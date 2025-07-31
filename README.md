@@ -3,7 +3,7 @@
 Model Context Protocol (MCP) server for Hostinger API.
 
 ## Prerequisites
-- Node.js version 20 or higher
+- Node.js version 24 or higher
 
 If you don't have Node.js installed, you can download it from the [official website](https://nodejs.org/en/download/).
 Alternatively, you can use a package manager like [Homebrew](https://brew.sh/) (for macOS) or [Chocolatey](https://chocolatey.org/) (for Windows) to install Node.js.
@@ -11,8 +11,8 @@ Alternatively, you can use a package manager like [Homebrew](https://brew.sh/) (
 We recommend using [NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) to install and manage installed Node.js versions.
 After installing NVM, you can install Node.js with the following command:
 ```bash
-nvm install v20
-nvm use v20
+nvm install v24
+nvm use v24
 ```
 
 ## Installation
@@ -49,11 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 The following environment variables can be configured when running the server:
 - `DEBUG`: Enable debug logging (true/false) (default: false)
-
-
-- `APITOKEN`: Your API token, which will be sent in the `Authorization` header.
-
-
+- `API_TOKEN`: Your API token, which will be sent in the `Authorization` header.
 
 ## Usage
 
@@ -73,43 +69,73 @@ The following environment variables can be configured when running the server:
 }
 ```
 
-### Using SSE Transport
+### Transport Options
 
-To use the MCP server with SSE transport, you must run the server with the `--sse` option. 
-This will enable the server to communicate with clients using Server-Sent Events on localhost port 8100.
-Additionally, you can specify the `--host` and `--port` options to set the host and port for the server to listen on.
+The MCP server supports two transport modes:
 
-Example of running the server with SSE transport:
+#### Standard I/O Transport
+
+The server can use standard input / output (stdio) transport (default). This provides local streaming:
+
+#### Streamable HTTP Transport
+
+The server can use HTTP streaming transport. This provides bidirectional streaming over HTTP:
 
 ```bash
-hostinger-api-mcp --sse --host 127.0.0.1 --port 8100
+# Default HTTP transport on localhost:8100
+hostinger-api-mcp --http
+
+# Specify custom host and port
+hostinger-api-mcp --http --host 0.0.0.0 --port 8150
+```
+
+#### Command Line Options
+
+```
+Options:
+  --http           Use HTTP streaming transport
+  --stdio          Use Server-Sent Events transport (default)
+  --host {host}    Hostname or IP address to listen on (default: 127.0.0.1)
+  --port {port}    Port to bind to (default: 8100)
+  --help           Show help message
 ```
 
 ### Using as an MCP Tool Provider
 
-This server implements the Model Context Protocol (MCP) and can be used with any MCP-compatible consumer, like Claude.js client or other MCP consumers.
+This server implements the Model Context Protocol (MCP) and can be used with any MCP-compatible consumer.
 
-Example of connecting to this server from a Claude.js client:
+Example of connecting to this server using HTTP streaming transport:
 
 ```javascript
-import { MCP } from "claude-js";
-import { createStdio } from "claude-js/mcp";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 
-// Create stdin/stdout transport
-const transport = createStdio({ command: "hostinger-api-mcp" });
+// Create HTTP transport
+const transport = new StreamableHTTPClientTransport({
+  url: "http://localhost:8100/",
+  headers: {
+    "Authorization": `Bearer ${process.env.API_TOKEN}`
+  }
+});
 
 // Connect to the MCP server
-const mcp = new MCP({ transport });
-await mcp.connect();
+const client = new Client({
+  name: "my-client",
+  version: "1.0.0"
+}, {
+  capabilities: {}
+});
+
+await client.connect(transport);
 
 // List available tools
-const { tools } = await mcp.listTools();
+const { tools } = await client.listTools();
 console.log("Available tools:", tools);
 
 // Call a tool
-const result = await mcp.callTool({
-    id: "TOOL-ID",
-    arguments: { param1: "value1" }
+const result = await client.callTool({
+  name: "billing_getCatalogItemListV1",
+  arguments: { category: "DOMAIN" }
 });
 console.log("Tool result:", result);
 ```
