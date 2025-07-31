@@ -2,7 +2,9 @@
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import minimist from 'minimist';
+import cors from "cors";
 import express from "express";
 import {Request, Response} from "express";
 import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from "axios";
@@ -1746,34 +1748,6 @@ const TOOLS: OpenApiTool[] = [
     ]
   },
   {
-    "name": "VPS_deleteBackupV1",
-    "description": "This endpoint deletes a specified backup for a virtual machine.",
-    "method": "DELETE",
-    "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/backups/{backupId}",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "virtualMachineId": {
-          "type": "integer",
-          "description": "Virtual Machine ID"
-        },
-        "backupId": {
-          "type": "integer",
-          "description": "Backup ID"
-        }
-      },
-      "required": [
-        "virtualMachineId",
-        "backupId"
-      ]
-    },
-    "security": [
-      {
-        "apiToken": []
-      }
-    ]
-  },
-  {
     "name": "VPS_getBackupListV1",
     "description": "This endpoint retrieves a list of backups for a specified virtual machine.",
     "method": "GET",
@@ -2079,6 +2053,10 @@ const TOOLS: OpenApiTool[] = [
         "ns2": {
           "type": "string",
           "description": "ns2 parameter"
+        },
+        "ns3": {
+          "type": "string",
+          "description": "ns3 parameter"
         }
       },
       "required": [
@@ -2528,7 +2506,7 @@ const SECURITY_SCHEMES: Record<string, SecurityScheme> = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.0.81
+ * Generated from OpenAPI spec version 0.0.86
  */
 class MCPServer {
   private server: Server;
@@ -2550,7 +2528,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.0.31",
+        version: "0.0.32",
       },
       {
         capabilities: {
@@ -2575,7 +2553,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.0.31';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.0.32';
     
     return headers;
   }
@@ -2702,62 +2680,12 @@ class MCPServer {
           return status < 500; // Resolve only if the status code is less than 500
         }
       };
-
-      // Apply security headers based on tool security requirements
-      if (tool.security && Array.isArray(tool.security)) {
-        for (const requirement of tool.security) {
-          for (const securitySchemeName of Object.keys(requirement)) {
-            const securityDefinition = SECURITY_SCHEMES[securitySchemeName];
-
-            if (securityDefinition) {
-              const authType = securityDefinition.type;
-
-              // Handle API key
-              if (authType === 'apiKey') {
-                const apiKeyName = securityDefinition.name || '';
-                const envVarName = `${securitySchemeName.toUpperCase()}_${apiKeyName.toUpperCase()}`;
-                const apiKeyValue = process.env[envVarName];
-
-                if (apiKeyValue) {
-                  if (securityDefinition.in === 'header') {
-                    config.headers = config.headers || {};
-                    config.headers[apiKeyName] = apiKeyValue;
-                  } else if (securityDefinition.in === 'query') {
-                    config.params = config.params || {};
-                    config.params[apiKeyName] = apiKeyValue;
-                  }
-                } else {
-                  this.log('warning', `API Key environment variable not found: ${envVarName}`);
-                }
-              }
-              // Handle bearer token
-              else if (authType === 'http' && securityDefinition.scheme === 'bearer') {
-                const envVarName = `${securitySchemeName.toUpperCase()}`;
-                const bearerToken = process.env[envVarName];
-
-                if (bearerToken) {
-                  config.headers = config.headers || {};
-                  config.headers['Authorization'] = `Bearer ${bearerToken}`;
-                } else {
-                  this.log('warning', `Bearer Token environment variable not found: ${envVarName}`);
-                }
-              }
-              // Handle basic auth
-              else if (authType === 'http' && securityDefinition.scheme === 'basic') {
-                const username = process.env[`${securitySchemeName.toUpperCase()}_USERNAME`];
-                const password = process.env[`${securitySchemeName.toUpperCase()}_PASSWORD`];
-
-                if (username && password) {
-                  const auth = Buffer.from(`${username}:${password}`).toString('base64');
-                  config.headers = config.headers || {};
-                  config.headers['Authorization'] = `Basic ${auth}`;
-                } else {
-                  this.log('warning', `Basic auth credentials not found for ${securitySchemeName}`);
-                }
-              }
-            }
-          }
-        }
+     
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN']; // APITOKEN for backwards compatibility
+      if (bearerToken) {
+        config.headers['Authorization'] = `Bearer ${bearerToken}`;
+      } else {
+        this.log('error', `Bearer Token environment variable not found: API_TOKEN`);
       }
 
       // Add parameters based on request method
@@ -2833,48 +2761,67 @@ class MCPServer {
       }
     }
   }
-  
+
   /**
-   * Start the sse server
+   * Create and configure Express app with shared middleware
    */
-  async startSse(host: string, port: number): Promise<void> {
+  createApp() {
+    const app = express();
+    app.use(express.json());
+    app.use(cors());
+    return app;
+  }
+
+  /**
+   * Start the server with HTTP streaming transport
+   */
+  async startHttp(host: string, port: number): Promise<void> {
     try {
-      // Create sse transport
-      const app = express();
-      app.use(express.json());
+      const app = this.createApp();
 
-      let transport: SSEServerTransport;
-      const sessions = {} as Record<string, SSEServerTransport>;
-
-      app.get('/sse', (req: Request, res: Response) => {
-        transport = new SSEServerTransport('/messages', res);
-        sessions[transport.sessionId] = transport;
-        
-        res.on('close', () => {
-           delete sessions[transport.sessionId];
-        });
-        
-        this.server.connect(transport);
+      // Create HTTP transport with session management
+      const httpTransport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => {
+          // Generate a simple session ID
+          return `session-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+        },
       });
 
-      app.post('/messages', (req: Request, res: Response) => {
-        const sessionId = req.query.sessionId as string;
-        const transport = sessions[sessionId];
-        if (transport) {
-          transport.handlePostMessage(req, res);
-        } else {
-          res.status(400).send('No transport found for sessionId');
-        }
+      // Set up CORS for all routes
+      app.options("*", (req, res) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, x-session-id");
+        res.sendStatus(200);
       });
 
-      app.listen(port, host);
-      this.log('info', `MCP Server with SSE transport started successfully with ${this.tools.size} tools`);
-      this.log('info', `Listening on ${host}:${port}`);
+      // Health check endpoint
+      app.get("/health", (req, res) => {
+        res.status(200).json({ status: "ok", transport: "http" });
+      });
+
+      // Set up the HTTP transport endpoint
+      app.post("/", async (req, res) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, x-session-id");
+        await httpTransport.handleRequest(req, res, req.body);
+      });
+
+      // Start the server
+      const server = app.listen(port, host, () => {
+        this.log('info', `MCP Server with HTTP streaming transport started successfully with ${this.tools.size} tools`);
+        this.log('info', `Listening on http://${host}:${port}`);
+      });
+
+      // Connect the MCP server to the transport
+      await this.server.connect(httpTransport);
+
     } catch (error) {
       console.error("Failed to start MCP server:", error);
       process.exit(1);
     }
-  }  
+  }
 
   /**
    * Start the stdio server
@@ -2904,17 +2851,35 @@ async function main(): Promise<void> {
     const argv = minimist(process.argv.slice(2), { 
         string: ['host'], 
         int: ['port'], 
-        boolean: ['sse'],
+        boolean: ['stdio', 'http', 'help'],
         default: {
             host: '127.0.0.1',
             port: 8100,
+            stdio: true,
         }
     });
     
-    const server = new MCPServer();
+    // Show help if requested
+    if (argv.help) {
+      console.log(`
+        Hostinger API MCP Server
+        Usage: hostinger-api-mcp [options]
+        Options:
+          --http           Use HTTP streaming transport
+          --stdio          Use standard input/output transport (default)
+          --host <host>    Host to bind to (default: 127.0.0.1)
+          --port <port>    Port to bind to (default: 8100)
+          --help           Show this help message
+        Environment Variables:
+          API_TOKEN        Your Hostinger API token (required)
+          DEBUG            Enable debug logging (true/false)
+        `);
+      process.exit(0);
+    }
     
-    if (argv.sse) {
-        await server.startSse(argv.host, argv.port);
+    const server = new MCPServer();
+    if (argv.http) {
+        await server.startHttp(argv.host, argv.port);
     } else {
         await server.startStdio();
     }

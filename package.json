@@ -1,6 +1,6 @@
 {
   "name": "hostinger-api-mcp",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "MCP server for Hostinger API",
   "repository": {
     "type": "git",
@@ -25,17 +25,21 @@
     "start:ts": "npx tsc && node dist/server.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.6",
     "minimist": "^1.2.8",
-    "express": "^5.1.0",
+    "express": "^4.21.2",
     "axios": "^1.8.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.4.7",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
-    "typescript": "^5.3.3"
+    "@types/node": "^24.0.0",
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/minimist": "^1.2.5",
+    "typescript": "^5.7.2"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=24.0.0"
   }
 }

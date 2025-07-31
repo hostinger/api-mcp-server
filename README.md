@@ -66,7 +66,7 @@ The following environment variables can be configured when running the server:
             "command": "hostinger-api-mcp",
             "env": {
                 "DEBUG": "false",
-                "APITOKEN": "YOUR API TOKEN"
+                "API_TOKEN": "YOUR API TOKEN"
             }
         }
     }
@@ -862,18 +862,6 @@ This endpoint retrieves a list of public keys attached to a specified virtual ma
 - `virtualMachineId`: Virtual Machine ID (required)
 - `page`: Page number 
 
-### VPS_deleteBackupV1
-
-This endpoint deletes a specified backup for a virtual machine.
-
-- **Method**: `DELETE`
-- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/backups/{backupId}`
-
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `backupId`: Backup ID (required)
-
 ### VPS_getBackupListV1
 
 This endpoint retrieves a list of backups for a specified virtual machine.
@@ -1038,6 +1026,7 @@ Be aware, that improper nameserver configuration can lead to the virtual machine
 - `virtualMachineId`: Virtual Machine ID (required)
 - `ns1`: ns1 parameter (required)
 - `ns2`: ns2 parameter 
+- `ns3`: ns3 parameter 
 
 ### VPS_createPTRRecordV1
 

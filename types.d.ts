@@ -1008,23 +1008,6 @@ such as the action name, timestamp, and status.
   };
 
   /**
-   * This endpoint deletes a specified backup for a virtual machine.
-   */
-  "undefined": {
-    params: {
-      /**
-       * Virtual Machine ID
-       */
-      virtualMachineId: number;
-      /**
-       * Backup ID
-       */
-      backupId: number;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
    * This endpoint retrieves a list of backups for a specified virtual machine.
    */
   "undefined": {
@@ -1238,6 +1221,10 @@ Be aware, that improper nameserver configuration can lead to the virtual machine
        * ns2 parameter
        */
       ns2?: string;
+      /**
+       * ns3 parameter
+       */
+      ns3?: string;
     };
     response: any; // Response structure will depend on the API
   };
