@@ -146,9 +146,11 @@ This MCP server provides the following tools:
 
 ### billing_getCatalogItemListV1
 
-This endpoint retrieves a list of catalog items available for order. 
+Retrieve catalog items available for order.
 
 Prices in catalog items is displayed as cents (without floating point), e.g: float `17.99` is displayed as integer `1799`.
+
+Use this endpoint to view available services and pricing before placing orders.
 
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/catalog`
@@ -158,9 +160,9 @@ Prices in catalog items is displayed as cents (without floating point), e.g: flo
 - `category`: Filter catalog items by category 
 - `name`: Filter catalog items by name. Use `*` for wildcard search, e.g. `.COM*` to find .com domain 
 
-### billing_createNewServiceOrderV1
+### billing_createServiceOrderV1
 
-This endpoint creates a new service order. 
+Create a new service order. 
 
 **DEPRECATED**
 
@@ -188,7 +190,9 @@ We recommend use other payment methods than `credit_card` if you encounter this 
 
 ### billing_setDefaultPaymentMethodV1
 
-This endpoint sets default payment method for your account.
+Set the default payment method for your account.
+
+Use this endpoint to configure the primary payment method for future orders.
 
 - **Method**: `POST`
 - **Path**: `/api/billing/v1/payment-methods/{paymentMethodId}`
@@ -199,7 +203,9 @@ This endpoint sets default payment method for your account.
 
 ### billing_deletePaymentMethodV1
 
-This endpoint deletes a payment method from your account.
+Delete a payment method from your account.
+
+Use this endpoint to remove unused payment methods from user accounts.
 
 - **Method**: `DELETE`
 - **Path**: `/api/billing/v1/payment-methods/{paymentMethodId}`
@@ -210,9 +216,11 @@ This endpoint deletes a payment method from your account.
 
 ### billing_getPaymentMethodListV1
 
-This endpoint retrieves a list of available payment methods that can be used for placing new orders.
+Retrieve available payment methods that can be used for placing new orders.
 
 If you want to add new payment method, please use [hPanel](https://hpanel.hostinger.com/billing/payment-methods).
+
+Use this endpoint to view available payment options before creating orders.
 
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/payment-methods`
@@ -221,7 +229,9 @@ If you want to add new payment method, please use [hPanel](https://hpanel.hostin
 
 ### billing_cancelSubscriptionV1
 
-This endpoint cancels a subscription and stops any further billing.
+Cancel a subscription and stop any further billing.
+
+Use this endpoint when users want to terminate active services.
 
 - **Method**: `DELETE`
 - **Path**: `/api/billing/v1/subscriptions/{subscriptionId}`
@@ -232,16 +242,20 @@ This endpoint cancels a subscription and stops any further billing.
 
 ### billing_getSubscriptionListV1
 
-This endpoint retrieves a list of all subscriptions associated with your account.
+Retrieve a list of all subscriptions associated with your account.
+
+Use this endpoint to monitor active services and billing status.
 
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/subscriptions`
 
 
 
-### DNS_getSnapshotV1
+### DNS_getDNSSnapshotV1
 
-This endpoint retrieves particular DNS snapshot with the contents of DNS zone records.
+Retrieve particular DNS snapshot with contents of DNS zone records.
+
+Use this endpoint to view historical DNS configurations for domains.
 
 - **Method**: `GET`
 - **Path**: `/api/dns/v1/snapshots/{domain}/{snapshotId}`
@@ -251,9 +265,11 @@ This endpoint retrieves particular DNS snapshot with the contents of DNS zone re
 - `domain`: Domain name (required)
 - `snapshotId`: Snapshot ID (required)
 
-### DNS_getSnapshotListV1
+### DNS_getDNSSnapshotListV1
 
-This endpoint retrieves list of DNS snapshots.
+Retrieve DNS snapshots for a domain.
+
+Use this endpoint to view available DNS backup points for restoration.
 
 - **Method**: `GET`
 - **Path**: `/api/dns/v1/snapshots/{domain}`
@@ -262,9 +278,11 @@ This endpoint retrieves list of DNS snapshots.
 
 - `domain`: Domain name (required)
 
-### DNS_restoreSnapshotV1
+### DNS_restoreDNSSnapshotV1
 
-This endpoint restores DNS zone to the selected snapshot.
+Restore DNS zone to the selected snapshot.
+
+Use this endpoint to revert domain DNS to a previous configuration.
 
 - **Method**: `POST`
 - **Path**: `/api/dns/v1/snapshots/{domain}/{snapshotId}/restore`
@@ -274,9 +292,11 @@ This endpoint restores DNS zone to the selected snapshot.
 - `domain`: Domain name (required)
 - `snapshotId`: Snapshot ID (required)
 
-### DNS_getRecordsV1
+### DNS_getDNSRecordsV1
 
-This endpoint retrieves DNS zone records for a specific domain.
+Retrieve DNS zone records for a specific domain.
+
+Use this endpoint to view current DNS configuration for domain management.
 
 - **Method**: `GET`
 - **Path**: `/api/dns/v1/zones/{domain}`
@@ -285,12 +305,14 @@ This endpoint retrieves DNS zone records for a specific domain.
 
 - `domain`: Domain name (required)
 
-### DNS_updateZoneRecordsV1
+### DNS_updateDNSRecordsV1
 
-This endpoint updates DNS records for the selected domain. 
+Update DNS records for the selected domain.
 
 Using `overwrite = true` will replace existing records with the provided ones. 
 Otherwise existing records will be updated and new records will be added.
+
+Use this endpoint to modify domain DNS configuration.
 
 - **Method**: `PUT`
 - **Path**: `/api/dns/v1/zones/{domain}`
@@ -301,14 +323,17 @@ Otherwise existing records will be updated and new records will be added.
 - `overwrite`: If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created, otherwise resource records' ttl's are updated and new records are appended. If no matching RRs are found, they are created. 
 - `zone`: zone parameter (required)
 
-### DNS_deleteZoneRecordsV1
+### DNS_deleteDNSRecordsV1
 
-This endpoint deletes DNS records for the selected domain. 
+Delete DNS records for the selected domain.
+
 To filter which records to delete, add the `name` of the record and `type` to the filter. 
 Multiple filters can be provided with single request.
 
 If you have multiple records with the same name and type, and you want to delete only part of them,
 refer to the `Update zone records` endpoint.
+
+Use this endpoint to remove specific DNS records from domains.
 
 - **Method**: `DELETE`
 - **Path**: `/api/dns/v1/zones/{domain}`
@@ -317,9 +342,11 @@ refer to the `Update zone records` endpoint.
 
 - `domain`: Domain name (required)
 
-### DNS_resetZoneRecordsV1
+### DNS_resetDNSRecordsV1
 
-This endpoint resets DNS zone to the default records.
+Reset DNS zone to the default records.
+
+Use this endpoint to restore domain DNS to original configuration.
 
 - **Method**: `POST`
 - **Path**: `/api/dns/v1/zones/{domain}/reset`
@@ -331,12 +358,14 @@ This endpoint resets DNS zone to the default records.
 - `reset_email_records`: Determines if email records should be reset 
 - `whitelisted_record_types`: Specifies which record types to not reset 
 
-### DNS_validateZoneRecordsV1
+### DNS_validateDNSRecordsV1
 
-This endpoint used to validate DNS records prior update for the selected domain. 
+Validate DNS records prior to update for the selected domain.
 
 If the validation is successful, the response will contain `200 Success` code.
 If there is validation error, the response will fail with `422 Validation error` code.
+
+Use this endpoint to verify DNS record validity before applying changes.
 
 - **Method**: `POST`
 - **Path**: `/api/dns/v1/zones/{domain}/validate`
@@ -349,11 +378,15 @@ If there is validation error, the response will fail with `422 Validation error`
 
 ### domains_checkDomainAvailabilityV1
 
-This endpoint checks the availability of a domain name. Multiple TLDs can be checked at once.
-If you want to get alternative domains with response, provide only one TLD in the request and set `with_alternatives` to `true`.
-TLDs should be provided without the leading dot (e.g. `com`, `net`, `org`).
+Check availability of domain names across multiple TLDs.
+
+Multiple TLDs can be checked at once.
+If you want alternative domains with response, provide only one TLD and set `with_alternatives` to `true`.
+TLDs should be provided without leading dot (e.g. `com`, `net`, `org`).
 
 Endpoint has rate limit of 10 requests per minute.
+
+Use this endpoint to verify domain availability before purchase.
 
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/availability`
@@ -364,9 +397,11 @@ Endpoint has rate limit of 10 requests per minute.
 - `tlds`: TLDs list (required)
 - `with_alternatives`: Should response include alternatives 
 
-### domains_getForwardingDataV1
+### domains_getDomainForwardingV1
 
-This endpoint retrieves domain forwarding data.
+Retrieve domain forwarding data.
+
+Use this endpoint to view current redirect configuration for domains.
 
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/forwarding/{domain}`
@@ -375,9 +410,11 @@ This endpoint retrieves domain forwarding data.
 
 - `domain`: Domain name (required)
 
-### domains_deleteForwardingDataV1
+### domains_deleteDomainForwardingV1
 
-This endpoint deletes domain forwarding data.
+Delete domain forwarding data.
+
+Use this endpoint to remove redirect configuration from domains.
 
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/forwarding/{domain}`
@@ -386,9 +423,11 @@ This endpoint deletes domain forwarding data.
 
 - `domain`: Domain name (required)
 
-### domains_createForwardingDataV1
+### domains_createDomainForwardingV1
 
-This endpoint creates domain forwarding data.
+Create domain forwarding configuration.
+
+Use this endpoint to set up domain redirects to other URLs.
 
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/forwarding`
@@ -401,8 +440,11 @@ This endpoint creates domain forwarding data.
 
 ### domains_enableDomainLockV1
 
-This endpoint enables domain lock for the domain. When domain lock is enabled, 
-the domain cannot be transferred to another registrar without first disabling the lock.
+Enable domain lock for the domain.
+
+When domain lock is enabled, the domain cannot be transferred to another registrar without first disabling the lock.
+
+Use this endpoint to secure domains against unauthorized transfers.
 
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/domain-lock`
@@ -413,8 +455,11 @@ the domain cannot be transferred to another registrar without first disabling th
 
 ### domains_disableDomainLockV1
 
-This endpoint disables domain lock for the domain. Domain lock needs to be disabled 
-before transferring the domain to another registrar.
+Disable domain lock for the domain.
+
+Domain lock needs to be disabled before transferring the domain to another registrar.
+
+Use this endpoint to prepare domains for transfer to other registrars.
 
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/portfolio/{domain}/domain-lock`
@@ -423,9 +468,11 @@ before transferring the domain to another registrar.
 
 - `domain`: Domain name (required)
 
-### domains_getDomainV1
+### domains_getDomainDetailsV1
 
-This endpoint retrieves details for specified domain.
+Retrieve detailed information for specified domain.
+
+Use this endpoint to view comprehensive domain configuration and status.
 
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/portfolio/{domain}`
@@ -436,7 +483,9 @@ This endpoint retrieves details for specified domain.
 
 ### domains_getDomainListV1
 
-This endpoint retrieves a list of all domains associated with your account.
+Retrieve all domains associated with your account.
+
+Use this endpoint to view user's domain portfolio.
 
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/portfolio`
@@ -445,16 +494,18 @@ This endpoint retrieves a list of all domains associated with your account.
 
 ### domains_purchaseNewDomainV1
 
-This endpoint allows you to buy (purchase) and register a new domain name. 
+Purchase and register a new domain name.
 
-If registration fails, login to [hPanel](https://hpanel.hostinger.com/) and check the domain registration status.
+If registration fails, login to [hPanel](https://hpanel.hostinger.com/) and check domain registration status.
 
 If no payment method is provided, your default payment method will be used automatically.
 
-If no WHOIS information is provided, the default contact information for that TLD (Top-Level Domain) will be used. 
-Before making a request, ensure that WHOIS information for the desired TLD exists in your account.
+If no WHOIS information is provided, default contact information for that TLD will be used. 
+Before making request, ensure WHOIS information for desired TLD exists in your account.
 
-Some TLDs require `additional_details` to be provided and these will be validated before completing the purchase. The required additional details vary by TLD.
+Some TLDs require `additional_details` to be provided and these will be validated before completing purchase.
+
+Use this endpoint to register new domains for users.
 
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/portfolio`
@@ -470,8 +521,11 @@ Some TLDs require `additional_details` to be provided and these will be validate
 
 ### domains_enablePrivacyProtectionV1
 
-This endpoint enables privacy protection for the domain.
-When privacy protection is enabled, the domain owner's personal information is hidden from the public WHOIS database.
+Enable privacy protection for the domain.
+
+When privacy protection is enabled, domain owner's personal information is hidden from public WHOIS database.
+
+Use this endpoint to protect domain owner's personal information from public view.
 
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/privacy-protection`
@@ -482,8 +536,11 @@ When privacy protection is enabled, the domain owner's personal information is h
 
 ### domains_disablePrivacyProtectionV1
 
-This endpoint disables privacy protection for the domain.
-When privacy protection is disabled, the domain owner's personal information is visible in the public WHOIS database.
+Disable privacy protection for the domain.
+
+When privacy protection is disabled, domain owner's personal information is visible in public WHOIS database.
+
+Use this endpoint to make domain owner's information publicly visible.
 
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/portfolio/{domain}/privacy-protection`
@@ -492,11 +549,13 @@ When privacy protection is disabled, the domain owner's personal information is 
 
 - `domain`: Domain name (required)
 
-### domains_updateNameserversV1
+### domains_updateDomainNameserversV1
 
-This endpoint sets the nameservers for a specified domain.
+Set nameservers for a specified domain.
 
-Be aware, that improper nameserver configuration can lead to the domain being unresolvable or unavailable. 
+Be aware, that improper nameserver configuration can lead to the domain being unresolvable or unavailable.
+
+Use this endpoint to configure custom DNS hosting for domains.
 
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/nameservers`
@@ -511,7 +570,9 @@ Be aware, that improper nameserver configuration can lead to the domain being un
 
 ### domains_getWHOISProfileV1
 
-This endpoint retrieves a WHOIS contact profile.
+Retrieve a WHOIS contact profile.
+
+Use this endpoint to view domain registration contact information.
 
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/whois/{whoisId}`
@@ -522,7 +583,9 @@ This endpoint retrieves a WHOIS contact profile.
 
 ### domains_deleteWHOISProfileV1
 
-This endpoint deletes WHOIS contact profile.
+Delete WHOIS contact profile.
+
+Use this endpoint to remove unused contact profiles from account.
 
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/whois/{whoisId}`
@@ -533,7 +596,9 @@ This endpoint deletes WHOIS contact profile.
 
 ### domains_getWHOISProfileListV1
 
-This endpoint retrieves a list of WHOIS contact profiles.
+Retrieve WHOIS contact profiles.
+
+Use this endpoint to view available contact profiles for domain registration.
 
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/whois`
@@ -544,7 +609,9 @@ This endpoint retrieves a list of WHOIS contact profiles.
 
 ### domains_createWHOISProfileV1
 
-This endpoint creates WHOIS contact profile.
+Create WHOIS contact profile.
+
+Use this endpoint to add new contact information for domain registration.
 
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/whois`
@@ -559,7 +626,9 @@ This endpoint creates WHOIS contact profile.
 
 ### domains_getWHOISProfileUsageV1
 
-This endpoint retrieves a domain list where provided WHOIS contact profile is used.
+Retrieve domain list where provided WHOIS contact profile is used.
+
+Use this endpoint to view which domains use specific contact profiles.
 
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/whois/{whoisId}/usage`
@@ -568,20 +637,187 @@ This endpoint retrieves a domain list where provided WHOIS contact profile is us
 
 - `whoisId`: WHOIS ID (required)
 
-### VPS_getDataCentersListV1
+### VPS_getDataCenterListV1
 
-This endpoint retrieves a list of all data centers available.
+Retrieve all available data centers.
+
+Use this endpoint to view location options before deploying VPS instances.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/data-centers`
 
 
 
+### VPS_getProjectContainersV1
+
+Retrieves a list of all containers belonging to a specific Docker Compose project on the virtual machine. 
+
+This endpoint returns detailed information about each container including their current status, port mappings, and runtime configuration. 
+
+Use this to monitor the health and state of all services within your Docker Compose project.
+
+- **Method**: `GET`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/containers`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
+
+### VPS_getProjectContentsV1
+
+Retrieves the complete project information including the docker-compose.yml file contents, project metadata, and current deployment status. 
+
+This endpoint provides the full configuration and state details of a specific Docker Compose project. 
+
+Use this to inspect project settings, review the compose file, or check the overall project health.
+
+- **Method**: `GET`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
+
+### VPS_deleteAProjectV1
+
+Completely removes a Docker Compose project from the virtual machine, stopping all containers and cleaning up 
+associated resources including networks, volumes, and images. 
+
+This operation is irreversible and will delete all project data. 
+
+Use this when you want to permanently remove a project and free up system resources.
+
+- **Method**: `DELETE`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/down`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
+
+### VPS_getProjectListV1
+
+Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. 
+
+This endpoint returns basic information about each project including name, status, and file path. 
+
+Use this to get an overview of all Docker projects on your VPS instance.
+
+- **Method**: `GET`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+
+### VPS_createAProjectV1
+
+Deploy new project from docker-compose.yaml contents or download contents from URL. 
+
+URL can be Github repository url in format https://github.com/[user]/[repo] and it will be automatically resolved to 
+docker-compose.yaml file in master branch. Any other URL provided must return docker-compose.yaml file contents.
+
+If project already exists, it will be replaced.
+
+- **Method**: `POST`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+- `project_name`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
+- `content`: URL pointing to docker-compose.yaml file, Github repository or raw YAML content of the compose file (required)
+
+### VPS_getProjectLogsV1
+
+Retrieves aggregated log entries from all services within a Docker Compose project. 
+
+This endpoint returns recent log output from each container, organized by service name with timestamps. 
+The response contains the last 300 log entries across all services. 
+
+Use this for debugging, monitoring application behavior, and troubleshooting issues across your entire project stack.
+
+- **Method**: `GET`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/logs`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
+
+### VPS_restartAProjectV1
+
+Restarts all services in a Docker Compose project by stopping and starting containers in the correct dependency order. 
+
+This operation preserves data volumes and network configurations while refreshing the running containers. 
+
+Use this to apply configuration changes or recover from service failures.
+
+- **Method**: `POST`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/restart`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
+
+### VPS_startAProjectV1
+
+Starts all services in a Docker Compose project that are currently stopped. 
+
+This operation brings up containers in the correct dependency order as defined in the compose file. 
+
+Use this to resume a project that was previously stopped or to start services after a system reboot.
+
+- **Method**: `POST`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/start`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
+
+### VPS_stopAProjectV1
+
+Stops all running services in a Docker Compose project while preserving container configurations and data volumes. 
+
+This operation gracefully shuts down containers in reverse dependency order. 
+
+Use this to temporarily halt a project without removing data or configurations.
+
+- **Method**: `POST`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/stop`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
+
+### VPS_updateAProjectV1
+
+Updates a Docker Compose project by pulling the latest image versions and recreating containers with new configurations. 
+
+This operation preserves data volumes while applying changes from the compose file. 
+
+Use this to deploy application updates, apply configuration changes, or refresh container images to their latest versions.
+
+- **Method**: `POST`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/update`
+
+**Parameters**:
+
+- `virtualMachineId`: Virtual Machine ID (required)
+- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
+
 ### VPS_activateFirewallV1
 
-This endpoint activates a firewall for a specified virtual machine. 
+Activate a firewall for a specified virtual machine.
 
 Only one firewall can be active for a virtual machine at a time.
+
+Use this endpoint to apply firewall rules to VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/activate/{virtualMachineId}`
@@ -593,7 +829,9 @@ Only one firewall can be active for a virtual machine at a time.
 
 ### VPS_deactivateFirewallV1
 
-This endpoint deactivates a firewall for a specified virtual machine.
+Deactivate a firewall for a specified virtual machine.
+
+Use this endpoint to remove firewall protection from VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/deactivate/{virtualMachineId}`
@@ -603,9 +841,11 @@ This endpoint deactivates a firewall for a specified virtual machine.
 - `firewallId`: Firewall ID (required)
 - `virtualMachineId`: Virtual Machine ID (required)
 
-### VPS_getFirewallV1
+### VPS_getFirewallDetailsV1
 
-This endpoint retrieves firewall by its ID and rules associated with it.
+Retrieve firewall by its ID and rules associated with it.
+
+Use this endpoint to view specific firewall configuration and rules.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/firewall/{firewallId}`
@@ -616,9 +856,11 @@ This endpoint retrieves firewall by its ID and rules associated with it.
 
 ### VPS_deleteFirewallV1
 
-This endpoint deletes a specified firewall. 
+Delete a specified firewall.
 
 Any virtual machine that has this firewall activated will automatically have it deactivated.
+
+Use this endpoint to remove unused firewall configurations.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/firewall/{firewallId}`
@@ -629,7 +871,9 @@ Any virtual machine that has this firewall activated will automatically have it 
 
 ### VPS_getFirewallListV1
 
-This endpoint retrieves a list of all firewalls available.
+Retrieve all available firewalls.
+
+Use this endpoint to view existing firewall configurations.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/firewall`
@@ -640,7 +884,9 @@ This endpoint retrieves a list of all firewalls available.
 
 ### VPS_createNewFirewallV1
 
-This endpoint creates a new firewall.
+Create a new firewall.
+
+Use this endpoint to set up new firewall configurations for VPS security.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall`
@@ -651,9 +897,11 @@ This endpoint creates a new firewall.
 
 ### VPS_updateFirewallRuleV1
 
-This endpoint updates a specific firewall rule from a specified firewall.
+Update a specific firewall rule from a specified firewall.
 
-Any virtual machine that has this firewall activated will loose sync with the firewall and will have to be synced again manually.
+Any virtual machine that has this firewall activated will lose sync with the firewall and will have to be synced again manually.
+
+Use this endpoint to modify existing firewall rules.
 
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules/{ruleId}`
@@ -669,9 +917,11 @@ Any virtual machine that has this firewall activated will loose sync with the fi
 
 ### VPS_deleteFirewallRuleV1
 
-This endpoint deletes a specific firewall rule from a specified firewall.
+Delete a specific firewall rule from a specified firewall.
 
-Any virtual machine that has this firewall activated will loose sync with the firewall and will have to be synced again manually.
+Any virtual machine that has this firewall activated will lose sync with the firewall and will have to be synced again manually.
+       
+Use this endpoint to remove specific firewall rules.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules/{ruleId}`
@@ -683,10 +933,13 @@ Any virtual machine that has this firewall activated will loose sync with the fi
 
 ### VPS_createFirewallRuleV1
 
-This endpoint creates new firewall rule from a specified firewall. 
+Create new firewall rule for a specified firewall.
+
 By default, the firewall drops all incoming traffic, which means you must add accept rules for all ports you want to use.
 
-Any virtual machine that has this firewall activated will loose sync with the firewall and will have to be synced again manually.
+Any virtual machine that has this firewall activated will lose sync with the firewall and will have to be synced again manually.
+
+Use this endpoint to add new security rules to firewalls.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules`
@@ -701,9 +954,11 @@ Any virtual machine that has this firewall activated will loose sync with the fi
 
 ### VPS_syncFirewallV1
 
-This endpoint syncs a firewall for a specified virtual machine.
+Sync a firewall for a specified virtual machine.
 
-Firewall can loose sync with virtual machine if the firewall has new rules added, removed or updated.
+Firewall can lose sync with virtual machine if the firewall has new rules added, removed or updated.
+
+Use this endpoint to apply updated firewall rules to VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/sync/{virtualMachineId}`
@@ -715,7 +970,9 @@ Firewall can loose sync with virtual machine if the firewall has new rules added
 
 ### VPS_getPostInstallScriptV1
 
-This endpoint retrieves post-install script by its ID.
+Retrieve post-install script by its ID.
+
+Use this endpoint to view specific automation script details.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/post-install-scripts/{postInstallScriptId}`
@@ -726,7 +983,9 @@ This endpoint retrieves post-install script by its ID.
 
 ### VPS_updatePostInstallScriptV1
 
-This endpoint updates a specific post-install script.
+Update a specific post-install script.
+
+Use this endpoint to modify existing automation scripts.
 
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/post-install-scripts/{postInstallScriptId}`
@@ -737,9 +996,11 @@ This endpoint updates a specific post-install script.
 - `name`: Name of the script (required)
 - `content`: Content of the script (required)
 
-### VPS_deleteAPostInstallScriptV1
+### VPS_deletePostInstallScriptV1
 
-This endpoint deletes a post-install script from your account. 
+Delete a post-install script from your account.
+       
+Use this endpoint to remove unused automation scripts.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/post-install-scripts/{postInstallScriptId}`
@@ -748,9 +1009,11 @@ This endpoint deletes a post-install script from your account.
 
 - `postInstallScriptId`: Post-install script ID (required)
 
-### VPS_getPostInstallScriptListV1
+### VPS_getPostInstallScriptsV1
 
-This endpoint retrieves a list of post-install scripts associated with your account.
+Retrieve post-install scripts associated with your account.
+
+Use this endpoint to view available automation scripts for VPS deployment.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/post-install-scripts`
@@ -761,11 +1024,12 @@ This endpoint retrieves a list of post-install scripts associated with your acco
 
 ### VPS_createPostInstallScriptV1
 
-This endpoint allows you to add a new post-install script to your account, 
-which can then be used run after the installation of a virtual machine instance.
+Add a new post-install script to your account, which can then be used after virtual machine installation.
 
 The script contents will be saved to the file `/post_install` with executable attribute set and will be executed once virtual machine is installed.
-The output of the script will be redirected to `/post_install.log`. Maximum script size is 48KB. 
+The output of the script will be redirected to `/post_install.log`. Maximum script size is 48KB.
+
+Use this endpoint to create automation scripts for VPS setup tasks.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/post-install-scripts`
@@ -777,9 +1041,11 @@ The output of the script will be redirected to `/post_install.log`. Maximum scri
 
 ### VPS_attachPublicKeyV1
 
-This endpoint attaches an existing public keys from your account to a specified virtual machine.
+Attach existing public keys from your account to a specified virtual machine.
 
 Multiple keys can be attached to a single virtual machine.
+
+Use this endpoint to enable SSH key authentication for VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/public-keys/attach/{virtualMachineId}`
@@ -789,11 +1055,13 @@ Multiple keys can be attached to a single virtual machine.
 - `virtualMachineId`: Virtual Machine ID (required)
 - `ids`: Public Key IDs to attach (required)
 
-### VPS_deleteAPublicKeyV1
+### VPS_deletePublicKeyV1
 
-This endpoint deletes a public key from your account. 
+Delete a public key from your account. 
 
 **Deleting public key from account does not remove it from virtual machine** 
+       
+Use this endpoint to remove unused SSH keys from account.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/public-keys/{publicKeyId}`
@@ -802,9 +1070,11 @@ This endpoint deletes a public key from your account.
 
 - `publicKeyId`: Public Key ID (required)
 
-### VPS_getPublicKeyListV1
+### VPS_getPublicKeysV1
 
-This endpoint retrieves a list of public keys associated with your account.
+Retrieve public keys associated with your account.
+
+Use this endpoint to view available SSH keys for VPS authentication.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/public-keys`
@@ -813,10 +1083,11 @@ This endpoint retrieves a list of public keys associated with your account.
 
 - `page`: Page number 
 
-### VPS_createNewPublicKeyV1
+### VPS_createPublicKeyV1
 
-This endpoint allows you to add a new public key to your account, 
-which can then be attached to virtual machine instances for secure access.
+Add a new public key to your account.
+
+Use this endpoint to register SSH keys for VPS authentication.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/public-keys`
@@ -826,9 +1097,11 @@ which can then be attached to virtual machine instances for secure access.
 - `name`: name parameter (required)
 - `key`: key parameter (required)
 
-### VPS_getTemplateV1
+### VPS_getTemplateDetailsV1
 
-This endpoint retrieves details of a specific OS template for virtual machines.
+Retrieve detailed information about a specific OS template for virtual machines.
+
+Use this endpoint to view specific template specifications before deployment.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/templates/{templateId}`
@@ -837,20 +1110,22 @@ This endpoint retrieves details of a specific OS template for virtual machines.
 
 - `templateId`: Template ID (required)
 
-### VPS_getTemplateListV1
+### VPS_getTemplatesV1
 
-This endpoint retrieves a list of available OS templates for virtual machines.
+Retrieve available OS templates for virtual machines.
+
+Use this endpoint to view operating system options before creating or recreating VPS instances.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/templates`
 
 
 
-### VPS_getActionV1
+### VPS_getActionDetailsV1
 
-This endpoint retrieves details of a specific action performed on a specified virtual machine. 
+Retrieve detailed information about a specific action performed on a specified virtual machine.
 
-This endpoint allows you to view detailed information about a particular action, including the action name, timestamp, and status.
+Use this endpoint to monitor specific VPS operation status and details.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/actions/{actionId}`
@@ -860,13 +1135,15 @@ This endpoint allows you to view detailed information about a particular action,
 - `virtualMachineId`: Virtual Machine ID (required)
 - `actionId`: Action ID (required)
 
-### VPS_getActionListV1
+### VPS_getActionsV1
 
-This endpoint retrieves a list of actions performed on a specified virtual machine.
+Retrieve actions performed on a specified virtual machine.
 
 Actions are operations or events that have been executed on the virtual machine, such as starting, stopping, or modifying 
 the machine. This endpoint allows you to view the history of these actions, providing details about each action, 
 such as the action name, timestamp, and status.
+
+Use this endpoint to view VPS operation history and troubleshoot issues.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/actions`
@@ -878,7 +1155,9 @@ such as the action name, timestamp, and status.
 
 ### VPS_getAttachedPublicKeysV1
 
-This endpoint retrieves a list of public keys attached to a specified virtual machine.
+Retrieve public keys attached to a specified virtual machine.
+
+Use this endpoint to view SSH keys configured for specific VPS instances.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/public-keys`
@@ -888,9 +1167,11 @@ This endpoint retrieves a list of public keys attached to a specified virtual ma
 - `virtualMachineId`: Virtual Machine ID (required)
 - `page`: Page number 
 
-### VPS_getBackupListV1
+### VPS_getBackupsV1
 
-This endpoint retrieves a list of backups for a specified virtual machine.
+Retrieve backups for a specified virtual machine.
+
+Use this endpoint to view available backup points for VPS data recovery.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/backups`
@@ -902,11 +1183,13 @@ This endpoint retrieves a list of backups for a specified virtual machine.
 
 ### VPS_restoreBackupV1
 
-This endpoint restores a backup for a specified virtual machine.
+Restore a backup for a specified virtual machine.
 
 The system will then initiate the restore process, which may take some time depending on the size of the backup.
 
 **All data on the virtual machine will be overwritten with the data from the backup.**
+
+Use this endpoint to recover VPS data from backup points.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/backups/{backupId}/restore`
@@ -918,10 +1201,13 @@ The system will then initiate the restore process, which may take some time depe
 
 ### VPS_setHostnameV1
 
-This endpoint sets the hostname for a specified virtual machine. 
+Set hostname for a specified virtual machine.
+
 Changing hostname does not update PTR record automatically.
 If you want your virtual machine to be reachable by a hostname, 
 you need to point your domain A/AAAA records to virtual machine IP as well.
+
+Use this endpoint to configure custom hostnames for VPS instances.
 
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/hostname`
@@ -933,7 +1219,9 @@ you need to point your domain A/AAAA records to virtual machine IP as well.
 
 ### VPS_resetHostnameV1
 
-This endpoint resets the hostname and PTR record of a specified virtual machine to the default value.
+Reset hostname and PTR record of a specified virtual machine to default value.
+
+Use this endpoint to restore default hostname configuration for VPS instances.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/hostname`
@@ -942,9 +1230,11 @@ This endpoint resets the hostname and PTR record of a specified virtual machine 
 
 - `virtualMachineId`: Virtual Machine ID (required)
 
-### VPS_getVirtualMachineV1
+### VPS_getVirtualMachineDetailsV1
 
-This endpoint retrieves detailed information about a specified virtual machine.
+Retrieve detailed information about a specified virtual machine.
+
+Use this endpoint to view comprehensive VPS configuration and status.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}`
@@ -953,9 +1243,11 @@ This endpoint retrieves detailed information about a specified virtual machine.
 
 - `virtualMachineId`: Virtual Machine ID (required)
 
-### VPS_getVirtualMachineListV1
+### VPS_getVirtualMachinesV1
 
-This endpoint retrieves a list of all available virtual machines.
+Retrieve all available virtual machines.
+
+Use this endpoint to view available VPS instances.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines`
@@ -964,11 +1256,13 @@ This endpoint retrieves a list of all available virtual machines.
 
 ### VPS_purchaseNewVirtualMachineV1
 
-This endpoint allows you to buy (purchase) and setup a new virtual machine.
+Purchase and setup a new virtual machine.
 
 If virtual machine setup fails for any reason, login to [hPanel](https://hpanel.hostinger.com/) and complete the setup manually.
 
-If no payment method is provided, your default payment method will be used automatically.                        
+If no payment method is provided, your default payment method will be used automatically.
+
+Use this endpoint to create new VPS instances.                        
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines`
@@ -982,10 +1276,13 @@ If no payment method is provided, your default payment method will be used autom
 
 ### VPS_getScanMetricsV1
 
-This endpoint retrieves the scan metrics for the [Monarx](https://www.monarx.com/) malware scanner installed on a specified virtual machine.
-The scan metrics provide detailed information about the malware scans performed by Monarx, including the number of scans, 
-detected threats, and other relevant statistics. This information is useful for monitoring the security status of the 
-virtual machine and assessing the effectiveness of the malware scanner.
+Retrieve scan metrics for the [Monarx](https://www.monarx.com/) malware scanner installed on a specified virtual machine.
+
+The scan metrics provide detailed information about malware scans performed by Monarx, including number of scans, 
+detected threats, and other relevant statistics. This information is useful for monitoring security status of the 
+virtual machine and assessing effectiveness of the malware scanner.
+
+Use this endpoint to monitor VPS security scan results and threat detection.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/monarx`
@@ -996,10 +1293,12 @@ virtual machine and assessing the effectiveness of the malware scanner.
 
 ### VPS_installMonarxV1
 
-This endpoint installs the Monarx malware scanner on a specified virtual machine. 
+Install the Monarx malware scanner on a specified virtual machine.
 
 [Monarx](https://www.monarx.com/) is a security tool designed to detect and prevent malware infections on virtual machines. 
 By installing Monarx, users can enhance the security of their virtual machines, ensuring that they are protected against malicious software.
+
+Use this endpoint to enable malware protection on VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/monarx`
@@ -1010,8 +1309,11 @@ By installing Monarx, users can enhance the security of their virtual machines, 
 
 ### VPS_uninstallMonarxV1
 
-This endpoint uninstalls the Monarx malware scanner on a specified virtual machine.
+Uninstall the Monarx malware scanner on a specified virtual machine.
+
 If Monarx is not installed, the request will still be processed without any effect.
+
+Use this endpoint to remove malware scanner from VPS instances.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/monarx`
@@ -1022,13 +1324,16 @@ If Monarx is not installed, the request will still be processed without any effe
 
 ### VPS_getMetricsV1
 
-This endpoint retrieves the historical metrics for a specified virtual machine.
+Retrieve historical metrics for a specified virtual machine.
+
 It includes the following metrics: 
 - CPU usage
 - Memory usage
 - Disk usage
 - Network usage
 - Uptime
+
+Use this endpoint to monitor VPS performance and resource utilization over time.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/metrics`
@@ -1041,8 +1346,11 @@ It includes the following metrics:
 
 ### VPS_setNameserversV1
 
-This endpoint sets the nameservers for a specified virtual machine.
+Set nameservers for a specified virtual machine.
+
 Be aware, that improper nameserver configuration can lead to the virtual machine being unable to resolve domain names.
+
+Use this endpoint to configure custom DNS resolvers for VPS instances.
 
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/nameservers`
@@ -1056,7 +1364,9 @@ Be aware, that improper nameserver configuration can lead to the virtual machine
 
 ### VPS_createPTRRecordV1
 
-This endpoint creates or updates a PTR (Pointer) record for a specified virtual machine.
+Create or update a PTR (Pointer) record for a specified virtual machine.
+
+Use this endpoint to configure reverse DNS lookup for VPS IP addresses.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr`
@@ -1067,9 +1377,11 @@ This endpoint creates or updates a PTR (Pointer) record for a specified virtual 
 
 ### VPS_deletePTRRecordV1
 
-This endpoint deletes a PTR (Pointer) record for a specified virtual machine. 
+Delete a PTR (Pointer) record for a specified virtual machine.
 
 Once deleted, reverse DNS lookups to the virtual machine's IP address will no longer return the previously configured hostname.
+
+Use this endpoint to remove reverse DNS configuration from VPS instances.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr`
@@ -1080,9 +1392,12 @@ Once deleted, reverse DNS lookups to the virtual machine's IP address will no lo
 
 ### VPS_setPanelPasswordV1
 
-This endpoint sets the panel password for a specified virtual machine. 
+Set panel password for a specified virtual machine.
+
 If virtual machine does not use panel OS, the request will still be processed without any effect.
-Requirements for the password is the same as in the [recreate virtual machine endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).
+Requirements for password are same as in the [recreate virtual machine endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).
+
+Use this endpoint to configure control panel access credentials for VPS instances.
 
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/panel-password`
@@ -1094,12 +1409,15 @@ Requirements for the password is the same as in the [recreate virtual machine en
 
 ### VPS_startRecoveryModeV1
 
-This endpoint initiates the recovery mode for a specified virtual machine. 
+Initiate recovery mode for a specified virtual machine.
+
 Recovery mode is a special state that allows users to perform system rescue operations, 
 such as repairing file systems, recovering data, or troubleshooting issues that prevent the virtual machine 
 from booting normally. 
 
 Virtual machine will boot recovery disk image and original disk image will be mounted in `/mnt` directory.
+
+Use this endpoint to enable system rescue operations on VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/recovery`
@@ -1111,8 +1429,11 @@ Virtual machine will boot recovery disk image and original disk image will be mo
 
 ### VPS_stopRecoveryModeV1
 
-This endpoint stops the recovery mode for a specified virtual machine. 
+Stop recovery mode for a specified virtual machine.
+
 If virtual machine is not in recovery mode, this operation will fail.
+
+Use this endpoint to exit system rescue mode and return VPS to normal operation.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/recovery`
@@ -1123,7 +1444,8 @@ If virtual machine is not in recovery mode, this operation will fail.
 
 ### VPS_recreateVirtualMachineV1
 
-This endpoint will recreate a virtual machine from scratch. 
+Recreate a virtual machine from scratch.
+
 The recreation process involves reinstalling the operating system and resetting the virtual machine to its initial state.
 Snapshots, if there are any, will be deleted.
 
@@ -1138,6 +1460,8 @@ Requirements for the password are:
 
 **This operation is irreversible and will result in the loss of all data stored on the virtual machine!**
 
+Use this endpoint to completely rebuild VPS instances with fresh OS installation.
+
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/recreate`
 
@@ -1150,8 +1474,11 @@ Requirements for the password are:
 
 ### VPS_restartVirtualMachineV1
 
-This endpoint restarts a specified virtual machine. This is equivalent to fully stopping and starting the virtual machine.
+Restart a specified virtual machine by fully stopping and starting it.
+
 If the virtual machine was stopped, it will be started.
+
+Use this endpoint to reboot VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/restart`
@@ -1162,8 +1489,11 @@ If the virtual machine was stopped, it will be started.
 
 ### VPS_setRootPasswordV1
 
-This endpoint sets the root password for a specified virtual machine. 
-Requirements for the password is the same as in the [recreate virtual machine endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).
+Set root password for a specified virtual machine.
+
+Requirements for password are same as in the [recreate virtual machine endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).
+
+Use this endpoint to update administrator credentials for VPS instances.
 
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/root-password`
@@ -1173,9 +1503,11 @@ Requirements for the password is the same as in the [recreate virtual machine en
 - `virtualMachineId`: Virtual Machine ID (required)
 - `password`: Root password for the virtual machine (required)
 
-### VPS_setupNewVirtualMachineV1
+### VPS_setupPurchasedVirtualMachineV1
 
-This endpoint will setup newly purchased virtual machine with `initial` state. 
+Setup newly purchased virtual machine with `initial` state.
+
+Use this endpoint to configure and initialize purchased VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/setup`
@@ -1196,7 +1528,9 @@ This endpoint will setup newly purchased virtual machine with `initial` state.
 
 ### VPS_getSnapshotV1
 
-This endpoint retrieves a snapshot for a specified virtual machine.
+Retrieve snapshot for a specified virtual machine.
+
+Use this endpoint to view current VPS snapshot information.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
@@ -1207,13 +1541,16 @@ This endpoint retrieves a snapshot for a specified virtual machine.
 
 ### VPS_createSnapshotV1
 
-This endpoint creates a snapshot of a specified virtual machine. 
+Create a snapshot of a specified virtual machine.
+
 A snapshot captures the state and data of the virtual machine at a specific point in time, 
 allowing users to restore the virtual machine to that state if needed. 
 This operation is useful for backup purposes, system recovery, 
 and testing changes without affecting the current state of the virtual machine.
 
 **Creating new snapshot will overwrite the existing snapshot!**
+
+Use this endpoint to capture VPS state for backup and recovery purposes.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
@@ -1224,7 +1561,9 @@ and testing changes without affecting the current state of the virtual machine.
 
 ### VPS_deleteSnapshotV1
 
-This endpoint deletes a snapshot of a specified virtual machine.
+Delete a snapshot of a specified virtual machine.
+
+Use this endpoint to remove VPS snapshots.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
@@ -1235,8 +1574,11 @@ This endpoint deletes a snapshot of a specified virtual machine.
 
 ### VPS_restoreSnapshotV1
 
-This endpoint restores a specified virtual machine to a previous state using a snapshot. 
+Restore a specified virtual machine to a previous state using a snapshot.
+
 Restoring from a snapshot allows users to revert the virtual machine to that state, which is useful for system recovery, undoing changes, or testing.
+
+Use this endpoint to revert VPS instances to previous saved states.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot/restore`
@@ -1247,8 +1589,11 @@ Restoring from a snapshot allows users to revert the virtual machine to that sta
 
 ### VPS_startVirtualMachineV1
 
-This endpoint starts a specified virtual machine. 
+Start a specified virtual machine.
+
 If the virtual machine is already running, the request will still be processed without any effect.
+
+Use this endpoint to power on stopped VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/start`
@@ -1259,8 +1604,11 @@ If the virtual machine is already running, the request will still be processed w
 
 ### VPS_stopVirtualMachineV1
 
-This endpoint stops a specified virtual machine. 
+Stop a specified virtual machine.
+
 If the virtual machine is already stopped, the request will still be processed without any effect.
+
+Use this endpoint to power off running VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/stop`
