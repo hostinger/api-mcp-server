@@ -1103,7 +1103,7 @@ const TOOLS = [
     ]
   },
   {
-    "name": "VPS_deleteAProjectV1",
+    "name": "VPS_deleteProjectV1",
     "description": "Completely removes a Docker Compose project from the virtual machine, stopping all containers and cleaning up \nassociated resources including networks, volumes, and images. \n\nThis operation is irreversible and will delete all project data. \n\nUse this when you want to permanently remove a project and free up system resources.",
     "method": "DELETE",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/down",
@@ -1154,7 +1154,7 @@ const TOOLS = [
     ]
   },
   {
-    "name": "VPS_createAProjectV1",
+    "name": "VPS_createNewProjectV1",
     "description": "Deploy new project from docker-compose.yaml contents or download contents from URL. \n\nURL can be Github repository url in format https://github.com/[user]/[repo] and it will be automatically resolved to \ndocker-compose.yaml file in master branch. Any other URL provided must return docker-compose.yaml file contents.\n\nIf project already exists, it will be replaced.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker",
@@ -2769,7 +2769,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.0.93
+ * Generated from OpenAPI spec version 0.0.94
  */
 class MCPServer {
   constructor() {
@@ -2787,7 +2787,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.3",
+        version: "0.1.4",
       },
       {
         capabilities: {
@@ -2812,7 +2812,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.3';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.4';
     
     return headers;
   }

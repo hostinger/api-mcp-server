@@ -680,7 +680,7 @@ Use this to inspect project settings, review the compose file, or check the over
 - `virtualMachineId`: Virtual Machine ID (required)
 - `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
 
-### VPS_deleteAProjectV1
+### VPS_deleteProjectV1
 
 Completely removes a Docker Compose project from the virtual machine, stopping all containers and cleaning up 
 associated resources including networks, volumes, and images. 
@@ -712,7 +712,7 @@ Use this to get an overview of all Docker projects on your VPS instance.
 
 - `virtualMachineId`: Virtual Machine ID (required)
 
-### VPS_createAProjectV1
+### VPS_createNewProjectV1
 
 Deploy new project from docker-compose.yaml contents or download contents from URL. 
 
