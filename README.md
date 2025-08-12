@@ -747,7 +747,7 @@ Use this for debugging, monitoring application behavior, and troubleshooting iss
 - `virtualMachineId`: Virtual Machine ID (required)
 - `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
 
-### VPS_restartAProjectV1
+### VPS_restartProjectV1
 
 Restarts all services in a Docker Compose project by stopping and starting containers in the correct dependency order. 
 
@@ -763,7 +763,7 @@ Use this to apply configuration changes or recover from service failures.
 - `virtualMachineId`: Virtual Machine ID (required)
 - `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
 
-### VPS_startAProjectV1
+### VPS_startProjectV1
 
 Starts all services in a Docker Compose project that are currently stopped. 
 
@@ -779,7 +779,7 @@ Use this to resume a project that was previously stopped or to start services af
 - `virtualMachineId`: Virtual Machine ID (required)
 - `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
 
-### VPS_stopAProjectV1
+### VPS_stopProjectV1
 
 Stops all running services in a Docker Compose project while preserving container configurations and data volumes. 
 
@@ -795,7 +795,7 @@ Use this to temporarily halt a project without removing data or configurations.
 - `virtualMachineId`: Virtual Machine ID (required)
 - `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
 
-### VPS_updateAProjectV1
+### VPS_updateProjectV1
 
 Updates a Docker Compose project by pulling the latest image versions and recreating containers with new configurations. 
 

@@ -1215,7 +1215,7 @@ const TOOLS = [
     ]
   },
   {
-    "name": "VPS_restartAProjectV1",
+    "name": "VPS_restartProjectV1",
     "description": "Restarts all services in a Docker Compose project by stopping and starting containers in the correct dependency order. \n\nThis operation preserves data volumes and network configurations while refreshing the running containers. \n\nUse this to apply configuration changes or recover from service failures.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/restart",
@@ -1243,7 +1243,7 @@ const TOOLS = [
     ]
   },
   {
-    "name": "VPS_startAProjectV1",
+    "name": "VPS_startProjectV1",
     "description": "Starts all services in a Docker Compose project that are currently stopped. \n\nThis operation brings up containers in the correct dependency order as defined in the compose file. \n\nUse this to resume a project that was previously stopped or to start services after a system reboot.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/start",
@@ -1271,7 +1271,7 @@ const TOOLS = [
     ]
   },
   {
-    "name": "VPS_stopAProjectV1",
+    "name": "VPS_stopProjectV1",
     "description": "Stops all running services in a Docker Compose project while preserving container configurations and data volumes. \n\nThis operation gracefully shuts down containers in reverse dependency order. \n\nUse this to temporarily halt a project without removing data or configurations.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/stop",
@@ -1299,7 +1299,7 @@ const TOOLS = [
     ]
   },
   {
-    "name": "VPS_updateAProjectV1",
+    "name": "VPS_updateProjectV1",
     "description": "Updates a Docker Compose project by pulling the latest image versions and recreating containers with new configurations. \n\nThis operation preserves data volumes while applying changes from the compose file. \n\nUse this to deploy application updates, apply configuration changes, or refresh container images to their latest versions.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/update",
@@ -2769,7 +2769,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.0.94
+ * Generated from OpenAPI spec version 0.0.95
  */
 class MCPServer {
   constructor() {
@@ -2787,7 +2787,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.4",
+        version: "0.1.5",
       },
       {
         capabilities: {
@@ -2812,7 +2812,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.4';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.5';
     
     return headers;
   }
