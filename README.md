@@ -701,7 +701,9 @@ Use this when you want to permanently remove a project and free up system resour
 
 Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. 
 
-This endpoint returns basic information about each project including name, status, and file path. 
+This endpoint returns basic information about each project including name, status, file path and list of containers with 
+details about their names, image, status, health and ports. Container stats are omitted in this endpoint.
+If you need to get detailed information about container with stats included, use the `Get project containers` endpoint. 
 
 Use this to get an overview of all Docker projects on your VPS instance.
 
@@ -719,7 +721,7 @@ Deploy new project from docker-compose.yaml contents or download contents from U
 URL can be Github repository url in format https://github.com/[user]/[repo] and it will be automatically resolved to 
 docker-compose.yaml file in master branch. Any other URL provided must return docker-compose.yaml file contents.
 
-If project already exists, it will be replaced.
+If project with the same name already exists, existing project will be replaced.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker`
@@ -729,6 +731,7 @@ If project already exists, it will be replaced.
 - `virtualMachineId`: Virtual Machine ID (required)
 - `project_name`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
 - `content`: URL pointing to docker-compose.yaml file, Github repository or raw YAML content of the compose file (required)
+- `environment`: Project environment variables 
 
 ### VPS_getProjectLogsV1
 
@@ -1369,11 +1372,13 @@ Create or update a PTR (Pointer) record for a specified virtual machine.
 Use this endpoint to configure reverse DNS lookup for VPS IP addresses.
 
 - **Method**: `POST`
-- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}`
 
 **Parameters**:
 
 - `virtualMachineId`: Virtual Machine ID (required)
+- `ipAddressId`: IP Address ID (required)
+- `domain`: Pointer record domain (required)
 
 ### VPS_deletePTRRecordV1
 
@@ -1384,11 +1389,12 @@ Once deleted, reverse DNS lookups to the virtual machine's IP address will no lo
 Use this endpoint to remove reverse DNS configuration from VPS instances.
 
 - **Method**: `DELETE`
-- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr`
+- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}`
 
 **Parameters**:
 
 - `virtualMachineId`: Virtual Machine ID (required)
+- `ipAddressId`: IP Address ID (required)
 
 ### VPS_setPanelPasswordV1
 
@@ -1469,8 +1475,9 @@ Use this endpoint to completely rebuild VPS instances with fresh OS installation
 
 - `virtualMachineId`: Virtual Machine ID (required)
 - `template_id`: Template ID (required)
-- `password`: Password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response. 
-- `post_install_script_id`: Post-install script ID 
+- `password`: Root password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response. 
+- `panel_password`: Panel password for the panel-based OS template. If not provided, random password will be generated. If OS does not support panel_password this field will be ignored. Password will not be shown in the response. 
+- `post_install_script_id`: Post-install script to execute after virtual machine was recreated 
 
 ### VPS_restartVirtualMachineV1
 

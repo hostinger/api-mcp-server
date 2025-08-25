@@ -1132,7 +1132,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_getProjectListV1",
-    "description": "Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. \n\nThis endpoint returns basic information about each project including name, status, and file path. \n\nUse this to get an overview of all Docker projects on your VPS instance.",
+    "description": "Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. \n\nThis endpoint returns basic information about each project including name, status, file path and list of containers with \ndetails about their names, image, status, health and ports. Container stats are omitted in this endpoint.\nIf you need to get detailed information about container with stats included, use the `Get project containers` endpoint. \n\nUse this to get an overview of all Docker projects on your VPS instance.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker",
     "inputSchema": {
@@ -1155,7 +1155,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_createNewProjectV1",
-    "description": "Deploy new project from docker-compose.yaml contents or download contents from URL. \n\nURL can be Github repository url in format https://github.com/[user]/[repo] and it will be automatically resolved to \ndocker-compose.yaml file in master branch. Any other URL provided must return docker-compose.yaml file contents.\n\nIf project already exists, it will be replaced.",
+    "description": "Deploy new project from docker-compose.yaml contents or download contents from URL. \n\nURL can be Github repository url in format https://github.com/[user]/[repo] and it will be automatically resolved to \ndocker-compose.yaml file in master branch. Any other URL provided must return docker-compose.yaml file contents.\n\nIf project with the same name already exists, existing project will be replaced.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker",
     "inputSchema": {
@@ -1172,6 +1172,10 @@ const TOOLS = [
         "content": {
           "type": "string",
           "description": "URL pointing to docker-compose.yaml file, Github repository or raw YAML content of the compose file"
+        },
+        "environment": {
+          "type": "string",
+          "description": "Project environment variables"
         }
       },
       "required": [
@@ -2337,17 +2341,27 @@ const TOOLS = [
     "name": "VPS_createPTRRecordV1",
     "description": "Create or update a PTR (Pointer) record for a specified virtual machine.\n\nUse this endpoint to configure reverse DNS lookup for VPS IP addresses.",
     "method": "POST",
-    "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ptr",
+    "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}",
     "inputSchema": {
       "type": "object",
       "properties": {
         "virtualMachineId": {
           "type": "integer",
           "description": "Virtual Machine ID"
+        },
+        "ipAddressId": {
+          "type": "integer",
+          "description": "IP Address ID"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Pointer record domain"
         }
       },
       "required": [
-        "virtualMachineId"
+        "virtualMachineId",
+        "ipAddressId",
+        "domain"
       ]
     },
     "security": [
@@ -2360,17 +2374,22 @@ const TOOLS = [
     "name": "VPS_deletePTRRecordV1",
     "description": "Delete a PTR (Pointer) record for a specified virtual machine.\n\nOnce deleted, reverse DNS lookups to the virtual machine's IP address will no longer return the previously configured hostname.\n\nUse this endpoint to remove reverse DNS configuration from VPS instances.",
     "method": "DELETE",
-    "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ptr",
+    "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}",
     "inputSchema": {
       "type": "object",
       "properties": {
         "virtualMachineId": {
           "type": "integer",
           "description": "Virtual Machine ID"
+        },
+        "ipAddressId": {
+          "type": "integer",
+          "description": "IP Address ID"
         }
       },
       "required": [
-        "virtualMachineId"
+        "virtualMachineId",
+        "ipAddressId"
       ]
     },
     "security": [
@@ -2476,11 +2495,15 @@ const TOOLS = [
         },
         "password": {
           "type": "string",
-          "description": "Password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response."
+          "description": "Root password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response."
+        },
+        "panel_password": {
+          "type": "string",
+          "description": "Panel password for the panel-based OS template. If not provided, random password will be generated. If OS does not support panel_password this field will be ignored. Password will not be shown in the response."
         },
         "post_install_script_id": {
           "type": "integer",
-          "description": "Post-install script ID"
+          "description": "Post-install script to execute after virtual machine was recreated"
         }
       },
       "required": [
@@ -2769,7 +2792,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.0.95
+ * Generated from OpenAPI spec version 0.0.101
  */
 class MCPServer {
   constructor() {
@@ -2787,7 +2810,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.5",
+        version: "0.1.6",
       },
       {
         capabilities: {
@@ -2812,7 +2835,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.5';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.6';
     
     return headers;
   }

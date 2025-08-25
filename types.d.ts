@@ -724,7 +724,9 @@ Use this when you want to permanently remove a project and free up system resour
   /**
    * Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. 
 
-This endpoint returns basic information about each project including name, status, and file path. 
+This endpoint returns basic information about each project including name, status, file path and list of containers with 
+details about their names, image, status, health and ports. Container stats are omitted in this endpoint.
+If you need to get detailed information about container with stats included, use the `Get project containers` endpoint. 
 
 Use this to get an overview of all Docker projects on your VPS instance.
    */
@@ -744,7 +746,7 @@ Use this to get an overview of all Docker projects on your VPS instance.
 URL can be Github repository url in format https://github.com/[user]/[repo] and it will be automatically resolved to 
 docker-compose.yaml file in master branch. Any other URL provided must return docker-compose.yaml file contents.
 
-If project already exists, it will be replaced.
+If project with the same name already exists, existing project will be replaced.
    */
   "undefined": {
     params: {
@@ -760,6 +762,10 @@ If project already exists, it will be replaced.
        * URL pointing to docker-compose.yaml file, Github repository or raw YAML content of the compose file
        */
       content: string;
+      /**
+       * Project environment variables
+       */
+      environment?: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -1598,6 +1604,14 @@ Use this endpoint to configure reverse DNS lookup for VPS IP addresses.
        * Virtual Machine ID
        */
       virtualMachineId: number;
+      /**
+       * IP Address ID
+       */
+      ipAddressId: number;
+      /**
+       * Pointer record domain
+       */
+      domain: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -1615,6 +1629,10 @@ Use this endpoint to remove reverse DNS configuration from VPS instances.
        * Virtual Machine ID
        */
       virtualMachineId: number;
+      /**
+       * IP Address ID
+       */
+      ipAddressId: number;
     };
     response: any; // Response structure will depend on the API
   };
@@ -1713,11 +1731,15 @@ Use this endpoint to completely rebuild VPS instances with fresh OS installation
        */
       template_id: number;
       /**
-       * Password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response.
+       * Root password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response.
        */
       password?: string;
       /**
-       * Post-install script ID
+       * Panel password for the panel-based OS template. If not provided, random password will be generated. If OS does not support panel_password this field will be ignored. Password will not be shown in the response.
+       */
+      panel_password?: string;
+      /**
+       * Post-install script to execute after virtual machine was recreated
        */
       post_install_script_id?: number;
     };
