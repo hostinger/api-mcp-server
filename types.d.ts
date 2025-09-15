@@ -646,6 +646,91 @@ Use this endpoint to view which domains use specific contact profiles.
   };
 
   /**
+   * Delete a contact with the specified UUID.
+
+This endpoint permanently removes a contact from the email marketing system.
+   */
+  "undefined": {
+    params: {
+      /**
+       * UUID of the contact to delete
+       */
+      uuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a list of all contact groups.
+
+This endpoint returns a list of contact groups that can be used to organize contacts.
+   */
+  "undefined": {
+    params: {
+
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a list of contacts, optionally filtered by group and subscription status.
+
+This endpoint returns a paginated list of contacts with their basic information.
+You can filter contacts by group UUID and subscription status.
+   */
+  "undefined": {
+    params: {
+      /**
+       * Filter contacts by group UUID
+       */
+      group_uuid?: string;
+      /**
+       * Filter contacts by subscription status
+       */
+      subscription_status?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a new contact in the email marketing system.
+
+This endpoint allows you to create a new contact with basic information like name, email, and surname.
+You can optionally assign the contact to specific groups and add notes.
+
+The contact will be automatically subscribed to email communications.
+   */
+  "undefined": {
+    params: {
+      /**
+       * email parameter
+       */
+      email: string;
+      /**
+       * name parameter
+       */
+      name?: string;
+      /**
+       * surname parameter
+       */
+      surname?: string;
+      /**
+       * group_uuids parameter
+       */
+      group_uuids?: array;
+      /**
+       * note parameter
+       */
+      note?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve all available data centers.
 
 Use this endpoint to view location options before deploying VPS instances.

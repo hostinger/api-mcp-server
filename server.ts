@@ -1048,6 +1048,121 @@ const TOOLS: OpenApiTool[] = [
     ]
   },
   {
+    "name": "reach_deleteAContactV1",
+    "description": "Delete a contact with the specified UUID.\n\nThis endpoint permanently removes a contact from the email marketing system.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/contacts/{uuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "UUID of the contact to delete"
+        }
+      },
+      "required": [
+        "uuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "reach_listContactGroupsV1",
+    "description": "Get a list of all contact groups.\n\nThis endpoint returns a list of contact groups that can be used to organize contacts.",
+    "method": "GET",
+    "path": "/api/reach/v1/contacts/groups",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "reach_listContactsV1",
+    "description": "Get a list of contacts, optionally filtered by group and subscription status.\n\nThis endpoint returns a paginated list of contacts with their basic information.\nYou can filter contacts by group UUID and subscription status.",
+    "method": "GET",
+    "path": "/api/reach/v1/contacts",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "group_uuid": {
+          "type": "string",
+          "description": "Filter contacts by group UUID"
+        },
+        "subscription_status": {
+          "type": "string",
+          "description": "Filter contacts by subscription status",
+          "enum": [
+            "subscribed",
+            "unsubscribed"
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "reach_createANewContactV1",
+    "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\nYou can optionally assign the contact to specific groups and add notes.\n\nThe contact will be automatically subscribed to email communications.",
+    "method": "POST",
+    "path": "/api/reach/v1/contacts",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "email parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "name parameter"
+        },
+        "surname": {
+          "type": "string",
+          "description": "surname parameter"
+        },
+        "group_uuids": {
+          "type": "array",
+          "description": "group_uuids parameter",
+          "items": {
+            "type": "string",
+            "description": "Group UUID"
+          }
+        },
+        "note": {
+          "type": "string",
+          "description": "note parameter"
+        }
+      },
+      "required": [
+        "email"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
     "name": "VPS_getDataCenterListV1",
     "description": "Retrieve all available data centers.\n\nUse this endpoint to view location options before deploying VPS instances.",
     "method": "GET",
@@ -2809,7 +2924,7 @@ const SECURITY_SCHEMES: Record<string, SecurityScheme> = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.0.101
+ * Generated from OpenAPI spec version 0.1.7
  */
 class MCPServer {
   private server: Server;
@@ -2831,7 +2946,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.7",
+        version: "0.1.9",
       },
       {
         capabilities: {
@@ -2856,7 +2971,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.7';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.9';
     
     return headers;
   }

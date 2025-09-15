@@ -637,6 +637,66 @@ Use this endpoint to view which domains use specific contact profiles.
 
 - `whoisId`: WHOIS ID (required)
 
+### reach_deleteAContactV1
+
+Delete a contact with the specified UUID.
+
+This endpoint permanently removes a contact from the email marketing system.
+
+- **Method**: `DELETE`
+- **Path**: `/api/reach/v1/contacts/{uuid}`
+
+**Parameters**:
+
+- `uuid`: UUID of the contact to delete (required)
+
+### reach_listContactGroupsV1
+
+Get a list of all contact groups.
+
+This endpoint returns a list of contact groups that can be used to organize contacts.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/contacts/groups`
+
+
+
+### reach_listContactsV1
+
+Get a list of contacts, optionally filtered by group and subscription status.
+
+This endpoint returns a paginated list of contacts with their basic information.
+You can filter contacts by group UUID and subscription status.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/contacts`
+
+**Parameters**:
+
+- `group_uuid`: Filter contacts by group UUID 
+- `subscription_status`: Filter contacts by subscription status 
+- `page`: Page number 
+
+### reach_createANewContactV1
+
+Create a new contact in the email marketing system.
+
+This endpoint allows you to create a new contact with basic information like name, email, and surname.
+You can optionally assign the contact to specific groups and add notes.
+
+The contact will be automatically subscribed to email communications.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/contacts`
+
+**Parameters**:
+
+- `email`: email parameter (required)
+- `name`: name parameter 
+- `surname`: surname parameter 
+- `group_uuids`: group_uuids parameter 
+- `note`: note parameter 
+
 ### VPS_getDataCenterListV1
 
 Retrieve all available data centers.
