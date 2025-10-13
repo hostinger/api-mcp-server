@@ -133,6 +133,36 @@ Use this endpoint to monitor active services and billing status.
   };
 
   /**
+   * Disable auto-renewal for a subscription.
+
+Use this endpoint when disable auto-renewal for a subscription.
+   */
+  "undefined": {
+    params: {
+      /**
+       * Subscription ID
+       */
+      subscriptionId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Enable auto-renewal for a subscription.
+
+Use this endpoint when enable auto-renewal for a subscription.
+   */
+  "undefined": {
+    params: {
+      /**
+       * Subscription ID
+       */
+      subscriptionId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve particular DNS snapshot with contents of DNS zone records.
 
 Use this endpoint to view historical DNS configurations for domains.
@@ -641,6 +671,140 @@ Use this endpoint to view which domains use specific contact profiles.
        * WHOIS ID
        */
       whoisId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a list of datacenters available for setting up hosting plans based on available datacenter capacity and hosting plan of your order.
+The first item in the list is the best match for your specific order requirements.
+   */
+  "undefined": {
+    params: {
+      /**
+       * Order ID
+       */
+      order_id: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.
+Free subdomains allow you to start using hosting services immediately and you can always connect a custom domain to your site later.
+   */
+  "undefined": {
+    params: {
+
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Verify ownership of a single domain and return the verification status.
+
+Use this endpoint to check if a domain is accessible for you before using it for new websites.
+If the domain is accessible, the response will have `is_accessible: true`.
+If not, add the given TXT record to your domain's DNS records and try verifying again.
+Keep in mind that it may take up to 10 minutes for new TXT DNS records to propagate.
+
+Skip this verification when using Hostinger's free subdomains (*.hostingersite.com).
+   */
+  "undefined": {
+    params: {
+      /**
+       * Domain to verify ownership for
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of orders accessible to the authenticated client.
+
+This endpoint returns orders of your hosting accounts as well as orders of other client hosting accounts that have shared access with you.
+
+Use the available query parameters to filter results by order statuses or specific order IDs for more targeted results.
+   */
+  "undefined": {
+    params: {
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+      /**
+       * Filter by order statuses
+       */
+      statuses?: array;
+      /**
+       * Filter by specific order IDs
+       */
+      order_ids?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.
+
+This endpoint returns websites from your hosting accounts as well as websites from other client hosting accounts that have shared access with you.
+
+Use the available query parameters to filter results by username, order ID, or enabled status for more targeted results.
+   */
+  "undefined": {
+    params: {
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+      /**
+       * Filter by specific username
+       */
+      username?: string;
+      /**
+       * Order ID
+       */
+      order_id?: number;
+      /**
+       * Filter by enabled status
+       */
+      is_enabled?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a new website for the authenticated client.
+
+Provide the domain name and associated order ID to create a new website. The datacenter_code parameter is required when creating the first website on a new hosting plan - this will set up and configure new hosting account in the selected datacenter.
+
+Subsequent websites will be hosted on the same datacenter automatically.
+
+Website creation takes up to a few minutes to complete. Check the websites list endpoint to see when your new website becomes available.
+   */
+  "undefined": {
+    params: {
+      /**
+       * Domain name for the website. Cannot start with "www."
+       */
+      domain: string;
+      /**
+       * ID of the associated order
+       */
+      order_id: number;
+      /**
+       * Datacenter code. This parameter is required when creating the first website on a new hosting plan.
+       */
+      datacenter_code?: string;
     };
     response: any; // Response structure will depend on the API
   };

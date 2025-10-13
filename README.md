@@ -251,6 +251,32 @@ Use this endpoint to monitor active services and billing status.
 
 
 
+### billing_disableAutoRenewalV1
+
+Disable auto-renewal for a subscription.
+
+Use this endpoint when disable auto-renewal for a subscription.
+
+- **Method**: `DELETE`
+- **Path**: `/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/disable`
+
+**Parameters**:
+
+- `subscriptionId`: Subscription ID (required)
+
+### billing_enableAutoRenewalV1
+
+Enable auto-renewal for a subscription.
+
+Use this endpoint when enable auto-renewal for a subscription.
+
+- **Method**: `PATCH`
+- **Path**: `/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/enable`
+
+**Parameters**:
+
+- `subscriptionId`: Subscription ID (required)
+
 ### DNS_getDNSSnapshotV1
 
 Retrieve particular DNS snapshot with contents of DNS zone records.
@@ -636,6 +662,102 @@ Use this endpoint to view which domains use specific contact profiles.
 **Parameters**:
 
 - `whoisId`: WHOIS ID (required)
+
+### hosting_listAvailableDatacentersV1
+
+Retrieve a list of datacenters available for setting up hosting plans based on available datacenter capacity and hosting plan of your order.
+The first item in the list is the best match for your specific order requirements.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/datacenters`
+
+**Parameters**:
+
+- `order_id`: Order ID (required)
+
+### hosting_generateAFreeSubdomainV1
+
+Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.
+Free subdomains allow you to start using hosting services immediately and you can always connect a custom domain to your site later.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/domains/free-subdomains`
+
+
+
+### hosting_verifyDomainOwnershipV1
+
+Verify ownership of a single domain and return the verification status.
+
+Use this endpoint to check if a domain is accessible for you before using it for new websites.
+If the domain is accessible, the response will have `is_accessible: true`.
+If not, add the given TXT record to your domain's DNS records and try verifying again.
+Keep in mind that it may take up to 10 minutes for new TXT DNS records to propagate.
+
+Skip this verification when using Hostinger's free subdomains (*.hostingersite.com).
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/domains/verify-ownership`
+
+**Parameters**:
+
+- `domain`: Domain to verify ownership for (required)
+
+### hosting_listOrdersV1
+
+Retrieve a paginated list of orders accessible to the authenticated client.
+
+This endpoint returns orders of your hosting accounts as well as orders of other client hosting accounts that have shared access with you.
+
+Use the available query parameters to filter results by order statuses or specific order IDs for more targeted results.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/orders`
+
+**Parameters**:
+
+- `page`: Page number 
+- `per_page`: Number of items per page 
+- `statuses`: Filter by order statuses 
+- `order_ids`: Filter by specific order IDs 
+
+### hosting_listWebsitesV1
+
+Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.
+
+This endpoint returns websites from your hosting accounts as well as websites from other client hosting accounts that have shared access with you.
+
+Use the available query parameters to filter results by username, order ID, or enabled status for more targeted results.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/websites`
+
+**Parameters**:
+
+- `page`: Page number 
+- `per_page`: Number of items per page 
+- `username`: Filter by specific username 
+- `order_id`: Order ID 
+- `is_enabled`: Filter by enabled status 
+
+### hosting_createWebsiteV1
+
+Create a new website for the authenticated client.
+
+Provide the domain name and associated order ID to create a new website. The datacenter_code parameter is required when creating the first website on a new hosting plan - this will set up and configure new hosting account in the selected datacenter.
+
+Subsequent websites will be hosted on the same datacenter automatically.
+
+Website creation takes up to a few minutes to complete. Check the websites list endpoint to see when your new website becomes available.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/websites`
+
+**Parameters**:
+
+- `domain`: Domain name for the website. Cannot start with "www." (required)
+- `order_id`: ID of the associated order (required)
+- `datacenter_code`: Datacenter code. This parameter is required when creating the first website on a new hosting plan. 
 
 ### reach_deleteAContactV1
 

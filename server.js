@@ -203,6 +203,52 @@ const TOOLS = [
     ]
   },
   {
+    "name": "billing_disableAutoRenewalV1",
+    "description": "Disable auto-renewal for a subscription.\n\nUse this endpoint when disable auto-renewal for a subscription.",
+    "method": "DELETE",
+    "path": "/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/disable",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID"
+        }
+      },
+      "required": [
+        "subscriptionId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "billing_enableAutoRenewalV1",
+    "description": "Enable auto-renewal for a subscription.\n\nUse this endpoint when enable auto-renewal for a subscription.",
+    "method": "PATCH",
+    "path": "/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/enable",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID"
+        }
+      },
+      "required": [
+        "subscriptionId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
     "name": "DNS_getDNSSnapshotV1",
     "description": "Retrieve particular DNS snapshot with contents of DNS zone records.\n\nUse this endpoint to view historical DNS configurations for domains.",
     "method": "GET",
@@ -1022,6 +1068,170 @@ const TOOLS = [
       },
       "required": [
         "whoisId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "hosting_listAvailableDatacentersV1",
+    "description": "Retrieve a list of datacenters available for setting up hosting plans based on available datacenter capacity and hosting plan of your order.\nThe first item in the list is the best match for your specific order requirements.",
+    "method": "GET",
+    "path": "/api/hosting/v1/datacenters",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer",
+          "description": "Order ID"
+        }
+      },
+      "required": [
+        "order_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "hosting_generateAFreeSubdomainV1",
+    "description": "Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.\nFree subdomains allow you to start using hosting services immediately and you can always connect a custom domain to your site later.",
+    "method": "POST",
+    "path": "/api/hosting/v1/domains/free-subdomains",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "hosting_verifyDomainOwnershipV1",
+    "description": "Verify ownership of a single domain and return the verification status.\n\nUse this endpoint to check if a domain is accessible for you before using it for new websites.\nIf the domain is accessible, the response will have `is_accessible: true`.\nIf not, add the given TXT record to your domain's DNS records and try verifying again.\nKeep in mind that it may take up to 10 minutes for new TXT DNS records to propagate.\n\nSkip this verification when using Hostinger's free subdomains (*.hostingersite.com).",
+    "method": "POST",
+    "path": "/api/hosting/v1/domains/verify-ownership",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain to verify ownership for"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "hosting_listOrdersV1",
+    "description": "Retrieve a paginated list of orders accessible to the authenticated client.\n\nThis endpoint returns orders of your hosting accounts as well as orders of other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by order statuses or specific order IDs for more targeted results.",
+    "method": "GET",
+    "path": "/api/hosting/v1/orders",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        },
+        "statuses": {
+          "type": "array",
+          "description": "Filter by order statuses"
+        },
+        "order_ids": {
+          "type": "array",
+          "description": "Filter by specific order IDs"
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "hosting_listWebsitesV1",
+    "description": "Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as websites from other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by username, order ID, or enabled status for more targeted results.",
+    "method": "GET",
+    "path": "/api/hosting/v1/websites",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        },
+        "username": {
+          "type": "string",
+          "description": "Filter by specific username"
+        },
+        "order_id": {
+          "type": "integer",
+          "description": "Order ID"
+        },
+        "is_enabled": {
+          "type": "boolean",
+          "description": "Filter by enabled status"
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "hosting_createWebsiteV1",
+    "description": "Create a new website for the authenticated client.\n\nProvide the domain name and associated order ID to create a new website. The datacenter_code parameter is required when creating the first website on a new hosting plan - this will set up and configure new hosting account in the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation takes up to a few minutes to complete. Check the websites list endpoint to see when your new website becomes available.",
+    "method": "POST",
+    "path": "/api/hosting/v1/websites",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name for the website. Cannot start with \"www.\""
+        },
+        "order_id": {
+          "type": "integer",
+          "description": "ID of the associated order"
+        },
+        "datacenter_code": {
+          "type": "string",
+          "description": "Datacenter code. This parameter is required when creating the first website on a new hosting plan."
+        }
+      },
+      "required": [
+        "domain",
+        "order_id"
       ]
     },
     "security": [
@@ -2907,7 +3117,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.1.7
+ * Generated from OpenAPI spec version 0.2.0
  */
 class MCPServer {
   constructor() {
@@ -2925,7 +3135,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.10",
+        version: "0.1.12",
       },
       {
         capabilities: {
@@ -2950,7 +3160,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.10';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.12';
     
     return headers;
   }
