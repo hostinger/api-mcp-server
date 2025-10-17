@@ -39,13 +39,14 @@ jobs:
           node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Update NPM
+        run: npm install -g npm@latest
+
       - name: Install dependencies
         run: npm install
 
       - name: Publish package
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   release-github:
     runs-on: ubuntu-latest
