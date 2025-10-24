@@ -5,13 +5,80 @@
 
 export interface APITools {
   /**
+   * Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. The username will be automatically resolved from the domain.
+   */
+  "hosting_importWordpressWebsite": {
+    params: {
+      /**
+       * Domain name associated with the hosting account (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * Absolute or relative path to the website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mywebsite_20250115_143022.zip)
+       */
+      archivePath: string;
+      /**
+       * Absolute or relative path to a database dump file (.sql)
+       */
+      databaseDump: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment.
+   */
+  "hosting_deployWordpressPlugin": {
+    params: {
+      /**
+       * Domain name associated with the hosting account (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * WordPress plugin slug (e.g., omnisend)
+       */
+      slug: string;
+      /**
+       * Absolute or relative path to the plugin directory containing all plugin files
+       */
+      pluginPath: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment.
+   */
+  "hosting_deployWordpressTheme": {
+    params: {
+      /**
+       * Domain name associated with the hosting account (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * WordPress theme slug (e.g., twentytwentyfive)
+       */
+      slug: string;
+      /**
+       * Absolute or relative path to the theme directory containing all theme files
+       */
+      themePath: string;
+      /**
+       * Whether to activate the theme after deployment (default: false)
+       */
+      activate?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve catalog items available for order.
 
 Prices in catalog items is displayed as cents (without floating point), e.g: float `17.99` is displayed as integer `1799`.
 
 Use this endpoint to view available services and pricing before placing orders.
    */
-  "undefined": {
+  "billing_getCatalogItemListV1": {
     params: {
       /**
        * Filter catalog items by category
@@ -43,7 +110,7 @@ Orders created using this endpoint will be set for automatic renewal.
 Some `credit_card` payments might need additional verification, rendering purchase unprocessed.
 We recommend use other payment methods than `credit_card` if you encounter this issue.
    */
-  "undefined": {
+  "billing_createServiceOrderV1": {
     params: {
       /**
        * Payment method ID
@@ -66,7 +133,7 @@ We recommend use other payment methods than `credit_card` if you encounter this 
 
 Use this endpoint to configure the primary payment method for future orders.
    */
-  "undefined": {
+  "billing_setDefaultPaymentMethodV1": {
     params: {
       /**
        * Payment method ID
@@ -81,7 +148,7 @@ Use this endpoint to configure the primary payment method for future orders.
 
 Use this endpoint to remove unused payment methods from user accounts.
    */
-  "undefined": {
+  "billing_deletePaymentMethodV1": {
     params: {
       /**
        * Payment method ID
@@ -98,7 +165,7 @@ If you want to add new payment method, please use [hPanel](https://hpanel.hostin
 
 Use this endpoint to view available payment options before creating orders.
    */
-  "undefined": {
+  "billing_getPaymentMethodListV1": {
     params: {
 
     };
@@ -110,7 +177,7 @@ Use this endpoint to view available payment options before creating orders.
 
 Use this endpoint when users want to terminate active services.
    */
-  "undefined": {
+  "billing_cancelSubscriptionV1": {
     params: {
       /**
        * Subscription ID
@@ -125,7 +192,7 @@ Use this endpoint when users want to terminate active services.
 
 Use this endpoint to monitor active services and billing status.
    */
-  "undefined": {
+  "billing_getSubscriptionListV1": {
     params: {
 
     };
@@ -137,7 +204,7 @@ Use this endpoint to monitor active services and billing status.
 
 Use this endpoint when disable auto-renewal for a subscription.
    */
-  "undefined": {
+  "billing_disableAutoRenewalV1": {
     params: {
       /**
        * Subscription ID
@@ -152,7 +219,7 @@ Use this endpoint when disable auto-renewal for a subscription.
 
 Use this endpoint when enable auto-renewal for a subscription.
    */
-  "undefined": {
+  "billing_enableAutoRenewalV1": {
     params: {
       /**
        * Subscription ID
@@ -167,7 +234,7 @@ Use this endpoint when enable auto-renewal for a subscription.
 
 Use this endpoint to view historical DNS configurations for domains.
    */
-  "undefined": {
+  "DNS_getDNSSnapshotV1": {
     params: {
       /**
        * Domain name
@@ -186,7 +253,7 @@ Use this endpoint to view historical DNS configurations for domains.
 
 Use this endpoint to view available DNS backup points for restoration.
    */
-  "undefined": {
+  "DNS_getDNSSnapshotListV1": {
     params: {
       /**
        * Domain name
@@ -201,7 +268,7 @@ Use this endpoint to view available DNS backup points for restoration.
 
 Use this endpoint to revert domain DNS to a previous configuration.
    */
-  "undefined": {
+  "DNS_restoreDNSSnapshotV1": {
     params: {
       /**
        * Domain name
@@ -220,7 +287,7 @@ Use this endpoint to revert domain DNS to a previous configuration.
 
 Use this endpoint to view current DNS configuration for domain management.
    */
-  "undefined": {
+  "DNS_getDNSRecordsV1": {
     params: {
       /**
        * Domain name
@@ -238,7 +305,7 @@ Otherwise existing records will be updated and new records will be added.
 
 Use this endpoint to modify domain DNS configuration.
    */
-  "undefined": {
+  "DNS_updateDNSRecordsV1": {
     params: {
       /**
        * Domain name
@@ -267,7 +334,7 @@ refer to the `Update zone records` endpoint.
 
 Use this endpoint to remove specific DNS records from domains.
    */
-  "undefined": {
+  "DNS_deleteDNSRecordsV1": {
     params: {
       /**
        * Domain name
@@ -282,7 +349,7 @@ Use this endpoint to remove specific DNS records from domains.
 
 Use this endpoint to restore domain DNS to original configuration.
    */
-  "undefined": {
+  "DNS_resetDNSRecordsV1": {
     params: {
       /**
        * Domain name
@@ -312,7 +379,7 @@ If there is validation error, the response will fail with `422 Validation error`
 
 Use this endpoint to verify DNS record validity before applying changes.
    */
-  "undefined": {
+  "DNS_validateDNSRecordsV1": {
     params: {
       /**
        * Domain name
@@ -331,6 +398,16 @@ Use this endpoint to verify DNS record validity before applying changes.
   };
 
   /**
+   * Retrieve a list of pending and completed domain verifications.
+   */
+  "v2_getDomainVerificationsDIRECT": {
+    params: {
+
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Check availability of domain names across multiple TLDs.
 
 Multiple TLDs can be checked at once.
@@ -341,7 +418,7 @@ Endpoint has rate limit of 10 requests per minute.
 
 Use this endpoint to verify domain availability before purchase.
    */
-  "undefined": {
+  "domains_checkDomainAvailabilityV1": {
     params: {
       /**
        * Domain name (without TLD)
@@ -364,7 +441,7 @@ Use this endpoint to verify domain availability before purchase.
 
 Use this endpoint to view current redirect configuration for domains.
    */
-  "undefined": {
+  "domains_getDomainForwardingV1": {
     params: {
       /**
        * Domain name
@@ -379,7 +456,7 @@ Use this endpoint to view current redirect configuration for domains.
 
 Use this endpoint to remove redirect configuration from domains.
    */
-  "undefined": {
+  "domains_deleteDomainForwardingV1": {
     params: {
       /**
        * Domain name
@@ -394,7 +471,7 @@ Use this endpoint to remove redirect configuration from domains.
 
 Use this endpoint to set up domain redirects to other URLs.
    */
-  "undefined": {
+  "domains_createDomainForwardingV1": {
     params: {
       /**
        * Domain name
@@ -419,7 +496,7 @@ When domain lock is enabled, the domain cannot be transferred to another registr
 
 Use this endpoint to secure domains against unauthorized transfers.
    */
-  "undefined": {
+  "domains_enableDomainLockV1": {
     params: {
       /**
        * Domain name
@@ -436,7 +513,7 @@ Domain lock needs to be disabled before transferring the domain to another regis
 
 Use this endpoint to prepare domains for transfer to other registrars.
    */
-  "undefined": {
+  "domains_disableDomainLockV1": {
     params: {
       /**
        * Domain name
@@ -451,7 +528,7 @@ Use this endpoint to prepare domains for transfer to other registrars.
 
 Use this endpoint to view comprehensive domain configuration and status.
    */
-  "undefined": {
+  "domains_getDomainDetailsV1": {
     params: {
       /**
        * Domain name
@@ -466,7 +543,7 @@ Use this endpoint to view comprehensive domain configuration and status.
 
 Use this endpoint to view user's domain portfolio.
    */
-  "undefined": {
+  "domains_getDomainListV1": {
     params: {
 
     };
@@ -487,7 +564,7 @@ Some TLDs require `additional_details` to be provided and these will be validate
 
 Use this endpoint to register new domains for users.
    */
-  "undefined": {
+  "domains_purchaseNewDomainV1": {
     params: {
       /**
        * Domain name
@@ -524,7 +601,7 @@ When privacy protection is enabled, domain owner's personal information is hidde
 
 Use this endpoint to protect domain owner's personal information from public view.
    */
-  "undefined": {
+  "domains_enablePrivacyProtectionV1": {
     params: {
       /**
        * Domain name
@@ -541,7 +618,7 @@ When privacy protection is disabled, domain owner's personal information is visi
 
 Use this endpoint to make domain owner's information publicly visible.
    */
-  "undefined": {
+  "domains_disablePrivacyProtectionV1": {
     params: {
       /**
        * Domain name
@@ -558,7 +635,7 @@ Be aware, that improper nameserver configuration can lead to the domain being un
 
 Use this endpoint to configure custom DNS hosting for domains.
    */
-  "undefined": {
+  "domains_updateDomainNameserversV1": {
     params: {
       /**
        * Domain name
@@ -589,7 +666,7 @@ Use this endpoint to configure custom DNS hosting for domains.
 
 Use this endpoint to view domain registration contact information.
    */
-  "undefined": {
+  "domains_getWHOISProfileV1": {
     params: {
       /**
        * WHOIS ID
@@ -604,7 +681,7 @@ Use this endpoint to view domain registration contact information.
 
 Use this endpoint to remove unused contact profiles from account.
    */
-  "undefined": {
+  "domains_deleteWHOISProfileV1": {
     params: {
       /**
        * WHOIS ID
@@ -619,7 +696,7 @@ Use this endpoint to remove unused contact profiles from account.
 
 Use this endpoint to view available contact profiles for domain registration.
    */
-  "undefined": {
+  "domains_getWHOISProfileListV1": {
     params: {
       /**
        * Filter by TLD (without leading dot)
@@ -634,7 +711,7 @@ Use this endpoint to view available contact profiles for domain registration.
 
 Use this endpoint to add new contact information for domain registration.
    */
-  "undefined": {
+  "domains_createWHOISProfileV1": {
     params: {
       /**
        * TLD of the domain (without leading dot)
@@ -665,7 +742,7 @@ Use this endpoint to add new contact information for domain registration.
 
 Use this endpoint to view which domains use specific contact profiles.
    */
-  "undefined": {
+  "domains_getWHOISProfileUsageV1": {
     params: {
       /**
        * WHOIS ID
@@ -679,7 +756,7 @@ Use this endpoint to view which domains use specific contact profiles.
    * Retrieve a list of datacenters available for setting up hosting plans based on available datacenter capacity and hosting plan of your order.
 The first item in the list is the best match for your specific order requirements.
    */
-  "undefined": {
+  "hosting_listAvailableDatacentersV1": {
     params: {
       /**
        * Order ID
@@ -693,7 +770,7 @@ The first item in the list is the best match for your specific order requirement
    * Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.
 Free subdomains allow you to start using hosting services immediately and you can always connect a custom domain to your site later.
    */
-  "undefined": {
+  "hosting_generateAFreeSubdomainV1": {
     params: {
 
     };
@@ -710,7 +787,7 @@ Keep in mind that it may take up to 10 minutes for new TXT DNS records to propag
 
 Skip this verification when using Hostinger's free subdomains (*.hostingersite.com).
    */
-  "undefined": {
+  "hosting_verifyDomainOwnershipV1": {
     params: {
       /**
        * Domain to verify ownership for
@@ -727,7 +804,7 @@ This endpoint returns orders of your hosting accounts as well as orders of other
 
 Use the available query parameters to filter results by order statuses or specific order IDs for more targeted results.
    */
-  "undefined": {
+  "hosting_listOrdersV1": {
     params: {
       /**
        * Page number
@@ -754,9 +831,9 @@ Use the available query parameters to filter results by order statuses or specif
 
 This endpoint returns websites from your hosting accounts as well as websites from other client hosting accounts that have shared access with you.
 
-Use the available query parameters to filter results by username, order ID, or enabled status for more targeted results.
+Use the available query parameters to filter results by username, order ID, enabled status, or domain name for more targeted results.
    */
-  "undefined": {
+  "hosting_listWebsitesV1": {
     params: {
       /**
        * Page number
@@ -778,6 +855,10 @@ Use the available query parameters to filter results by username, order ID, or e
        * Filter by enabled status
        */
       is_enabled?: boolean;
+      /**
+       * Filter by domain name (exact match)
+       */
+      domain?: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -791,7 +872,7 @@ Subsequent websites will be hosted on the same datacenter automatically.
 
 Website creation takes up to a few minutes to complete. Check the websites list endpoint to see when your new website becomes available.
    */
-  "undefined": {
+  "hosting_createWebsiteV1": {
     params: {
       /**
        * Domain name for the website. Cannot start with "www."
@@ -814,7 +895,7 @@ Website creation takes up to a few minutes to complete. Check the websites list 
 
 This endpoint permanently removes a contact from the email marketing system.
    */
-  "undefined": {
+  "reach_deleteAContactV1": {
     params: {
       /**
        * UUID of the contact to delete
@@ -829,7 +910,7 @@ This endpoint permanently removes a contact from the email marketing system.
 
 This endpoint returns a list of contact groups that can be used to organize contacts.
    */
-  "undefined": {
+  "reach_listContactGroupsV1": {
     params: {
 
     };
@@ -842,7 +923,7 @@ This endpoint returns a list of contact groups that can be used to organize cont
 This endpoint returns a paginated list of contacts with their basic information.
 You can filter contacts by group UUID and subscription status.
    */
-  "undefined": {
+  "reach_listContactsV1": {
     params: {
       /**
        * Filter contacts by group UUID
@@ -868,7 +949,7 @@ You can optionally assign the contact to specific groups and add notes.
 
 The contact will be automatically subscribed to email communications.
    */
-  "undefined": {
+  "reach_createANewContactV1": {
     params: {
       /**
        * email parameter
@@ -899,7 +980,7 @@ The contact will be automatically subscribed to email communications.
 
 Use this endpoint to view location options before deploying VPS instances.
    */
-  "undefined": {
+  "VPS_getDataCenterListV1": {
     params: {
 
     };
@@ -913,7 +994,7 @@ This endpoint returns detailed information about each container including their 
 
 Use this to monitor the health and state of all services within your Docker Compose project.
    */
-  "undefined": {
+  "VPS_getProjectContainersV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -934,7 +1015,7 @@ This endpoint provides the full configuration and state details of a specific Do
 
 Use this to inspect project settings, review the compose file, or check the overall project health.
    */
-  "undefined": {
+  "VPS_getProjectContentsV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -956,7 +1037,7 @@ This operation is irreversible and will delete all project data.
 
 Use this when you want to permanently remove a project and free up system resources.
    */
-  "undefined": {
+  "VPS_deleteProjectV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -979,7 +1060,7 @@ If you need to get detailed information about container with stats included, use
 
 Use this to get an overview of all Docker projects on your VPS instance.
    */
-  "undefined": {
+  "VPS_getProjectListV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -997,7 +1078,7 @@ docker-compose.yaml file in master branch. Any other URL provided must return do
 
 If project with the same name already exists, existing project will be replaced.
    */
-  "undefined": {
+  "VPS_createNewProjectV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1027,7 +1108,7 @@ The response contains the last 300 log entries across all services.
 
 Use this for debugging, monitoring application behavior, and troubleshooting issues across your entire project stack.
    */
-  "undefined": {
+  "VPS_getProjectLogsV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1048,7 +1129,7 @@ This operation preserves data volumes and network configurations while refreshin
 
 Use this to apply configuration changes or recover from service failures.
    */
-  "undefined": {
+  "VPS_restartProjectV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1069,7 +1150,7 @@ This operation brings up containers in the correct dependency order as defined i
 
 Use this to resume a project that was previously stopped or to start services after a system reboot.
    */
-  "undefined": {
+  "VPS_startProjectV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1090,7 +1171,7 @@ This operation gracefully shuts down containers in reverse dependency order.
 
 Use this to temporarily halt a project without removing data or configurations.
    */
-  "undefined": {
+  "VPS_stopProjectV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1111,7 +1192,7 @@ This operation preserves data volumes while applying changes from the compose fi
 
 Use this to deploy application updates, apply configuration changes, or refresh container images to their latest versions.
    */
-  "undefined": {
+  "VPS_updateProjectV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1132,7 +1213,7 @@ Only one firewall can be active for a virtual machine at a time.
 
 Use this endpoint to apply firewall rules to VPS instances.
    */
-  "undefined": {
+  "VPS_activateFirewallV1": {
     params: {
       /**
        * Firewall ID
@@ -1151,7 +1232,7 @@ Use this endpoint to apply firewall rules to VPS instances.
 
 Use this endpoint to remove firewall protection from VPS instances.
    */
-  "undefined": {
+  "VPS_deactivateFirewallV1": {
     params: {
       /**
        * Firewall ID
@@ -1170,7 +1251,7 @@ Use this endpoint to remove firewall protection from VPS instances.
 
 Use this endpoint to view specific firewall configuration and rules.
    */
-  "undefined": {
+  "VPS_getFirewallDetailsV1": {
     params: {
       /**
        * Firewall ID
@@ -1187,7 +1268,7 @@ Any virtual machine that has this firewall activated will automatically have it 
 
 Use this endpoint to remove unused firewall configurations.
    */
-  "undefined": {
+  "VPS_deleteFirewallV1": {
     params: {
       /**
        * Firewall ID
@@ -1202,7 +1283,7 @@ Use this endpoint to remove unused firewall configurations.
 
 Use this endpoint to view existing firewall configurations.
    */
-  "undefined": {
+  "VPS_getFirewallListV1": {
     params: {
       /**
        * Page number
@@ -1217,7 +1298,7 @@ Use this endpoint to view existing firewall configurations.
 
 Use this endpoint to set up new firewall configurations for VPS security.
    */
-  "undefined": {
+  "VPS_createNewFirewallV1": {
     params: {
       /**
        * name parameter
@@ -1234,7 +1315,7 @@ Any virtual machine that has this firewall activated will lose sync with the fir
 
 Use this endpoint to modify existing firewall rules.
    */
-  "undefined": {
+  "VPS_updateFirewallRuleV1": {
     params: {
       /**
        * Firewall ID
@@ -1271,7 +1352,7 @@ Any virtual machine that has this firewall activated will lose sync with the fir
        
 Use this endpoint to remove specific firewall rules.
    */
-  "undefined": {
+  "VPS_deleteFirewallRuleV1": {
     params: {
       /**
        * Firewall ID
@@ -1294,7 +1375,7 @@ Any virtual machine that has this firewall activated will lose sync with the fir
 
 Use this endpoint to add new security rules to firewalls.
    */
-  "undefined": {
+  "VPS_createFirewallRuleV1": {
     params: {
       /**
        * Firewall ID
@@ -1327,7 +1408,7 @@ Firewall can lose sync with virtual machine if the firewall has new rules added,
 
 Use this endpoint to apply updated firewall rules to VPS instances.
    */
-  "undefined": {
+  "VPS_syncFirewallV1": {
     params: {
       /**
        * Firewall ID
@@ -1346,7 +1427,7 @@ Use this endpoint to apply updated firewall rules to VPS instances.
 
 Use this endpoint to view specific automation script details.
    */
-  "undefined": {
+  "VPS_getPostInstallScriptV1": {
     params: {
       /**
        * Post-install script ID
@@ -1361,7 +1442,7 @@ Use this endpoint to view specific automation script details.
 
 Use this endpoint to modify existing automation scripts.
    */
-  "undefined": {
+  "VPS_updatePostInstallScriptV1": {
     params: {
       /**
        * Post-install script ID
@@ -1384,7 +1465,7 @@ Use this endpoint to modify existing automation scripts.
        
 Use this endpoint to remove unused automation scripts.
    */
-  "undefined": {
+  "VPS_deletePostInstallScriptV1": {
     params: {
       /**
        * Post-install script ID
@@ -1399,7 +1480,7 @@ Use this endpoint to remove unused automation scripts.
 
 Use this endpoint to view available automation scripts for VPS deployment.
    */
-  "undefined": {
+  "VPS_getPostInstallScriptsV1": {
     params: {
       /**
        * Page number
@@ -1417,7 +1498,7 @@ The output of the script will be redirected to `/post_install.log`. Maximum scri
 
 Use this endpoint to create automation scripts for VPS setup tasks.
    */
-  "undefined": {
+  "VPS_createPostInstallScriptV1": {
     params: {
       /**
        * Name of the script
@@ -1438,7 +1519,7 @@ Multiple keys can be attached to a single virtual machine.
 
 Use this endpoint to enable SSH key authentication for VPS instances.
    */
-  "undefined": {
+  "VPS_attachPublicKeyV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1459,7 +1540,7 @@ Use this endpoint to enable SSH key authentication for VPS instances.
        
 Use this endpoint to remove unused SSH keys from account.
    */
-  "undefined": {
+  "VPS_deletePublicKeyV1": {
     params: {
       /**
        * Public Key ID
@@ -1474,7 +1555,7 @@ Use this endpoint to remove unused SSH keys from account.
 
 Use this endpoint to view available SSH keys for VPS authentication.
    */
-  "undefined": {
+  "VPS_getPublicKeysV1": {
     params: {
       /**
        * Page number
@@ -1489,7 +1570,7 @@ Use this endpoint to view available SSH keys for VPS authentication.
 
 Use this endpoint to register SSH keys for VPS authentication.
    */
-  "undefined": {
+  "VPS_createPublicKeyV1": {
     params: {
       /**
        * name parameter
@@ -1508,7 +1589,7 @@ Use this endpoint to register SSH keys for VPS authentication.
 
 Use this endpoint to view specific template specifications before deployment.
    */
-  "undefined": {
+  "VPS_getTemplateDetailsV1": {
     params: {
       /**
        * Template ID
@@ -1523,7 +1604,7 @@ Use this endpoint to view specific template specifications before deployment.
 
 Use this endpoint to view operating system options before creating or recreating VPS instances.
    */
-  "undefined": {
+  "VPS_getTemplatesV1": {
     params: {
 
     };
@@ -1535,7 +1616,7 @@ Use this endpoint to view operating system options before creating or recreating
 
 Use this endpoint to monitor specific VPS operation status and details.
    */
-  "undefined": {
+  "VPS_getActionDetailsV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1558,7 +1639,7 @@ such as the action name, timestamp, and status.
 
 Use this endpoint to view VPS operation history and troubleshoot issues.
    */
-  "undefined": {
+  "VPS_getActionsV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1577,7 +1658,7 @@ Use this endpoint to view VPS operation history and troubleshoot issues.
 
 Use this endpoint to view SSH keys configured for specific VPS instances.
    */
-  "undefined": {
+  "VPS_getAttachedPublicKeysV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1596,7 +1677,7 @@ Use this endpoint to view SSH keys configured for specific VPS instances.
 
 Use this endpoint to view available backup points for VPS data recovery.
    */
-  "undefined": {
+  "VPS_getBackupsV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1619,7 +1700,7 @@ The system will then initiate the restore process, which may take some time depe
 
 Use this endpoint to recover VPS data from backup points.
    */
-  "undefined": {
+  "VPS_restoreBackupV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1642,7 +1723,7 @@ you need to point your domain A/AAAA records to virtual machine IP as well.
 
 Use this endpoint to configure custom hostnames for VPS instances.
    */
-  "undefined": {
+  "VPS_setHostnameV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1661,7 +1742,7 @@ Use this endpoint to configure custom hostnames for VPS instances.
 
 Use this endpoint to restore default hostname configuration for VPS instances.
    */
-  "undefined": {
+  "VPS_resetHostnameV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1676,7 +1757,7 @@ Use this endpoint to restore default hostname configuration for VPS instances.
 
 Use this endpoint to view comprehensive VPS configuration and status.
    */
-  "undefined": {
+  "VPS_getVirtualMachineDetailsV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1691,7 +1772,7 @@ Use this endpoint to view comprehensive VPS configuration and status.
 
 Use this endpoint to view available VPS instances.
    */
-  "undefined": {
+  "VPS_getVirtualMachinesV1": {
     params: {
 
     };
@@ -1707,7 +1788,7 @@ If no payment method is provided, your default payment method will be used autom
 
 Use this endpoint to create new VPS instances.                        
    */
-  "undefined": {
+  "VPS_purchaseNewVirtualMachineV1": {
     params: {
       /**
        * Catalog price item ID
@@ -1738,7 +1819,7 @@ virtual machine and assessing effectiveness of the malware scanner.
 
 Use this endpoint to monitor VPS security scan results and threat detection.
    */
-  "undefined": {
+  "VPS_getScanMetricsV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1756,7 +1837,7 @@ By installing Monarx, users can enhance the security of their virtual machines, 
 
 Use this endpoint to enable malware protection on VPS instances.
    */
-  "undefined": {
+  "VPS_installMonarxV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1773,7 +1854,7 @@ If Monarx is not installed, the request will still be processed without any effe
 
 Use this endpoint to remove malware scanner from VPS instances.
    */
-  "undefined": {
+  "VPS_uninstallMonarxV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1795,7 +1876,7 @@ It includes the following metrics:
 
 Use this endpoint to monitor VPS performance and resource utilization over time.
    */
-  "undefined": {
+  "VPS_getMetricsV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1820,7 +1901,7 @@ Be aware, that improper nameserver configuration can lead to the virtual machine
 
 Use this endpoint to configure custom DNS resolvers for VPS instances.
    */
-  "undefined": {
+  "VPS_setNameserversV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1847,7 +1928,7 @@ Use this endpoint to configure custom DNS resolvers for VPS instances.
 
 Use this endpoint to configure reverse DNS lookup for VPS IP addresses.
    */
-  "undefined": {
+  "VPS_createPTRRecordV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1872,7 +1953,7 @@ Once deleted, reverse DNS lookups to the virtual machine's IP address will no lo
 
 Use this endpoint to remove reverse DNS configuration from VPS instances.
    */
-  "undefined": {
+  "VPS_deletePTRRecordV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1894,7 +1975,7 @@ Requirements for password are same as in the [recreate virtual machine endpoint]
 
 Use this endpoint to configure control panel access credentials for VPS instances.
    */
-  "undefined": {
+  "VPS_setPanelPasswordV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1919,7 +2000,7 @@ Virtual machine will boot recovery disk image and original disk image will be mo
 
 Use this endpoint to enable system rescue operations on VPS instances.
    */
-  "undefined": {
+  "VPS_startRecoveryModeV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1940,7 +2021,7 @@ If virtual machine is not in recovery mode, this operation will fail.
 
 Use this endpoint to exit system rescue mode and return VPS to normal operation.
    */
-  "undefined": {
+  "VPS_stopRecoveryModeV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -1969,7 +2050,7 @@ Requirements for the password are:
 
 Use this endpoint to completely rebuild VPS instances with fresh OS installation.
    */
-  "undefined": {
+  "VPS_recreateVirtualMachineV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -2002,7 +2083,7 @@ If the virtual machine was stopped, it will be started.
 
 Use this endpoint to reboot VPS instances.
    */
-  "undefined": {
+  "VPS_restartVirtualMachineV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -2019,7 +2100,7 @@ Requirements for password are same as in the [recreate virtual machine endpoint]
 
 Use this endpoint to update administrator credentials for VPS instances.
    */
-  "undefined": {
+  "VPS_setRootPasswordV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -2038,7 +2119,7 @@ Use this endpoint to update administrator credentials for VPS instances.
 
 Use this endpoint to configure and initialize purchased VPS instances.
    */
-  "undefined": {
+  "VPS_setupPurchasedVirtualMachineV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -2093,7 +2174,7 @@ Use this endpoint to configure and initialize purchased VPS instances.
 
 Use this endpoint to view current VPS snapshot information.
    */
-  "undefined": {
+  "VPS_getSnapshotV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -2115,7 +2196,7 @@ and testing changes without affecting the current state of the virtual machine.
 
 Use this endpoint to capture VPS state for backup and recovery purposes.
    */
-  "undefined": {
+  "VPS_createSnapshotV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -2130,7 +2211,7 @@ Use this endpoint to capture VPS state for backup and recovery purposes.
 
 Use this endpoint to remove VPS snapshots.
    */
-  "undefined": {
+  "VPS_deleteSnapshotV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -2147,7 +2228,7 @@ Restoring from a snapshot allows users to revert the virtual machine to that sta
 
 Use this endpoint to revert VPS instances to previous saved states.
    */
-  "undefined": {
+  "VPS_restoreSnapshotV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -2164,7 +2245,7 @@ If the virtual machine is already running, the request will still be processed w
 
 Use this endpoint to power on stopped VPS instances.
    */
-  "undefined": {
+  "VPS_startVirtualMachineV1": {
     params: {
       /**
        * Virtual Machine ID
@@ -2181,7 +2262,7 @@ If the virtual machine is already stopped, the request will still be processed w
 
 Use this endpoint to power off running VPS instances.
    */
-  "undefined": {
+  "VPS_stopVirtualMachineV1": {
     params: {
       /**
        * Virtual Machine ID

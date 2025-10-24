@@ -144,6 +144,46 @@ console.log("Tool result:", result);
 
 This MCP server provides the following tools:
 
+### hosting_importWordpressWebsite
+
+Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. The username will be automatically resolved from the domain.
+
+- **Method**: ``
+- **Path**: ``
+
+**Parameters**:
+
+- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
+- `archivePath`: Absolute or relative path to the website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mywebsite_20250115_143022.zip) (required)
+- `databaseDump`: Absolute or relative path to a database dump file (.sql) (required)
+
+### hosting_deployWordpressPlugin
+
+Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment.
+
+- **Method**: ``
+- **Path**: ``
+
+**Parameters**:
+
+- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
+- `slug`: WordPress plugin slug (e.g., omnisend) (required)
+- `pluginPath`: Absolute or relative path to the plugin directory containing all plugin files (required)
+
+### hosting_deployWordpressTheme
+
+Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment.
+
+- **Method**: ``
+- **Path**: ``
+
+**Parameters**:
+
+- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
+- `slug`: WordPress theme slug (e.g., twentytwentyfive) (required)
+- `themePath`: Absolute or relative path to the theme directory containing all theme files (required)
+- `activate`: Whether to activate the theme after deployment (default: false) 
+
 ### billing_getCatalogItemListV1
 
 Retrieve catalog items available for order.
@@ -401,6 +441,15 @@ Use this endpoint to verify DNS record validity before applying changes.
 - `domain`: Domain name (required)
 - `overwrite`: If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created, otherwise resource records' ttl's are updated and new records are appended. If no matching RRs are found, they are created. 
 - `zone`: zone parameter (required)
+
+### v2_getDomainVerificationsDIRECT
+
+Retrieve a list of pending and completed domain verifications.
+
+- **Method**: `GET`
+- **Path**: `/api/v2/direct/verifications/active`
+
+
 
 ### domains_checkDomainAvailabilityV1
 
@@ -727,7 +776,7 @@ Retrieve a paginated list of websites (main and addon types) accessible to the a
 
 This endpoint returns websites from your hosting accounts as well as websites from other client hosting accounts that have shared access with you.
 
-Use the available query parameters to filter results by username, order ID, or enabled status for more targeted results.
+Use the available query parameters to filter results by username, order ID, enabled status, or domain name for more targeted results.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/websites`
@@ -739,6 +788,7 @@ Use the available query parameters to filter results by username, order ID, or e
 - `username`: Filter by specific username 
 - `order_id`: Order ID 
 - `is_enabled`: Filter by enabled status 
+- `domain`: Filter by domain name (exact match) 
 
 ### hosting_createWebsiteV1
 

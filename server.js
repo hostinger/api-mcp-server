@@ -12,12 +12,121 @@ import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+import * as tus from "tus-js-client";
+import fs from "fs";
+import path from "path";
 
 // Load environment variables
 dotenvConfig();
 
 // Define tool schemas
 const TOOLS = [
+  {
+    "name": "hosting_importWordpressWebsite",
+    "topic": "hosting",
+    "description": "Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. The username will be automatically resolved from the domain.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name associated with the hosting account (e.g., example.com)"
+        },
+        "archivePath": {
+          "type": "string",
+          "description": "Absolute or relative path to the website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mywebsite_20250115_143022.zip)"
+        },
+        "databaseDump": {
+          "type": "string",
+          "description": "Absolute or relative path to a database dump file (.sql)"
+        }
+      },
+      "required": [
+        "domain",
+        "archivePath",
+        "databaseDump"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "templateFile": "import-wordpress.template.js",
+    "templateFileTS": "import-wordpress.template.ts",
+    "handlerMethod": "handleWordpressWebsiteImport"
+  },
+  {
+    "name": "hosting_deployWordpressPlugin",
+    "topic": "hosting",
+    "description": "Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name associated with the hosting account (e.g., example.com)"
+        },
+        "slug": {
+          "type": "string",
+          "description": "WordPress plugin slug (e.g., omnisend)"
+        },
+        "pluginPath": {
+          "type": "string",
+          "description": "Absolute or relative path to the plugin directory containing all plugin files"
+        }
+      },
+      "required": [
+        "domain",
+        "slug",
+        "pluginPath"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "templateFile": "deploy-wordpress-plugin.template.js",
+    "templateFileTS": "deploy-wordpress-plugin.template.ts",
+    "handlerMethod": "handleWordpressPluginDeploy"
+  },
+  {
+    "name": "hosting_deployWordpressTheme",
+    "topic": "hosting",
+    "description": "Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name associated with the hosting account (e.g., example.com)"
+        },
+        "slug": {
+          "type": "string",
+          "description": "WordPress theme slug (e.g., twentytwentyfive)"
+        },
+        "themePath": {
+          "type": "string",
+          "description": "Absolute or relative path to the theme directory containing all theme files"
+        },
+        "activate": {
+          "type": "boolean",
+          "description": "Whether to activate the theme after deployment (default: false)"
+        }
+      },
+      "required": [
+        "domain",
+        "slug",
+        "themePath"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "templateFile": "deploy-wordpress-theme.template.js",
+    "templateFileTS": "deploy-wordpress-theme.template.ts",
+    "handlerMethod": "handleWordpressThemeDeploy"
+  },
   {
     "name": "billing_getCatalogItemListV1",
     "description": "Retrieve catalog items available for order.\n\nPrices in catalog items is displayed as cents (without floating point), e.g: float `17.99` is displayed as integer `1799`.\n\nUse this endpoint to view available services and pricing before placing orders.",
@@ -573,6 +682,22 @@ const TOOLS = [
         "domain",
         "zone"
       ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "v2_getDomainVerificationsDIRECT",
+    "description": "Retrieve a list of pending and completed domain verifications.",
+    "method": "GET",
+    "path": "/api/v2/direct/verifications/active",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
     },
     "security": [
       {
@@ -1156,11 +1281,25 @@ const TOOLS = [
         },
         "statuses": {
           "type": "array",
-          "description": "Filter by order statuses"
+          "description": "Filter by order statuses",
+          "items": {
+            "type": "string",
+            "description": "statuses parameter",
+            "enum": [
+              "active",
+              "deleting",
+              "deleted",
+              "suspended"
+            ]
+          }
         },
         "order_ids": {
           "type": "array",
-          "description": "Filter by specific order IDs"
+          "description": "Filter by specific order IDs",
+          "items": {
+            "type": "integer",
+            "description": "order_ids parameter"
+          }
         }
       },
       "required": []
@@ -1173,7 +1312,7 @@ const TOOLS = [
   },
   {
     "name": "hosting_listWebsitesV1",
-    "description": "Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as websites from other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by username, order ID, or enabled status for more targeted results.",
+    "description": "Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as websites from other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by username, order ID, enabled status, or domain name for more targeted results.",
     "method": "GET",
     "path": "/api/hosting/v1/websites",
     "inputSchema": {
@@ -1198,6 +1337,10 @@ const TOOLS = [
         "is_enabled": {
           "type": "boolean",
           "description": "Filter by enabled status"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Filter by domain name (exact match)"
         }
       },
       "required": []
@@ -3117,7 +3260,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.2.0
+ * Generated from OpenAPI spec version 0.6.0
  */
 class MCPServer {
   constructor() {
@@ -3135,7 +3278,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.12",
+        version: "0.1.14",
       },
       {
         capabilities: {
@@ -3160,7 +3303,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.12';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.14';
     
     return headers;
   }
@@ -3228,8 +3371,13 @@ class MCPServer {
       try {
         this.log('info', `Executing tool: ${toolName}`);
 
-        // Execute the API call
-        const result = await this.executeApiCall(toolDetails, params || {});
+        let result;
+        
+        if (toolDetails.custom) {
+          result = await this.executeCustomTool(toolDetails, params || {});
+        } else {
+          result = await this.executeApiCall(toolDetails, params || {});
+        }
 
         // Return the result in the correct MCP format
         return {
@@ -3249,6 +3397,968 @@ class MCPServer {
         throw error;
       }
     });
+  }
+
+  async executeCustomTool(tool, params) {
+    switch (tool.name) {
+      case 'hosting_importWordpressWebsite':
+        return await this.handleWordpressWebsiteImport(params);
+      case 'hosting_deployWordpressPlugin':
+        return await this.handleWordpressPluginDeploy(params);
+      case 'hosting_deployWordpressTheme':
+        return await this.handleWordpressThemeDeploy(params);
+      default:
+        throw new Error(`Unknown custom tool: ${tool.name}`);
+    }
+  }
+
+  normalizePath(pathString) {
+    return pathString.replace(/\\/g, '/');
+  }
+
+  async resolveUsername(domain) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/websites?domain=${encodeURIComponent(domain)}`, baseUrl).toString();
+    
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+      
+      const config = {
+        method: 'get',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`
+        },
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+      
+      const response = await axios(config);
+      
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+      
+      const websites = response.data?.data;
+      if (!websites || websites.length === 0) {
+        throw new Error(`No website found for domain: ${domain}`);
+      }
+      
+      const username = websites[0].username;
+      if (!username) {
+        throw new Error(`Username not found in website data for domain: ${domain}`);
+      }
+      
+      this.log('info', `Resolved username: ${username} for domain: ${domain}`);
+      return username;
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to resolve username for domain ${domain}: ${errorMessage}`);
+      
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+      
+      throw error;
+    }
+  }
+
+  async fetchUploadCredentials(username, domain) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL('api/hosting/v1/files/upload-urls', baseUrl).toString();
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const config = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          username,
+          domain
+        },
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to fetch upload credentials: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async uploadFile(filePath, relativePath, uploadUrl, authRestToken, authToken) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const stats = fs.statSync(filePath);
+        const fileStream = fs.createReadStream(filePath);
+        
+        const cleanUploadUrl = uploadUrl.replace(new RegExp('/$'), '');
+        const normalizedPath = this.normalizePath(relativePath);
+        const uploadUrlWithFile = `${cleanUploadUrl}/${normalizedPath}?override=true`;
+
+        const requestHeaders = {
+          'X-Auth': authToken,
+          'X-Auth-Rest': authRestToken
+        };
+
+        try {
+          this.log('debug', `Making pre-upload POST request to ${uploadUrlWithFile}`);
+          await axios.post(uploadUrlWithFile, '', {
+            headers: requestHeaders,
+            timeout: 60000, // 60s
+            validateStatus: function (status) {
+              return status == 201;
+            }
+          });
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          
+          if (axios.isAxiosError(error)) {
+            const responseData = error.response?.data;
+            const responseStatus = error.response?.status;
+            const responseHeaders = error.response?.headers;
+            const responseText = typeof responseData === 'object' ? JSON.stringify(responseData) : responseData;
+            
+            this.log('error', 'Pre-upload POST request failed - Full Response Details:', {
+              status: responseStatus,
+              headers: responseHeaders,
+              data: responseText,
+              message: errorMessage
+            });
+            reject(new Error(`Pre-upload request failed: ${errorMessage}`));
+            return;
+          } else {
+            this.log('error', `Pre-upload POST request failed: ${errorMessage}`);
+            reject(new Error(`Pre-upload request failed: ${errorMessage}`));
+            return;
+          }
+        }
+
+        const upload = new tus.Upload(fileStream, {
+          uploadUrl: uploadUrlWithFile,
+          retryDelays: [1000, 2000, 4000, 8000, 16000, 20000],
+          uploadDataDuringCreation: false,
+          parallelUploads: 1,
+          chunkSize: 10485760,
+          headers: requestHeaders,
+          removeFingerprintOnSuccess: true,
+          uploadSize: stats.size,
+          metadata: {
+            filename: path.basename(relativePath)
+          },
+          onError: (error) => {
+            this.log('error', `TUS upload error for ${relativePath}`, { error: error.message });
+            reject(new Error(`Upload failed: ${error.message}`));
+          },
+          onSuccess: () => {
+            this.log('info', `TUS upload completed for ${relativePath}`, { url: upload.url });
+            resolve({
+              url: upload.url,
+              filename: relativePath
+            });
+          }
+        });
+
+        upload.start();
+
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.log('error', `Error preparing upload for ${filePath}`, { error: errorMessage });
+        reject(new Error(`Failed to prepare upload: ${errorMessage}`));
+      }
+    });
+  }
+
+  hosting_importWordpressWebsite_validateArchiveFormat(filePath) {
+    const validExtensions = ['zip', 'tar', 'tar.gz', 'tgz', '7z', 'gz', 'gzip'];
+    const fileName = path.basename(filePath).toLowerCase();
+    
+    for (const ext of validExtensions) {
+      if (fileName.endsWith(`.${ext}`)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  hosting_importWordpressWebsite_validateRequiredParams(params) {
+    const { domain, archivePath, databaseDump } = params;
+
+    if (!domain || typeof domain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    if (!archivePath || typeof archivePath !== 'string') {
+      throw new Error('archivePath is required and must be a string');
+    }
+
+    if (!databaseDump || typeof databaseDump !== 'string') {
+      throw new Error('databaseDump is required and must be a string');
+    }
+  }
+
+  hosting_importWordpressWebsite_validateArchiveFile(archivePath) {
+    if (!fs.existsSync(archivePath)) {
+      throw new Error(`Archive file not found: ${archivePath}`);
+    }
+
+    const archiveStats = fs.statSync(archivePath);
+    if (!archiveStats.isFile()) {
+      throw new Error(`Archive path is not a file: ${archivePath}`);
+    }
+
+    if (!this.hosting_importWordpressWebsite_validateArchiveFormat(archivePath)) {
+      throw new Error('Invalid archive format. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip');
+    }
+  }
+
+  hosting_importWordpressWebsite_validateDatabaseFile(databaseDump) {
+    if (!fs.existsSync(databaseDump)) {
+      throw new Error(`Database dump file not found: ${databaseDump}`);
+    }
+
+    const dbStats = fs.statSync(databaseDump);
+    if (!dbStats.isFile()) {
+      throw new Error(`Database dump path is not a file: ${databaseDump}`);
+    }
+
+    if (!databaseDump.toLowerCase().endsWith('.sql')) {
+      throw new Error('Database dump must be a .sql file');
+    }
+  }
+
+  async hosting_importWordpressWebsite_checkWebsiteIsEmpty(username, domain) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/accounts/${username}/domains/${domain}/is-empty`, baseUrl).toString();
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const config = {
+        method: 'get',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`
+        },
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      const { is_empty } = response.data;
+
+      if (!is_empty) {
+        throw new Error('Website is not empty. WordPress import can only be performed on empty sites. Please visit hPanel (https://hpanel.hostinger.com) and remove all existing files from the website before attempting to import.');
+      }
+
+      this.log('info', `Website ${domain} is empty, proceeding with import`);
+      return true;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to check if website is empty: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async hosting_importWordpressWebsite_extractFiles(username, domain, archivePath, databaseDump) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/wordpress/import`, baseUrl).toString();
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const config = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          archive_path: path.basename(archivePath),
+          sql_path: path.basename(databaseDump)
+        },
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      this.log('info', `Successfully triggered file extraction for ${domain}`);
+      return true;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger file extraction: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async handleWordpressWebsiteImport(params) {
+    const { domain, archivePath, databaseDump } = params;
+
+    this.hosting_importWordpressWebsite_validateRequiredParams(params);
+    this.hosting_importWordpressWebsite_validateArchiveFile(archivePath);
+    this.hosting_importWordpressWebsite_validateDatabaseFile(databaseDump);
+
+    // Auto-resolve username from domain
+    this.log('info', `Resolving username from domain: ${domain}`);
+    const username = await this.resolveUsername(domain);
+
+    await this.hosting_importWordpressWebsite_checkWebsiteIsEmpty(username, domain);
+
+    const filesToUpload = [{
+      absolutePath: archivePath,
+      relativePath: path.basename(archivePath),
+      type: 'archive'
+    }, {
+      absolutePath: databaseDump,
+      relativePath: path.basename(databaseDump),
+      type: 'database'
+    }];
+
+    let uploadCredentials;
+    try {
+      uploadCredentials = await this.fetchUploadCredentials(username, domain);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch upload credentials: ${errorMessage}`);
+    }
+
+    const { url: uploadUrl, auth_key: authToken, rest_auth_key: authRestToken } = uploadCredentials;
+
+    if (!uploadUrl || !authToken || !authRestToken) {
+      throw new Error('Invalid upload credentials received from API');
+    }
+
+    this.log('info', `Starting website archive import to ${uploadUrl}`);
+
+    const results = [];
+    let successCount = 0;
+    let failureCount = 0;
+
+    for (const fileInfo of filesToUpload) {
+      try {
+        this.log('info', `Uploading ${fileInfo.type}: ${fileInfo.absolutePath}`);
+
+        const stats = fs.statSync(fileInfo.absolutePath);
+        const uploadResult = await this.uploadFile(
+          fileInfo.absolutePath,
+          fileInfo.relativePath,
+          uploadUrl,
+          authRestToken,
+          authToken
+        );
+
+        results.push({
+          file: fileInfo.absolutePath,
+          remotePath: fileInfo.relativePath,
+          type: fileInfo.type,
+          status: 'success',
+          uploadUrl: uploadResult.url,
+          size: stats.size
+        });
+
+        successCount++;
+        this.log('info', `Successfully uploaded ${fileInfo.type}: ${fileInfo.relativePath}`);
+
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        results.push({
+          file: fileInfo.absolutePath,
+          remotePath: fileInfo.relativePath,
+          type: fileInfo.type,
+          status: 'error',
+          error: errorMessage
+        });
+
+        failureCount++;
+        this.log('error', `Failed to upload ${fileInfo.type} ${fileInfo.absolutePath}: ${errorMessage}`);
+      }
+    }
+
+    const overallStatus = failureCount === 0 ? 'success' : (successCount === 0 ? 'failure' : 'partial');
+
+    if (failureCount === 0) {
+      try {
+        this.log('info', 'All files uploaded successfully, triggering extraction...');
+        await this.hosting_importWordpressWebsite_extractFiles(username, domain, archivePath, databaseDump);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.log('error', `File extraction failed: ${errorMessage}`);
+        return {
+          status: 'partial',
+          summary: {
+            total: filesToUpload.length,
+            successful: successCount,
+            failed: failureCount
+          },
+          results,
+          extractionError: errorMessage
+        };
+      }
+    }
+
+    return {
+      status: overallStatus,
+      summary: {
+        total: filesToUpload.length,
+        successful: successCount,
+        failed: failureCount
+      },
+      results
+    };
+  }
+
+  hosting_deployWordpressPlugin_generateRandomString(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  hosting_deployWordpressPlugin_validateRequiredParams(params) {
+    const { domain, slug, pluginPath } = params;
+
+    if (!domain || typeof domain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    if (!slug || typeof slug !== 'string') {
+      throw new Error('slug is required and must be a string');
+    }
+
+    if (!pluginPath || typeof pluginPath !== 'string') {
+      throw new Error('pluginPath is required and must be a string');
+    }
+  }
+
+  hosting_deployWordpressPlugin_validatePluginDirectory(pluginPath) {
+    if (!fs.existsSync(pluginPath)) {
+      throw new Error(`Plugin directory not found: ${pluginPath}`);
+    }
+
+    const pluginStats = fs.statSync(pluginPath);
+    if (!pluginStats.isDirectory()) {
+      throw new Error(`Plugin path is not a directory: ${pluginPath}`);
+    }
+  }
+
+  hosting_deployWordpressPlugin_scanDirectory(dirPath, basePath = dirPath) {
+    const files = [];
+    
+    const scanDir = (currentPath) => {
+      const items = fs.readdirSync(currentPath);
+      
+      for (const item of items) {
+        const itemPath = path.join(currentPath, item);
+        const stats = fs.statSync(itemPath);
+        
+        if (stats.isDirectory()) {
+          scanDir(itemPath);
+        } else if (stats.isFile()) {
+          const relativePath = path.relative(basePath, itemPath);
+          files.push({
+            absolutePath: itemPath,
+            relativePath: relativePath
+          });
+        }
+      }
+    };
+    
+    scanDir(dirPath);
+    return files;
+  }
+
+  async hosting_deployWordpressPlugin_deployPlugin(username, domain, slug, pluginPath) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/wordpress/plugins/deploy`, baseUrl).toString();
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const config = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          slug,
+          plugin_path: pluginPath
+        },
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      this.log('info', `Successfully triggered plugin deployment for ${domain}`);
+      return true;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger plugin deployment: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async handleWordpressPluginDeploy(params) {
+    const { domain, slug, pluginPath } = params;
+
+    this.hosting_deployWordpressPlugin_validateRequiredParams(params);
+    this.hosting_deployWordpressPlugin_validatePluginDirectory(pluginPath);
+
+    this.log('info', `Resolving username from domain: ${domain}`);
+    const username = await this.resolveUsername(domain);
+
+    const randomSuffix = this.hosting_deployWordpressPlugin_generateRandomString(8);
+    const uploadDirName = `${slug}-${randomSuffix}`;
+
+    this.log('info', `Scanning plugin directory: ${pluginPath}`);
+    const pluginFiles = this.hosting_deployWordpressPlugin_scanDirectory(pluginPath);
+
+    if (pluginFiles.length === 0) {
+      throw new Error(`No files found in plugin directory: ${pluginPath}`);
+    }
+
+    this.log('info', `Found ${pluginFiles.length} files to upload`);
+
+    let uploadCredentials;
+    try {
+      uploadCredentials = await this.fetchUploadCredentials(username, domain);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch upload credentials: ${errorMessage}`);
+    }
+
+    const { url: uploadUrl, auth_key: authToken, rest_auth_key: authRestToken } = uploadCredentials;
+
+    if (!uploadUrl || !authToken || !authRestToken) {
+      throw new Error('Invalid upload credentials received from API');
+    }
+
+    this.log('info', `Starting plugin file upload to ${uploadUrl}`);
+
+    const results = [];
+    let successCount = 0;
+    let failureCount = 0;
+
+    for (const fileInfo of pluginFiles) {
+      try {
+        const normalizedRelativePath = this.normalizePath(fileInfo.relativePath);
+        const uploadPath = `wp-content/plugins/${uploadDirName}/${normalizedRelativePath}`;
+        this.log('info', `Uploading: ${fileInfo.absolutePath} -> ${uploadPath}`);
+
+        const stats = fs.statSync(fileInfo.absolutePath);
+        const uploadResult = await this.uploadFile(
+          fileInfo.absolutePath,
+          uploadPath,
+          uploadUrl,
+          authRestToken,
+          authToken
+        );
+
+        results.push({
+          file: fileInfo.absolutePath,
+          remotePath: uploadPath,
+          status: 'success',
+          uploadUrl: uploadResult.url,
+          size: stats.size
+        });
+
+        successCount++;
+        this.log('info', `Successfully uploaded: ${uploadPath}`);
+
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const normalizedRelativePath = this.normalizePath(fileInfo.relativePath);
+        const uploadPath = `wp-content/plugins/${uploadDirName}/${normalizedRelativePath}`;
+        
+        results.push({
+          file: fileInfo.absolutePath,
+          remotePath: uploadPath,
+          status: 'error',
+          error: errorMessage
+        });
+
+        failureCount++;
+        this.log('error', `Failed to upload ${fileInfo.absolutePath}: ${errorMessage}`);
+      }
+    }
+
+    const overallStatus = failureCount === 0 ? 'success' : (successCount === 0 ? 'failure' : 'partial');
+
+    if (failureCount === 0) {
+      try {
+        this.log('info', 'All files uploaded successfully, triggering plugin deployment...');
+        await this.hosting_deployWordpressPlugin_deployPlugin(username, domain, slug, uploadDirName);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.log('error', `Plugin deployment failed: ${errorMessage}`);
+        return {
+          status: 'partial',
+          summary: {
+            total: pluginFiles.length,
+            successful: successCount,
+            failed: failureCount
+          },
+          results,
+          deploymentError: errorMessage
+        };
+      }
+    }
+
+    return {
+      status: overallStatus,
+      summary: {
+        total: pluginFiles.length,
+        successful: successCount,
+        failed: failureCount
+      },
+      results,
+      uploadDirName
+    };
+  }
+
+  hosting_deployWordpressTheme_generateRandomString(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  hosting_deployWordpressTheme_validateRequiredParams(params) {
+    const { domain, slug, themePath } = params;
+
+    if (!domain || typeof domain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    if (!slug || typeof slug !== 'string') {
+      throw new Error('slug is required and must be a string');
+    }
+
+    if (!themePath || typeof themePath !== 'string') {
+      throw new Error('themePath is required and must be a string');
+    }
+  }
+
+  hosting_deployWordpressTheme_validateThemeDirectory(themePath) {
+    if (!fs.existsSync(themePath)) {
+      throw new Error(`Theme directory not found: ${themePath}`);
+    }
+
+    const themeStats = fs.statSync(themePath);
+    if (!themeStats.isDirectory()) {
+      throw new Error(`Theme path is not a directory: ${themePath}`);
+    }
+  }
+
+  hosting_deployWordpressTheme_scanDirectory(dirPath, basePath = dirPath) {
+    const files = [];
+    
+    const scanDir = (currentPath) => {
+      const items = fs.readdirSync(currentPath);
+      
+      for (const item of items) {
+        const itemPath = path.join(currentPath, item);
+        const stats = fs.statSync(itemPath);
+        
+        if (stats.isDirectory()) {
+          scanDir(itemPath);
+        } else if (stats.isFile()) {
+          const relativePath = path.relative(basePath, itemPath);
+          files.push({
+            absolutePath: itemPath,
+            relativePath: relativePath
+          });
+        }
+      }
+    };
+    
+    scanDir(dirPath);
+    return files;
+  }
+
+  async hosting_deployWordpressTheme_deployTheme(username, domain, slug, themePath, activate = false) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/wordpress/themes/deploy`, baseUrl).toString();
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const config = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          slug,
+          theme_path: themePath,
+          is_activated: activate
+        },
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      this.log('info', `Successfully triggered theme deployment for ${domain}`);
+      return true;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger theme deployment: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async handleWordpressThemeDeploy(params) {
+    const { domain, slug, themePath, activate = false } = params;
+
+    this.hosting_deployWordpressTheme_validateRequiredParams(params);
+    this.hosting_deployWordpressTheme_validateThemeDirectory(themePath);
+
+    this.log('info', `Resolving username from domain: ${domain}`);
+    const username = await this.resolveUsername(domain);
+
+    const randomSuffix = this.hosting_deployWordpressTheme_generateRandomString(8);
+    const uploadDirName = `${slug}-${randomSuffix}`;
+
+    this.log('info', `Scanning theme directory: ${themePath}`);
+    const themeFiles = this.hosting_deployWordpressTheme_scanDirectory(themePath);
+
+    if (themeFiles.length === 0) {
+      throw new Error(`No files found in theme directory: ${themePath}`);
+    }
+
+    this.log('info', `Found ${themeFiles.length} files to upload`);
+
+    let uploadCredentials;
+    try {
+      uploadCredentials = await this.fetchUploadCredentials(username, domain);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch upload credentials: ${errorMessage}`);
+    }
+
+    const { url: uploadUrl, auth_key: authToken, rest_auth_key: authRestToken } = uploadCredentials;
+
+    if (!uploadUrl || !authToken || !authRestToken) {
+      throw new Error('Invalid upload credentials received from API');
+    }
+
+    this.log('info', `Starting theme file upload to ${uploadUrl}`);
+
+    const results = [];
+    let successCount = 0;
+    let failureCount = 0;
+
+    for (const fileInfo of themeFiles) {
+      try {
+        const normalizedRelativePath = this.normalizePath(fileInfo.relativePath);
+        const uploadPath = `wp-content/themes/${uploadDirName}/${normalizedRelativePath}`;
+        this.log('info', `Uploading: ${fileInfo.absolutePath} -> ${uploadPath}`);
+
+        const stats = fs.statSync(fileInfo.absolutePath);
+        const uploadResult = await this.uploadFile(
+          fileInfo.absolutePath,
+          uploadPath,
+          uploadUrl,
+          authRestToken,
+          authToken
+        );
+
+        results.push({
+          file: fileInfo.absolutePath,
+          remotePath: uploadPath,
+          status: 'success',
+          uploadUrl: uploadResult.url,
+          size: stats.size
+        });
+
+        successCount++;
+        this.log('info', `Successfully uploaded: ${uploadPath}`);
+
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const normalizedRelativePath = this.normalizePath(fileInfo.relativePath);
+        const uploadPath = `wp-content/themes/${uploadDirName}/${normalizedRelativePath}`;
+        
+        results.push({
+          file: fileInfo.absolutePath,
+          remotePath: uploadPath,
+          status: 'error',
+          error: errorMessage
+        });
+
+        failureCount++;
+        this.log('error', `Failed to upload ${fileInfo.absolutePath}: ${errorMessage}`);
+      }
+    }
+
+    const overallStatus = failureCount === 0 ? 'success' : (successCount === 0 ? 'failure' : 'partial');
+
+    if (failureCount === 0) {
+      try {
+        this.log('info', 'All files uploaded successfully, triggering theme deployment...');
+        await this.hosting_deployWordpressTheme_deployTheme(username, domain, slug, uploadDirName, activate);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.log('error', `Theme deployment failed: ${errorMessage}`);
+        return {
+          status: 'partial',
+          summary: {
+            total: themeFiles.length,
+            successful: successCount,
+            failed: failureCount
+          },
+          results,
+          deploymentError: errorMessage
+        };
+      }
+    }
+
+    return {
+      status: overallStatus,
+      summary: {
+        total: themeFiles.length,
+        successful: successCount,
+        failed: failureCount
+      },
+      results,
+      uploadDirName,
+      activated: activate
+    };
   }
 
   /**
@@ -3284,6 +4394,7 @@ class MCPServer {
         method: method.toLowerCase(),
         url,
         headers: { ...this.headers },
+        timeout: 60000, // 60s
         validateStatus: function (status) {
           return status < 500; // Resolve only if the status code is less than 500
         }
@@ -3455,7 +4566,6 @@ async function main() {
   try {
     const argv = minimist(process.argv.slice(2), { 
         string: ['host'], 
-        int: ['port'], 
         boolean: ['stdio', 'http', 'help'],
         default: {
             host: '127.0.0.1',
