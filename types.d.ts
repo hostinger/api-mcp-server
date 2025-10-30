@@ -72,6 +72,73 @@ export interface APITools {
   };
 
   /**
+   * Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.
+   */
+  "hosting_deployJsApplication": {
+    params: {
+      /**
+       * Domain name associated with the hosting account (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * Absolute or relative path to the application archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory.
+       */
+      archivePath: string;
+      /**
+       * Whether to remove the archive file after successful deployment (default: false)
+       */
+      removeArchive?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.
+   */
+  "hosting_listJsDeployments": {
+    params: {
+      /**
+       * Domain name associated with the hosting account (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * Page number for pagination (optional)
+       */
+      page?: number;
+      /**
+       * Number of items per page (optional)
+       */
+      perPage?: number;
+      /**
+       * Filter by deployment states (optional). Valid values: pending, completed, running, failed
+       */
+      states?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.
+   */
+  "hosting_showJsDeploymentLogs": {
+    params: {
+      /**
+       * Domain name associated with the hosting account (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * Line from which to retrieve logs (optional, default 0)
+       */
+      fromLine?: number;
+      /**
+       * UUID of the JavaScript deployment build
+       */
+      buildUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve catalog items available for order.
 
 Prices in catalog items is displayed as cents (without floating point), e.g: float `17.99` is displayed as integer `1799`.

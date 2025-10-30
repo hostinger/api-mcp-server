@@ -128,6 +128,117 @@ const TOOLS = [
     "handlerMethod": "handleWordpressThemeDeploy"
   },
   {
+    "name": "hosting_deployJsApplication",
+    "topic": "hosting",
+    "description": "Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name associated with the hosting account (e.g., example.com)"
+        },
+        "archivePath": {
+          "type": "string",
+          "description": "Absolute or relative path to the application archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory."
+        },
+        "removeArchive": {
+          "type": "boolean",
+          "description": "Whether to remove the archive file after successful deployment (default: false)"
+        }
+      },
+      "required": [
+        "domain",
+        "archivePath"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "templateFile": "deploy-javascript-app.template.js",
+    "templateFileTS": "deploy-javascript-app.template.ts",
+    "handlerMethod": "handleJavascriptApplicationDeploy"
+  },
+  {
+    "name": "hosting_listJsDeployments",
+    "topic": "hosting",
+    "description": "List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name associated with the hosting account (e.g., example.com)"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination (optional)"
+        },
+        "perPage": {
+          "type": "integer",
+          "description": "Number of items per page (optional)"
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed",
+              "running",
+              "failed"
+            ]
+          },
+          "description": "Filter by deployment states (optional). Valid values: pending, completed, running, failed"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "templateFile": "list-javascript-deployments.template.js",
+    "templateFileTS": "list-javascript-deployments.template.ts",
+    "handlerMethod": "handleListJavascriptDeployments"
+  },
+  {
+    "name": "hosting_showJsDeploymentLogs",
+    "topic": "hosting",
+    "description": "Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name associated with the hosting account (e.g., example.com)"
+        },
+        "fromLine": {
+          "type": "integer",
+          "description": "Line from which to retrieve logs (optional, default 0)"
+        },
+        "buildUuid": {
+          "type": "string",
+          "description": "UUID of the JavaScript deployment build"
+        }
+      },
+      "required": [
+        "domain",
+        "buildUuid"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "templateFile": "show-javascript-deployment-logs.template.js",
+    "templateFileTS": "show-javascript-deployment-logs.template.ts",
+    "handlerMethod": "handleShowJsDeploymentLogs"
+  },
+  {
     "name": "billing_getCatalogItemListV1",
     "description": "Retrieve catalog items available for order.\n\nPrices in catalog items is displayed as cents (without floating point), e.g: float `17.99` is displayed as integer `1799`.\n\nUse this endpoint to view available services and pricing before placing orders.",
     "method": "GET",
@@ -3260,7 +3371,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.6.0
+ * Generated from OpenAPI spec version 0.8.0
  */
 class MCPServer {
   constructor() {
@@ -3278,7 +3389,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.14",
+        version: "0.1.15",
       },
       {
         capabilities: {
@@ -3303,7 +3414,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.14';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.15';
     
     return headers;
   }
@@ -3407,6 +3518,12 @@ class MCPServer {
         return await this.handleWordpressPluginDeploy(params);
       case 'hosting_deployWordpressTheme':
         return await this.handleWordpressThemeDeploy(params);
+      case 'hosting_deployJsApplication':
+        return await this.handleJavascriptApplicationDeploy(params);
+      case 'hosting_listJsDeployments':
+        return await this.handleListJavascriptDeployments(params);
+      case 'hosting_showJsDeploymentLogs':
+        return await this.handleShowJsDeploymentLogs(params);
       default:
         throw new Error(`Unknown custom tool: ${tool.name}`);
     }
@@ -4358,6 +4475,534 @@ class MCPServer {
       results,
       uploadDirName,
       activated: activate
+    };
+  }
+
+  hosting_deployJsApplication_validateArchiveFormat(filePath) {
+    const validExtensions = ['zip', 'tar', 'tar.gz', 'tgz', '7z', 'gz', 'gzip'];
+    const fileName = path.basename(filePath).toLowerCase();
+    
+    for (const ext of validExtensions) {
+      if (fileName.endsWith(`.${ext}`)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  hosting_deployJsApplication_validateRequiredParams(params) {
+    const { domain, archivePath, removeArchive } = params;
+
+    if (!domain || typeof domain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    if (!archivePath || typeof archivePath !== 'string') {
+      throw new Error('archivePath is required and must be a string');
+    }
+
+    if (removeArchive !== undefined && typeof removeArchive !== 'boolean') {
+      throw new Error('removeArchive must be a boolean if provided');
+    }
+  }
+
+  hosting_deployJsApplication_removeArchive(archivePath, removeArchive) {
+    if (!removeArchive) {
+      return false;
+    }
+
+    try {
+      this.log('info', `Removing archive file: ${archivePath}`);
+      fs.unlinkSync(archivePath);
+      this.log('info', `Successfully removed archive file: ${archivePath}`);
+      return true;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to remove archive file: ${errorMessage}`);
+      // Don't fail the entire operation if archive removal fails
+      return false;
+    }
+  }
+
+  hosting_deployJsApplication_validateArchiveFile(archivePath) {
+    if (!fs.existsSync(archivePath)) {
+      throw new Error(`Archive file not found: ${archivePath}`);
+    }
+
+    const archiveStats = fs.statSync(archivePath);
+    if (!archiveStats.isFile()) {
+      throw new Error(`Archive path is not a file: ${archivePath}`);
+    }
+
+    if (!this.hosting_deployJsApplication_validateArchiveFormat(archivePath)) {
+      throw new Error('Invalid archive format. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip');
+    }
+  }
+
+  async hosting_deployJsApplication_fetchBuildSettings(username, domain, archivePath) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const archiveBasename = path.basename(archivePath);
+    const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/nodejs/builds/settings/from-archive?archive_path=${encodeURIComponent(archiveBasename)}`, baseUrl).toString();
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const config = {
+        method: 'get',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`
+        },
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      this.log('info', `Successfully fetched build settings for ${domain}`);
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to fetch build settings: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async hosting_deployJsApplication_triggerBuild(username, domain, archivePath, buildSettings) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/nodejs/builds`, baseUrl).toString();
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const archiveBasename = path.basename(archivePath);
+      const buildData = {
+        ...buildSettings,
+        node_version: buildSettings?.node_version || 20,
+        output_directory: buildSettings?.output_directory || 'dist',
+        build_script: buildSettings?.build_script || 'build',
+        source_type: 'archive',
+        source_options: {
+          archive_path: archiveBasename
+        }
+      };
+
+      const config = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: buildData,
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      this.log('info', `Successfully triggered build for ${domain}`);
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger build: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async handleJavascriptApplicationDeploy(params) {
+    const { domain, archivePath, removeArchive = false } = params;
+
+    this.hosting_deployJsApplication_validateRequiredParams(params);
+    this.hosting_deployJsApplication_validateArchiveFile(archivePath);
+
+    // Auto-resolve username from domain
+    this.log('info', `Resolving username from domain: ${domain}`);
+    const username = await this.resolveUsername(domain);
+
+    // Upload archive file
+    this.log('info', `Starting archive upload for ${domain}`);
+    
+    let uploadCredentials;
+    try {
+      uploadCredentials = await this.fetchUploadCredentials(username, domain);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch upload credentials: ${errorMessage}`);
+    }
+
+    const { url: uploadUrl, auth_key: authToken, rest_auth_key: authRestToken } = uploadCredentials;
+
+    if (!uploadUrl || !authToken || !authRestToken) {
+      throw new Error('Invalid upload credentials received from API');
+    }
+
+    const archiveBasename = path.basename(archivePath);
+    let uploadResult;
+    try {
+      const stats = fs.statSync(archivePath);
+      uploadResult = await this.uploadFile(
+        archivePath,
+        archiveBasename,
+        uploadUrl,
+        authRestToken,
+        authToken
+      );
+
+      this.log('info', `Successfully uploaded archive: ${archiveBasename}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to upload archive: ${errorMessage}`);
+    }
+
+    // Fetch build settings
+    let buildSettings;
+    try {
+      this.log('info', `Fetching build settings for ${domain}`);
+      buildSettings = await this.hosting_deployJsApplication_fetchBuildSettings(username, domain, archivePath);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to fetch build settings: ${errorMessage}`);
+      const archiveRemoved = this.hosting_deployJsApplication_removeArchive(archivePath, removeArchive);
+
+      return {
+        upload: {
+          status: 'success',
+          data: {
+            filename: uploadResult.filename
+          }
+        },
+        resolveSettings: {
+          status: 'error',
+          error: errorMessage
+        },
+        build: {
+          status: 'skipped'
+        },
+        removeArchive: {
+          status: archiveRemoved ? 'success' : 'skipped'
+        }
+      };
+    }
+
+    // Trigger build
+    let buildResult;
+    try {
+      this.log('info', `Triggering build for ${domain}`);
+      buildResult = await this.hosting_deployJsApplication_triggerBuild(username, domain, archivePath, buildSettings);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger build: ${errorMessage}`);
+      const archiveRemoved = this.hosting_deployJsApplication_removeArchive(archivePath, removeArchive);
+
+      return {
+        upload: {
+          status: 'success',
+          data: {
+            filename: uploadResult.filename
+          }
+        },
+        resolveSettings: {
+          status: 'success',
+          data: buildSettings
+        },
+        build: {
+          status: 'error',
+          error: errorMessage
+        },
+        removeArchive: {
+          status: archiveRemoved ? 'success' : 'skipped'
+        }
+      };
+    }
+
+    const archiveRemoved = this.hosting_deployJsApplication_removeArchive(archivePath, removeArchive);
+
+    return {
+      upload: {
+        status: 'success',
+        data: {
+          filename: uploadResult.filename
+        }
+      },
+      resolveSettings: {
+        status: 'success',
+        data: buildSettings
+      },
+      build: {
+        status: 'success',
+        data: buildResult
+      },
+      removeArchive: {
+        status: archiveRemoved ? 'success' : 'skipped'
+      }
+    };
+  }
+
+  hosting_listJsDeployments_validateRequiredParams(params) {
+    const { domain } = params;
+
+    if (!domain || typeof domain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+  }
+
+  hosting_listJsDeployments_buildQueryParams(params) {
+    const { page, perPage, states } = params;
+    const queryParams = new URLSearchParams();
+
+    if (page !== undefined && page !== null) {
+      queryParams.append('page', page.toString());
+    }
+
+    if (perPage !== undefined && perPage !== null) {
+      queryParams.append('per_page', perPage.toString());
+    }
+
+    if (states && Array.isArray(states) && states.length > 0) {
+      states.forEach(state => {
+        queryParams.append('states[]', state);
+      });
+    }
+
+    return queryParams.toString();
+  }
+
+  async hosting_listJsDeployments_fetchDeployments(username, domain, queryParams) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/nodejs/builds`, baseUrl).toString();
+    
+    const fullUrl = queryParams ? `${url}?${queryParams}` : url;
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const config = {
+        method: 'get',
+        url: fullUrl,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`
+        },
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      this.log('info', `Successfully fetched deployments for ${domain}`);
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to fetch deployments: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async handleListJavascriptDeployments(params) {
+    const { domain, page, perPage, states } = params;
+
+    this.hosting_listJsDeployments_validateRequiredParams(params);
+
+    // Auto-resolve username from domain
+    this.log('info', `Resolving username from domain: ${domain}`);
+    const username = await this.resolveUsername(domain);
+
+    // Build query parameters
+    const queryParams = this.hosting_listJsDeployments_buildQueryParams(params);
+
+    // Fetch deployments
+    let deployments;
+    try {
+      this.log('info', `Fetching deployments for ${domain}`);
+      deployments = await this.hosting_listJsDeployments_fetchDeployments(username, domain, queryParams);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to fetch deployments: ${errorMessage}`);
+      throw error;
+    }
+
+    return {
+      status: 'success',
+      domain,
+      username,
+      queryParams: {
+        page,
+        perPage,
+        states
+      },
+      deployments
+    };
+  }
+
+  hosting_showJsDeploymentLogs_validateRequiredParams(params) {
+    const { domain, buildUuid, fromLine } = params;
+
+    if (!domain || typeof domain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    if (!buildUuid || typeof buildUuid !== 'string') {
+      throw new Error('buildUuid is required and must be a string');
+    }
+
+    if (fromLine !== undefined && (typeof fromLine !== 'number' || !Number.isInteger(fromLine) || fromLine < 0)) {
+      throw new Error('fromLine must be a non-negative integer when provided');
+    }
+  }
+
+  hosting_showJsDeploymentLogs_buildQueryParams(params) {
+    const { fromLine } = params;
+    const queryParams = new URLSearchParams();
+
+    const line = (typeof fromLine === 'number' && Number.isInteger(fromLine) && fromLine >= 0) ? fromLine : 0;
+    queryParams.append('from_line', line.toString());
+
+    return queryParams.toString();
+  }
+
+  async hosting_showJsDeploymentLogs_fetchLogs(username, domain, buildUuid, queryParams) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/nodejs/builds/${buildUuid}/logs`, baseUrl).toString();
+
+    const fullUrl = queryParams ? `${url}?${queryParams}` : url;
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const config = {
+        method: 'get',
+        url: fullUrl,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`
+        },
+        timeout: 60000,
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      this.log('info', `Successfully fetched logs for ${domain} build ${buildUuid}`);
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to fetch logs: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async handleShowJsDeploymentLogs(params) {
+    const { domain, buildUuid, fromLine } = params;
+
+    this.hosting_showJsDeploymentLogs_validateRequiredParams(params);
+
+    this.log('info', `Resolving username from domain: ${domain}`);
+    const username = await this.resolveUsername(domain);
+
+    const queryParams = this.hosting_showJsDeploymentLogs_buildQueryParams(params);
+
+    let logs;
+    try {
+      this.log('info', `Fetching logs for ${domain}, build ${buildUuid}`);
+      logs = await this.hosting_showJsDeploymentLogs_fetchLogs(username, domain, buildUuid, queryParams);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to fetch logs: ${errorMessage}`);
+      throw error;
+    }
+
+    const effectiveFromLine = (typeof fromLine === 'number' && Number.isInteger(fromLine) && fromLine >= 0) ? fromLine : 0;
+
+    return {
+      domain,
+      username,
+      buildUuid,
+      fromLine: effectiveFromLine,
+      logs
     };
   }
 

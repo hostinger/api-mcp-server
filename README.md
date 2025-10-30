@@ -184,6 +184,46 @@ Deploy a WordPress theme from a directory to a hosting server. This tool uploads
 - `themePath`: Absolute or relative path to the theme directory containing all theme files (required)
 - `activate`: Whether to activate the theme after deployment (default: false) 
 
+### hosting_deployJsApplication
+
+Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.
+
+- **Method**: ``
+- **Path**: ``
+
+**Parameters**:
+
+- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
+- `archivePath`: Absolute or relative path to the application archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory. (required)
+- `removeArchive`: Whether to remove the archive file after successful deployment (default: false) 
+
+### hosting_listJsDeployments
+
+List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.
+
+- **Method**: ``
+- **Path**: ``
+
+**Parameters**:
+
+- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
+- `page`: Page number for pagination (optional) 
+- `perPage`: Number of items per page (optional) 
+- `states`: Filter by deployment states (optional). Valid values: pending, completed, running, failed 
+
+### hosting_showJsDeploymentLogs
+
+Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.
+
+- **Method**: ``
+- **Path**: ``
+
+**Parameters**:
+
+- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
+- `fromLine`: Line from which to retrieve logs (optional, default 0) 
+- `buildUuid`: UUID of the JavaScript deployment build (required)
+
 ### billing_getCatalogItemListV1
 
 Retrieve catalog items available for order.
