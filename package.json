@@ -6,6 +6,7 @@
     "type": "git",
     "url": "https://github.com/hostinger/api-mcp-server.git"
   },
+  "mcpName": "io.github.hostinger/hostinger-api-mcp",
   "license": "MIT",
   "keywords": [
     "hostinger",
