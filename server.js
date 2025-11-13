@@ -161,6 +161,39 @@ const TOOLS = [
     "handlerMethod": "handleJavascriptApplicationDeploy"
   },
   {
+    "name": "hosting_deployStaticWebsite",
+    "topic": "hosting",
+    "description": "Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The archive will be extracted and deployed directly without any build steps. The username will be automatically resolved from the domain.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name associated with the hosting account (e.g., example.com)"
+        },
+        "archivePath": {
+          "type": "string",
+          "description": "Absolute or relative path to the static website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mystaticwebsite_20250115_143022.zip)"
+        },
+        "removeArchive": {
+          "type": "boolean",
+          "description": "Whether to remove the archive file after successful deployment (default: false)"
+        }
+      },
+      "required": [
+        "domain",
+        "archivePath"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "templateFile": "deploy-static-website.template.js",
+    "templateFileTS": "deploy-static-website.template.ts",
+    "handlerMethod": "handleStaticWebsiteDeploy"
+  },
+  {
     "name": "hosting_listJsDeployments",
     "topic": "hosting",
     "description": "List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.",
@@ -3371,7 +3404,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.8.0
+ * Generated from OpenAPI spec version 0.9.0
  */
 class MCPServer {
   constructor() {
@@ -3389,7 +3422,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.15",
+        version: "0.1.18",
       },
       {
         capabilities: {
@@ -3414,7 +3447,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.15';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.18';
     
     return headers;
   }
@@ -3520,6 +3553,8 @@ class MCPServer {
         return await this.handleWordpressThemeDeploy(params);
       case 'hosting_deployJsApplication':
         return await this.handleJavascriptApplicationDeploy(params);
+      case 'hosting_deployStaticWebsite':
+        return await this.handleStaticWebsiteDeploy(params);
       case 'hosting_listJsDeployments':
         return await this.handleListJavascriptDeployments(params);
       case 'hosting_showJsDeploymentLogs':
@@ -4775,6 +4810,211 @@ class MCPServer {
       build: {
         status: 'success',
         data: buildResult
+      },
+      removeArchive: {
+        status: archiveRemoved ? 'success' : 'skipped'
+      }
+    };
+  }
+
+  hosting_deployStaticWebsite_validateArchiveFormat(filePath) {
+    const validExtensions = ['zip', 'tar', 'tar.gz', 'tgz', '7z', 'gz', 'gzip'];
+    const fileName = path.basename(filePath).toLowerCase();
+    
+    for (const ext of validExtensions) {
+      if (fileName.endsWith(`.${ext}`)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  hosting_deployStaticWebsite_validateRequiredParams(params) {
+    const { domain, archivePath, removeArchive } = params;
+
+    if (!domain || typeof domain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    if (!archivePath || typeof archivePath !== 'string') {
+      throw new Error('archivePath is required and must be a string');
+    }
+
+    if (removeArchive !== undefined && typeof removeArchive !== 'boolean') {
+      throw new Error('removeArchive must be a boolean if provided');
+    }
+  }
+
+  hosting_deployStaticWebsite_removeArchive(archivePath, removeArchive) {
+    if (!removeArchive) {
+      return false;
+    }
+
+    try {
+      this.log('info', `Removing archive file: ${archivePath}`);
+      fs.unlinkSync(archivePath);
+      this.log('info', `Successfully removed archive file: ${archivePath}`);
+      return true;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to remove archive file: ${errorMessage}`);
+      return false;
+    }
+  }
+
+  hosting_deployStaticWebsite_validateArchiveFile(archivePath) {
+    if (!fs.existsSync(archivePath)) {
+      throw new Error(`Archive file not found: ${archivePath}`);
+    }
+
+    const archiveStats = fs.statSync(archivePath);
+    if (!archiveStats.isFile()) {
+      throw new Error(`Archive path is not a file: ${archivePath}`);
+    }
+
+    if (!this.hosting_deployStaticWebsite_validateArchiveFormat(archivePath)) {
+      throw new Error('Invalid archive format. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip');
+    }
+  }
+
+  async hosting_deployStaticWebsite_triggerDeploy(username, domain, archivePath) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/deploy`, baseUrl).toString();
+
+    try {
+      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      if (!bearerToken) {
+        throw new Error('API_TOKEN environment variable not found');
+      }
+
+      const archiveBasename = path.basename(archivePath);
+      const deployData = {
+        archive_path: archiveBasename
+      };
+
+      const config = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: deployData,
+        timeout: 60000,
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      this.log('info', `Successfully triggered deployment for ${domain}`);
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger deployment: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async handleStaticWebsiteDeploy(params) {
+    const { domain, archivePath, removeArchive = false } = params;
+
+    this.hosting_deployStaticWebsite_validateRequiredParams(params);
+    this.hosting_deployStaticWebsite_validateArchiveFile(archivePath);
+
+    this.log('info', `Resolving username from domain: ${domain}`);
+    const username = await this.resolveUsername(domain);
+
+    this.log('info', `Starting archive upload for ${domain}`);
+    
+    let uploadCredentials;
+    try {
+      uploadCredentials = await this.fetchUploadCredentials(username, domain);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch upload credentials: ${errorMessage}`);
+    }
+
+    const { url: uploadUrl, auth_key: authToken, rest_auth_key: authRestToken } = uploadCredentials;
+
+    if (!uploadUrl || !authToken || !authRestToken) {
+      throw new Error('Invalid upload credentials received from API');
+    }
+
+    const archiveBasename = path.basename(archivePath);
+    let uploadResult;
+    try {
+      const stats = fs.statSync(archivePath);
+      uploadResult = await this.uploadFile(
+        archivePath,
+        archiveBasename,
+        uploadUrl,
+        authRestToken,
+        authToken
+      );
+
+      this.log('info', `Successfully uploaded archive: ${archiveBasename}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to upload archive: ${errorMessage}`);
+    }
+
+    let deployResult;
+    try {
+      this.log('info', `Triggering deployment for ${domain}`);
+      deployResult = await this.hosting_deployStaticWebsite_triggerDeploy(username, domain, archivePath);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger deployment: ${errorMessage}`);
+      const archiveRemoved = this.hosting_deployStaticWebsite_removeArchive(archivePath, removeArchive);
+
+      return {
+        upload: {
+          status: 'success',
+          data: {
+            filename: uploadResult.filename
+          }
+        },
+        deploy: {
+          status: 'error',
+          error: errorMessage
+        },
+        removeArchive: {
+          status: archiveRemoved ? 'success' : 'skipped'
+        }
+      };
+    }
+
+    const archiveRemoved = this.hosting_deployStaticWebsite_removeArchive(archivePath, removeArchive);
+
+    return {
+      upload: {
+        status: 'success',
+        data: {
+          filename: uploadResult.filename
+        }
+      },
+      deploy: {
+        status: 'success',
+        data: deployResult
       },
       removeArchive: {
         status: archiveRemoved ? 'success' : 'skipped'

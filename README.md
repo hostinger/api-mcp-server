@@ -197,6 +197,19 @@ Deploy a JavaScript application from an archive file to a hosting server. IMPORT
 - `archivePath`: Absolute or relative path to the application archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory. (required)
 - `removeArchive`: Whether to remove the archive file after successful deployment (default: false) 
 
+### hosting_deployStaticWebsite
+
+Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The archive will be extracted and deployed directly without any build steps. The username will be automatically resolved from the domain.
+
+- **Method**: ``
+- **Path**: ``
+
+**Parameters**:
+
+- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
+- `archivePath`: Absolute or relative path to the static website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mystaticwebsite_20250115_143022.zip) (required)
+- `removeArchive`: Whether to remove the archive file after successful deployment (default: false) 
+
 ### hosting_listJsDeployments
 
 List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.

@@ -93,6 +93,27 @@ export interface APITools {
   };
 
   /**
+   * Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The archive will be extracted and deployed directly without any build steps. The username will be automatically resolved from the domain.
+   */
+  "hosting_deployStaticWebsite": {
+    params: {
+      /**
+       * Domain name associated with the hosting account (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * Absolute or relative path to the static website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mystaticwebsite_20250115_143022.zip)
+       */
+      archivePath: string;
+      /**
+       * Whether to remove the archive file after successful deployment (default: false)
+       */
+      removeArchive?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.
    */
   "hosting_listJsDeployments": {
