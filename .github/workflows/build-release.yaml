@@ -11,7 +11,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-      pull-requests: read
     steps:
       - name: Repo checkout
         uses: actions/checkout@v4
@@ -35,7 +34,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-      pull-requests: read
     steps:
       - uses: actions/checkout@v4
 
@@ -60,7 +58,6 @@ jobs:
       contents: read
       id-token: write
       packages: write
-      pull-requests: read
     steps:
       - uses: actions/checkout@v4
 
@@ -86,7 +83,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-      pull-requests: read
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
