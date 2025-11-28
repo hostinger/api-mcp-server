@@ -11,6 +11,8 @@ jobs:
     permissions:
       id-token: write
       contents: write
+    outputs:
+      new_version: ${{ steps.bump.outputs.new_version }}
     steps:
       - name: Repo checkout
         uses: actions/checkout@v4
@@ -79,7 +81,7 @@ jobs:
 
   publish-mcp:
     runs-on: ubuntu-latest
-    needs: [ publish-npmjs ]
+    needs: [ release, publish-npmjs ]
     permissions:
       id-token: write
       contents: read
@@ -99,8 +101,9 @@ jobs:
 
       - name: Sync version in server.json
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
+          VERSION=${{ needs.release.outputs.new_version }}
           jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' server.json > tmp && mv tmp server.json
+          cat server.json
 
       - name: Login to MCP Registry using GitHub OIDC
         run: ./mcp-publisher login github-oidc
