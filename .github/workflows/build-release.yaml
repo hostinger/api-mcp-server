@@ -103,6 +103,7 @@ jobs:
         run: |
           VERSION=${{ needs.release.outputs.new_version }}
           jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' server.json > tmp && mv tmp server.json
+          cat server.json
 
       - name: Login to MCP Registry using GitHub OIDC
         run: ./mcp-publisher login github-oidc
