@@ -1052,13 +1052,89 @@ The contact will be automatically subscribed to email communications.
        */
       surname?: string;
       /**
-       * group_uuids parameter
-       */
-      group_uuids?: array;
-      /**
        * note parameter
        */
       note?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Filter and retrieve contacts based on segmentation criteria.
+
+This endpoint allows filtering contacts using specified conditions and returns a paginated list of matching contacts.
+The results can be filtered using various attributes like email, name, subscription status, etc.
+   */
+  "reach_filterSegmentContactsV1": {
+    params: {
+      /**
+       * conditions parameter
+       */
+      conditions: array;
+      /**
+       * logic parameter
+       */
+      logic: string;
+      /**
+       * page parameter
+       */
+      page?: number;
+      /**
+       * per_page parameter
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a list of all contact segments.
+
+This endpoint returns a list of contact segments that can be used to organize contacts.
+   */
+  "reach_listContactSegmentsV1": {
+    params: {
+
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a new contact segment.
+
+This endpoint allows creating a new contact segment that can be used to organize contacts.
+The segment can be configured with specific criteria like email, name, subscription status, etc.
+   */
+  "reach_createANewContactSegmentV1": {
+    params: {
+      /**
+       * name parameter
+       */
+      name: string;
+      /**
+       * conditions parameter
+       */
+      conditions: array;
+      /**
+       * logic parameter
+       */
+      logic: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get details of a specific segment.
+
+This endpoint retrieves information about a single segment identified by UUID.
+Segments are used to organize and group contacts based on specific criteria.
+   */
+  "reach_getSegmentDetailsV1": {
+    params: {
+      /**
+       * Segment uuid parameter
+       */
+      segmentUuid: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -2128,7 +2204,7 @@ Snapshots, if there are any, will be deleted.
 ## Password Requirements
 Password will be checked against leaked password databases. 
 Requirements for the password are:
-- At least 8 characters long
+- At least 12 characters long
 - At least one uppercase letter
 - At least one lowercase letter
 - At least one number

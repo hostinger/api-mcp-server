@@ -919,8 +919,65 @@ The contact will be automatically subscribed to email communications.
 - `email`: email parameter (required)
 - `name`: name parameter 
 - `surname`: surname parameter 
-- `group_uuids`: group_uuids parameter 
 - `note`: note parameter 
+
+### reach_filterSegmentContactsV1
+
+Filter and retrieve contacts based on segmentation criteria.
+
+This endpoint allows filtering contacts using specified conditions and returns a paginated list of matching contacts.
+The results can be filtered using various attributes like email, name, subscription status, etc.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/segmentation/filters/contacts`
+
+**Parameters**:
+
+- `conditions`: conditions parameter (required)
+- `logic`: logic parameter (required)
+- `page`: page parameter 
+- `per_page`: per_page parameter 
+
+### reach_listContactSegmentsV1
+
+Get a list of all contact segments.
+
+This endpoint returns a list of contact segments that can be used to organize contacts.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/segmentation/segments`
+
+
+
+### reach_createANewContactSegmentV1
+
+Create a new contact segment.
+
+This endpoint allows creating a new contact segment that can be used to organize contacts.
+The segment can be configured with specific criteria like email, name, subscription status, etc.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/segmentation/segments`
+
+**Parameters**:
+
+- `name`: name parameter (required)
+- `conditions`: conditions parameter (required)
+- `logic`: logic parameter (required)
+
+### reach_getSegmentDetailsV1
+
+Get details of a specific segment.
+
+This endpoint retrieves information about a single segment identified by UUID.
+Segments are used to organize and group contacts based on specific criteria.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/segmentation/segments/{segmentUuid}`
+
+**Parameters**:
+
+- `segmentUuid`: Segment uuid parameter (required)
 
 ### VPS_getDataCenterListV1
 
@@ -1743,7 +1800,7 @@ Snapshots, if there are any, will be deleted.
 ## Password Requirements
 Password will be checked against leaked password databases. 
 Requirements for the password are:
-- At least 8 characters long
+- At least 12 characters long
 - At least one uppercase letter
 - At least one lowercase letter
 - At least one number

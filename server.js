@@ -1619,14 +1619,6 @@ const TOOLS = [
           "type": "string",
           "description": "surname parameter"
         },
-        "group_uuids": {
-          "type": "array",
-          "description": "group_uuids parameter",
-          "items": {
-            "type": "string",
-            "description": "Group UUID"
-          }
-        },
         "note": {
           "type": "string",
           "description": "note parameter"
@@ -1634,6 +1626,254 @@ const TOOLS = [
       },
       "required": [
         "email"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "reach_filterSegmentContactsV1",
+    "description": "Filter and retrieve contacts based on segmentation criteria.\n\nThis endpoint allows filtering contacts using specified conditions and returns a paginated list of matching contacts.\nThe results can be filtered using various attributes like email, name, subscription status, etc.",
+    "method": "POST",
+    "path": "/api/reach/v1/segmentation/filters/contacts",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "description": "conditions parameter",
+          "items": {
+            "type": "object",
+            "description": "conditions parameter",
+            "properties": {
+              "operator": {
+                "type": "string",
+                "description": "operator parameter",
+                "enum": [
+                  "equals",
+                  "not_equals",
+                  "contains",
+                  "not_contains",
+                  "gte",
+                  "lte",
+                  "exists",
+                  "within_last_days",
+                  "not_within_last_days",
+                  "older_than_days",
+                  "processed",
+                  "not_processed",
+                  "delivered",
+                  "not_delivered",
+                  "dropped",
+                  "not_dropped",
+                  "bounced",
+                  "not_bounced",
+                  "opened",
+                  "not_opened",
+                  "clicked",
+                  "not_clicked",
+                  "unsubscribed",
+                  "not_unsubscribed"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "description": "value parameter"
+              },
+              "attribute": {
+                "type": "string",
+                "description": "attribute parameter",
+                "enum": [
+                  "note",
+                  "comment",
+                  "domain",
+                  "integration",
+                  "source",
+                  "name",
+                  "surname",
+                  "email",
+                  "subscribed_at",
+                  "unsubscribed_at",
+                  "subscription_status",
+                  "processed",
+                  "opened",
+                  "clicked",
+                  "delivered",
+                  "bounced",
+                  "unsubscribed",
+                  "dropped",
+                  "tag",
+                  "campaigns"
+                ]
+              }
+            }
+          }
+        },
+        "logic": {
+          "type": "string",
+          "description": "logic parameter",
+          "enum": [
+            "AND",
+            "OR"
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "description": "page parameter"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "per_page parameter"
+        }
+      },
+      "required": [
+        "conditions",
+        "logic"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "reach_listContactSegmentsV1",
+    "description": "Get a list of all contact segments.\n\nThis endpoint returns a list of contact segments that can be used to organize contacts.",
+    "method": "GET",
+    "path": "/api/reach/v1/segmentation/segments",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "reach_createANewContactSegmentV1",
+    "description": "Create a new contact segment.\n\nThis endpoint allows creating a new contact segment that can be used to organize contacts.\nThe segment can be configured with specific criteria like email, name, subscription status, etc.",
+    "method": "POST",
+    "path": "/api/reach/v1/segmentation/segments",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "name parameter"
+        },
+        "conditions": {
+          "type": "array",
+          "description": "conditions parameter",
+          "items": {
+            "type": "object",
+            "description": "conditions parameter",
+            "properties": {
+              "operator": {
+                "type": "string",
+                "description": "operator parameter",
+                "enum": [
+                  "equals",
+                  "not_equals",
+                  "contains",
+                  "not_contains",
+                  "gte",
+                  "lte",
+                  "exists",
+                  "within_last_days",
+                  "not_within_last_days",
+                  "older_than_days",
+                  "processed",
+                  "not_processed",
+                  "delivered",
+                  "not_delivered",
+                  "dropped",
+                  "not_dropped",
+                  "bounced",
+                  "not_bounced",
+                  "opened",
+                  "not_opened",
+                  "clicked",
+                  "not_clicked",
+                  "unsubscribed",
+                  "not_unsubscribed"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "description": "value parameter"
+              },
+              "attribute": {
+                "type": "string",
+                "description": "attribute parameter",
+                "enum": [
+                  "note",
+                  "comment",
+                  "domain",
+                  "integration",
+                  "source",
+                  "name",
+                  "surname",
+                  "email",
+                  "subscribed_at",
+                  "unsubscribed_at",
+                  "subscription_status",
+                  "processed",
+                  "opened",
+                  "clicked",
+                  "delivered",
+                  "bounced",
+                  "unsubscribed",
+                  "dropped",
+                  "tag",
+                  "campaigns"
+                ]
+              }
+            }
+          }
+        },
+        "logic": {
+          "type": "string",
+          "description": "logic parameter",
+          "enum": [
+            "AND",
+            "OR"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "conditions",
+        "logic"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "reach_getSegmentDetailsV1",
+    "description": "Get details of a specific segment.\n\nThis endpoint retrieves information about a single segment identified by UUID.\nSegments are used to organize and group contacts based on specific criteria.",
+    "method": "GET",
+    "path": "/api/reach/v1/segmentation/segments/{segmentUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "segmentUuid": {
+          "type": "string",
+          "description": "Segment uuid parameter"
+        }
+      },
+      "required": [
+        "segmentUuid"
       ]
     },
     "security": [
@@ -3091,7 +3331,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_recreateVirtualMachineV1",
-    "description": "Recreate a virtual machine from scratch.\n\nThe recreation process involves reinstalling the operating system and resetting the virtual machine to its initial state.\nSnapshots, if there are any, will be deleted.\n\n## Password Requirements\nPassword will be checked against leaked password databases. \nRequirements for the password are:\n- At least 8 characters long\n- At least one uppercase letter\n- At least one lowercase letter\n- At least one number\n- Is not leaked publicly\n\n**This operation is irreversible and will result in the loss of all data stored on the virtual machine!**\n\nUse this endpoint to completely rebuild VPS instances with fresh OS installation.",
+    "description": "Recreate a virtual machine from scratch.\n\nThe recreation process involves reinstalling the operating system and resetting the virtual machine to its initial state.\nSnapshots, if there are any, will be deleted.\n\n## Password Requirements\nPassword will be checked against leaked password databases. \nRequirements for the password are:\n- At least 12 characters long\n- At least one uppercase letter\n- At least one lowercase letter\n- At least one number\n- Is not leaked publicly\n\n**This operation is irreversible and will result in the loss of all data stored on the virtual machine!**\n\nUse this endpoint to completely rebuild VPS instances with fresh OS installation.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/recreate",
     "inputSchema": {
@@ -3422,7 +3662,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.22",
+        version: "0.1.23",
       },
       {
         capabilities: {
@@ -3447,7 +3687,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.22';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.23';
     
     return headers;
   }
@@ -4639,8 +4879,6 @@ class MCPServer {
       const buildData = {
         ...buildSettings,
         node_version: buildSettings?.node_version || 20,
-        output_directory: buildSettings?.output_directory || 'dist',
-        build_script: buildSettings?.build_script || 'build',
         source_type: 'archive',
         source_options: {
           archive_path: archiveBasename
