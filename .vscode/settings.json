@@ -1,0 +1,6 @@
+{
+    "[ruby]": {
+        "diffEditor.codeLens": true,
+        "editor.formatOnType": true
+    }
+}
