@@ -1060,39 +1060,11 @@ The contact will be automatically subscribed to email communications.
   };
 
   /**
-   * Filter and retrieve contacts based on segmentation criteria.
-
-This endpoint allows filtering contacts using specified conditions and returns a paginated list of matching contacts.
-The results can be filtered using various attributes like email, name, subscription status, etc.
-   */
-  "reach_filterSegmentContactsV1": {
-    params: {
-      /**
-       * conditions parameter
-       */
-      conditions: array;
-      /**
-       * logic parameter
-       */
-      logic: string;
-      /**
-       * page parameter
-       */
-      page?: number;
-      /**
-       * per_page parameter
-       */
-      per_page?: number;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
    * Get a list of all contact segments.
 
 This endpoint returns a list of contact segments that can be used to organize contacts.
    */
-  "reach_listContactSegmentsV1": {
+  "reach_listSegmentsV1": {
     params: {
 
     };
@@ -1119,6 +1091,30 @@ The segment can be configured with specific criteria like email, name, subscript
        * logic parameter
        */
       logic: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve contacts associated with a specific segment.
+
+This endpoint allows you to fetch and filter contacts that belong to a particular segment,
+identified by its UUID.
+   */
+  "reach_listSegmentContactsV1": {
+    params: {
+      /**
+       * Segment uuid parameter
+       */
+      segmentUuid: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
     };
     response: any; // Response structure will depend on the API
   };
@@ -1950,7 +1946,7 @@ If virtual machine setup fails for any reason, login to [hPanel](https://hpanel.
 
 If no payment method is provided, your default payment method will be used automatically.
 
-Use this endpoint to create new VPS instances.                        
+Use this endpoint to create new VPS instances.
    */
   "VPS_purchaseNewVirtualMachineV1": {
     params: {

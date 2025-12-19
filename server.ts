@@ -1653,113 +1653,7 @@ const TOOLS: OpenApiTool[] = [
     ]
   },
   {
-    "name": "reach_filterSegmentContactsV1",
-    "description": "Filter and retrieve contacts based on segmentation criteria.\n\nThis endpoint allows filtering contacts using specified conditions and returns a paginated list of matching contacts.\nThe results can be filtered using various attributes like email, name, subscription status, etc.",
-    "method": "POST",
-    "path": "/api/reach/v1/segmentation/filters/contacts",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "conditions": {
-          "type": "array",
-          "description": "conditions parameter",
-          "items": {
-            "type": "object",
-            "description": "conditions parameter",
-            "properties": {
-              "operator": {
-                "type": "string",
-                "description": "operator parameter",
-                "enum": [
-                  "equals",
-                  "not_equals",
-                  "contains",
-                  "not_contains",
-                  "gte",
-                  "lte",
-                  "exists",
-                  "within_last_days",
-                  "not_within_last_days",
-                  "older_than_days",
-                  "processed",
-                  "not_processed",
-                  "delivered",
-                  "not_delivered",
-                  "dropped",
-                  "not_dropped",
-                  "bounced",
-                  "not_bounced",
-                  "opened",
-                  "not_opened",
-                  "clicked",
-                  "not_clicked",
-                  "unsubscribed",
-                  "not_unsubscribed"
-                ]
-              },
-              "value": {
-                "type": "string",
-                "description": "value parameter"
-              },
-              "attribute": {
-                "type": "string",
-                "description": "attribute parameter",
-                "enum": [
-                  "note",
-                  "comment",
-                  "domain",
-                  "integration",
-                  "source",
-                  "name",
-                  "surname",
-                  "email",
-                  "subscribed_at",
-                  "unsubscribed_at",
-                  "subscription_status",
-                  "processed",
-                  "opened",
-                  "clicked",
-                  "delivered",
-                  "bounced",
-                  "unsubscribed",
-                  "dropped",
-                  "tag",
-                  "campaigns"
-                ]
-              }
-            }
-          }
-        },
-        "logic": {
-          "type": "string",
-          "description": "logic parameter",
-          "enum": [
-            "AND",
-            "OR"
-          ]
-        },
-        "page": {
-          "type": "integer",
-          "description": "page parameter"
-        },
-        "per_page": {
-          "type": "integer",
-          "description": "per_page parameter"
-        }
-      },
-      "required": [
-        "conditions",
-        "logic"
-      ]
-    },
-    "security": [
-      {
-        "apiToken": []
-      }
-    ]
-  },
-  {
-    "name": "reach_listContactSegmentsV1",
+    "name": "reach_listSegmentsV1",
     "description": "Get a list of all contact segments.\n\nThis endpoint returns a list of contact segments that can be used to organize contacts.",
     "method": "GET",
     "path": "/api/reach/v1/segmentation/segments",
@@ -1869,6 +1763,37 @@ const TOOLS: OpenApiTool[] = [
         "name",
         "conditions",
         "logic"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "reach_listSegmentContactsV1",
+    "description": "Retrieve contacts associated with a specific segment.\n\nThis endpoint allows you to fetch and filter contacts that belong to a particular segment,\nidentified by its UUID.",
+    "method": "GET",
+    "path": "/api/reach/v1/segmentation/segments/{segmentUuid}/contacts",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "segmentUuid": {
+          "type": "string",
+          "description": "Segment uuid parameter"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "segmentUuid"
       ]
     },
     "security": [
@@ -3031,7 +2956,7 @@ const TOOLS: OpenApiTool[] = [
   },
   {
     "name": "VPS_purchaseNewVirtualMachineV1",
-    "description": "Purchase and setup a new virtual machine.\n\nIf virtual machine setup fails for any reason, login to [hPanel](https://hpanel.hostinger.com/) and complete the setup manually.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nUse this endpoint to create new VPS instances.                        ",
+    "description": "Purchase and setup a new virtual machine.\n\nIf virtual machine setup fails for any reason, login to [hPanel](https://hpanel.hostinger.com/) and complete the setup manually.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nUse this endpoint to create new VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines",
     "inputSchema": {
@@ -3662,7 +3587,7 @@ const SECURITY_SCHEMES: Record<string, SecurityScheme> = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.10.0
+ * Generated from OpenAPI spec version 0.10.2
  */
 class MCPServer {
   private server: Server;
@@ -3684,7 +3609,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.23",
+        version: "0.1.24",
       },
       {
         capabilities: {
@@ -3709,7 +3634,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.23';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.24';
     
     return headers;
   }

@@ -921,24 +921,7 @@ The contact will be automatically subscribed to email communications.
 - `surname`: surname parameter 
 - `note`: note parameter 
 
-### reach_filterSegmentContactsV1
-
-Filter and retrieve contacts based on segmentation criteria.
-
-This endpoint allows filtering contacts using specified conditions and returns a paginated list of matching contacts.
-The results can be filtered using various attributes like email, name, subscription status, etc.
-
-- **Method**: `POST`
-- **Path**: `/api/reach/v1/segmentation/filters/contacts`
-
-**Parameters**:
-
-- `conditions`: conditions parameter (required)
-- `logic`: logic parameter (required)
-- `page`: page parameter 
-- `per_page`: per_page parameter 
-
-### reach_listContactSegmentsV1
+### reach_listSegmentsV1
 
 Get a list of all contact segments.
 
@@ -964,6 +947,22 @@ The segment can be configured with specific criteria like email, name, subscript
 - `name`: name parameter (required)
 - `conditions`: conditions parameter (required)
 - `logic`: logic parameter (required)
+
+### reach_listSegmentContactsV1
+
+Retrieve contacts associated with a specific segment.
+
+This endpoint allows you to fetch and filter contacts that belong to a particular segment,
+identified by its UUID.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/segmentation/segments/{segmentUuid}/contacts`
+
+**Parameters**:
+
+- `segmentUuid`: Segment uuid parameter (required)
+- `page`: Page number 
+- `per_page`: Number of items per page 
 
 ### reach_getSegmentDetailsV1
 
@@ -1607,7 +1606,7 @@ If virtual machine setup fails for any reason, login to [hPanel](https://hpanel.
 
 If no payment method is provided, your default payment method will be used automatically.
 
-Use this endpoint to create new VPS instances.                        
+Use this endpoint to create new VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines`
