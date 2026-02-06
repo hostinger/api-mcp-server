@@ -261,21 +261,6 @@ Use this endpoint to view available payment options before creating orders.
   };
 
   /**
-   * Cancel a subscription and stop any further billing.
-
-Use this endpoint when users want to terminate active services.
-   */
-  "billing_cancelSubscriptionV1": {
-    params: {
-      /**
-       * Subscription ID
-       */
-      subscriptionId: string;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
    * Retrieve a list of all subscriptions associated with your account.
 
 Use this endpoint to monitor active services and billing status.
@@ -1033,9 +1018,8 @@ You can filter contacts by group UUID and subscription status.
    * Create a new contact in the email marketing system.
 
 This endpoint allows you to create a new contact with basic information like name, email, and surname.
-You can optionally assign the contact to specific groups and add notes.
 
-The contact will be automatically subscribed to email communications.
+If double opt-in is enabled, the contact will be created with a pending status and a confirmation email will be sent.
    */
   "reach_createANewContactV1": {
     params: {
@@ -1131,6 +1115,16 @@ Segments are used to organize and group contacts based on specific criteria.
        * Segment uuid parameter
        */
       segmentUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * This endpoint returns all profiles available to the client, including their basic information.
+   */
+  "reach_listProfilesV1": {
+    params: {
+
     };
     response: any; // Response structure will depend on the API
   };

@@ -417,29 +417,6 @@ const TOOLS = [
     ]
   },
   {
-    "name": "billing_cancelSubscriptionV1",
-    "description": "Cancel a subscription and stop any further billing.\n\nUse this endpoint when users want to terminate active services.",
-    "method": "DELETE",
-    "path": "/api/billing/v1/subscriptions/{subscriptionId}",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "subscriptionId": {
-          "type": "string",
-          "description": "Subscription ID"
-        }
-      },
-      "required": [
-        "subscriptionId"
-      ]
-    },
-    "security": [
-      {
-        "apiToken": []
-      }
-    ]
-  },
-  {
     "name": "billing_getSubscriptionListV1",
     "description": "Retrieve a list of all subscriptions associated with your account.\n\nUse this endpoint to monitor active services and billing status.",
     "method": "GET",
@@ -1601,7 +1578,7 @@ const TOOLS = [
   },
   {
     "name": "reach_createANewContactV1",
-    "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\nYou can optionally assign the contact to specific groups and add notes.\n\nThe contact will be automatically subscribed to email communications.",
+    "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\n\nIf double opt-in is enabled, the contact will be created with a pending status and a confirmation email will be sent.",
     "method": "POST",
     "path": "/api/reach/v1/contacts",
     "inputSchema": {
@@ -1800,6 +1777,22 @@ const TOOLS = [
       "required": [
         "segmentUuid"
       ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
+    "name": "reach_listProfilesV1",
+    "description": "This endpoint returns all profiles available to the client, including their basic information.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
     },
     "security": [
       {
@@ -3569,7 +3562,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.10.2
+ * Generated from OpenAPI spec version 0.11.3
  */
 class MCPServer {
   constructor() {
@@ -3587,7 +3580,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.24",
+        version: "0.1.25",
       },
       {
         capabilities: {
@@ -3612,7 +3605,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.24';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.25';
     
     return headers;
   }
