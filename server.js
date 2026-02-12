@@ -3562,7 +3562,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.11.3
+ * Generated from OpenAPI spec version 0.11.4
  */
 class MCPServer {
   constructor() {
@@ -3580,7 +3580,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.25",
+        version: "0.1.27",
       },
       {
         capabilities: {
@@ -3605,7 +3605,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.25';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.27';
     
     return headers;
   }
