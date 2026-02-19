@@ -1120,6 +1120,39 @@ Segments are used to organize and group contacts based on specific criteria.
   };
 
   /**
+   * Create a new contact in the email marketing system.
+
+This endpoint allows you to create a new contact with basic information like name, email, and surname.
+
+If double opt-in is enabled, the contact will be created with a pending status and a confirmation email will be sent.
+   */
+  "reach_createANewProfileContactV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * email parameter
+       */
+      email: string;
+      /**
+       * name parameter
+       */
+      name?: string;
+      /**
+       * surname parameter
+       */
+      surname?: string;
+      /**
+       * note parameter
+       */
+      note?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * This endpoint returns all profiles available to the client, including their basic information.
    */
   "reach_listProfilesV1": {

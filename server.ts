@@ -1803,6 +1803,46 @@ const TOOLS: OpenApiTool[] = [
     ]
   },
   {
+    "name": "reach_createANewProfileContactV1",
+    "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\n\nIf double opt-in is enabled, the contact will be created with a pending status and a confirmation email will be sent.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/contacts",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "email": {
+          "type": "string",
+          "description": "email parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "name parameter"
+        },
+        "surname": {
+          "type": "string",
+          "description": "surname parameter"
+        },
+        "note": {
+          "type": "string",
+          "description": "note parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "email"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ]
+  },
+  {
     "name": "reach_listProfilesV1",
     "description": "This endpoint returns all profiles available to the client, including their basic information.",
     "method": "GET",
@@ -3602,7 +3642,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.27",
+        version: "0.1.28",
       },
       {
         capabilities: {
@@ -3627,7 +3667,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.27';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.28';
     
     return headers;
   }
@@ -3877,7 +3917,9 @@ class MCPServer {
 
         const requestHeaders: Record<string, string> = {
           'X-Auth': authToken,
-          'X-Auth-Rest': authRestToken
+          'X-Auth-Rest': authRestToken,
+          'upload-length': stats.size.toString(),
+          'upload-offset': '0'
         };
 
         try {

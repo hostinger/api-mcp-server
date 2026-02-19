@@ -964,6 +964,25 @@ Segments are used to organize and group contacts based on specific criteria.
 
 - `segmentUuid`: Segment uuid parameter (required)
 
+### reach_createANewProfileContactV1
+
+Create a new contact in the email marketing system.
+
+This endpoint allows you to create a new contact with basic information like name, email, and surname.
+
+If double opt-in is enabled, the contact will be created with a pending status and a confirmation email will be sent.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts`
+
+**Parameters**:
+
+- `profileUuid`: Profile uuid parameter (required)
+- `email`: email parameter (required)
+- `name`: name parameter 
+- `surname`: surname parameter 
+- `note`: note parameter 
+
 ### reach_listProfilesV1
 
 This endpoint returns all profiles available to the client, including their basic information.
