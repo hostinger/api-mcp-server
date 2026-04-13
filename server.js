@@ -273,7 +273,7 @@ const TOOLS = [
   },
   {
     "name": "billing_getCatalogItemListV1",
-    "description": "Retrieve catalog items available for order.\n\nPrices in catalog items is displayed as cents (without floating point), e.g: float `17.99` is displayed as integer `1799`.\n\nUse this endpoint to view available services and pricing before placing orders.",
+    "description": "Retrieve catalog items available for order.\n\nPrices in catalog items is displayed as cents (without floating point),\ne.g: float `17.99` is displayed as integer `1799`.\n\nUse this endpoint to view available services and pricing before placing orders.",
     "method": "GET",
     "path": "/api/billing/v1/catalog",
     "inputSchema": {
@@ -293,60 +293,6 @@ const TOOLS = [
         }
       },
       "required": []
-    },
-    "security": [
-      {
-        "apiToken": []
-      }
-    ]
-  },
-  {
-    "name": "billing_createServiceOrderV1",
-    "description": "Create a new service order. \n\n**DEPRECATED**\n\nTo purchase a domain, use [`POST /api/domains/v1/portfolio`](/#tag/domains-portfolio/POST/api/domains/v1/portfolio) instead.\n\nTo purchase a VPS, use [`POST /api/vps/v1/virtual-machines`](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines) instead.\n\n\nTo place order, you need to provide payment method ID and list of price items from the catalog endpoint together with quantity.\nCoupons also can be provided during order creation.\n\nOrders created using this endpoint will be set for automatic renewal.\n\nSome `credit_card` payments might need additional verification, rendering purchase unprocessed.\nWe recommend use other payment methods than `credit_card` if you encounter this issue.",
-    "method": "POST",
-    "path": "/api/billing/v1/orders",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "payment_method_id": {
-          "type": "integer",
-          "description": "Payment method ID"
-        },
-        "items": {
-          "type": "array",
-          "description": "items parameter",
-          "items": {
-            "type": "object",
-            "description": "items parameter",
-            "properties": {
-              "item_id": {
-                "type": "string",
-                "description": "Price Item ID"
-              },
-              "quantity": {
-                "type": "integer",
-                "description": "quantity parameter"
-              }
-            },
-            "required": [
-              "item_id",
-              "quantity"
-            ]
-          }
-        },
-        "coupons": {
-          "type": "array",
-          "description": "Discount coupon codes",
-          "items": {
-            "type": "string",
-            "description": "coupons parameter"
-          }
-        }
-      },
-      "required": [
-        "payment_method_id",
-        "items"
-      ]
     },
     "security": [
       {
@@ -402,7 +348,7 @@ const TOOLS = [
   },
   {
     "name": "billing_getPaymentMethodListV1",
-    "description": "Retrieve available payment methods that can be used for placing new orders.\n\nIf you want to add new payment method, please use [hPanel](https://hpanel.hostinger.com/billing/payment-methods).\n\nUse this endpoint to view available payment options before creating orders.",
+    "description": "Retrieve available payment methods that can be used for placing new orders.\n\nIf you want to add new payment method,\nplease use [hPanel](https://hpanel.hostinger.com/billing/payment-methods).\n\nUse this endpoint to view available payment options before creating orders.",
     "method": "GET",
     "path": "/api/billing/v1/payment-methods",
     "inputSchema": {
@@ -594,7 +540,7 @@ const TOOLS = [
         },
         "overwrite": {
           "type": "boolean",
-          "description": "If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created, otherwise resource records' ttl's are updated and new records are appended. If no matching RRs are found, they are created."
+          "description": "If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created,\notherwise resource records' ttl's are updated and new records are appended.\nIf no matching RRs are found, they are created."
         },
         "zone": {
           "type": "array",
@@ -740,7 +686,7 @@ const TOOLS = [
         },
         "overwrite": {
           "type": "boolean",
-          "description": "If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created, otherwise resource records' ttl's are updated and new records are appended. If no matching RRs are found, they are created."
+          "description": "If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created,\notherwise resource records' ttl's are updated and new records are appended.\nIf no matching RRs are found, they are created."
         },
         "zone": {
           "type": "array",
@@ -947,7 +893,7 @@ const TOOLS = [
   },
   {
     "name": "domains_enableDomainLockV1",
-    "description": "Enable domain lock for the domain.\n\nWhen domain lock is enabled, the domain cannot be transferred to another registrar without first disabling the lock.\n\nUse this endpoint to secure domains against unauthorized transfers.",
+    "description": "Enable domain lock for the domain.\n\nWhen domain lock is enabled,\nthe domain cannot be transferred to another registrar without first disabling the lock.\n\nUse this endpoint to secure domains against unauthorized transfers.",
     "method": "PUT",
     "path": "/api/domains/v1/portfolio/{domain}/domain-lock",
     "inputSchema": {
@@ -1032,7 +978,7 @@ const TOOLS = [
   },
   {
     "name": "domains_purchaseNewDomainV1",
-    "description": "Purchase and register a new domain name.\n\nIf registration fails, login to [hPanel](https://hpanel.hostinger.com/) and check domain registration status.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nIf no WHOIS information is provided, default contact information for that TLD will be used. \nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nSome TLDs require `additional_details` to be provided and these will be validated before completing purchase.\n\nUse this endpoint to register new domains for users.",
+    "description": "Purchase and register a new domain name.\n\nIf registration fails, login to [hPanel](https://hpanel.hostinger.com/) and check domain registration status.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nSome TLDs require `additional_details` to be provided and these will be validated before completing purchase.\n\nUse this endpoint to register new domains for users.",
     "method": "POST",
     "path": "/api/domains/v1/portfolio",
     "inputSchema": {
@@ -1324,7 +1270,7 @@ const TOOLS = [
   },
   {
     "name": "hosting_listAvailableDatacentersV1",
-    "description": "Retrieve a list of datacenters available for setting up hosting plans based on available datacenter capacity and hosting plan of your order.\nThe first item in the list is the best match for your specific order requirements.",
+    "description": "Retrieve a list of datacenters available for setting up hosting plans\nbased on available datacenter capacity and hosting plan of your order.\nThe first item in the list is the best match for your specific order\nrequirements.",
     "method": "GET",
     "path": "/api/hosting/v1/datacenters",
     "inputSchema": {
@@ -1347,7 +1293,7 @@ const TOOLS = [
   },
   {
     "name": "hosting_generateAFreeSubdomainV1",
-    "description": "Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.\nFree subdomains allow you to start using hosting services immediately and you can always connect a custom domain to your site later.",
+    "description": "Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.\nFree subdomains allow you to start using hosting services immediately\nand you can always connect a custom domain to your site later.",
     "method": "POST",
     "path": "/api/hosting/v1/domains/free-subdomains",
     "inputSchema": {
@@ -1386,7 +1332,7 @@ const TOOLS = [
   },
   {
     "name": "hosting_listOrdersV1",
-    "description": "Retrieve a paginated list of orders accessible to the authenticated client.\n\nThis endpoint returns orders of your hosting accounts as well as orders of other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by order statuses or specific order IDs for more targeted results.",
+    "description": "Retrieve a paginated list of orders accessible to the authenticated client.\n\nThis endpoint returns orders of your hosting accounts as well as orders\nof other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by order statuses\nor specific order IDs for more targeted results.",
     "method": "GET",
     "path": "/api/hosting/v1/orders",
     "inputSchema": {
@@ -1433,7 +1379,7 @@ const TOOLS = [
   },
   {
     "name": "hosting_listWebsitesV1",
-    "description": "Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as websites from other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by username, order ID, enabled status, or domain name for more targeted results.",
+    "description": "Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nUse the available query parameters to filter results by username,\norder ID, enabled status, or domain name for more targeted results.",
     "method": "GET",
     "path": "/api/hosting/v1/websites",
     "inputSchema": {
@@ -1474,7 +1420,7 @@ const TOOLS = [
   },
   {
     "name": "hosting_createWebsiteV1",
-    "description": "Create a new website for the authenticated client.\n\nProvide the domain name and associated order ID to create a new website. The datacenter_code parameter is required when creating the first website on a new hosting plan - this will set up and configure new hosting account in the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation takes up to a few minutes to complete. Check the websites list endpoint to see when your new website becomes available.",
+    "description": "Create a new website for the authenticated client.\n\nProvide the domain name and associated order ID to create a new website.\nThe datacenter_code parameter is required when creating the first website\non a new hosting plan - this will set up and configure new hosting account\nin the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation takes up to a few minutes to complete. Check the\nwebsites list endpoint to see when your new website becomes available.",
     "method": "POST",
     "path": "/api/hosting/v1/websites",
     "inputSchema": {
@@ -1578,7 +1524,7 @@ const TOOLS = [
   },
   {
     "name": "reach_createANewContactV1",
-    "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\n\nIf double opt-in is enabled, the contact will be created with a pending status and a confirmation email will be sent.",
+    "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\n\nIf double opt-in is enabled,\nthe contact will be created with a pending status and a confirmation email will be sent.",
     "method": "POST",
     "path": "/api/reach/v1/contacts",
     "inputSchema": {
@@ -1785,8 +1731,8 @@ const TOOLS = [
     ]
   },
   {
-    "name": "reach_createANewProfileContactV1",
-    "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\n\nIf double opt-in is enabled, the contact will be created with a pending status and a confirmation email will be sent.",
+    "name": "reach_createNewContactsV1",
+    "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\n\nIf double opt-in is enabled, the contact will be created with a pending status\nand a confirmation email will be sent.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts",
     "inputSchema": {
@@ -1858,7 +1804,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_getProjectContainersV1",
-    "description": "Retrieves a list of all containers belonging to a specific Docker Compose project on the virtual machine. \n\nThis endpoint returns detailed information about each container including their current status, port mappings, and runtime configuration. \n\nUse this to monitor the health and state of all services within your Docker Compose project.",
+    "description": "Retrieves a list of all containers belonging to a specific Docker Compose project on the virtual machine. \n\nThis endpoint returns detailed information about each container including\ntheir current status, port mappings, and runtime configuration.\n\nUse this to monitor the health and state of all services within your Docker Compose project.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/containers",
     "inputSchema": {
@@ -1886,7 +1832,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_getProjectContentsV1",
-    "description": "Retrieves the complete project information including the docker-compose.yml file contents, project metadata, and current deployment status. \n\nThis endpoint provides the full configuration and state details of a specific Docker Compose project. \n\nUse this to inspect project settings, review the compose file, or check the overall project health.",
+    "description": "Retrieves the complete project information including the docker-compose.yml\nfile contents, project metadata, and current deployment status.\n\nThis endpoint provides the full configuration and state details of a specific Docker Compose project. \n\nUse this to inspect project settings, review the compose file, or check the overall project health.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}",
     "inputSchema": {
@@ -1942,7 +1888,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_getProjectListV1",
-    "description": "Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. \n\nThis endpoint returns basic information about each project including name, status, file path and list of containers with \ndetails about their names, image, status, health and ports. Container stats are omitted in this endpoint.\nIf you need to get detailed information about container with stats included, use the `Get project containers` endpoint. \n\nUse this to get an overview of all Docker projects on your VPS instance.",
+    "description": "Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. \n\nThis endpoint returns basic information about each project including name,\nstatus, file path and list of containers with details about their names,\nimage, status, health and ports. Container stats are omitted in this\nendpoint. If you need to get detailed information about container with\nstats included, use the `Get project containers` endpoint.\n\nUse this to get an overview of all Docker projects on your VPS instance.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker",
     "inputSchema": {
@@ -1965,7 +1911,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_createNewProjectV1",
-    "description": "Deploy new project from docker-compose.yaml contents or download contents from URL. \n\nURL can be Github repository url in format https://github.com/[user]/[repo] and it will be automatically resolved to \ndocker-compose.yaml file in master branch. Any other URL provided must return docker-compose.yaml file contents.\n\nIf project with the same name already exists, existing project will be replaced.",
+    "description": "Deploy new project from docker-compose.yaml contents or download contents from URL. \n\nURL can be Github repository url in format https://github.com/[user]/[repo]\nand it will be automatically resolved to docker-compose.yaml file in\nmaster branch. Any other URL provided must return docker-compose.yaml\nfile contents.\n\nIf project with the same name already exists, existing project will be replaced.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker",
     "inputSchema": {
@@ -2002,7 +1948,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_getProjectLogsV1",
-    "description": "Retrieves aggregated log entries from all services within a Docker Compose project. \n\nThis endpoint returns recent log output from each container, organized by service name with timestamps. \nThe response contains the last 300 log entries across all services. \n\nUse this for debugging, monitoring application behavior, and troubleshooting issues across your entire project stack.",
+    "description": "Retrieves aggregated log entries from all services within a Docker Compose project. \n\nThis endpoint returns recent log output from each container, organized by service name with timestamps. \nThe response contains the last 300 log entries across all services. \n\nUse this for debugging, monitoring application behavior, and\ntroubleshooting issues across your entire project stack.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/logs",
     "inputSchema": {
@@ -2030,7 +1976,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_restartProjectV1",
-    "description": "Restarts all services in a Docker Compose project by stopping and starting containers in the correct dependency order. \n\nThis operation preserves data volumes and network configurations while refreshing the running containers. \n\nUse this to apply configuration changes or recover from service failures.",
+    "description": "Restarts all services in a Docker Compose project by stopping and starting\ncontainers in the correct dependency order.\n\nThis operation preserves data volumes and network configurations while refreshing the running containers. \n\nUse this to apply configuration changes or recover from service failures.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/restart",
     "inputSchema": {
@@ -2086,7 +2032,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_stopProjectV1",
-    "description": "Stops all running services in a Docker Compose project while preserving container configurations and data volumes. \n\nThis operation gracefully shuts down containers in reverse dependency order. \n\nUse this to temporarily halt a project without removing data or configurations.",
+    "description": "Stops all running services in a Docker Compose project while preserving\ncontainer configurations and data volumes.\n\nThis operation gracefully shuts down containers in reverse dependency order. \n\nUse this to temporarily halt a project without removing data or configurations.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/stop",
     "inputSchema": {
@@ -2114,7 +2060,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_updateProjectV1",
-    "description": "Updates a Docker Compose project by pulling the latest image versions and recreating containers with new configurations. \n\nThis operation preserves data volumes while applying changes from the compose file. \n\nUse this to deploy application updates, apply configuration changes, or refresh container images to their latest versions.",
+    "description": "Updates a Docker Compose project by pulling the latest image versions and\nrecreating containers with new configurations.\n\nThis operation preserves data volumes while applying changes from the compose file. \n\nUse this to deploy application updates, apply configuration changes, or\nrefresh container images to their latest versions.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/update",
     "inputSchema": {
@@ -2288,7 +2234,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_updateFirewallRuleV1",
-    "description": "Update a specific firewall rule from a specified firewall.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall and will have to be synced again manually.\n\nUse this endpoint to modify existing firewall rules.",
+    "description": "Update a specific firewall rule from a specified firewall.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall\nand will have to be synced again manually.\n\nUse this endpoint to modify existing firewall rules.",
     "method": "PUT",
     "path": "/api/vps/v1/firewall/{firewallId}/rules/{ruleId}",
     "inputSchema": {
@@ -2355,7 +2301,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_deleteFirewallRuleV1",
-    "description": "Delete a specific firewall rule from a specified firewall.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall and will have to be synced again manually.\n       \nUse this endpoint to remove specific firewall rules.",
+    "description": "Delete a specific firewall rule from a specified firewall.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall\nand will have to be synced again manually.\n\nUse this endpoint to remove specific firewall rules.",
     "method": "DELETE",
     "path": "/api/vps/v1/firewall/{firewallId}/rules/{ruleId}",
     "inputSchema": {
@@ -2383,7 +2329,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_createFirewallRuleV1",
-    "description": "Create new firewall rule for a specified firewall.\n\nBy default, the firewall drops all incoming traffic, which means you must add accept rules for all ports you want to use.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall and will have to be synced again manually.\n\nUse this endpoint to add new security rules to firewalls.",
+    "description": "Create new firewall rule for a specified firewall.\n\nBy default, the firewall drops all incoming traffic,\nwhich means you must add accept rules for all ports you want to use.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall\nand will have to be synced again manually.\n\nUse this endpoint to add new security rules to firewalls.",
     "method": "POST",
     "path": "/api/vps/v1/firewall/{firewallId}/rules",
     "inputSchema": {
@@ -2573,7 +2519,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_createPostInstallScriptV1",
-    "description": "Add a new post-install script to your account, which can then be used after virtual machine installation.\n\nThe script contents will be saved to the file `/post_install` with executable attribute set and will be executed once virtual machine is installed.\nThe output of the script will be redirected to `/post_install.log`. Maximum script size is 48KB.\n\nUse this endpoint to create automation scripts for VPS setup tasks.",
+    "description": "Add a new post-install script to your account, which can then be used after virtual machine installation.\n\nThe script contents will be saved to the file `/post_install` with executable attribute set\nand will be executed once virtual machine is installed.\nThe output of the script will be redirected to `/post_install.log`. Maximum script size is 48KB.\n\nUse this endpoint to create automation scripts for VPS setup tasks.",
     "method": "POST",
     "path": "/api/vps/v1/post-install-scripts",
     "inputSchema": {
@@ -2772,7 +2718,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_getActionsV1",
-    "description": "Retrieve actions performed on a specified virtual machine.\n\nActions are operations or events that have been executed on the virtual machine, such as starting, stopping, or modifying \nthe machine. This endpoint allows you to view the history of these actions, providing details about each action, \nsuch as the action name, timestamp, and status.\n\nUse this endpoint to view VPS operation history and troubleshoot issues.",
+    "description": "Retrieve actions performed on a specified virtual machine.\n\nActions are operations or events that have been executed on the virtual\nmachine, such as starting, stopping, or modifying the machine. This endpoint\nallows you to view the history of these actions, providing details about\neach action, such as the action name, timestamp, and status.\n\nUse this endpoint to view VPS operation history and troubleshoot issues.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/actions",
     "inputSchema": {
@@ -2971,7 +2917,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_purchaseNewVirtualMachineV1",
-    "description": "Purchase and setup a new virtual machine.\n\nIf virtual machine setup fails for any reason, login to [hPanel](https://hpanel.hostinger.com/) and complete the setup manually.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nUse this endpoint to create new VPS instances.",
+    "description": "Purchase and setup a new virtual machine.\n\nIf virtual machine setup fails for any reason, login to\n[hPanel](https://hpanel.hostinger.com/) and complete the setup manually.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nUse this endpoint to create new VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines",
     "inputSchema": {
@@ -3011,7 +2957,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_getScanMetricsV1",
-    "description": "Retrieve scan metrics for the [Monarx](https://www.monarx.com/) malware scanner installed on a specified virtual machine.\n\nThe scan metrics provide detailed information about malware scans performed by Monarx, including number of scans, \ndetected threats, and other relevant statistics. This information is useful for monitoring security status of the \nvirtual machine and assessing effectiveness of the malware scanner.\n\nUse this endpoint to monitor VPS security scan results and threat detection.",
+    "description": "Retrieve scan metrics for the [Monarx](https://www.monarx.com/) malware scanner\ninstalled on a specified virtual machine.\n\nThe scan metrics provide detailed information about malware scans performed\nby Monarx, including number of scans, detected threats, and other relevant\nstatistics. This information is useful for monitoring security status of the\nvirtual machine and assessing effectiveness of the malware scanner.\n\nUse this endpoint to monitor VPS security scan results and threat detection.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/monarx",
     "inputSchema": {
@@ -3034,7 +2980,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_installMonarxV1",
-    "description": "Install the Monarx malware scanner on a specified virtual machine.\n\n[Monarx](https://www.monarx.com/) is a security tool designed to detect and prevent malware infections on virtual machines. \nBy installing Monarx, users can enhance the security of their virtual machines, ensuring that they are protected against malicious software.\n\nUse this endpoint to enable malware protection on VPS instances.",
+    "description": "Install the Monarx malware scanner on a specified virtual machine.\n\n[Monarx](https://www.monarx.com/) is a security tool designed to detect and\nprevent malware infections on virtual machines. By installing Monarx, users\ncan enhance the security of their virtual machines, ensuring that they are\nprotected against malicious software.\n\nUse this endpoint to enable malware protection on VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/monarx",
     "inputSchema": {
@@ -3113,7 +3059,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_setNameserversV1",
-    "description": "Set nameservers for a specified virtual machine.\n\nBe aware, that improper nameserver configuration can lead to the virtual machine being unable to resolve domain names.\n\nUse this endpoint to configure custom DNS resolvers for VPS instances.",
+    "description": "Set nameservers for a specified virtual machine.\n\nBe aware, that improper nameserver configuration can lead to the virtual\nmachine being unable to resolve domain names.\n\nUse this endpoint to configure custom DNS resolvers for VPS instances.",
     "method": "PUT",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/nameservers",
     "inputSchema": {
@@ -3182,7 +3128,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_deletePTRRecordV1",
-    "description": "Delete a PTR (Pointer) record for a specified virtual machine.\n\nOnce deleted, reverse DNS lookups to the virtual machine's IP address will no longer return the previously configured hostname.\n\nUse this endpoint to remove reverse DNS configuration from VPS instances.",
+    "description": "Delete a PTR (Pointer) record for a specified virtual machine.\n\nOnce deleted, reverse DNS lookups to the virtual machine's IP address will\nno longer return the previously configured hostname.\n\nUse this endpoint to remove reverse DNS configuration from VPS instances.",
     "method": "DELETE",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}",
     "inputSchema": {
@@ -3210,7 +3156,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_setPanelPasswordV1",
-    "description": "Set panel password for a specified virtual machine.\n\nIf virtual machine does not use panel OS, the request will still be processed without any effect.\nRequirements for password are same as in the [recreate virtual machine endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).\n\nUse this endpoint to configure control panel access credentials for VPS instances.",
+    "description": "Set panel password for a specified virtual machine.\n\nIf virtual machine does not use panel OS, the request will still be processed without any effect.\nRequirements for password are same as in the [recreate virtual machine\nendpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).\n\nUse this endpoint to configure control panel access credentials for VPS instances.",
     "method": "PUT",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/panel-password",
     "inputSchema": {
@@ -3289,7 +3235,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_recreateVirtualMachineV1",
-    "description": "Recreate a virtual machine from scratch.\n\nThe recreation process involves reinstalling the operating system and resetting the virtual machine to its initial state.\nSnapshots, if there are any, will be deleted.\n\n## Password Requirements\nPassword will be checked against leaked password databases. \nRequirements for the password are:\n- At least 12 characters long\n- At least one uppercase letter\n- At least one lowercase letter\n- At least one number\n- Is not leaked publicly\n\n**This operation is irreversible and will result in the loss of all data stored on the virtual machine!**\n\nUse this endpoint to completely rebuild VPS instances with fresh OS installation.",
+    "description": "Recreate a virtual machine from scratch.\n\nThe recreation process involves reinstalling the operating system and\nresetting the virtual machine to its initial state.\nSnapshots, if there are any, will be deleted.\n\n## Password Requirements\nPassword will be checked against leaked password databases. \nRequirements for the password are:\n- At least 12 characters long\n- At least one uppercase letter\n- At least one lowercase letter\n- At least one number\n- Is not leaked publicly\n\n**This operation is irreversible and will result in the loss of all data stored on the virtual machine!**\n\nUse this endpoint to completely rebuild VPS instances with fresh OS installation.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/recreate",
     "inputSchema": {
@@ -3305,11 +3251,11 @@ const TOOLS = [
         },
         "password": {
           "type": "string",
-          "description": "Root password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response."
+          "description": "Root password for the virtual machine. If not provided, random password will be generated.\nPassword will not be shown in the response."
         },
         "panel_password": {
           "type": "string",
-          "description": "Panel password for the panel-based OS template. If not provided, random password will be generated. If OS does not support panel_password this field will be ignored. Password will not be shown in the response."
+          "description": "Panel password for the panel-based OS template. If not provided, random password will be generated.\nIf OS does not support panel_password this field will be ignored.\nPassword will not be shown in the response."
         },
         "post_install_script_id": {
           "type": "integer",
@@ -3352,7 +3298,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_setRootPasswordV1",
-    "description": "Set root password for a specified virtual machine.\n\nRequirements for password are same as in the [recreate virtual machine endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).\n\nUse this endpoint to update administrator credentials for VPS instances.",
+    "description": "Set root password for a specified virtual machine.\n\nRequirements for password are same as in the [recreate virtual machine\nendpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).\n\nUse this endpoint to update administrator credentials for VPS instances.",
     "method": "PUT",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/root-password",
     "inputSchema": {
@@ -3404,7 +3350,7 @@ const TOOLS = [
         },
         "password": {
           "type": "string",
-          "description": "Password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response."
+          "description": "Password for the virtual machine. If not provided, random password will be generated.\nPassword will not be shown in the response."
         },
         "hostname": {
           "type": "string",
@@ -3524,7 +3470,7 @@ const TOOLS = [
   },
   {
     "name": "VPS_restoreSnapshotV1",
-    "description": "Restore a specified virtual machine to a previous state using a snapshot.\n\nRestoring from a snapshot allows users to revert the virtual machine to that state, which is useful for system recovery, undoing changes, or testing.\n\nUse this endpoint to revert VPS instances to previous saved states.",
+    "description": "Restore a specified virtual machine to a previous state using a snapshot.\n\nRestoring from a snapshot allows users to revert the virtual machine to that state,\nwhich is useful for system recovery, undoing changes, or testing.\n\nUse this endpoint to revert VPS instances to previous saved states.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot/restore",
     "inputSchema": {
@@ -3602,7 +3548,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.11.4
+ * Generated from OpenAPI spec version 0.11.7
  */
 class MCPServer {
   constructor() {
@@ -3620,7 +3566,7 @@ class MCPServer {
     this.server = new Server(
       {
         name: "hostinger-api-mcp",
-        version: "0.1.28",
+        version: "0.1.36",
       },
       {
         capabilities: {
@@ -3645,7 +3591,7 @@ class MCPServer {
       });
     }
     
-    headers['User-Agent'] = 'hostinger-mcp-server/0.1.28';
+    headers['User-Agent'] = 'hostinger-mcp-server/0.1.36';
     
     return headers;
   }

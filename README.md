@@ -241,7 +241,8 @@ Retrieve logs for a specified JavaScript application deployment for debugging pu
 
 Retrieve catalog items available for order.
 
-Prices in catalog items is displayed as cents (without floating point), e.g: float `17.99` is displayed as integer `1799`.
+Prices in catalog items is displayed as cents (without floating point),
+e.g: float `17.99` is displayed as integer `1799`.
 
 Use this endpoint to view available services and pricing before placing orders.
 
@@ -252,34 +253,6 @@ Use this endpoint to view available services and pricing before placing orders.
 
 - `category`: Filter catalog items by category 
 - `name`: Filter catalog items by name. Use `*` for wildcard search, e.g. `.COM*` to find .com domain 
-
-### billing_createServiceOrderV1
-
-Create a new service order. 
-
-**DEPRECATED**
-
-To purchase a domain, use [`POST /api/domains/v1/portfolio`](/#tag/domains-portfolio/POST/api/domains/v1/portfolio) instead.
-
-To purchase a VPS, use [`POST /api/vps/v1/virtual-machines`](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines) instead.
-
-
-To place order, you need to provide payment method ID and list of price items from the catalog endpoint together with quantity.
-Coupons also can be provided during order creation.
-
-Orders created using this endpoint will be set for automatic renewal.
-
-Some `credit_card` payments might need additional verification, rendering purchase unprocessed.
-We recommend use other payment methods than `credit_card` if you encounter this issue.
-
-- **Method**: `POST`
-- **Path**: `/api/billing/v1/orders`
-
-**Parameters**:
-
-- `payment_method_id`: Payment method ID (required)
-- `items`: items parameter (required)
-- `coupons`: Discount coupon codes 
 
 ### billing_setDefaultPaymentMethodV1
 
@@ -311,7 +284,8 @@ Use this endpoint to remove unused payment methods from user accounts.
 
 Retrieve available payment methods that can be used for placing new orders.
 
-If you want to add new payment method, please use [hPanel](https://hpanel.hostinger.com/billing/payment-methods).
+If you want to add new payment method,
+please use [hPanel](https://hpanel.hostinger.com/billing/payment-methods).
 
 Use this endpoint to view available payment options before creating orders.
 
@@ -426,7 +400,9 @@ Use this endpoint to modify domain DNS configuration.
 **Parameters**:
 
 - `domain`: Domain name (required)
-- `overwrite`: If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created, otherwise resource records' ttl's are updated and new records are appended. If no matching RRs are found, they are created. 
+- `overwrite`: If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created,
+otherwise resource records' ttl's are updated and new records are appended.
+If no matching RRs are found, they are created. 
 - `zone`: zone parameter (required)
 
 ### DNS_deleteDNSRecordsV1
@@ -479,7 +455,9 @@ Use this endpoint to verify DNS record validity before applying changes.
 **Parameters**:
 
 - `domain`: Domain name (required)
-- `overwrite`: If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created, otherwise resource records' ttl's are updated and new records are appended. If no matching RRs are found, they are created. 
+- `overwrite`: If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created,
+otherwise resource records' ttl's are updated and new records are appended.
+If no matching RRs are found, they are created. 
 - `zone`: zone parameter (required)
 
 ### v2_getDomainVerificationsDIRECT
@@ -557,7 +535,8 @@ Use this endpoint to set up domain redirects to other URLs.
 
 Enable domain lock for the domain.
 
-When domain lock is enabled, the domain cannot be transferred to another registrar without first disabling the lock.
+When domain lock is enabled,
+the domain cannot be transferred to another registrar without first disabling the lock.
 
 Use this endpoint to secure domains against unauthorized transfers.
 
@@ -615,7 +594,7 @@ If registration fails, login to [hPanel](https://hpanel.hostinger.com/) and chec
 
 If no payment method is provided, your default payment method will be used automatically.
 
-If no WHOIS information is provided, default contact information for that TLD will be used. 
+If no WHOIS information is provided, default contact information for that TLD will be used.
 Before making request, ensure WHOIS information for desired TLD exists in your account.
 
 Some TLDs require `additional_details` to be provided and these will be validated before completing purchase.
@@ -754,8 +733,10 @@ Use this endpoint to view which domains use specific contact profiles.
 
 ### hosting_listAvailableDatacentersV1
 
-Retrieve a list of datacenters available for setting up hosting plans based on available datacenter capacity and hosting plan of your order.
-The first item in the list is the best match for your specific order requirements.
+Retrieve a list of datacenters available for setting up hosting plans
+based on available datacenter capacity and hosting plan of your order.
+The first item in the list is the best match for your specific order
+requirements.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/datacenters`
@@ -767,7 +748,8 @@ The first item in the list is the best match for your specific order requirement
 ### hosting_generateAFreeSubdomainV1
 
 Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.
-Free subdomains allow you to start using hosting services immediately and you can always connect a custom domain to your site later.
+Free subdomains allow you to start using hosting services immediately
+and you can always connect a custom domain to your site later.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/free-subdomains`
@@ -796,9 +778,11 @@ Skip this verification when using Hostinger's free subdomains (*.hostingersite.c
 
 Retrieve a paginated list of orders accessible to the authenticated client.
 
-This endpoint returns orders of your hosting accounts as well as orders of other client hosting accounts that have shared access with you.
+This endpoint returns orders of your hosting accounts as well as orders
+of other client hosting accounts that have shared access with you.
 
-Use the available query parameters to filter results by order statuses or specific order IDs for more targeted results.
+Use the available query parameters to filter results by order statuses
+or specific order IDs for more targeted results.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/orders`
@@ -814,9 +798,12 @@ Use the available query parameters to filter results by order statuses or specif
 
 Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.
 
-This endpoint returns websites from your hosting accounts as well as websites from other client hosting accounts that have shared access with you.
+This endpoint returns websites from your hosting accounts as well as
+websites from other client hosting accounts that have shared access
+with you.
 
-Use the available query parameters to filter results by username, order ID, enabled status, or domain name for more targeted results.
+Use the available query parameters to filter results by username,
+order ID, enabled status, or domain name for more targeted results.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/websites`
@@ -834,11 +821,15 @@ Use the available query parameters to filter results by username, order ID, enab
 
 Create a new website for the authenticated client.
 
-Provide the domain name and associated order ID to create a new website. The datacenter_code parameter is required when creating the first website on a new hosting plan - this will set up and configure new hosting account in the selected datacenter.
+Provide the domain name and associated order ID to create a new website.
+The datacenter_code parameter is required when creating the first website
+on a new hosting plan - this will set up and configure new hosting account
+in the selected datacenter.
 
 Subsequent websites will be hosted on the same datacenter automatically.
 
-Website creation takes up to a few minutes to complete. Check the websites list endpoint to see when your new website becomes available.
+Website creation takes up to a few minutes to complete. Check the
+websites list endpoint to see when your new website becomes available.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/websites`
@@ -895,7 +886,8 @@ Create a new contact in the email marketing system.
 
 This endpoint allows you to create a new contact with basic information like name, email, and surname.
 
-If double opt-in is enabled, the contact will be created with a pending status and a confirmation email will be sent.
+If double opt-in is enabled,
+the contact will be created with a pending status and a confirmation email will be sent.
 
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/contacts`
@@ -964,13 +956,14 @@ Segments are used to organize and group contacts based on specific criteria.
 
 - `segmentUuid`: Segment uuid parameter (required)
 
-### reach_createANewProfileContactV1
+### reach_createNewContactsV1
 
 Create a new contact in the email marketing system.
 
 This endpoint allows you to create a new contact with basic information like name, email, and surname.
 
-If double opt-in is enabled, the contact will be created with a pending status and a confirmation email will be sent.
+If double opt-in is enabled, the contact will be created with a pending status
+and a confirmation email will be sent.
 
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts`
@@ -1007,7 +1000,8 @@ Use this endpoint to view location options before deploying VPS instances.
 
 Retrieves a list of all containers belonging to a specific Docker Compose project on the virtual machine. 
 
-This endpoint returns detailed information about each container including their current status, port mappings, and runtime configuration. 
+This endpoint returns detailed information about each container including
+their current status, port mappings, and runtime configuration.
 
 Use this to monitor the health and state of all services within your Docker Compose project.
 
@@ -1021,7 +1015,8 @@ Use this to monitor the health and state of all services within your Docker Comp
 
 ### VPS_getProjectContentsV1
 
-Retrieves the complete project information including the docker-compose.yml file contents, project metadata, and current deployment status. 
+Retrieves the complete project information including the docker-compose.yml
+file contents, project metadata, and current deployment status.
 
 This endpoint provides the full configuration and state details of a specific Docker Compose project. 
 
@@ -1056,9 +1051,11 @@ Use this when you want to permanently remove a project and free up system resour
 
 Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. 
 
-This endpoint returns basic information about each project including name, status, file path and list of containers with 
-details about their names, image, status, health and ports. Container stats are omitted in this endpoint.
-If you need to get detailed information about container with stats included, use the `Get project containers` endpoint. 
+This endpoint returns basic information about each project including name,
+status, file path and list of containers with details about their names,
+image, status, health and ports. Container stats are omitted in this
+endpoint. If you need to get detailed information about container with
+stats included, use the `Get project containers` endpoint.
 
 Use this to get an overview of all Docker projects on your VPS instance.
 
@@ -1073,8 +1070,10 @@ Use this to get an overview of all Docker projects on your VPS instance.
 
 Deploy new project from docker-compose.yaml contents or download contents from URL. 
 
-URL can be Github repository url in format https://github.com/[user]/[repo] and it will be automatically resolved to 
-docker-compose.yaml file in master branch. Any other URL provided must return docker-compose.yaml file contents.
+URL can be Github repository url in format https://github.com/[user]/[repo]
+and it will be automatically resolved to docker-compose.yaml file in
+master branch. Any other URL provided must return docker-compose.yaml
+file contents.
 
 If project with the same name already exists, existing project will be replaced.
 
@@ -1095,7 +1094,8 @@ Retrieves aggregated log entries from all services within a Docker Compose proje
 This endpoint returns recent log output from each container, organized by service name with timestamps. 
 The response contains the last 300 log entries across all services. 
 
-Use this for debugging, monitoring application behavior, and troubleshooting issues across your entire project stack.
+Use this for debugging, monitoring application behavior, and
+troubleshooting issues across your entire project stack.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/logs`
@@ -1107,7 +1107,8 @@ Use this for debugging, monitoring application behavior, and troubleshooting iss
 
 ### VPS_restartProjectV1
 
-Restarts all services in a Docker Compose project by stopping and starting containers in the correct dependency order. 
+Restarts all services in a Docker Compose project by stopping and starting
+containers in the correct dependency order.
 
 This operation preserves data volumes and network configurations while refreshing the running containers. 
 
@@ -1139,7 +1140,8 @@ Use this to resume a project that was previously stopped or to start services af
 
 ### VPS_stopProjectV1
 
-Stops all running services in a Docker Compose project while preserving container configurations and data volumes. 
+Stops all running services in a Docker Compose project while preserving
+container configurations and data volumes.
 
 This operation gracefully shuts down containers in reverse dependency order. 
 
@@ -1155,11 +1157,13 @@ Use this to temporarily halt a project without removing data or configurations.
 
 ### VPS_updateProjectV1
 
-Updates a Docker Compose project by pulling the latest image versions and recreating containers with new configurations. 
+Updates a Docker Compose project by pulling the latest image versions and
+recreating containers with new configurations.
 
 This operation preserves data volumes while applying changes from the compose file. 
 
-Use this to deploy application updates, apply configuration changes, or refresh container images to their latest versions.
+Use this to deploy application updates, apply configuration changes, or
+refresh container images to their latest versions.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/update`
@@ -1257,7 +1261,8 @@ Use this endpoint to set up new firewall configurations for VPS security.
 
 Update a specific firewall rule from a specified firewall.
 
-Any virtual machine that has this firewall activated will lose sync with the firewall and will have to be synced again manually.
+Any virtual machine that has this firewall activated will lose sync with the firewall
+and will have to be synced again manually.
 
 Use this endpoint to modify existing firewall rules.
 
@@ -1277,8 +1282,9 @@ Use this endpoint to modify existing firewall rules.
 
 Delete a specific firewall rule from a specified firewall.
 
-Any virtual machine that has this firewall activated will lose sync with the firewall and will have to be synced again manually.
-       
+Any virtual machine that has this firewall activated will lose sync with the firewall
+and will have to be synced again manually.
+
 Use this endpoint to remove specific firewall rules.
 
 - **Method**: `DELETE`
@@ -1293,9 +1299,11 @@ Use this endpoint to remove specific firewall rules.
 
 Create new firewall rule for a specified firewall.
 
-By default, the firewall drops all incoming traffic, which means you must add accept rules for all ports you want to use.
+By default, the firewall drops all incoming traffic,
+which means you must add accept rules for all ports you want to use.
 
-Any virtual machine that has this firewall activated will lose sync with the firewall and will have to be synced again manually.
+Any virtual machine that has this firewall activated will lose sync with the firewall
+and will have to be synced again manually.
 
 Use this endpoint to add new security rules to firewalls.
 
@@ -1384,7 +1392,8 @@ Use this endpoint to view available automation scripts for VPS deployment.
 
 Add a new post-install script to your account, which can then be used after virtual machine installation.
 
-The script contents will be saved to the file `/post_install` with executable attribute set and will be executed once virtual machine is installed.
+The script contents will be saved to the file `/post_install` with executable attribute set
+and will be executed once virtual machine is installed.
 The output of the script will be redirected to `/post_install.log`. Maximum script size is 48KB.
 
 Use this endpoint to create automation scripts for VPS setup tasks.
@@ -1497,9 +1506,10 @@ Use this endpoint to monitor specific VPS operation status and details.
 
 Retrieve actions performed on a specified virtual machine.
 
-Actions are operations or events that have been executed on the virtual machine, such as starting, stopping, or modifying 
-the machine. This endpoint allows you to view the history of these actions, providing details about each action, 
-such as the action name, timestamp, and status.
+Actions are operations or events that have been executed on the virtual
+machine, such as starting, stopping, or modifying the machine. This endpoint
+allows you to view the history of these actions, providing details about
+each action, such as the action name, timestamp, and status.
 
 Use this endpoint to view VPS operation history and troubleshoot issues.
 
@@ -1616,7 +1626,8 @@ Use this endpoint to view available VPS instances.
 
 Purchase and setup a new virtual machine.
 
-If virtual machine setup fails for any reason, login to [hPanel](https://hpanel.hostinger.com/) and complete the setup manually.
+If virtual machine setup fails for any reason, login to
+[hPanel](https://hpanel.hostinger.com/) and complete the setup manually.
 
 If no payment method is provided, your default payment method will be used automatically.
 
@@ -1634,10 +1645,12 @@ Use this endpoint to create new VPS instances.
 
 ### VPS_getScanMetricsV1
 
-Retrieve scan metrics for the [Monarx](https://www.monarx.com/) malware scanner installed on a specified virtual machine.
+Retrieve scan metrics for the [Monarx](https://www.monarx.com/) malware scanner
+installed on a specified virtual machine.
 
-The scan metrics provide detailed information about malware scans performed by Monarx, including number of scans, 
-detected threats, and other relevant statistics. This information is useful for monitoring security status of the 
+The scan metrics provide detailed information about malware scans performed
+by Monarx, including number of scans, detected threats, and other relevant
+statistics. This information is useful for monitoring security status of the
 virtual machine and assessing effectiveness of the malware scanner.
 
 Use this endpoint to monitor VPS security scan results and threat detection.
@@ -1653,8 +1666,10 @@ Use this endpoint to monitor VPS security scan results and threat detection.
 
 Install the Monarx malware scanner on a specified virtual machine.
 
-[Monarx](https://www.monarx.com/) is a security tool designed to detect and prevent malware infections on virtual machines. 
-By installing Monarx, users can enhance the security of their virtual machines, ensuring that they are protected against malicious software.
+[Monarx](https://www.monarx.com/) is a security tool designed to detect and
+prevent malware infections on virtual machines. By installing Monarx, users
+can enhance the security of their virtual machines, ensuring that they are
+protected against malicious software.
 
 Use this endpoint to enable malware protection on VPS instances.
 
@@ -1706,7 +1721,8 @@ Use this endpoint to monitor VPS performance and resource utilization over time.
 
 Set nameservers for a specified virtual machine.
 
-Be aware, that improper nameserver configuration can lead to the virtual machine being unable to resolve domain names.
+Be aware, that improper nameserver configuration can lead to the virtual
+machine being unable to resolve domain names.
 
 Use this endpoint to configure custom DNS resolvers for VPS instances.
 
@@ -1739,7 +1755,8 @@ Use this endpoint to configure reverse DNS lookup for VPS IP addresses.
 
 Delete a PTR (Pointer) record for a specified virtual machine.
 
-Once deleted, reverse DNS lookups to the virtual machine's IP address will no longer return the previously configured hostname.
+Once deleted, reverse DNS lookups to the virtual machine's IP address will
+no longer return the previously configured hostname.
 
 Use this endpoint to remove reverse DNS configuration from VPS instances.
 
@@ -1756,7 +1773,8 @@ Use this endpoint to remove reverse DNS configuration from VPS instances.
 Set panel password for a specified virtual machine.
 
 If virtual machine does not use panel OS, the request will still be processed without any effect.
-Requirements for password are same as in the [recreate virtual machine endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).
+Requirements for password are same as in the [recreate virtual machine
+endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).
 
 Use this endpoint to configure control panel access credentials for VPS instances.
 
@@ -1807,7 +1825,8 @@ Use this endpoint to exit system rescue mode and return VPS to normal operation.
 
 Recreate a virtual machine from scratch.
 
-The recreation process involves reinstalling the operating system and resetting the virtual machine to its initial state.
+The recreation process involves reinstalling the operating system and
+resetting the virtual machine to its initial state.
 Snapshots, if there are any, will be deleted.
 
 ## Password Requirements
@@ -1830,8 +1849,11 @@ Use this endpoint to completely rebuild VPS instances with fresh OS installation
 
 - `virtualMachineId`: Virtual Machine ID (required)
 - `template_id`: Template ID (required)
-- `password`: Root password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response. 
-- `panel_password`: Panel password for the panel-based OS template. If not provided, random password will be generated. If OS does not support panel_password this field will be ignored. Password will not be shown in the response. 
+- `password`: Root password for the virtual machine. If not provided, random password will be generated.
+Password will not be shown in the response. 
+- `panel_password`: Panel password for the panel-based OS template. If not provided, random password will be generated.
+If OS does not support panel_password this field will be ignored.
+Password will not be shown in the response. 
 - `post_install_script_id`: Post-install script to execute after virtual machine was recreated 
 
 ### VPS_restartVirtualMachineV1
@@ -1853,7 +1875,8 @@ Use this endpoint to reboot VPS instances.
 
 Set root password for a specified virtual machine.
 
-Requirements for password are same as in the [recreate virtual machine endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).
+Requirements for password are same as in the [recreate virtual machine
+endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).
 
 Use this endpoint to update administrator credentials for VPS instances.
 
@@ -1880,7 +1903,8 @@ Use this endpoint to configure and initialize purchased VPS instances.
 - `template_id`: Template ID (required)
 - `data_center_id`: Data center ID (required)
 - `post_install_script_id`: Post-install script ID 
-- `password`: Password for the virtual machine. If not provided, random password will be generated. Password will not be shown in the response. 
+- `password`: Password for the virtual machine. If not provided, random password will be generated.
+Password will not be shown in the response. 
 - `hostname`: Override default hostname of the virtual machine 
 - `install_monarx`: Install Monarx malware scanner (if supported) 
 - `enable_backups`: Enable weekly backup schedule 
@@ -1938,7 +1962,8 @@ Use this endpoint to remove VPS snapshots.
 
 Restore a specified virtual machine to a previous state using a snapshot.
 
-Restoring from a snapshot allows users to revert the virtual machine to that state, which is useful for system recovery, undoing changes, or testing.
+Restoring from a snapshot allows users to revert the virtual machine to that state,
+which is useful for system recovery, undoing changes, or testing.
 
 Use this endpoint to revert VPS instances to previous saved states.
 
