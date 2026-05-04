@@ -45,6 +45,20 @@ yarn global upgrade hostinger-api-mcp
 pnpm update -g hostinger-api-mcp
 ```
 
+## Binaries
+
+This package installs the following MCP server commands:
+
+- `hostinger-api-mcp` — unified server with every tool (118 total)
+- `hostinger-billing-mcp` — 7 tools for billing
+- `hostinger-dns-mcp` — 8 tools for dns
+- `hostinger-domains-mcp` — 18 tools for domains
+- `hostinger-hosting-mcp` — 13 tools for hosting
+- `hostinger-reach-mcp` — 10 tools for reach
+- `hostinger-vps-mcp` — 62 tools for vps
+
+Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
+
 ## Configuration
 
 The following environment variables can be configured when running the server:
@@ -144,100 +158,9 @@ console.log("Tool result:", result);
 
 This MCP server provides the following tools:
 
-### hosting_importWordpressWebsite
+### `hostinger-billing-mcp`
 
-Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. The username will be automatically resolved from the domain.
-
-- **Method**: ``
-- **Path**: ``
-
-**Parameters**:
-
-- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
-- `archivePath`: Absolute or relative path to the website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mywebsite_20250115_143022.zip) (required)
-- `databaseDump`: Absolute or relative path to a database dump file (.sql) (required)
-
-### hosting_deployWordpressPlugin
-
-Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment.
-
-- **Method**: ``
-- **Path**: ``
-
-**Parameters**:
-
-- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
-- `slug`: WordPress plugin slug (e.g., omnisend) (required)
-- `pluginPath`: Absolute or relative path to the plugin directory containing all plugin files (required)
-
-### hosting_deployWordpressTheme
-
-Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment.
-
-- **Method**: ``
-- **Path**: ``
-
-**Parameters**:
-
-- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
-- `slug`: WordPress theme slug (e.g., twentytwentyfive) (required)
-- `themePath`: Absolute or relative path to the theme directory containing all theme files (required)
-- `activate`: Whether to activate the theme after deployment (default: false) 
-
-### hosting_deployJsApplication
-
-Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.
-
-- **Method**: ``
-- **Path**: ``
-
-**Parameters**:
-
-- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
-- `archivePath`: Absolute or relative path to the application archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory. (required)
-- `removeArchive`: Whether to remove the archive file after successful deployment (default: false) 
-
-### hosting_deployStaticWebsite
-
-Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The archive will be extracted and deployed directly without any build steps. The username will be automatically resolved from the domain.
-
-- **Method**: ``
-- **Path**: ``
-
-**Parameters**:
-
-- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
-- `archivePath`: Absolute or relative path to the static website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mystaticwebsite_20250115_143022.zip) (required)
-- `removeArchive`: Whether to remove the archive file after successful deployment (default: false) 
-
-### hosting_listJsDeployments
-
-List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.
-
-- **Method**: ``
-- **Path**: ``
-
-**Parameters**:
-
-- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
-- `page`: Page number for pagination (optional) 
-- `perPage`: Number of items per page (optional) 
-- `states`: Filter by deployment states (optional). Valid values: pending, completed, running, failed 
-
-### hosting_showJsDeploymentLogs
-
-Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.
-
-- **Method**: ``
-- **Path**: ``
-
-**Parameters**:
-
-- `domain`: Domain name associated with the hosting account (e.g., example.com) (required)
-- `fromLine`: Line from which to retrieve logs (optional, default 0) 
-- `buildUuid`: UUID of the JavaScript deployment build (required)
-
-### billing_getCatalogItemListV1
+#### billing_getCatalogItemListV1
 
 Retrieve catalog items available for order.
 
@@ -249,12 +172,7 @@ Use this endpoint to view available services and pricing before placing orders.
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/catalog`
 
-**Parameters**:
-
-- `category`: Filter catalog items by category 
-- `name`: Filter catalog items by name. Use `*` for wildcard search, e.g. `.COM*` to find .com domain 
-
-### billing_setDefaultPaymentMethodV1
+#### billing_setDefaultPaymentMethodV1
 
 Set the default payment method for your account.
 
@@ -263,11 +181,7 @@ Use this endpoint to configure the primary payment method for future orders.
 - **Method**: `POST`
 - **Path**: `/api/billing/v1/payment-methods/{paymentMethodId}`
 
-**Parameters**:
-
-- `paymentMethodId`: Payment method ID (required)
-
-### billing_deletePaymentMethodV1
+#### billing_deletePaymentMethodV1
 
 Delete a payment method from your account.
 
@@ -276,11 +190,7 @@ Use this endpoint to remove unused payment methods from user accounts.
 - **Method**: `DELETE`
 - **Path**: `/api/billing/v1/payment-methods/{paymentMethodId}`
 
-**Parameters**:
-
-- `paymentMethodId`: Payment method ID (required)
-
-### billing_getPaymentMethodListV1
+#### billing_getPaymentMethodListV1
 
 Retrieve available payment methods that can be used for placing new orders.
 
@@ -292,9 +202,7 @@ Use this endpoint to view available payment options before creating orders.
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/payment-methods`
 
-
-
-### billing_getSubscriptionListV1
+#### billing_getSubscriptionListV1
 
 Retrieve a list of all subscriptions associated with your account.
 
@@ -303,9 +211,7 @@ Use this endpoint to monitor active services and billing status.
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/subscriptions`
 
-
-
-### billing_disableAutoRenewalV1
+#### billing_disableAutoRenewalV1
 
 Disable auto-renewal for a subscription.
 
@@ -314,11 +220,7 @@ Use this endpoint when disable auto-renewal for a subscription.
 - **Method**: `DELETE`
 - **Path**: `/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/disable`
 
-**Parameters**:
-
-- `subscriptionId`: Subscription ID (required)
-
-### billing_enableAutoRenewalV1
+#### billing_enableAutoRenewalV1
 
 Enable auto-renewal for a subscription.
 
@@ -327,11 +229,9 @@ Use this endpoint when enable auto-renewal for a subscription.
 - **Method**: `PATCH`
 - **Path**: `/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/enable`
 
-**Parameters**:
+### `hostinger-dns-mcp`
 
-- `subscriptionId`: Subscription ID (required)
-
-### DNS_getDNSSnapshotV1
+#### DNS_getDNSSnapshotV1
 
 Retrieve particular DNS snapshot with contents of DNS zone records.
 
@@ -340,12 +240,7 @@ Use this endpoint to view historical DNS configurations for domains.
 - **Method**: `GET`
 - **Path**: `/api/dns/v1/snapshots/{domain}/{snapshotId}`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-- `snapshotId`: Snapshot ID (required)
-
-### DNS_getDNSSnapshotListV1
+#### DNS_getDNSSnapshotListV1
 
 Retrieve DNS snapshots for a domain.
 
@@ -354,11 +249,7 @@ Use this endpoint to view available DNS backup points for restoration.
 - **Method**: `GET`
 - **Path**: `/api/dns/v1/snapshots/{domain}`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### DNS_restoreDNSSnapshotV1
+#### DNS_restoreDNSSnapshotV1
 
 Restore DNS zone to the selected snapshot.
 
@@ -367,12 +258,7 @@ Use this endpoint to revert domain DNS to a previous configuration.
 - **Method**: `POST`
 - **Path**: `/api/dns/v1/snapshots/{domain}/{snapshotId}/restore`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-- `snapshotId`: Snapshot ID (required)
-
-### DNS_getDNSRecordsV1
+#### DNS_getDNSRecordsV1
 
 Retrieve DNS zone records for a specific domain.
 
@@ -381,11 +267,7 @@ Use this endpoint to view current DNS configuration for domain management.
 - **Method**: `GET`
 - **Path**: `/api/dns/v1/zones/{domain}`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### DNS_updateDNSRecordsV1
+#### DNS_updateDNSRecordsV1
 
 Update DNS records for the selected domain.
 
@@ -397,15 +279,7 @@ Use this endpoint to modify domain DNS configuration.
 - **Method**: `PUT`
 - **Path**: `/api/dns/v1/zones/{domain}`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-- `overwrite`: If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created,
-otherwise resource records' ttl's are updated and new records are appended.
-If no matching RRs are found, they are created. 
-- `zone`: zone parameter (required)
-
-### DNS_deleteDNSRecordsV1
+#### DNS_deleteDNSRecordsV1
 
 Delete DNS records for the selected domain.
 
@@ -420,11 +294,7 @@ Use this endpoint to remove specific DNS records from domains.
 - **Method**: `DELETE`
 - **Path**: `/api/dns/v1/zones/{domain}`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### DNS_resetDNSRecordsV1
+#### DNS_resetDNSRecordsV1
 
 Reset DNS zone to the default records.
 
@@ -433,14 +303,7 @@ Use this endpoint to restore domain DNS to original configuration.
 - **Method**: `POST`
 - **Path**: `/api/dns/v1/zones/{domain}/reset`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-- `sync`: Determines if operation should be run synchronously 
-- `reset_email_records`: Determines if email records should be reset 
-- `whitelisted_record_types`: Specifies which record types to not reset 
-
-### DNS_validateDNSRecordsV1
+#### DNS_validateDNSRecordsV1
 
 Validate DNS records prior to update for the selected domain.
 
@@ -452,24 +315,16 @@ Use this endpoint to verify DNS record validity before applying changes.
 - **Method**: `POST`
 - **Path**: `/api/dns/v1/zones/{domain}/validate`
 
-**Parameters**:
+### `hostinger-domains-mcp`
 
-- `domain`: Domain name (required)
-- `overwrite`: If `true`, resource records (RRs) matching name and type will be deleted and new RRs will be created,
-otherwise resource records' ttl's are updated and new records are appended.
-If no matching RRs are found, they are created. 
-- `zone`: zone parameter (required)
-
-### v2_getDomainVerificationsDIRECT
+#### v2_getDomainVerificationsDIRECT
 
 Retrieve a list of pending and completed domain verifications.
 
 - **Method**: `GET`
 - **Path**: `/api/v2/direct/verifications/active`
 
-
-
-### domains_checkDomainAvailabilityV1
+#### domains_checkDomainAvailabilityV1
 
 Check availability of domain names across multiple TLDs.
 
@@ -484,13 +339,7 @@ Use this endpoint to verify domain availability before purchase.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/availability`
 
-**Parameters**:
-
-- `domain`: Domain name (without TLD) (required)
-- `tlds`: TLDs list (required)
-- `with_alternatives`: Should response include alternatives 
-
-### domains_getDomainForwardingV1
+#### domains_getDomainForwardingV1
 
 Retrieve domain forwarding data.
 
@@ -499,11 +348,7 @@ Use this endpoint to view current redirect configuration for domains.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/forwarding/{domain}`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### domains_deleteDomainForwardingV1
+#### domains_deleteDomainForwardingV1
 
 Delete domain forwarding data.
 
@@ -512,11 +357,7 @@ Use this endpoint to remove redirect configuration from domains.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/forwarding/{domain}`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### domains_createDomainForwardingV1
+#### domains_createDomainForwardingV1
 
 Create domain forwarding configuration.
 
@@ -525,13 +366,7 @@ Use this endpoint to set up domain redirects to other URLs.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/forwarding`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-- `redirect_type`: Redirect type (required)
-- `redirect_url`: URL to forward domain to (required)
-
-### domains_enableDomainLockV1
+#### domains_enableDomainLockV1
 
 Enable domain lock for the domain.
 
@@ -543,11 +378,7 @@ Use this endpoint to secure domains against unauthorized transfers.
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/domain-lock`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### domains_disableDomainLockV1
+#### domains_disableDomainLockV1
 
 Disable domain lock for the domain.
 
@@ -558,11 +389,7 @@ Use this endpoint to prepare domains for transfer to other registrars.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/portfolio/{domain}/domain-lock`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### domains_getDomainDetailsV1
+#### domains_getDomainDetailsV1
 
 Retrieve detailed information for specified domain.
 
@@ -571,11 +398,7 @@ Use this endpoint to view comprehensive domain configuration and status.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/portfolio/{domain}`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### domains_getDomainListV1
+#### domains_getDomainListV1
 
 Retrieve all domains associated with your account.
 
@@ -584,9 +407,7 @@ Use this endpoint to view user's domain portfolio.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/portfolio`
 
-
-
-### domains_purchaseNewDomainV1
+#### domains_purchaseNewDomainV1
 
 Purchase and register a new domain name.
 
@@ -604,16 +425,7 @@ Use this endpoint to register new domains for users.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/portfolio`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-- `item_id`: Catalog price item ID (required)
-- `payment_method_id`: Payment method ID, default will be used if not provided 
-- `domain_contacts`: Domain contact information 
-- `additional_details`: Additional registration data, possible values depends on TLD 
-- `coupons`: Discount coupon codes 
-
-### domains_enablePrivacyProtectionV1
+#### domains_enablePrivacyProtectionV1
 
 Enable privacy protection for the domain.
 
@@ -624,11 +436,7 @@ Use this endpoint to protect domain owner's personal information from public vie
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/privacy-protection`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### domains_disablePrivacyProtectionV1
+#### domains_disablePrivacyProtectionV1
 
 Disable privacy protection for the domain.
 
@@ -639,11 +447,7 @@ Use this endpoint to make domain owner's information publicly visible.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/portfolio/{domain}/privacy-protection`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-
-### domains_updateDomainNameserversV1
+#### domains_updateDomainNameserversV1
 
 Set nameservers for a specified domain.
 
@@ -654,15 +458,7 @@ Use this endpoint to configure custom DNS hosting for domains.
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/nameservers`
 
-**Parameters**:
-
-- `domain`: Domain name (required)
-- `ns1`: First name server (required)
-- `ns2`: Second name server (required)
-- `ns3`: Third name server 
-- `ns4`: Fourth name server 
-
-### domains_getWHOISProfileV1
+#### domains_getWHOISProfileV1
 
 Retrieve a WHOIS contact profile.
 
@@ -671,11 +467,7 @@ Use this endpoint to view domain registration contact information.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/whois/{whoisId}`
 
-**Parameters**:
-
-- `whoisId`: WHOIS ID (required)
-
-### domains_deleteWHOISProfileV1
+#### domains_deleteWHOISProfileV1
 
 Delete WHOIS contact profile.
 
@@ -684,11 +476,7 @@ Use this endpoint to remove unused contact profiles from account.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/whois/{whoisId}`
 
-**Parameters**:
-
-- `whoisId`: WHOIS ID (required)
-
-### domains_getWHOISProfileListV1
+#### domains_getWHOISProfileListV1
 
 Retrieve WHOIS contact profiles.
 
@@ -697,11 +485,7 @@ Use this endpoint to view available contact profiles for domain registration.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/whois`
 
-**Parameters**:
-
-- `tld`: Filter by TLD (without leading dot) 
-
-### domains_createWHOISProfileV1
+#### domains_createWHOISProfileV1
 
 Create WHOIS contact profile.
 
@@ -710,15 +494,7 @@ Use this endpoint to add new contact information for domain registration.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/whois`
 
-**Parameters**:
-
-- `tld`: TLD of the domain (without leading dot) (required)
-- `country`: ISO 3166 2-letter country code (required)
-- `entity_type`: Legal entity type (required)
-- `tld_details`: TLD details 
-- `whois_details`: WHOIS details (required)
-
-### domains_getWHOISProfileUsageV1
+#### domains_getWHOISProfileUsageV1
 
 Retrieve domain list where provided WHOIS contact profile is used.
 
@@ -727,11 +503,58 @@ Use this endpoint to view which domains use specific contact profiles.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/whois/{whoisId}/usage`
 
-**Parameters**:
+### `hostinger-hosting-mcp`
 
-- `whoisId`: WHOIS ID (required)
+#### hosting_importWordpressWebsite
 
-### hosting_listAvailableDatacentersV1
+Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. The username will be automatically resolved from the domain.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_deployWordpressPlugin
+
+Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_deployWordpressTheme
+
+Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_deployJsApplication
+
+Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_deployStaticWebsite
+
+Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The archive will be extracted and deployed directly without any build steps. The username will be automatically resolved from the domain.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_listJsDeployments
+
+List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_showJsDeploymentLogs
+
+Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_listAvailableDatacentersV1
 
 Retrieve a list of datacenters available for setting up hosting plans
 based on available datacenter capacity and hosting plan of your order.
@@ -741,11 +564,7 @@ requirements.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/datacenters`
 
-**Parameters**:
-
-- `order_id`: Order ID (required)
-
-### hosting_generateAFreeSubdomainV1
+#### hosting_generateAFreeSubdomainV1
 
 Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.
 Free subdomains allow you to start using hosting services immediately
@@ -754,9 +573,7 @@ and you can always connect a custom domain to your site later.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/free-subdomains`
 
-
-
-### hosting_verifyDomainOwnershipV1
+#### hosting_verifyDomainOwnershipV1
 
 Verify ownership of a single domain and return the verification status.
 
@@ -770,11 +587,7 @@ Skip this verification when using Hostinger's free subdomains (*.hostingersite.c
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/verify-ownership`
 
-**Parameters**:
-
-- `domain`: Domain to verify ownership for (required)
-
-### hosting_listOrdersV1
+#### hosting_listOrdersV1
 
 Retrieve a paginated list of orders accessible to the authenticated client.
 
@@ -787,14 +600,7 @@ or specific order IDs for more targeted results.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/orders`
 
-**Parameters**:
-
-- `page`: Page number 
-- `per_page`: Number of items per page 
-- `statuses`: Filter by order statuses 
-- `order_ids`: Filter by specific order IDs 
-
-### hosting_listWebsitesV1
+#### hosting_listWebsitesV1
 
 Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.
 
@@ -808,16 +614,7 @@ order ID, enabled status, or domain name for more targeted results.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/websites`
 
-**Parameters**:
-
-- `page`: Page number 
-- `per_page`: Number of items per page 
-- `username`: Filter by specific username 
-- `order_id`: Order ID 
-- `is_enabled`: Filter by enabled status 
-- `domain`: Filter by domain name (exact match) 
-
-### hosting_createWebsiteV1
+#### hosting_createWebsiteV1
 
 Create a new website for the authenticated client.
 
@@ -834,13 +631,9 @@ websites list endpoint to see when your new website becomes available.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/websites`
 
-**Parameters**:
+### `hostinger-reach-mcp`
 
-- `domain`: Domain name for the website. Cannot start with "www." (required)
-- `order_id`: ID of the associated order (required)
-- `datacenter_code`: Datacenter code. This parameter is required when creating the first website on a new hosting plan. 
-
-### reach_deleteAContactV1
+#### reach_deleteAContactV1
 
 Delete a contact with the specified UUID.
 
@@ -849,11 +642,7 @@ This endpoint permanently removes a contact from the email marketing system.
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/contacts/{uuid}`
 
-**Parameters**:
-
-- `uuid`: UUID of the contact to delete (required)
-
-### reach_listContactGroupsV1
+#### reach_listContactGroupsV1
 
 Get a list of all contact groups.
 
@@ -862,9 +651,7 @@ This endpoint returns a list of contact groups that can be used to organize cont
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/contacts/groups`
 
-
-
-### reach_listContactsV1
+#### reach_listContactsV1
 
 Get a list of contacts, optionally filtered by group and subscription status.
 
@@ -874,13 +661,7 @@ You can filter contacts by group UUID and subscription status.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/contacts`
 
-**Parameters**:
-
-- `group_uuid`: Filter contacts by group UUID 
-- `subscription_status`: Filter contacts by subscription status 
-- `page`: Page number 
-
-### reach_createANewContactV1
+#### reach_createANewContactV1
 
 Create a new contact in the email marketing system.
 
@@ -892,14 +673,7 @@ the contact will be created with a pending status and a confirmation email will 
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/contacts`
 
-**Parameters**:
-
-- `email`: email parameter (required)
-- `name`: name parameter 
-- `surname`: surname parameter 
-- `note`: note parameter 
-
-### reach_listSegmentsV1
+#### reach_listSegmentsV1
 
 Get a list of all contact segments.
 
@@ -908,9 +682,7 @@ This endpoint returns a list of contact segments that can be used to organize co
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments`
 
-
-
-### reach_createANewContactSegmentV1
+#### reach_createANewContactSegmentV1
 
 Create a new contact segment.
 
@@ -920,13 +692,7 @@ The segment can be configured with specific criteria like email, name, subscript
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/segmentation/segments`
 
-**Parameters**:
-
-- `name`: name parameter (required)
-- `conditions`: conditions parameter (required)
-- `logic`: logic parameter (required)
-
-### reach_listSegmentContactsV1
+#### reach_listSegmentContactsV1
 
 Retrieve contacts associated with a specific segment.
 
@@ -936,13 +702,7 @@ identified by its UUID.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments/{segmentUuid}/contacts`
 
-**Parameters**:
-
-- `segmentUuid`: Segment uuid parameter (required)
-- `page`: Page number 
-- `per_page`: Number of items per page 
-
-### reach_getSegmentDetailsV1
+#### reach_getSegmentDetailsV1
 
 Get details of a specific segment.
 
@@ -952,11 +712,7 @@ Segments are used to organize and group contacts based on specific criteria.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments/{segmentUuid}`
 
-**Parameters**:
-
-- `segmentUuid`: Segment uuid parameter (required)
-
-### reach_createNewContactsV1
+#### reach_createNewContactsV1
 
 Create a new contact in the email marketing system.
 
@@ -968,24 +724,16 @@ and a confirmation email will be sent.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts`
 
-**Parameters**:
-
-- `profileUuid`: Profile uuid parameter (required)
-- `email`: email parameter (required)
-- `name`: name parameter 
-- `surname`: surname parameter 
-- `note`: note parameter 
-
-### reach_listProfilesV1
+#### reach_listProfilesV1
 
 This endpoint returns all profiles available to the client, including their basic information.
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles`
 
+### `hostinger-vps-mcp`
 
-
-### VPS_getDataCenterListV1
+#### VPS_getDataCenterListV1
 
 Retrieve all available data centers.
 
@@ -994,9 +742,7 @@ Use this endpoint to view location options before deploying VPS instances.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/data-centers`
 
-
-
-### VPS_getProjectContainersV1
+#### VPS_getProjectContainersV1
 
 Retrieves a list of all containers belonging to a specific Docker Compose project on the virtual machine. 
 
@@ -1008,12 +754,7 @@ Use this to monitor the health and state of all services within your Docker Comp
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/containers`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
-
-### VPS_getProjectContentsV1
+#### VPS_getProjectContentsV1
 
 Retrieves the complete project information including the docker-compose.yml
 file contents, project metadata, and current deployment status.
@@ -1025,12 +766,7 @@ Use this to inspect project settings, review the compose file, or check the over
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
-
-### VPS_deleteProjectV1
+#### VPS_deleteProjectV1
 
 Completely removes a Docker Compose project from the virtual machine, stopping all containers and cleaning up 
 associated resources including networks, volumes, and images. 
@@ -1042,12 +778,7 @@ Use this when you want to permanently remove a project and free up system resour
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/down`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
-
-### VPS_getProjectListV1
+#### VPS_getProjectListV1
 
 Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. 
 
@@ -1062,11 +793,7 @@ Use this to get an overview of all Docker projects on your VPS instance.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_createNewProjectV1
+#### VPS_createNewProjectV1
 
 Deploy new project from docker-compose.yaml contents or download contents from URL. 
 
@@ -1080,14 +807,7 @@ If project with the same name already exists, existing project will be replaced.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `project_name`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
-- `content`: URL pointing to docker-compose.yaml file, Github repository or raw YAML content of the compose file (required)
-- `environment`: Project environment variables 
-
-### VPS_getProjectLogsV1
+#### VPS_getProjectLogsV1
 
 Retrieves aggregated log entries from all services within a Docker Compose project. 
 
@@ -1100,12 +820,7 @@ troubleshooting issues across your entire project stack.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/logs`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
-
-### VPS_restartProjectV1
+#### VPS_restartProjectV1
 
 Restarts all services in a Docker Compose project by stopping and starting
 containers in the correct dependency order.
@@ -1117,12 +832,7 @@ Use this to apply configuration changes or recover from service failures.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/restart`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
-
-### VPS_startProjectV1
+#### VPS_startProjectV1
 
 Starts all services in a Docker Compose project that are currently stopped. 
 
@@ -1133,12 +843,7 @@ Use this to resume a project that was previously stopped or to start services af
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/start`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
-
-### VPS_stopProjectV1
+#### VPS_stopProjectV1
 
 Stops all running services in a Docker Compose project while preserving
 container configurations and data volumes.
@@ -1150,12 +855,7 @@ Use this to temporarily halt a project without removing data or configurations.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/stop`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
-
-### VPS_updateProjectV1
+#### VPS_updateProjectV1
 
 Updates a Docker Compose project by pulling the latest image versions and
 recreating containers with new configurations.
@@ -1168,12 +868,7 @@ refresh container images to their latest versions.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/update`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `projectName`: Docker Compose project name using alphanumeric characters, dashes, and underscores only (required)
-
-### VPS_activateFirewallV1
+#### VPS_activateFirewallV1
 
 Activate a firewall for a specified virtual machine.
 
@@ -1184,12 +879,7 @@ Use this endpoint to apply firewall rules to VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/activate/{virtualMachineId}`
 
-**Parameters**:
-
-- `firewallId`: Firewall ID (required)
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_deactivateFirewallV1
+#### VPS_deactivateFirewallV1
 
 Deactivate a firewall for a specified virtual machine.
 
@@ -1198,12 +888,7 @@ Use this endpoint to remove firewall protection from VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/deactivate/{virtualMachineId}`
 
-**Parameters**:
-
-- `firewallId`: Firewall ID (required)
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_getFirewallDetailsV1
+#### VPS_getFirewallDetailsV1
 
 Retrieve firewall by its ID and rules associated with it.
 
@@ -1212,11 +897,7 @@ Use this endpoint to view specific firewall configuration and rules.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/firewall/{firewallId}`
 
-**Parameters**:
-
-- `firewallId`: Firewall ID (required)
-
-### VPS_deleteFirewallV1
+#### VPS_deleteFirewallV1
 
 Delete a specified firewall.
 
@@ -1227,11 +908,7 @@ Use this endpoint to remove unused firewall configurations.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/firewall/{firewallId}`
 
-**Parameters**:
-
-- `firewallId`: Firewall ID (required)
-
-### VPS_getFirewallListV1
+#### VPS_getFirewallListV1
 
 Retrieve all available firewalls.
 
@@ -1240,11 +917,7 @@ Use this endpoint to view existing firewall configurations.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/firewall`
 
-**Parameters**:
-
-- `page`: Page number 
-
-### VPS_createNewFirewallV1
+#### VPS_createNewFirewallV1
 
 Create a new firewall.
 
@@ -1253,11 +926,7 @@ Use this endpoint to set up new firewall configurations for VPS security.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall`
 
-**Parameters**:
-
-- `name`: name parameter (required)
-
-### VPS_updateFirewallRuleV1
+#### VPS_updateFirewallRuleV1
 
 Update a specific firewall rule from a specified firewall.
 
@@ -1269,16 +938,7 @@ Use this endpoint to modify existing firewall rules.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules/{ruleId}`
 
-**Parameters**:
-
-- `firewallId`: Firewall ID (required)
-- `ruleId`: Firewall Rule ID (required)
-- `protocol`: protocol parameter (required)
-- `port`: Port or port range, ex: 1024:2048 (required)
-- `source`: source parameter (required)
-- `source_detail`: IP range, CIDR, single IP or `any` (required)
-
-### VPS_deleteFirewallRuleV1
+#### VPS_deleteFirewallRuleV1
 
 Delete a specific firewall rule from a specified firewall.
 
@@ -1290,12 +950,7 @@ Use this endpoint to remove specific firewall rules.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules/{ruleId}`
 
-**Parameters**:
-
-- `firewallId`: Firewall ID (required)
-- `ruleId`: Firewall Rule ID (required)
-
-### VPS_createFirewallRuleV1
+#### VPS_createFirewallRuleV1
 
 Create new firewall rule for a specified firewall.
 
@@ -1310,15 +965,7 @@ Use this endpoint to add new security rules to firewalls.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules`
 
-**Parameters**:
-
-- `firewallId`: Firewall ID (required)
-- `protocol`: protocol parameter (required)
-- `port`: Port or port range, ex: 1024:2048 (required)
-- `source`: source parameter (required)
-- `source_detail`: IP range, CIDR, single IP or `any` (required)
-
-### VPS_syncFirewallV1
+#### VPS_syncFirewallV1
 
 Sync a firewall for a specified virtual machine.
 
@@ -1329,12 +976,7 @@ Use this endpoint to apply updated firewall rules to VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/sync/{virtualMachineId}`
 
-**Parameters**:
-
-- `firewallId`: Firewall ID (required)
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_getPostInstallScriptV1
+#### VPS_getPostInstallScriptV1
 
 Retrieve post-install script by its ID.
 
@@ -1343,11 +985,7 @@ Use this endpoint to view specific automation script details.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/post-install-scripts/{postInstallScriptId}`
 
-**Parameters**:
-
-- `postInstallScriptId`: Post-install script ID (required)
-
-### VPS_updatePostInstallScriptV1
+#### VPS_updatePostInstallScriptV1
 
 Update a specific post-install script.
 
@@ -1356,13 +994,7 @@ Use this endpoint to modify existing automation scripts.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/post-install-scripts/{postInstallScriptId}`
 
-**Parameters**:
-
-- `postInstallScriptId`: Post-install script ID (required)
-- `name`: Name of the script (required)
-- `content`: Content of the script (required)
-
-### VPS_deletePostInstallScriptV1
+#### VPS_deletePostInstallScriptV1
 
 Delete a post-install script from your account.
        
@@ -1371,11 +1003,7 @@ Use this endpoint to remove unused automation scripts.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/post-install-scripts/{postInstallScriptId}`
 
-**Parameters**:
-
-- `postInstallScriptId`: Post-install script ID (required)
-
-### VPS_getPostInstallScriptsV1
+#### VPS_getPostInstallScriptsV1
 
 Retrieve post-install scripts associated with your account.
 
@@ -1384,11 +1012,7 @@ Use this endpoint to view available automation scripts for VPS deployment.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/post-install-scripts`
 
-**Parameters**:
-
-- `page`: Page number 
-
-### VPS_createPostInstallScriptV1
+#### VPS_createPostInstallScriptV1
 
 Add a new post-install script to your account, which can then be used after virtual machine installation.
 
@@ -1401,12 +1025,7 @@ Use this endpoint to create automation scripts for VPS setup tasks.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/post-install-scripts`
 
-**Parameters**:
-
-- `name`: Name of the script (required)
-- `content`: Content of the script (required)
-
-### VPS_attachPublicKeyV1
+#### VPS_attachPublicKeyV1
 
 Attach existing public keys from your account to a specified virtual machine.
 
@@ -1417,12 +1036,7 @@ Use this endpoint to enable SSH key authentication for VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/public-keys/attach/{virtualMachineId}`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `ids`: Public Key IDs to attach (required)
-
-### VPS_deletePublicKeyV1
+#### VPS_deletePublicKeyV1
 
 Delete a public key from your account. 
 
@@ -1433,11 +1047,7 @@ Use this endpoint to remove unused SSH keys from account.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/public-keys/{publicKeyId}`
 
-**Parameters**:
-
-- `publicKeyId`: Public Key ID (required)
-
-### VPS_getPublicKeysV1
+#### VPS_getPublicKeysV1
 
 Retrieve public keys associated with your account.
 
@@ -1446,11 +1056,7 @@ Use this endpoint to view available SSH keys for VPS authentication.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/public-keys`
 
-**Parameters**:
-
-- `page`: Page number 
-
-### VPS_createPublicKeyV1
+#### VPS_createPublicKeyV1
 
 Add a new public key to your account.
 
@@ -1459,12 +1065,7 @@ Use this endpoint to register SSH keys for VPS authentication.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/public-keys`
 
-**Parameters**:
-
-- `name`: name parameter (required)
-- `key`: key parameter (required)
-
-### VPS_getTemplateDetailsV1
+#### VPS_getTemplateDetailsV1
 
 Retrieve detailed information about a specific OS template for virtual machines.
 
@@ -1473,11 +1074,7 @@ Use this endpoint to view specific template specifications before deployment.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/templates/{templateId}`
 
-**Parameters**:
-
-- `templateId`: Template ID (required)
-
-### VPS_getTemplatesV1
+#### VPS_getTemplatesV1
 
 Retrieve available OS templates for virtual machines.
 
@@ -1486,9 +1083,7 @@ Use this endpoint to view operating system options before creating or recreating
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/templates`
 
-
-
-### VPS_getActionDetailsV1
+#### VPS_getActionDetailsV1
 
 Retrieve detailed information about a specific action performed on a specified virtual machine.
 
@@ -1497,12 +1092,7 @@ Use this endpoint to monitor specific VPS operation status and details.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/actions/{actionId}`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `actionId`: Action ID (required)
-
-### VPS_getActionsV1
+#### VPS_getActionsV1
 
 Retrieve actions performed on a specified virtual machine.
 
@@ -1516,12 +1106,7 @@ Use this endpoint to view VPS operation history and troubleshoot issues.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/actions`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `page`: Page number 
-
-### VPS_getAttachedPublicKeysV1
+#### VPS_getAttachedPublicKeysV1
 
 Retrieve public keys attached to a specified virtual machine.
 
@@ -1530,12 +1115,7 @@ Use this endpoint to view SSH keys configured for specific VPS instances.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/public-keys`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `page`: Page number 
-
-### VPS_getBackupsV1
+#### VPS_getBackupsV1
 
 Retrieve backups for a specified virtual machine.
 
@@ -1544,12 +1124,7 @@ Use this endpoint to view available backup points for VPS data recovery.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/backups`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `page`: Page number 
-
-### VPS_restoreBackupV1
+#### VPS_restoreBackupV1
 
 Restore a backup for a specified virtual machine.
 
@@ -1562,12 +1137,7 @@ Use this endpoint to recover VPS data from backup points.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/backups/{backupId}/restore`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `backupId`: Backup ID (required)
-
-### VPS_setHostnameV1
+#### VPS_setHostnameV1
 
 Set hostname for a specified virtual machine.
 
@@ -1580,12 +1150,7 @@ Use this endpoint to configure custom hostnames for VPS instances.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/hostname`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `hostname`: hostname parameter (required)
-
-### VPS_resetHostnameV1
+#### VPS_resetHostnameV1
 
 Reset hostname and PTR record of a specified virtual machine to default value.
 
@@ -1594,11 +1159,7 @@ Use this endpoint to restore default hostname configuration for VPS instances.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/hostname`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_getVirtualMachineDetailsV1
+#### VPS_getVirtualMachineDetailsV1
 
 Retrieve detailed information about a specified virtual machine.
 
@@ -1607,11 +1168,7 @@ Use this endpoint to view comprehensive VPS configuration and status.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_getVirtualMachinesV1
+#### VPS_getVirtualMachinesV1
 
 Retrieve all available virtual machines.
 
@@ -1620,9 +1177,7 @@ Use this endpoint to view available VPS instances.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines`
 
-
-
-### VPS_purchaseNewVirtualMachineV1
+#### VPS_purchaseNewVirtualMachineV1
 
 Purchase and setup a new virtual machine.
 
@@ -1636,14 +1191,7 @@ Use this endpoint to create new VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines`
 
-**Parameters**:
-
-- `item_id`: Catalog price item ID (required)
-- `payment_method_id`: Payment method ID, default will be used if not provided 
-- `setup`: setup parameter (required)
-- `coupons`: Discount coupon codes 
-
-### VPS_getScanMetricsV1
+#### VPS_getScanMetricsV1
 
 Retrieve scan metrics for the [Monarx](https://www.monarx.com/) malware scanner
 installed on a specified virtual machine.
@@ -1658,11 +1206,7 @@ Use this endpoint to monitor VPS security scan results and threat detection.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/monarx`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_installMonarxV1
+#### VPS_installMonarxV1
 
 Install the Monarx malware scanner on a specified virtual machine.
 
@@ -1676,11 +1220,7 @@ Use this endpoint to enable malware protection on VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/monarx`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_uninstallMonarxV1
+#### VPS_uninstallMonarxV1
 
 Uninstall the Monarx malware scanner on a specified virtual machine.
 
@@ -1691,11 +1231,7 @@ Use this endpoint to remove malware scanner from VPS instances.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/monarx`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_getMetricsV1
+#### VPS_getMetricsV1
 
 Retrieve historical metrics for a specified virtual machine.
 
@@ -1711,13 +1247,7 @@ Use this endpoint to monitor VPS performance and resource utilization over time.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/metrics`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `date_from`: date_from parameter (required)
-- `date_to`: date_to parameter (required)
-
-### VPS_setNameserversV1
+#### VPS_setNameserversV1
 
 Set nameservers for a specified virtual machine.
 
@@ -1729,14 +1259,7 @@ Use this endpoint to configure custom DNS resolvers for VPS instances.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/nameservers`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `ns1`: ns1 parameter (required)
-- `ns2`: ns2 parameter 
-- `ns3`: ns3 parameter 
-
-### VPS_createPTRRecordV1
+#### VPS_createPTRRecordV1
 
 Create or update a PTR (Pointer) record for a specified virtual machine.
 
@@ -1745,13 +1268,7 @@ Use this endpoint to configure reverse DNS lookup for VPS IP addresses.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `ipAddressId`: IP Address ID (required)
-- `domain`: Pointer record domain (required)
-
-### VPS_deletePTRRecordV1
+#### VPS_deletePTRRecordV1
 
 Delete a PTR (Pointer) record for a specified virtual machine.
 
@@ -1763,12 +1280,7 @@ Use this endpoint to remove reverse DNS configuration from VPS instances.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `ipAddressId`: IP Address ID (required)
-
-### VPS_setPanelPasswordV1
+#### VPS_setPanelPasswordV1
 
 Set panel password for a specified virtual machine.
 
@@ -1781,12 +1293,7 @@ Use this endpoint to configure control panel access credentials for VPS instance
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/panel-password`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `password`: Panel password for the virtual machine (required)
-
-### VPS_startRecoveryModeV1
+#### VPS_startRecoveryModeV1
 
 Initiate recovery mode for a specified virtual machine.
 
@@ -1801,12 +1308,7 @@ Use this endpoint to enable system rescue operations on VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/recovery`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `root_password`: Temporary root password for recovery mode (required)
-
-### VPS_stopRecoveryModeV1
+#### VPS_stopRecoveryModeV1
 
 Stop recovery mode for a specified virtual machine.
 
@@ -1817,11 +1319,7 @@ Use this endpoint to exit system rescue mode and return VPS to normal operation.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/recovery`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_recreateVirtualMachineV1
+#### VPS_recreateVirtualMachineV1
 
 Recreate a virtual machine from scratch.
 
@@ -1845,18 +1343,7 @@ Use this endpoint to completely rebuild VPS instances with fresh OS installation
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/recreate`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `template_id`: Template ID (required)
-- `password`: Root password for the virtual machine. If not provided, random password will be generated.
-Password will not be shown in the response. 
-- `panel_password`: Panel password for the panel-based OS template. If not provided, random password will be generated.
-If OS does not support panel_password this field will be ignored.
-Password will not be shown in the response. 
-- `post_install_script_id`: Post-install script to execute after virtual machine was recreated 
-
-### VPS_restartVirtualMachineV1
+#### VPS_restartVirtualMachineV1
 
 Restart a specified virtual machine by fully stopping and starting it.
 
@@ -1867,11 +1354,7 @@ Use this endpoint to reboot VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/restart`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_setRootPasswordV1
+#### VPS_setRootPasswordV1
 
 Set root password for a specified virtual machine.
 
@@ -1883,12 +1366,7 @@ Use this endpoint to update administrator credentials for VPS instances.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/root-password`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `password`: Root password for the virtual machine (required)
-
-### VPS_setupPurchasedVirtualMachineV1
+#### VPS_setupPurchasedVirtualMachineV1
 
 Setup newly purchased virtual machine with `initial` state.
 
@@ -1897,22 +1375,7 @@ Use this endpoint to configure and initialize purchased VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/setup`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-- `template_id`: Template ID (required)
-- `data_center_id`: Data center ID (required)
-- `post_install_script_id`: Post-install script ID 
-- `password`: Password for the virtual machine. If not provided, random password will be generated.
-Password will not be shown in the response. 
-- `hostname`: Override default hostname of the virtual machine 
-- `install_monarx`: Install Monarx malware scanner (if supported) 
-- `enable_backups`: Enable weekly backup schedule 
-- `ns1`: Name server 1 
-- `ns2`: Name server 2 
-- `public_key`: Use SSH key 
-
-### VPS_getSnapshotV1
+#### VPS_getSnapshotV1
 
 Retrieve snapshot for a specified virtual machine.
 
@@ -1921,11 +1384,7 @@ Use this endpoint to view current VPS snapshot information.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_createSnapshotV1
+#### VPS_createSnapshotV1
 
 Create a snapshot of a specified virtual machine.
 
@@ -1941,11 +1400,7 @@ Use this endpoint to capture VPS state for backup and recovery purposes.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_deleteSnapshotV1
+#### VPS_deleteSnapshotV1
 
 Delete a snapshot of a specified virtual machine.
 
@@ -1954,11 +1409,7 @@ Use this endpoint to remove VPS snapshots.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_restoreSnapshotV1
+#### VPS_restoreSnapshotV1
 
 Restore a specified virtual machine to a previous state using a snapshot.
 
@@ -1970,11 +1421,7 @@ Use this endpoint to revert VPS instances to previous saved states.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot/restore`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_startVirtualMachineV1
+#### VPS_startVirtualMachineV1
 
 Start a specified virtual machine.
 
@@ -1985,11 +1432,7 @@ Use this endpoint to power on stopped VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/start`
 
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)
-
-### VPS_stopVirtualMachineV1
+#### VPS_stopVirtualMachineV1
 
 Stop a specified virtual machine.
 
@@ -1999,7 +1442,3 @@ Use this endpoint to power off running VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/stop`
-
-**Parameters**:
-
-- `virtualMachineId`: Virtual Machine ID (required)

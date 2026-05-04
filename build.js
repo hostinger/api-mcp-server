@@ -41,9 +41,14 @@ exec('npx tsc', (error, stdout, stderr) => {
             console.log('Copied README.md to dist directory');
         }
 
-        // Create package.json in dist
+        // Create package.json in dist that points at compiled src/
         const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-        packageJson.main = 'server.js';
+        packageJson.main = 'src/servers/all.js';
+        if (packageJson.bin) {
+            for (const key of Object.keys(packageJson.bin)) {
+                packageJson.bin[key] = packageJson.bin[key].replace(/^\.\//g, '');
+            }
+        }
         fs.writeFileSync('./dist/package.json', JSON.stringify(packageJson, null, 2));
         console.log('Created package.json in dist directory');
 

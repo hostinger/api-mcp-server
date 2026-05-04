@@ -1,6 +1,6 @@
 {
   "name": "hostinger-api-mcp",
-  "version": "0.1.37",
+  "version": "0.1.40",
   "description": "MCP server for Hostinger API",
   "repository": {
     "type": "git",
@@ -15,14 +15,20 @@
     "api"
   ],
   "type": "module",
-  "main": "server.js",
+  "main": "./src/servers/all.js",
   "bin": {
-    "hostinger-api-mcp": "./server.js"
+    "hostinger-api-mcp": "./src/servers/all.js",
+    "hostinger-billing-mcp": "./src/servers/billing.js",
+    "hostinger-dns-mcp": "./src/servers/dns.js",
+    "hostinger-domains-mcp": "./src/servers/domains.js",
+    "hostinger-hosting-mcp": "./src/servers/hosting.js",
+    "hostinger-reach-mcp": "./src/servers/reach.js",
+    "hostinger-vps-mcp": "./src/servers/vps.js"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node src/servers/all.js",
     "build": "node build.js",
-    "start:ts": "npx tsc && node dist/server.js"
+    "start:ts": "npx tsc && node dist/src/servers/all.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.0",
