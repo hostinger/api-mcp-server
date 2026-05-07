@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/vps.js';
 
-startServer({ name: 'hostinger-vps-mcp', version: '0.1.40', tools });
+startServer({ name: 'hostinger-vps-mcp', version: '0.1.41', tools });
