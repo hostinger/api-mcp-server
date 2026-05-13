@@ -98,9 +98,13 @@ class MCPServer {
         if (key && value) headers[key.trim()] = value.trim();
       });
     }
-    
-    headers['User-Agent'] = `hostinger-mcp-server/${this.version}`;
-    
+
+    const extensionUa = String(process.env.USER_AGENT ?? "")
+      .replace(/\r|\n/g, "")
+      .trim();
+    const base = `hostinger-mcp-server/${this.version}`;
+    headers["User-Agent"] = extensionUa ? `${base} (${extensionUa})` : base;
+
     return headers;
   }
 
