@@ -11,6 +11,7 @@ import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+import { OAuthProvider } from "./oauth.js";
 import * as tus from "tus-js-client";
 import fs from "fs";
 import path from "path";
@@ -41,6 +42,7 @@ class MCPServer {
     this.debug = process.env.DEBUG === "true";
     this.baseUrl = process.env.API_BASE_URL || "https://developers.hostinger.com";
     this.headers = this.parseHeaders(process.env.API_HEADERS || "");
+    this.oauth = new OAuthProvider();
 
     // Initialize tools map - do this before creating server
     this.initializeTools();
@@ -81,6 +83,14 @@ class MCPServer {
     headers["User-Agent"] = extensionUa ? `${base} (${extensionUa})` : base;
 
     return headers;
+  }
+
+  /**
+   * Resolve a bearer token. API_TOKEN env var takes precedence; otherwise the
+   * OAuth provider handles login/refresh transparently.
+   */
+  async getAuthToken() {
+    return await this.oauth.getAccessToken();
   }
 
   /**
@@ -204,10 +214,7 @@ class MCPServer {
     const url = new URL(`api/hosting/v1/websites?domain=${encodeURIComponent(domain)}`, baseUrl).toString();
     
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
       
       const config = {
         method: 'get',
@@ -263,10 +270,7 @@ class MCPServer {
     const url = new URL('api/hosting/v1/files/upload-urls', baseUrl).toString();
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const config = {
         method: 'post',
@@ -460,10 +464,7 @@ class MCPServer {
     const url = new URL(`api/hosting/v1/accounts/${username}/domains/${domain}/is-empty`, baseUrl).toString();
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const config = {
         method: 'get',
@@ -515,10 +516,7 @@ class MCPServer {
     const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/wordpress/import`, baseUrl).toString();
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const config = {
         method: 'post',
@@ -743,10 +741,7 @@ class MCPServer {
     const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/wordpress/plugins/deploy`, baseUrl).toString();
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const config = {
         method: 'post',
@@ -977,10 +972,7 @@ class MCPServer {
     const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/wordpress/themes/deploy`, baseUrl).toString();
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const config = {
         method: 'post',
@@ -1214,10 +1206,7 @@ class MCPServer {
     const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/nodejs/builds/settings/from-archive?archive_path=${encodeURIComponent(archiveBasename)}`, baseUrl).toString();
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const config = {
         method: 'get',
@@ -1263,10 +1252,7 @@ class MCPServer {
     const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/nodejs/builds`, baseUrl).toString();
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const archiveBasename = path.basename(archivePath);
       const buildData = {
@@ -1514,10 +1500,7 @@ class MCPServer {
     const url = new URL(`api/hosting/v1/accounts/${username}/websites/${domain}/deploy`, baseUrl).toString();
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const archiveBasename = path.basename(archivePath);
       const deployData = {
@@ -1689,10 +1672,7 @@ class MCPServer {
     const fullUrl = queryParams ? `${url}?${queryParams}` : url;
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const config = {
         method: 'get',
@@ -1802,10 +1782,7 @@ class MCPServer {
     const fullUrl = queryParams ? `${url}?${queryParams}` : url;
 
     try {
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
-      if (!bearerToken) {
-        throw new Error('API_TOKEN environment variable not found');
-      }
+      const bearerToken = await this.getAuthToken();
 
       const config = {
         method: 'get',
@@ -1916,12 +1893,9 @@ class MCPServer {
         }
       };
     
-      const bearerToken = process.env['API_TOKEN'] || process.env['APITOKEN']; // APITOKEN for backwards compatibility
-      if (bearerToken) {
-        config.headers['Authorization'] = `Bearer ${bearerToken}`;
-      } else {
-        this.log('error', `Bearer Token environment variable not found: API_TOKEN`);
-      }
+      const envToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      let bearerToken = await this.getAuthToken();
+      config.headers['Authorization'] = `Bearer ${bearerToken}`;
 
       // Add parameters based on request method
       if (["GET", "DELETE"].includes(method)) {
@@ -1941,8 +1915,20 @@ class MCPServer {
       });
 
       // Execute the request
-      const response = await axios(config);
+      let response = await axios(config);
       this.log('debug', `Response status: ${response.status}`);
+
+      // Reactive token recovery: a 401 means the bearer was rejected even
+      // though our local expiry said it was fine (e.g. revoked, account
+      // changed, clock skew). Force a re-auth via refresh-or-login and retry
+      // once. Skipped for the env-token path — nothing to refresh.
+      if (response.status === 401 && !envToken) {
+        this.log('info', 'API returned 401; reauthenticating and retrying once');
+        bearerToken = await this.oauth.reauthenticate();
+        config.headers['Authorization'] = `Bearer ${bearerToken}`;
+        response = await axios(config);
+        this.log('debug', `Retry response status: ${response.status}`);
+      }
 
       return response.data;
 
@@ -2080,7 +2066,7 @@ class MCPServer {
 export async function startServer({ name, version, tools }) {
   const argv = minimist(process.argv.slice(2), {
     string: ['host'],
-    boolean: ['stdio', 'http', 'help'],
+    boolean: ['stdio', 'http', 'help', 'login', 'logout'],
     default: { host: '127.0.0.1', port: 8100, stdio: true }
   });
 
@@ -2089,16 +2075,42 @@ export async function startServer({ name, version, tools }) {
       ${name}
       Usage: ${name} [options]
       Options:
-        --http           Use HTTP streaming transport
+        --http           Use HTTP streaming transport (requires API_TOKEN env var)
         --stdio          Use standard input/output transport (default)
         --host <host>    Host to bind to (default: 127.0.0.1)
         --port <port>    Port to bind to (default: 8100)
+        --login          Run OAuth sign-in flow and exit
+        --logout         Revoke stored OAuth credentials and exit
         --help           Show this help message
       Environment Variables:
-        API_TOKEN        Your Hostinger API token (required)
+        API_TOKEN        Hostinger API token (overrides OAuth when set)
+        OAUTH_ISSUER     OAuth server base URL (default: https://auth.hostinger.com)
         DEBUG            Enable debug logging (true/false)
     `);
     process.exit(0);
+  }
+
+  if (argv.login) {
+    const provider = new OAuthProvider();
+    console.error('[OAuth] Starting sign-in flow...');
+    await provider.login();
+    console.error('[OAuth] Sign-in successful. Credentials stored.');
+    process.exit(0);
+  }
+
+  if (argv.logout) {
+    const provider = new OAuthProvider();
+    await provider.logout();
+    console.error('[OAuth] Signed out. Stored credentials revoked and cleared.');
+    process.exit(0);
+  }
+
+  if (argv.http) {
+    const envToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+    if (!envToken) {
+      console.error('[Error] HTTP transport requires the API_TOKEN environment variable. OAuth sign-in is only supported in stdio mode.');
+      process.exit(1);
+    }
   }
 
   const server = new MCPServer({ name, version, tools });

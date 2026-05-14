@@ -63,7 +63,43 @@ Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the
 
 The following environment variables can be configured when running the server:
 - `DEBUG`: Enable debug logging (true/false) (default: false)
-- `API_TOKEN`: Your API token, which will be sent in the `Authorization` header.
+- `API_TOKEN`: Your API token, which will be sent in the `Authorization` header. When set, OAuth is bypassed entirely.
+- `OAUTH_ISSUER`: OAuth server base URL (default: `https://auth.hostinger.com`). Only used when `API_TOKEN` is not set.
+
+## Authentication
+
+The server supports two authentication methods:
+
+### API Token (recommended for CI/scripts)
+
+Set `API_TOKEN` in the environment or `.env` file. When present it always takes precedence — no OAuth code runs.
+
+### OAuth 2.0 with PKCE (interactive sign-in)
+
+When `API_TOKEN` is not set and the server runs in stdio mode, OAuth 2.0 with PKCE is used automatically on the first authenticated tool call:
+
+1. A dynamic OAuth client is registered with the issuer (RFC 7591) — once per machine.
+2. A browser window opens to the authorization page.
+3. After sign-in, the server captures the redirect on a local ephemeral port, exchanges the code for tokens, and stores them.
+4. Subsequent calls reuse the stored access token; expired tokens are refreshed automatically. If a refresh token is revoked, the browser flow is re-launched.
+
+Credentials are stored at:
+- macOS / Linux: `~/.config/hostinger-mcp/credentials.json` (mode 0600)
+- Windows: `%APPDATA%\hostinger-mcp\credentials.json`
+
+Credentials are shared across all Hostinger MCP binaries (`hostinger-api-mcp`, `hostinger-vps-mcp`, etc.).
+
+**Manual commands:**
+
+```bash
+# Run the OAuth sign-in flow immediately (don't wait for the first tool call)
+hostinger-api-mcp --login
+
+# Revoke stored credentials
+hostinger-api-mcp --logout
+```
+
+**HTTP transport note:** OAuth sign-in is not supported in `--http` mode. Set `API_TOKEN` before using `--http`.
 
 ## Usage
 
@@ -107,10 +143,12 @@ hostinger-api-mcp --http --host 0.0.0.0 --port 8150
 
 ```
 Options:
-  --http           Use HTTP streaming transport
+  --http           Use HTTP streaming transport (requires API_TOKEN env var)
   --stdio          Use Server-Sent Events transport (default)
   --host {host}    Hostname or IP address to listen on (default: 127.0.0.1)
   --port {port}    Port to bind to (default: 8100)
+  --login          Run OAuth sign-in flow and exit
+  --logout         Revoke stored OAuth credentials and exit
   --help           Show help message
 ```
 

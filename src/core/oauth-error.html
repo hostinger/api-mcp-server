@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Authentication failed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #673DE6;
+      --primary-hover: #5025D1;
+      --deep: #2F1C6A;
+      --bg: #F4F5FF;
+      --lavender: #b6b2ff;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(31, 19, 70, 0.08);
+      padding: 48px 56px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+    .icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      border: 2px solid var(--primary);
+    }
+    .icon svg { width: 36px; height: 36px; }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0 0 12px;
+      color: var(--deep);
+    }
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin: 0 0 16px;
+      color: var(--deep);
+      opacity: 0.72;
+    }
+    .error-detail {
+      display: inline-block;
+      margin-top: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Cascadia Code", monospace;
+      font-size: 14px;
+      color: var(--deep);
+      background: var(--bg);
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--lavender);
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="alert" aria-live="assertive">
+    <div class="icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1>Authentication failed</h1>
+    <p>You can close this tab.</p>
+    <code class="error-detail">{{error}}</code>
+  </main>
+</body>
+</html>
