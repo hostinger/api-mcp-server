@@ -105,6 +105,10 @@ const tools: OpenApiTool[] = [
           "type": "string",
           "description": "surname parameter"
         },
+        "phone": {
+          "type": "string",
+          "description": "Phone number in E.164 format (leading \"+\" then 7-15 digits)"
+        },
         "note": {
           "type": "string",
           "description": "note parameter"
@@ -321,6 +325,10 @@ const tools: OpenApiTool[] = [
         "surname": {
           "type": "string",
           "description": "surname parameter"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number in E.164 format (leading \"+\" then 7-15 digits)"
         },
         "note": {
           "type": "string",

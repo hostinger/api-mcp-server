@@ -1020,6 +1020,10 @@ the contact will be created with a pending status and a confirmation email will 
        */
       surname?: string;
       /**
+       * Phone number in E.164 format (leading "+" then 7-15 digits)
+       */
+      phone?: string;
+      /**
        * note parameter
        */
       note?: string;
@@ -1129,6 +1133,10 @@ and a confirmation email will be sent.
        * surname parameter
        */
       surname?: string;
+      /**
+       * Phone number in E.164 format (leading "+" then 7-15 digits)
+       */
+      phone?: string;
       /**
        * note parameter
        */

@@ -41,6 +41,20 @@ export class OAuthRefreshError extends Error {
   }
 }
 
+/**
+ * Resolve the bearer token from the environment. HOSTINGER_API_TOKEN is the
+ * preferred name; API_TOKEN and APITOKEN are kept as backwards-compatible
+ * aliases (API_TOKEN is deprecated and will be removed in a future version).
+ * Empty values fall through, matching the previous `||` behavior.
+ */
+export function getEnvToken() {
+  return (
+    process.env["HOSTINGER_API_TOKEN"] ||
+    process.env["API_TOKEN"] ||
+    process.env["APITOKEN"]
+  );
+}
+
 export class OAuthProvider {
   constructor(issuerBaseUrl) {
     this.issuer = (
@@ -52,7 +66,7 @@ export class OAuthProvider {
   }
 
   async getAccessToken() {
-    const envToken = process.env["API_TOKEN"] || process.env["APITOKEN"];
+    const envToken = getEnvToken();
     if (envToken) {
       return envToken;
     }

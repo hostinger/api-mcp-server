@@ -63,8 +63,9 @@ Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the
 
 The following environment variables can be configured when running the server:
 - `DEBUG`: Enable debug logging (true/false) (default: false)
-- `API_TOKEN`: Your API token, which will be sent in the `Authorization` header. When set, OAuth is bypassed entirely.
-- `OAUTH_ISSUER`: OAuth server base URL (default: `https://auth.hostinger.com`). Only used when `API_TOKEN` is not set.
+- `HOSTINGER_API_TOKEN`: Your API token, which will be sent in the `Authorization` header. When set, OAuth is bypassed entirely.
+- `API_TOKEN`: Deprecated alias for `HOSTINGER_API_TOKEN`. Will be removed in a future version — prefer `HOSTINGER_API_TOKEN`.
+- `OAUTH_ISSUER`: OAuth server base URL (default: `https://auth.hostinger.com`). Only used when `HOSTINGER_API_TOKEN` is not set.
 
 ## Authentication
 
@@ -72,11 +73,11 @@ The server supports two authentication methods:
 
 ### API Token (recommended for CI/scripts)
 
-Set `API_TOKEN` in the environment or `.env` file. When present it always takes precedence — no OAuth code runs.
+Set `HOSTINGER_API_TOKEN` in the environment or `.env` file. When present it always takes precedence — no OAuth code runs.
 
 ### OAuth 2.0 with PKCE (interactive sign-in)
 
-When `API_TOKEN` is not set and the server runs in stdio mode, OAuth 2.0 with PKCE is used automatically on the first authenticated tool call:
+When `HOSTINGER_API_TOKEN` is not set and the server runs in stdio mode, OAuth 2.0 with PKCE is used automatically on the first authenticated tool call:
 
 1. A dynamic OAuth client is registered with the issuer (RFC 7591) — once per machine.
 2. A browser window opens to the authorization page.
@@ -99,7 +100,7 @@ hostinger-api-mcp --login
 hostinger-api-mcp --logout
 ```
 
-**HTTP transport note:** OAuth sign-in is not supported in `--http` mode. Set `API_TOKEN` before using `--http`.
+**HTTP transport note:** OAuth sign-in is not supported in `--http` mode. Set `HOSTINGER_API_TOKEN` before using `--http`.
 
 ## Usage
 
@@ -112,7 +113,7 @@ hostinger-api-mcp --logout
             "command": "hostinger-api-mcp",
             "env": {
                 "DEBUG": "false",
-                "API_TOKEN": "YOUR API TOKEN"
+                "HOSTINGER_API_TOKEN": "YOUR API TOKEN"
             }
         }
     }
@@ -143,7 +144,7 @@ hostinger-api-mcp --http --host 0.0.0.0 --port 8150
 
 ```
 Options:
-  --http           Use HTTP streaming transport (requires API_TOKEN env var)
+  --http           Use HTTP streaming transport (requires HOSTINGER_API_TOKEN env var)
   --stdio          Use Server-Sent Events transport (default)
   --host {host}    Hostname or IP address to listen on (default: 127.0.0.1)
   --port {port}    Port to bind to (default: 8100)
@@ -166,7 +167,7 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 const transport = new StreamableHTTPClientTransport({
   url: "http://localhost:8100/",
   headers: {
-    "Authorization": `Bearer ${process.env.API_TOKEN}`
+    "Authorization": `Bearer ${process.env.HOSTINGER_API_TOKEN}`
   }
 });
 

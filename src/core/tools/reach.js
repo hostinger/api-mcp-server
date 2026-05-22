@@ -95,6 +95,10 @@ export default [
           "type": "string",
           "description": "surname parameter"
         },
+        "phone": {
+          "type": "string",
+          "description": "Phone number in E.164 format (leading \"+\" then 7-15 digits)"
+        },
         "note": {
           "type": "string",
           "description": "note parameter"
@@ -311,6 +315,10 @@ export default [
         "surname": {
           "type": "string",
           "description": "surname parameter"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number in E.164 format (leading \"+\" then 7-15 digits)"
         },
         "note": {
           "type": "string",

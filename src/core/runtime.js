@@ -11,7 +11,7 @@ import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { OAuthProvider } from "./oauth.js";
+import { OAuthProvider, getEnvToken } from "./oauth.js";
 import * as tus from "tus-js-client";
 import fs from "fs";
 import path from "path";
@@ -29,7 +29,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.11.7
+ * Generated from OpenAPI spec version 0.12.0
  */
 class MCPServer {
   constructor({ name, version, tools }) {
@@ -86,8 +86,8 @@ class MCPServer {
   }
 
   /**
-   * Resolve a bearer token. API_TOKEN env var takes precedence; otherwise the
-   * OAuth provider handles login/refresh transparently.
+   * Resolve a bearer token. HOSTINGER_API_TOKEN / API_TOKEN env vars take
+   * precedence; otherwise the OAuth provider handles login/refresh transparently.
    */
   async getAuthToken() {
     return await this.oauth.getAccessToken();
@@ -1893,7 +1893,7 @@ class MCPServer {
         }
       };
     
-      const envToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+      const envToken = getEnvToken();
       let bearerToken = await this.getAuthToken();
       config.headers['Authorization'] = `Bearer ${bearerToken}`;
 
@@ -2075,17 +2075,18 @@ export async function startServer({ name, version, tools }) {
       ${name}
       Usage: ${name} [options]
       Options:
-        --http           Use HTTP streaming transport (requires API_TOKEN env var)
-        --stdio          Use standard input/output transport (default)
-        --host <host>    Host to bind to (default: 127.0.0.1)
-        --port <port>    Port to bind to (default: 8100)
-        --login          Run OAuth sign-in flow and exit
-        --logout         Revoke stored OAuth credentials and exit
-        --help           Show this help message
+        --http               Use HTTP streaming transport (requires HOSTINGER_API_TOKEN env var)
+        --stdio              Use standard input/output transport (default)
+        --host <host>        Host to bind to (default: 127.0.0.1)
+        --port <port>        Port to bind to (default: 8100)
+        --login              Run OAuth sign-in flow and exit
+        --logout             Revoke stored OAuth credentials and exit
+        --help               Show this help message
       Environment Variables:
-        API_TOKEN        Hostinger API token (overrides OAuth when set)
-        OAUTH_ISSUER     OAuth server base URL (default: https://auth.hostinger.com)
-        DEBUG            Enable debug logging (true/false)
+        HOSTINGER_API_TOKEN  Hostinger API token (overrides OAuth when set)
+        API_TOKEN            Deprecated alias for HOSTINGER_API_TOKEN (will be removed in a future version)
+        OAUTH_ISSUER         OAuth server base URL (default: https://auth.hostinger.com)
+        DEBUG                Enable debug logging (true/false)
     `);
     process.exit(0);
   }
@@ -2106,9 +2107,9 @@ export async function startServer({ name, version, tools }) {
   }
 
   if (argv.http) {
-    const envToken = process.env['API_TOKEN'] || process.env['APITOKEN'];
+    const envToken = getEnvToken();
     if (!envToken) {
-      console.error('[Error] HTTP transport requires the API_TOKEN environment variable. OAuth sign-in is only supported in stdio mode.');
+      console.error('[Error] HTTP transport requires the HOSTINGER_API_TOKEN environment variable. OAuth sign-in is only supported in stdio mode.');
       process.exit(1);
     }
   }
