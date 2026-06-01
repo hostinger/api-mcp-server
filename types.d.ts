@@ -825,6 +825,81 @@ and you can always connect a custom domain to your site later.
   };
 
   /**
+   * Retrieve all subdomains created under the selected website.
+
+Use this endpoint to inspect subdomain configuration for a specific website,
+including the parent domain and root directory assigned to each subdomain.
+   */
+  "hosting_listWebsiteSubdomainsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a new subdomain for the selected website.
+
+Provide a subdomain prefix and, optionally, a custom directory or the
+website public directory to use as the subdomain root.
+   */
+  "hosting_createWebsiteSubdomainV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Subdomain prefix to create under the selected website
+       */
+      subdomain: string;
+      /**
+       * Directory name for the subdomain relative to the website root
+       */
+      directory?: string;
+      /**
+       * Use the website public directory as the subdomain root directory
+       */
+      is_using_public_directory?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete an existing subdomain from the selected website.
+
+Use this endpoint to remove subdomains that are no longer needed.
+   */
+  "hosting_deleteWebsiteSubdomainV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * subdomain parameter
+       */
+      subdomain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Verify ownership of a single domain and return the verification status.
 
 Use this endpoint to check if a domain is accessible for you before using it for new websites.

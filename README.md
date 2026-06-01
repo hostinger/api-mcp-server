@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (118 total)
+- `hostinger-api-mcp` — unified server with every tool (121 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
-- `hostinger-hosting-mcp` — 13 tools for hosting
+- `hostinger-hosting-mcp` — 16 tools for hosting
 - `hostinger-reach-mcp` — 10 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 
@@ -611,6 +611,35 @@ and you can always connect a custom domain to your site later.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/free-subdomains`
+
+#### hosting_listWebsiteSubdomainsV1
+
+Retrieve all subdomains created under the selected website.
+
+Use this endpoint to inspect subdomain configuration for a specific website,
+including the parent domain and root directory assigned to each subdomain.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains`
+
+#### hosting_createWebsiteSubdomainV1
+
+Create a new subdomain for the selected website.
+
+Provide a subdomain prefix and, optionally, a custom directory or the
+website public directory to use as the subdomain root.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains`
+
+#### hosting_deleteWebsiteSubdomainV1
+
+Delete an existing subdomain from the selected website.
+
+Use this endpoint to remove subdomains that are no longer needed.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains/{subdomain}`
 
 #### hosting_verifyDomainOwnershipV1
 
