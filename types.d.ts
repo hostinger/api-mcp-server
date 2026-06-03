@@ -797,6 +797,91 @@ Use this endpoint to view which domains use specific contact profiles.
   };
 
   /**
+   * Returns a paginated list of databases for the specified account.
+
+Use the domain and is_assigned filters to find databases assigned to a specific domain.
+   */
+  "hosting_listAccountDatabasesV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+      /**
+       * Filter by domain name (exact match)
+       */
+      domain?: string;
+      /**
+       * When used with domain, return only databases assigned to that domain.
+       */
+      is_assigned?: boolean;
+      /**
+       * Search databases by name, user, or creation date.
+       */
+      search?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Creates a database with a database user and password for the specified account.
+
+The database name and user are automatically prefixed with the account username when needed.
+   */
+  "hosting_createAccountDatabaseV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Database name. If the account username prefix is omitted, it is added automatically.
+       */
+      name: string;
+      /**
+       * Database user. If the account username prefix is omitted, it is added automatically.
+       */
+      user: string;
+      /**
+       * Database user password.
+       */
+      password: string;
+      /**
+       * Website domain assigned to the database.
+       */
+      website_domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently deletes a database and its remote connections.
+
+The database name must be the full name returned by the list databases endpoint.
+   */
+  "hosting_deleteAccountDatabaseV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Full database name as returned by the list databases endpoint.
+       */
+      name: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a list of datacenters available for setting up hosting plans
 based on available datacenter capacity and hosting plan of your order.
 The first item in the list is the best match for your specific order
@@ -820,6 +905,73 @@ and you can always connect a custom domain to your site later.
   "hosting_generateAFreeSubdomainV1": {
     params: {
 
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve all parked or alias domains created under the selected website.
+
+Use this endpoint to inspect parked domain configuration for a specific website,
+including the parent domain and root directory assigned to each parked domain.
+   */
+  "hosting_listWebsiteParkedDomainsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a parked or alias domain for the selected website.
+
+Provide a domain name or IP address to park on the website so it serves the same content
+as the parent domain.
+   */
+  "hosting_createWebsiteParkedDomainV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Domain name or IP address to park on the selected website
+       */
+      parked_domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete an existing parked or alias domain from the selected website.
+
+Use this endpoint to remove parked domains that are no longer needed.
+   */
+  "hosting_deleteWebsiteParkedDomainV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * parkedDomain parameter
+       */
+      parkedDomain: string;
     };
     response: any; // Response structure will depend on the API
   };

@@ -1298,6 +1298,123 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
+    "name": "hosting_listAccountDatabasesV1",
+    "description": "Returns a paginated list of databases for the specified account.\n\nUse the domain and is_assigned filters to find databases assigned to a specific domain.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/databases",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Filter by domain name (exact match)"
+        },
+        "is_assigned": {
+          "type": "boolean",
+          "description": "When used with domain, return only databases assigned to that domain."
+        },
+        "search": {
+          "type": "string",
+          "description": "Search databases by name, user, or creation date."
+        }
+      },
+      "required": [
+        "username"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_createAccountDatabaseV1",
+    "description": "Creates a database with a database user and password for the specified account.\n\nThe database name and user are automatically prefixed with the account username when needed.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/databases",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "Database name. If the account username prefix is omitted, it is added automatically."
+        },
+        "user": {
+          "type": "string",
+          "description": "Database user. If the account username prefix is omitted, it is added automatically."
+        },
+        "password": {
+          "type": "string",
+          "description": "Database user password."
+        },
+        "website_domain": {
+          "type": "string",
+          "description": "Website domain assigned to the database."
+        }
+      },
+      "required": [
+        "username",
+        "name",
+        "user",
+        "password",
+        "website_domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_deleteAccountDatabaseV1",
+    "description": "Permanently deletes a database and its remote connections.\n\nThe database name must be the full name returned by the list databases endpoint.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/databases/{name}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full database name as returned by the list databases endpoint."
+        }
+      },
+      "required": [
+        "username",
+        "name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_listAvailableDatacentersV1",
     "description": "Retrieve a list of datacenters available for setting up hosting plans\nbased on available datacenter capacity and hosting plan of your order.\nThe first item in the list is the best match for your specific order\nrequirements.",
     "method": "GET",
@@ -1330,6 +1447,103 @@ const tools: OpenApiTool[] = [
       "type": "object",
       "properties": {},
       "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_listWebsiteParkedDomainsV1",
+    "description": "Retrieve all parked or alias domains created under the selected website.\n\nUse this endpoint to inspect parked domain configuration for a specific website,\nincluding the parent domain and root directory assigned to each parked domain.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_createWebsiteParkedDomainV1",
+    "description": "Create a parked or alias domain for the selected website.\n\nProvide a domain name or IP address to park on the website so it serves the same content\nas the parent domain.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "parked_domain": {
+          "type": "string",
+          "description": "Domain name or IP address to park on the selected website"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "parked_domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_deleteWebsiteParkedDomainV1",
+    "description": "Delete an existing parked or alias domain from the selected website.\n\nUse this endpoint to remove parked domains that are no longer needed.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains/{parkedDomain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "parkedDomain": {
+          "type": "string",
+          "description": "parkedDomain parameter"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "parkedDomain"
+      ]
     },
     "security": [
       {

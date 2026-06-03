@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (121 total)
+- `hostinger-api-mcp` — unified server with every tool (127 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
-- `hostinger-hosting-mcp` — 16 tools for hosting
+- `hostinger-hosting-mcp` — 22 tools for hosting
 - `hostinger-reach-mcp` — 10 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 
@@ -593,6 +593,33 @@ Retrieve logs for a specified JavaScript application deployment for debugging pu
 - **Method**: `custom`
 - **Path**: `custom`
 
+#### hosting_listAccountDatabasesV1
+
+Returns a paginated list of databases for the specified account.
+
+Use the domain and is_assigned filters to find databases assigned to a specific domain.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/databases`
+
+#### hosting_createAccountDatabaseV1
+
+Creates a database with a database user and password for the specified account.
+
+The database name and user are automatically prefixed with the account username when needed.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/databases`
+
+#### hosting_deleteAccountDatabaseV1
+
+Permanently deletes a database and its remote connections.
+
+The database name must be the full name returned by the list databases endpoint.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}`
+
 #### hosting_listAvailableDatacentersV1
 
 Retrieve a list of datacenters available for setting up hosting plans
@@ -611,6 +638,35 @@ and you can always connect a custom domain to your site later.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/free-subdomains`
+
+#### hosting_listWebsiteParkedDomainsV1
+
+Retrieve all parked or alias domains created under the selected website.
+
+Use this endpoint to inspect parked domain configuration for a specific website,
+including the parent domain and root directory assigned to each parked domain.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains`
+
+#### hosting_createWebsiteParkedDomainV1
+
+Create a parked or alias domain for the selected website.
+
+Provide a domain name or IP address to park on the website so it serves the same content
+as the parent domain.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains`
+
+#### hosting_deleteWebsiteParkedDomainV1
+
+Delete an existing parked or alias domain from the selected website.
+
+Use this endpoint to remove parked domains that are no longer needed.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains/{parkedDomain}`
 
 #### hosting_listWebsiteSubdomainsV1
 
