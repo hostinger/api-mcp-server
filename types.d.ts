@@ -797,6 +797,30 @@ Use this endpoint to view which domains use specific contact profiles.
   };
 
   /**
+   * Changes the password for the specified database user.
+
+The database name must be the full name returned by the list databases endpoint.
+The password must also be updated in any website configuration that uses this database.
+   */
+  "hosting_changeDatabasePasswordV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Full database name as returned by the list databases endpoint.
+       */
+      name: string;
+      /**
+       * New database user password.
+       */
+      password: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Returns a paginated list of databases for the specified account.
 
 Use the domain and is_assigned filters to find databases assigned to a specific domain.
@@ -868,6 +892,46 @@ The database name and user are automatically prefixed with the account username 
 The database name must be the full name returned by the list databases endpoint.
    */
   "hosting_deleteAccountDatabaseV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Full database name as returned by the list databases endpoint.
+       */
+      name: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Repairs corrupted database tables asynchronously.
+
+Use when database errors, crashes, or corruption are reported.
+The database name must be the full name returned by the list databases endpoint.
+   */
+  "hosting_repairDatabaseV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Full database name as returned by the list databases endpoint.
+       */
+      name: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns a direct sign-on link to phpMyAdmin for the specified database.
+
+Use this when a visual database interface is needed for SQL queries, imports, exports, or table management.
+The database name must be the full name returned by the list databases endpoint.
+   */
+  "hosting_getPhpMyAdminLinkV1": {
     params: {
       /**
        * username parameter
@@ -1067,6 +1131,137 @@ Skip this verification when using Hostinger's free subdomains (*.hostingersite.c
        * Domain to verify ownership for
        */
       domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of Node.js build processes for a specific website.
+
+Each build represents a single run of the Node.js build pipeline. Use the `states`
+query parameter to filter results by build state (pending, running, completed, failed).
+Use the `uuid` from a build to poll its output via the `Get Node.js Build Logs` endpoint.
+   */
+  "hosting_listNode.jsBuildsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+      /**
+       * Build states to filter by
+       */
+      states?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Upload a project archive, auto-detect build settings, and immediately start a Node.js build.
+
+This is the recommended single-step approach for deploying a Node.js application.
+The archive is uploaded to the website's file storage, build settings are auto-detected
+from the package.json inside the archive, and the build process starts automatically.
+Optional override fields take precedence over auto-detected values.
+Maximum archive size is 50MB.
+
+Before archiving, exclude `node_modules/` and any build output directories
+(e.g. `dist/`, `.next/`, `build/`) — they are not needed because the build
+process runs the install step automatically, and including them unnecessarily
+increases the archive size. This also helps keep the archive well under the 50MB limit.
+
+Example (zip):
+```
+zip -r archive.zip . --exclude "node_modules/*" --exclude "dist/*"
+```
+
+The returned build `uuid` can be used to poll progress and retrieve logs via
+the `Get Node.js Build Logs` endpoint.
+   */
+  "hosting_createNode.jsBuildFromArchiveV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Project archive file (.zip, .tar.gz, or .tgz), maximum 50MB
+       */
+      archive: string;
+      /**
+       * Node.js version override (auto-detected from package.json if omitted)
+       */
+      node_version?: number;
+      /**
+       * Node.js application type override
+       */
+      app_type?: string;
+      /**
+       * Application root directory override (where package.json is located) relative to public_html
+       */
+      root_directory?: string;
+      /**
+       * Build output directory override relative to the root directory
+       */
+      output_directory?: string;
+      /**
+       * Build script override
+       */
+      build_script?: string;
+      /**
+       * Main entry point file override
+       */
+      entry_file?: string;
+      /**
+       * Package manager override
+       */
+      package_manager?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve logs from a specific Node.js build process.
+
+To stream live output while a build is running, poll this endpoint repeatedly
+while the build state is `running`, passing the previously returned `lines` count
+as `from_line` to fetch only new output since the last call.
+Log content may contain ANSI escape sequences (color codes).
+   */
+  "hosting_getNode.jsBuildLogsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Build UUID
+       */
+      uuid: string;
+      /**
+       * Line from which to start retrieving logs
+       */
+      from_line?: number;
     };
     response: any; // Response structure will depend on the API
   };

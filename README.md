@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (129 total)
+- `hostinger-api-mcp` — unified server with every tool (135 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
-- `hostinger-hosting-mcp` — 24 tools for hosting
+- `hostinger-hosting-mcp` — 30 tools for hosting
 - `hostinger-reach-mcp` — 10 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 
@@ -593,6 +593,16 @@ Retrieve logs for a specified JavaScript application deployment for debugging pu
 - **Method**: `custom`
 - **Path**: `custom`
 
+#### hosting_changeDatabasePasswordV1
+
+Changes the password for the specified database user.
+
+The database name must be the full name returned by the list databases endpoint.
+The password must also be updated in any website configuration that uses this database.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/change-password`
+
 #### hosting_listAccountDatabasesV1
 
 Returns a paginated list of databases for the specified account.
@@ -619,6 +629,26 @@ The database name must be the full name returned by the list databases endpoint.
 
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}`
+
+#### hosting_repairDatabaseV1
+
+Repairs corrupted database tables asynchronously.
+
+Use when database errors, crashes, or corruption are reported.
+The database name must be the full name returned by the list databases endpoint.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/repair`
+
+#### hosting_getPhpMyAdminLinkV1
+
+Returns a direct sign-on link to phpMyAdmin for the specified database.
+
+Use this when a visual database interface is needed for SQL queries, imports, exports, or table management.
+The database name must be the full name returned by the list databases endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/phpmyadmin-link`
 
 #### hosting_listAvailableDatacentersV1
 
@@ -710,6 +740,55 @@ Skip this verification when using Hostinger's free subdomains (*.hostingersite.c
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/verify-ownership`
+
+#### hosting_listNode.jsBuildsV1
+
+Retrieve a paginated list of Node.js build processes for a specific website.
+
+Each build represents a single run of the Node.js build pipeline. Use the `states`
+query parameter to filter results by build state (pending, running, completed, failed).
+Use the `uuid` from a build to poll its output via the `Get Node.js Build Logs` endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds`
+
+#### hosting_createNode.jsBuildFromArchiveV1
+
+Upload a project archive, auto-detect build settings, and immediately start a Node.js build.
+
+This is the recommended single-step approach for deploying a Node.js application.
+The archive is uploaded to the website's file storage, build settings are auto-detected
+from the package.json inside the archive, and the build process starts automatically.
+Optional override fields take precedence over auto-detected values.
+Maximum archive size is 50MB.
+
+Before archiving, exclude `node_modules/` and any build output directories
+(e.g. `dist/`, `.next/`, `build/`) — they are not needed because the build
+process runs the install step automatically, and including them unnecessarily
+increases the archive size. This also helps keep the archive well under the 50MB limit.
+
+Example (zip):
+```
+zip -r archive.zip . --exclude "node_modules/*" --exclude "dist/*"
+```
+
+The returned build `uuid` can be used to poll progress and retrieve logs via
+the `Get Node.js Build Logs` endpoint.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/from-archive`
+
+#### hosting_getNode.jsBuildLogsV1
+
+Retrieve logs from a specific Node.js build process.
+
+To stream live output while a build is running, poll this endpoint repeatedly
+while the build state is `running`, passing the previously returned `lines` count
+as `from_line` to fetch only new output since the last call.
+Log content may contain ANSI escape sequences (color codes).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/logs`
 
 #### hosting_listOrdersV1
 

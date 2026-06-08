@@ -1298,6 +1298,40 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
+    "name": "hosting_changeDatabasePasswordV1",
+    "description": "Changes the password for the specified database user.\n\nThe database name must be the full name returned by the list databases endpoint.\nThe password must also be updated in any website configuration that uses this database.",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/databases/{name}/change-password",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full database name as returned by the list databases endpoint."
+        },
+        "password": {
+          "type": "string",
+          "description": "New database user password."
+        }
+      },
+      "required": [
+        "username",
+        "name",
+        "password"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_listAccountDatabasesV1",
     "description": "Returns a paginated list of databases for the specified account.\n\nUse the domain and is_assigned filters to find databases assigned to a specific domain.",
     "method": "GET",
@@ -1390,6 +1424,64 @@ const tools: OpenApiTool[] = [
     "description": "Permanently deletes a database and its remote connections.\n\nThe database name must be the full name returned by the list databases endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full database name as returned by the list databases endpoint."
+        }
+      },
+      "required": [
+        "username",
+        "name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_repairDatabaseV1",
+    "description": "Repairs corrupted database tables asynchronously.\n\nUse when database errors, crashes, or corruption are reported.\nThe database name must be the full name returned by the list databases endpoint.",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/databases/{name}/repair",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full database name as returned by the list databases endpoint."
+        }
+      },
+      "required": [
+        "username",
+        "name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_getPhpMyAdminLinkV1",
+    "description": "Returns a direct sign-on link to phpMyAdmin for the specified database.\n\nUse this when a visual database interface is needed for SQL queries, imports, exports, or table management.\nThe database name must be the full name returned by the list databases endpoint.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/databases/{name}/phpmyadmin-link",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -1672,6 +1764,179 @@ const tools: OpenApiTool[] = [
       },
       "required": [
         "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_listNode.jsBuildsV1",
+    "description": "Retrieve a paginated list of Node.js build processes for a specific website.\n\nEach build represents a single run of the Node.js build pipeline. Use the `states`\nquery parameter to filter results by build state (pending, running, completed, failed).\nUse the `uuid` from a build to poll its output via the `Get Node.js Build Logs` endpoint.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        },
+        "states": {
+          "type": "array",
+          "description": "Build states to filter by",
+          "items": {
+            "type": "string",
+            "description": "states parameter",
+            "enum": [
+              "pending",
+              "running",
+              "completed",
+              "failed"
+            ]
+          }
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_createNode.jsBuildFromArchiveV1",
+    "description": "Upload a project archive, auto-detect build settings, and immediately start a Node.js build.\n\nThis is the recommended single-step approach for deploying a Node.js application.\nThe archive is uploaded to the website's file storage, build settings are auto-detected\nfrom the package.json inside the archive, and the build process starts automatically.\nOptional override fields take precedence over auto-detected values.\nMaximum archive size is 50MB.\n\nBefore archiving, exclude `node_modules/` and any build output directories\n(e.g. `dist/`, `.next/`, `build/`) — they are not needed because the build\nprocess runs the install step automatically, and including them unnecessarily\nincreases the archive size. This also helps keep the archive well under the 50MB limit.\n\nExample (zip):\n```\nzip -r archive.zip . --exclude \"node_modules/*\" --exclude \"dist/*\"\n```\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/from-archive",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "archive": {
+          "type": "string",
+          "description": "Project archive file (.zip, .tar.gz, or .tgz), maximum 50MB"
+        },
+        "node_version": {
+          "type": "integer",
+          "description": "Node.js version override (auto-detected from package.json if omitted)",
+          "enum": [
+            18,
+            20,
+            22,
+            24
+          ]
+        },
+        "app_type": {
+          "type": "string",
+          "description": "Node.js application type override",
+          "enum": [
+            "create-react-app",
+            "vite",
+            "angular",
+            "react",
+            "vue",
+            "parcel",
+            "express",
+            "fastify",
+            "nest"
+          ]
+        },
+        "root_directory": {
+          "type": "string",
+          "description": "Application root directory override (where package.json is located) relative to public_html"
+        },
+        "output_directory": {
+          "type": "string",
+          "description": "Build output directory override relative to the root directory"
+        },
+        "build_script": {
+          "type": "string",
+          "description": "Build script override"
+        },
+        "entry_file": {
+          "type": "string",
+          "description": "Main entry point file override"
+        },
+        "package_manager": {
+          "type": "string",
+          "description": "Package manager override",
+          "enum": [
+            "npm",
+            "yarn",
+            "pnpm"
+          ]
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "archive"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_getNode.jsBuildLogsV1",
+    "description": "Retrieve logs from a specific Node.js build process.\n\nTo stream live output while a build is running, poll this endpoint repeatedly\nwhile the build state is `running`, passing the previously returned `lines` count\nas `from_line` to fetch only new output since the last call.\nLog content may contain ANSI escape sequences (color codes).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/logs",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "Build UUID"
+        },
+        "from_line": {
+          "type": "integer",
+          "description": "Line from which to start retrieving logs"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "uuid"
       ]
     },
     "security": [
