@@ -2066,9 +2066,15 @@ class MCPServer {
 export async function startServer({ name, version, tools }) {
   const argv = minimist(process.argv.slice(2), {
     string: ['host'],
-    boolean: ['stdio', 'http', 'help', 'login', 'logout'],
+    boolean: ['stdio', 'http', 'help', 'version', 'login', 'logout'],
+    alias: { h: 'help', v: 'version' },
     default: { host: '127.0.0.1', port: 8100, stdio: true }
   });
+
+  if (argv.version) {
+    console.log(version);
+    process.exit(0);
+  }
 
   if (argv.help) {
     console.log(`
@@ -2081,6 +2087,7 @@ export async function startServer({ name, version, tools }) {
         --port <port>        Port to bind to (default: 8100)
         --login              Run OAuth sign-in flow and exit
         --logout             Revoke stored OAuth credentials and exit
+        --version, -v        Show version number
         --help               Show this help message
       Environment Variables:
         HOSTINGER_API_TOKEN  Hostinger API token (overrides OAuth when set)
