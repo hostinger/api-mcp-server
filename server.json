@@ -1,0 +1,29 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.hostinger/hostinger-api-mcp",
+  "description": "MCP server for Hostinger API",
+  "repository": {
+    "url": "https://github.com/hostinger/api-mcp-server",
+    "source": "github"
+  },
+  "version": "0.2.9",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "hostinger-api-mcp",
+      "version": "0.2.9",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "HOSTINGER_API_TOKEN",
+          "description": "Hostinger API token",
+          "isRequired": true,
+          "isSecret": true,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}
