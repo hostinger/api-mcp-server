@@ -741,7 +741,7 @@ Skip this verification when using Hostinger's free subdomains (*.hostingersite.c
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/verify-ownership`
 
-#### hosting_listNode.jsBuildsV1
+#### hosting_listNodeJSBuildsV1
 
 Retrieve a paginated list of Node.js build processes for a specific website.
 
@@ -752,7 +752,7 @@ Use the `uuid` from a build to poll its output via the `Get Node.js Build Logs` 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds`
 
-#### hosting_createNode.jsBuildFromArchiveV1
+#### hosting_createNodeJSBuildFromArchiveV1
 
 Upload a project archive, auto-detect build settings, and immediately start a Node.js build.
 
@@ -778,7 +778,7 @@ the `Get Node.js Build Logs` endpoint.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/from-archive`
 
-#### hosting_getNode.jsBuildLogsV1
+#### hosting_getNodeJSBuildLogsV1
 
 Retrieve logs from a specific Node.js build process.
 

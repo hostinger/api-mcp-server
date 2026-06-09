@@ -1142,7 +1142,7 @@ Each build represents a single run of the Node.js build pipeline. Use the `state
 query parameter to filter results by build state (pending, running, completed, failed).
 Use the `uuid` from a build to poll its output via the `Get Node.js Build Logs` endpoint.
    */
-  "hosting_listNode.jsBuildsV1": {
+  "hosting_listNodeJSBuildsV1": {
     params: {
       /**
        * username parameter
@@ -1190,7 +1190,7 @@ zip -r archive.zip . --exclude "node_modules/*" --exclude "dist/*"
 The returned build `uuid` can be used to poll progress and retrieve logs via
 the `Get Node.js Build Logs` endpoint.
    */
-  "hosting_createNode.jsBuildFromArchiveV1": {
+  "hosting_createNodeJSBuildFromArchiveV1": {
     params: {
       /**
        * username parameter
@@ -1244,7 +1244,7 @@ while the build state is `running`, passing the previously returned `lines` coun
 as `from_line` to fetch only new output since the last call.
 Log content may contain ANSI escape sequences (color codes).
    */
-  "hosting_getNode.jsBuildLogsV1": {
+  "hosting_getNodeJSBuildLogsV1": {
     params: {
       /**
        * username parameter
