@@ -6,20 +6,20 @@
     "url": "https://github.com/hostinger/api-mcp-server",
     "source": "github"
   },
-  "version": "0.2.10",
+  "version": "0.2.11",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "hostinger-api-mcp",
-      "version": "0.2.10",
+      "version": "0.2.11",
       "transport": {
         "type": "stdio"
       },
       "environmentVariables": [
         {
           "name": "HOSTINGER_API_TOKEN",
-          "description": "Hostinger API token",
-          "isRequired": true,
+          "description": "Hostinger API token. Optional — when unset, the server falls back to interactive OAuth sign-in.",
+          "isRequired": false,
           "isSecret": true,
           "format": "string"
         }
