@@ -1,6 +1,6 @@
 {
   "name": "hostinger-api-mcp",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "mcpName": "io.github.hostinger/hostinger-api-mcp",
   "description": "MCP server for Hostinger API",
   "repository": {
@@ -22,6 +22,7 @@
     "hostinger-billing-mcp": "./src/servers/billing.js",
     "hostinger-dns-mcp": "./src/servers/dns.js",
     "hostinger-domains-mcp": "./src/servers/domains.js",
+    "hostinger-ecommerce-mcp": "./src/servers/ecommerce.js",
     "hostinger-hosting-mcp": "./src/servers/hosting.js",
     "hostinger-reach-mcp": "./src/servers/reach.js",
     "hostinger-vps-mcp": "./src/servers/vps.js"

@@ -797,6 +797,54 @@ Use this endpoint to view which domains use specific contact profiles.
   };
 
   /**
+   * Retrieve the stores associated with your account.
+   */
+  "ecommerce_getStoresV1": {
+    params: {
+      /**
+       * Page number
+       */
+      page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a new store for your account.
+
+A primary sales channel is created alongside the store.
+   */
+  "ecommerce_createStoreV1": {
+    params: {
+      /**
+       * name parameter
+       */
+      name?: string;
+      /**
+       * ISO 3166-1 alpha-2 country code.
+       */
+      country_code?: string;
+      /**
+       * company_email parameter
+       */
+      company_email?: string;
+      /**
+       * company_name parameter
+       */
+      company_name?: string;
+      /**
+       * ISO 639-1 language code.
+       */
+      language?: string;
+      /**
+       * sales_channel parameter
+       */
+      sales_channel?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Changes the password for the specified database user.
 
 The database name must be the full name returned by the list databases endpoint.

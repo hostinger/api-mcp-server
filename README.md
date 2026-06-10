@@ -49,10 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (135 total)
+- `hostinger-api-mcp` — unified server with every tool (137 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
+- `hostinger-ecommerce-mcp` — 2 tools for ecommerce
 - `hostinger-hosting-mcp` — 30 tools for hosting
 - `hostinger-reach-mcp` — 10 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
@@ -541,6 +542,24 @@ Use this endpoint to view which domains use specific contact profiles.
 
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/whois/{whoisId}/usage`
+
+### `hostinger-ecommerce-mcp`
+
+#### ecommerce_getStoresV1
+
+Retrieve the stores associated with your account.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores`
+
+#### ecommerce_createStoreV1
+
+Create a new store for your account.
+
+A primary sales channel is created alongside the store.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores`
 
 ### `hostinger-hosting-mcp`
 
