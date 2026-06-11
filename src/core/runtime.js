@@ -60,6 +60,14 @@ class MCPServer {
       }
     );
 
+    // Capture the connecting MCP client's identity once the initialize handshake completes
+    this.server.oninitialized = () => {
+      const clientInfo = this.server.getClientVersion();
+      if (clientInfo?.name) {
+        this.headers["X-MCP-Client"] = clientInfo.name;
+      }
+    };
+
     // Set up request handlers - don't log here
     this.setupHandlers();
   }
