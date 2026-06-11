@@ -29,7 +29,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.18.2
+ * Generated from OpenAPI spec version 0.19.0
  */
 class MCPServer {
   constructor({ name, version, tools }) {
@@ -116,6 +116,17 @@ class MCPServer {
    * Set up request handlers
    */
   setupHandlers() {
+    // Capture the connecting MCP client's identity once the initialize handshake completes.
+    // The name is client-controlled input, so strip CR/LF to prevent header injection.
+    this.server.oninitialized = () => {
+      const clientName = String(this.server.getClientVersion()?.name ?? "")
+        .replace(/\r|\n/g, "")
+        .trim();
+      if (clientName) {
+        this.headers["X-MCP-Client"] = clientName;
+      }
+    };
+
     // Handle tool listing requests
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
       this.log('debug', "Handling ListTools request");

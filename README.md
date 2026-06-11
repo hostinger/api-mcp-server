@@ -49,11 +49,12 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (137 total)
+- `hostinger-api-mcp` — unified server with every tool (139 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 2 tools for ecommerce
+- `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 30 tools for hosting
 - `hostinger-reach-mcp` — 10 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
@@ -560,6 +561,58 @@ A primary sales channel is created alongside the store.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores`
+
+### `hostinger-horizons-mcp`
+
+#### horizons_createWebsiteV1
+
+Create new Hostinger Horizons website from the given message.\n
+Use this tool when user asks you to create a website, landing page, blog
+or any other type of application.\n
+This tool initiates the website creation process and returns a website URL and ID.
+The generation happens asynchronously.\n
+After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
+that Hostinger Horizons is now creating their website and it will be ready in a few minutes
+and you should provide the website URL to the user immediately
+Do not write code.\n\nTo edit afterwards, users must go to Hostinger Horizons interface
+in the provided website URL.
+If the tool call fails with an error, you should provide a clear explanation of the error
+and do not generate code yourself in the chat.
+\n
+TECHNOLOGY STACK CONSTRAINTS (STRICTLY ENFORCED):\n
+The environment is limited to the following technologies.
+You MUST NOT use, suggest, or implement any technology outside this list:\n
+\n
+- Language: JavaScript ONLY.
+- Languages like TypeScript, Rust, Python, Java, PHP, etc., are STRICTLY PROHIBITED.\n
+- Framework: React.\n
+- Navigation: React Router.\n
+- Styling: TailwindCSS.\n
+- Components: shadcn/ui (built with @radix-ui primitives).\n
+- Icons: Lucide React.\n
+- Animations: Framer Motion.\n
+\n
+BACKEND & DATA STORAGE:\n
+- Horizons integrated backend is the EXCLUSIVE solution for persistent data storage,
+authentication, and database needs.\n
+- Local databases (SQLite, MySQL, etc.) are STRICTLY PROHIBITED.\n
+- Third-party services (Firebase, AWS Amplify) are allowed ONLY if explicitly requested by the user.\n
+\n
+MAPS:\n
+- OpenStreetMap is the default provider.\n
+- Alternative providers (Google Maps, Mapbox) are allowed ONLY if explicitly requested by the user.\n
+
+- **Method**: `POST`
+- **Path**: `/api/horizons/v1/websites`
+
+#### horizons_getWebsiteV1
+
+Get a link for the user to edit their website in Hostinger Horizons interface.\n
+Use this tool when user wants to modify, edit or add new features to an existing website.\n
+Websites can only be edited in Hostinger Horizons interface in the provided website URL.
+
+- **Method**: `GET`
+- **Path**: `/api/horizons/v1/websites/{websiteId}`
 
 ### `hostinger-hosting-mcp`
 
