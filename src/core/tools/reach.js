@@ -237,6 +237,43 @@ export default [
     "group": "reach"
   },
   {
+    "name": "reach_listProfileSegmentContactsV1",
+    "description": "Retrieve contacts associated with a specific segment for a given profile.\n\nThis endpoint allows you to fetch and filter contacts that belong to a particular segment,\nidentified by its UUID, scoped to a specific profile.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "segmentUuid": {
+          "type": "string",
+          "description": "Segment uuid parameter"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "segmentUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_listSegmentContactsV1",
     "description": "Retrieve contacts associated with a specific segment.\n\nThis endpoint allows you to fetch and filter contacts that belong to a particular segment,\nidentified by its UUID.",
     "method": "GET",

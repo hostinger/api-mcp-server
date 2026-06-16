@@ -1693,6 +1693,34 @@ The segment can be configured with specific criteria like email, name, subscript
   };
 
   /**
+   * Retrieve contacts associated with a specific segment for a given profile.
+
+This endpoint allows you to fetch and filter contacts that belong to a particular segment,
+identified by its UUID, scoped to a specific profile.
+   */
+  "reach_listProfileSegmentContactsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Segment uuid parameter
+       */
+      segmentUuid: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve contacts associated with a specific segment.
 
 This endpoint allows you to fetch and filter contacts that belong to a particular segment,

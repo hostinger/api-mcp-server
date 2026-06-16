@@ -49,14 +49,14 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (139 total)
+- `hostinger-api-mcp` — unified server with every tool (140 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 2 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 30 tools for hosting
-- `hostinger-reach-mcp` — 10 tools for reach
+- `hostinger-reach-mcp` — 11 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 
 Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
@@ -1003,6 +1003,16 @@ The segment can be configured with specific criteria like email, name, subscript
 
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/segmentation/segments`
+
+#### reach_listProfileSegmentContactsV1
+
+Retrieve contacts associated with a specific segment for a given profile.
+
+This endpoint allows you to fetch and filter contacts that belong to a particular segment,
+identified by its UUID, scoped to a specific profile.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts`
 
 #### reach_listSegmentContactsV1
 
