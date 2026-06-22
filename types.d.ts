@@ -797,6 +797,117 @@ Use this endpoint to view which domains use specific contact profiles.
   };
 
   /**
+   * Enable a manual payment method so the store can accept orders without an online payment provider.
+   */
+  "ecommerce_enableManualPaymentMethodV1": {
+    params: {
+      /**
+       * The ID of the store to enable manual payment for.
+       */
+      store_id: string;
+      /**
+       * Optional display name shown to customers at checkout.
+       */
+      title?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a published digital product with a single variant and an optional external download link.
+   */
+  "ecommerce_createDigitalProductV1": {
+    params: {
+      /**
+       * The ID of the store to create the product in.
+       */
+      store_id: string;
+      /**
+       * The product name.
+       */
+      name: string;
+      /**
+       * Price in the smallest currency unit (e.g. cents). Must be positive.
+       */
+      price: number;
+      /**
+       * The product description.
+       */
+      description?: string;
+      /**
+       * ISO 4217 currency code. Defaults to the store's default currency when omitted.
+       */
+      currency?: string;
+      /**
+       * Optional external download link delivered to the customer after purchase.
+       */
+      download_url?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a published physical product with a single variant priced in the store currency.
+   */
+  "ecommerce_createPhysicalProductV1": {
+    params: {
+      /**
+       * The ID of the store to create the product in.
+       */
+      store_id: string;
+      /**
+       * The product name.
+       */
+      name: string;
+      /**
+       * Price in the smallest currency unit (e.g. cents). Must be positive.
+       */
+      price: number;
+      /**
+       * The product description.
+       */
+      description?: string;
+      /**
+       * ISO 4217 currency code. Defaults to the store's default currency when omitted.
+       */
+      currency?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Set the flat-rate shipping price for a store, creating the shipping zone if it does not exist yet.
+   */
+  "ecommerce_setStoreShippingV1": {
+    params: {
+      /**
+       * The ID of the store to configure shipping for.
+       */
+      store_id: string;
+      /**
+       * Flat shipping rate in the smallest currency unit (e.g. cents). Use 0 for free shipping.
+       */
+      price: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Soft-delete a store owned by your account.
+
+The underlying store data is preserved; only the store is marked as deleted.
+   */
+  "ecommerce_deleteStoreV1": {
+    params: {
+      /**
+       * The ID of the store to delete.
+       */
+      store_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve the stores associated with your account.
    */
   "ecommerce_getStoresV1": {

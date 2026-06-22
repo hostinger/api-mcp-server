@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (140 total)
+- `hostinger-api-mcp` — unified server with every tool (145 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
-- `hostinger-ecommerce-mcp` — 2 tools for ecommerce
+- `hostinger-ecommerce-mcp` — 7 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 30 tools for hosting
 - `hostinger-reach-mcp` — 11 tools for reach
@@ -545,6 +545,43 @@ Use this endpoint to view which domains use specific contact profiles.
 - **Path**: `/api/domains/v1/whois/{whoisId}/usage`
 
 ### `hostinger-ecommerce-mcp`
+
+#### ecommerce_enableManualPaymentMethodV1
+
+Enable a manual payment method so the store can accept orders without an online payment provider.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/payment-methods/manual`
+
+#### ecommerce_createDigitalProductV1
+
+Create a published digital product with a single variant and an optional external download link.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/digital`
+
+#### ecommerce_createPhysicalProductV1
+
+Create a published physical product with a single variant priced in the store currency.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/physical`
+
+#### ecommerce_setStoreShippingV1
+
+Set the flat-rate shipping price for a store, creating the shipping zone if it does not exist yet.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/shipping`
+
+#### ecommerce_deleteStoreV1
+
+Soft-delete a store owned by your account.
+
+The underlying store data is preserved; only the store is marked as deleted.
+
+- **Method**: `DELETE`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}`
 
 #### ecommerce_getStoresV1
 
