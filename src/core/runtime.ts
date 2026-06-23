@@ -47,7 +47,7 @@ const SECURITY_SCHEMES: Record<string, SecurityScheme> = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 0.19.2
+ * Generated from OpenAPI spec version 0.19.3
  */
 class MCPServer {
   private readonly name: string;

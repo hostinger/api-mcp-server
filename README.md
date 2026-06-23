@@ -49,14 +49,14 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (145 total)
+- `hostinger-api-mcp` — unified server with every tool (146 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 7 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 30 tools for hosting
-- `hostinger-reach-mcp` — 11 tools for reach
+- `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 
 Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
@@ -1082,6 +1082,16 @@ and a confirmation email will be sent.
 
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts`
+
+#### reach_getProfileDomainDNSStatusV1
+
+Retrieve the DNS configuration status for a profile's domain.
+
+This endpoint reports the state of MX, SPF, DKIM and DMARC records, including the
+actual records found and the suggested records required for correct email delivery.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/domains/dns-status`
 
 #### reach_listProfilesV1
 

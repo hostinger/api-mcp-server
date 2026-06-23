@@ -2891,6 +2891,30 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
+    "name": "reach_getProfileDomainDNSStatusV1",
+    "description": "Retrieve the DNS configuration status for a profile's domain.\n\nThis endpoint reports the state of MX, SPF, DKIM and DMARC records, including the\nactual records found and the suggested records required for correct email delivery.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/domains/dns-status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_listProfilesV1",
     "description": "This endpoint returns all profiles available to the client, including their basic information.",
     "method": "GET",

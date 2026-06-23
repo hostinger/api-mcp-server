@@ -1910,6 +1910,22 @@ and a confirmation email will be sent.
   };
 
   /**
+   * Retrieve the DNS configuration status for a profile's domain.
+
+This endpoint reports the state of MX, SPF, DKIM and DMARC records, including the
+actual records found and the suggested records required for correct email delivery.
+   */
+  "reach_getProfileDomainDNSStatusV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * This endpoint returns all profiles available to the client, including their basic information.
    */
   "reach_listProfilesV1": {
