@@ -1764,6 +1764,102 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_createAccountDatabaseRemoteConnectionV1",
+    "description": "Allows a remote host to connect to the specified database.\n\nProvide an IPv4/IPv6 address, or \"%\" to allow any host. The database name must be\nthe full name returned by the list databases endpoint.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full database name as returned by the list databases endpoint."
+        },
+        "ip": {
+          "type": "string",
+          "description": "Remote host to allow: an IPv4/IPv6 address, or \"%\" for any host."
+        }
+      },
+      "required": [
+        "username",
+        "name",
+        "ip"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_deleteAccountDatabaseRemoteConnectionV1",
+    "description": "Permanently removes a remote-access rule, revoking the given host's remote access to the database.\n\nIdentify the rule with the required ip query parameter (the IPv4/IPv6 address, or \"%\",\nexactly as returned by the list remote connections endpoint). The database name must be\nthe full name returned by the list databases endpoint.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full database name as returned by the list databases endpoint."
+        },
+        "ip": {
+          "type": "string",
+          "description": "Remote host to revoke: the IPv4/IPv6 address, or \"%\",\nexactly as returned by the list remote connections endpoint."
+        }
+      },
+      "required": [
+        "username",
+        "name",
+        "ip"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_listAccountDatabaseRemoteConnectionsV1",
+    "description": "Returns the remote-access rules for the specified account: the remote hosts\n(IPv4/IPv6 addresses, or \"%\" for any host) allowed to connect to the account databases.\n\nUse the domain filter to only return rules for databases assigned to a specific domain.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/databases/remote-connections",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Filter remote connections by the domain the database is assigned to.\nRules for databases not assigned to any domain are always included."
+        }
+      },
+      "required": [
+        "username"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_repairDatabaseV1",
     "description": "Repairs corrupted database tables asynchronously.\n\nUse when database errors, crashes, or corruption are reported.\nThe database name must be the full name returned by the list databases endpoint.",
     "method": "PATCH",

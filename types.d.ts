@@ -1127,6 +1127,77 @@ The database name must be the full name returned by the list databases endpoint.
   };
 
   /**
+   * Allows a remote host to connect to the specified database.
+
+Provide an IPv4/IPv6 address, or "%" to allow any host. The database name must be
+the full name returned by the list databases endpoint.
+   */
+  "hosting_createAccountDatabaseRemoteConnectionV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Full database name as returned by the list databases endpoint.
+       */
+      name: string;
+      /**
+       * Remote host to allow: an IPv4/IPv6 address, or "%" for any host.
+       */
+      ip: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently removes a remote-access rule, revoking the given host's remote access to the database.
+
+Identify the rule with the required ip query parameter (the IPv4/IPv6 address, or "%",
+exactly as returned by the list remote connections endpoint). The database name must be
+the full name returned by the list databases endpoint.
+   */
+  "hosting_deleteAccountDatabaseRemoteConnectionV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Full database name as returned by the list databases endpoint.
+       */
+      name: string;
+      /**
+       * Remote host to revoke: the IPv4/IPv6 address, or "%",
+exactly as returned by the list remote connections endpoint.
+       */
+      ip: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns the remote-access rules for the specified account: the remote hosts
+(IPv4/IPv6 addresses, or "%" for any host) allowed to connect to the account databases.
+
+Use the domain filter to only return rules for databases assigned to a specific domain.
+   */
+  "hosting_listAccountDatabaseRemoteConnectionsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Filter remote connections by the domain the database is assigned to.
+Rules for databases not assigned to any domain are always included.
+       */
+      domain?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Repairs corrupted database tables asynchronously.
 
 Use when database errors, crashes, or corruption are reported.

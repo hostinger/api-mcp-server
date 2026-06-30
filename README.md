@@ -49,13 +49,13 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (146 total)
+- `hostinger-api-mcp` — unified server with every tool (149 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 7 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 30 tools for hosting
+- `hostinger-hosting-mcp` — 33 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 
@@ -738,6 +738,37 @@ The database name must be the full name returned by the list databases endpoint.
 
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}`
+
+#### hosting_createAccountDatabaseRemoteConnectionV1
+
+Allows a remote host to connect to the specified database.
+
+Provide an IPv4/IPv6 address, or "%" to allow any host. The database name must be
+the full name returned by the list databases endpoint.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections`
+
+#### hosting_deleteAccountDatabaseRemoteConnectionV1
+
+Permanently removes a remote-access rule, revoking the given host's remote access to the database.
+
+Identify the rule with the required ip query parameter (the IPv4/IPv6 address, or "%",
+exactly as returned by the list remote connections endpoint). The database name must be
+the full name returned by the list databases endpoint.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections`
+
+#### hosting_listAccountDatabaseRemoteConnectionsV1
+
+Returns the remote-access rules for the specified account: the remote hosts
+(IPv4/IPv6 addresses, or "%" for any host) allowed to connect to the account databases.
+
+Use the domain filter to only return rules for databases assigned to a specific domain.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/databases/remote-connections`
 
 #### hosting_repairDatabaseV1
 
