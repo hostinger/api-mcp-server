@@ -1603,6 +1603,122 @@ export default [
     "group": "horizons"
   },
   {
+    "name": "hosting_listAccountCronJobsV1",
+    "description": "Returns the list of cron jobs configured for the specified account, including their schedule and command.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/cron-jobs",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        }
+      },
+      "required": [
+        "username"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_createAccountCronJobV1",
+    "description": "Creates a cron job for the specified account from a schedule expression and a command.\n\nReturns the created cron job, including its uid, which is required to delete the cron job or fetch its output.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/cron-jobs",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "time": {
+          "type": "string",
+          "description": "Cron schedule expression (for example \"0 2 * * *\" runs daily at 02:00)."
+        },
+        "command": {
+          "type": "string",
+          "description": "Command to execute on the schedule."
+        }
+      },
+      "required": [
+        "username",
+        "time",
+        "command"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_deleteAccountCronJobV1",
+    "description": "Permanently deletes the cron job identified by its uid.\n\nThe uid is returned by the list cron jobs endpoint.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/cron-jobs/{uid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier of the cron job as returned by the list cron jobs endpoint."
+        }
+      },
+      "required": [
+        "username",
+        "uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_getCronJobOutputV1",
+    "description": "Returns the output captured from the last execution of the cron job identified by its uid.\n\nThe uid is returned by the list cron jobs endpoint.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/cron-jobs/{uid}/output",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier of the cron job as returned by the list cron jobs endpoint."
+        }
+      },
+      "required": [
+        "username",
+        "uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_changeDatabasePasswordV1",
     "description": "Changes the password for the specified database user.\n\nThe database name must be the full name returned by the list databases endpoint.\nThe password must also be updated in any website configuration that uses this database.",
     "method": "PATCH",

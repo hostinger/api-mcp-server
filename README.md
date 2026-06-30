@@ -49,13 +49,13 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (149 total)
+- `hostinger-api-mcp` — unified server with every tool (153 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 7 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 33 tools for hosting
+- `hostinger-hosting-mcp` — 37 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 
@@ -701,6 +701,40 @@ Retrieve logs for a specified JavaScript application deployment for debugging pu
 
 - **Method**: `custom`
 - **Path**: `custom`
+
+#### hosting_listAccountCronJobsV1
+
+Returns the list of cron jobs configured for the specified account, including their schedule and command.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/cron-jobs`
+
+#### hosting_createAccountCronJobV1
+
+Creates a cron job for the specified account from a schedule expression and a command.
+
+Returns the created cron job, including its uid, which is required to delete the cron job or fetch its output.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/cron-jobs`
+
+#### hosting_deleteAccountCronJobV1
+
+Permanently deletes the cron job identified by its uid.
+
+The uid is returned by the list cron jobs endpoint.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/cron-jobs/{uid}`
+
+#### hosting_getCronJobOutputV1
+
+Returns the output captured from the last execution of the cron job identified by its uid.
+
+The uid is returned by the list cron jobs endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/cron-jobs/{uid}/output`
 
 #### hosting_changeDatabasePasswordV1
 

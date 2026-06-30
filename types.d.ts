@@ -1018,6 +1018,80 @@ Websites can only be edited in Hostinger Horizons interface in the provided webs
   };
 
   /**
+   * Returns the list of cron jobs configured for the specified account, including their schedule and command.
+   */
+  "hosting_listAccountCronJobsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Creates a cron job for the specified account from a schedule expression and a command.
+
+Returns the created cron job, including its uid, which is required to delete the cron job or fetch its output.
+   */
+  "hosting_createAccountCronJobV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Cron schedule expression (for example "0 2 * * *" runs daily at 02:00).
+       */
+      time: string;
+      /**
+       * Command to execute on the schedule.
+       */
+      command: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently deletes the cron job identified by its uid.
+
+The uid is returned by the list cron jobs endpoint.
+   */
+  "hosting_deleteAccountCronJobV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Unique identifier of the cron job as returned by the list cron jobs endpoint.
+       */
+      uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns the output captured from the last execution of the cron job identified by its uid.
+
+The uid is returned by the list cron jobs endpoint.
+   */
+  "hosting_getCronJobOutputV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Unique identifier of the cron job as returned by the list cron jobs endpoint.
+       */
+      uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Changes the password for the specified database user.
 
 The database name must be the full name returned by the list databases endpoint.
