@@ -1,0 +1,25 @@
+{
+  "name": "hostinger-api-mcp",
+  "version": "0.3.0",
+  "description": "Hostinger API — manage domains, DNS, hosting, VPS, billing and more from Gemini CLI.",
+  "mcpServers": {
+    "hostinger": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "hostinger-api-mcp"
+      ],
+      "env": {
+        "HOSTINGER_API_TOKEN": "${HOSTINGER_API_TOKEN}"
+      }
+    }
+  },
+  "settings": [
+    {
+      "name": "Hostinger API Token",
+      "description": "Hostinger API token from hpanel.hostinger.com/profile/api. Optional — when unset, the server falls back to interactive OAuth sign-in in stdio mode.",
+      "envVar": "HOSTINGER_API_TOKEN",
+      "sensitive": true
+    }
+  ]
+}
