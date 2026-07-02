@@ -1735,99 +1735,6 @@ websites list endpoint to see when your new website becomes available.
   };
 
   /**
-   * Install WordPress on an existing website.
-
-The website must already exist before calling this endpoint. To create a new
-website first, use POST /api/hosting/v1/websites and poll
-GET /api/hosting/v1/websites until it appears.
-
-Call GET /api/hosting/v1/wordpress/installations filtered by username and
-domain before proceeding to check whether WordPress is already installed on
-the target domain/path. If WordPress already exists and `overwrite` is false
-(the default), the async job will fail.
-
-This operation is asynchronous: a successful response only means the install
-job has been queued, not that WordPress is ready. Installation typically
-takes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered
-by username and domain to track progress. When the installation appears in
-that list, WordPress is ready.
-   */
-  "hosting_installWordPressV1": {
-    params: {
-      /**
-       * username parameter
-       */
-      username: string;
-      /**
-       * Domain of the existing website where WordPress will be installed
-       */
-      domain: string;
-      /**
-       * Title of the WordPress site
-       */
-      site_title: string;
-      /**
-       * WordPress locale. Defaults to en_US when omitted.
-       */
-      language?: string;
-      /**
-       * Relative directory to install WordPress into. Defaults to the website root when omitted.
-       */
-      directory?: string;
-      /**
-       * When false (default), does not replace an existing installation. If WordPress is already installed on the domain/path, the async install job fails unless true.
-       */
-      overwrite?: boolean;
-      /**
-       * WordPress core auto-update policy
-       */
-      auto_updates?: string;
-      /**
-       * WordPress core version to install. If omitted, the latest core version compatible with the account vhost PHP version is selected.
-       */
-      version?: string;
-      /**
-       * WordPress admin credentials
-       */
-      credentials: object;
-      /**
-       * Optional. If the named database already exists, it will be used for this WordPress install. Otherwise a new database is created with a generated name and random credentials.
-       */
-      database?: object;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
-   * List WordPress installations accessible to the authenticated client.
-
-Use this endpoint to discover existing WordPress installations and to poll
-for installation status after calling the install endpoint. When a newly
-requested installation appears in this list, WordPress is ready. Filter by
-username and domain to narrow results to a specific website.
-
-Each installation includes a `valid` flag and, when invalid, a
-`validationError` describing why.
-   */
-  "hosting_listWordPressInstallationsV1": {
-    params: {
-      /**
-       * Filter by specific username
-       */
-      username?: string;
-      /**
-       * Filter by domain name (exact match)
-       */
-      domain?: string;
-      /**
-       * Filter by ownership type. Defaults to "owned". Use "all" to include both owned and managed installations.
-       */
-      ownership?: string;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
    * Delete a contact with the specified UUID.
 
 This endpoint permanently removes a contact from the email marketing system.
@@ -3405,6 +3312,173 @@ Use this endpoint to power off running VPS instances.
        * Virtual Machine ID
        */
       virtualMachineId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Install WordPress on an existing website.
+
+The website must already exist before calling this endpoint. To create a new
+website first, use POST /api/hosting/v1/websites and poll
+GET /api/hosting/v1/websites until it appears.
+
+Call GET /api/hosting/v1/wordpress/installations filtered by username and
+domain before proceeding to check whether WordPress is already installed on
+the target domain/path. If WordPress already exists and `overwrite` is false
+(the default), the async job will fail.
+
+This operation is asynchronous: a successful response only means the install
+job has been queued, not that WordPress is ready. Installation typically
+takes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered
+by username and domain to track progress. When the installation appears in
+that list, WordPress is ready.
+   */
+  "hosting_installWordPressV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain of the existing website where WordPress will be installed
+       */
+      domain: string;
+      /**
+       * Title of the WordPress site
+       */
+      site_title: string;
+      /**
+       * WordPress locale. Defaults to en_US when omitted.
+       */
+      language?: string;
+      /**
+       * Relative directory to install WordPress into. Defaults to the website root when omitted.
+       */
+      directory?: string;
+      /**
+       * When false (default), does not replace an existing installation. If WordPress is already installed on the domain/path, the async install job fails unless true.
+       */
+      overwrite?: boolean;
+      /**
+       * WordPress core auto-update policy
+       */
+      auto_updates?: string;
+      /**
+       * WordPress core version to install. If omitted, the latest core version compatible with the account vhost PHP version is selected.
+       */
+      version?: string;
+      /**
+       * WordPress admin credentials
+       */
+      credentials: object;
+      /**
+       * Optional. If the named database already exists, it will be used for this WordPress install. Otherwise a new database is created with a generated name and random credentials.
+       */
+      database?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List WordPress installations accessible to the authenticated client.
+
+Use this endpoint to discover existing WordPress installations and to poll
+for installation status after calling the install endpoint. When a newly
+requested installation appears in this list, WordPress is ready. Filter by
+username and domain to narrow results to a specific website.
+
+Each installation includes a `valid` flag and, when invalid, a
+`validationError` describing why.
+   */
+  "hosting_listWordPressInstallationsV1": {
+    params: {
+      /**
+       * Filter by specific username
+       */
+      username?: string;
+      /**
+       * Filter by domain name (exact match)
+       */
+      domain?: string;
+      /**
+       * Filter by ownership type. Defaults to "owned". Use "all" to include both owned and managed installations.
+       */
+      ownership?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Install one or more plugins on an existing WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id`
+field). Use GET /api/hosting/v1/wordpress/plugins to discover the plugin
+slugs available for installation.
+
+This operation is asynchronous: a successful response only means the install
+job has been queued, not that the plugins are ready.
+   */
+  "hosting_installWordPressPluginsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Plugin slugs to install. Use GET /api/hosting/v1/wordpress/plugins to discover available slugs.
+       */
+      plugins: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Install a theme on an existing WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id`
+field).
+
+When the theme is one of the Hostinger themes (hostinger-blog,
+hostinger-affiliate-theme, hostinger-ai-theme), the optional `palette`,
+`layout`, and `font` fields are forwarded to the custom installer (defaults:
+palette1, layout1, default). For any other theme they are ignored.
+
+This operation is asynchronous: a successful response only means the install
+job has been queued, not that the theme is ready.
+   */
+  "hosting_installWordPressThemeV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Slug of the theme to install. Hostinger theme slugs (hostinger-blog, hostinger-affiliate-theme, hostinger-ai-theme) trigger the custom installer and forward the optional palette/layout/font fields; any other WordPress theme slug uses the standard installer and ignores those fields.
+       */
+      theme: string;
+      /**
+       * Palette identifier. Only applied when the theme is a Hostinger theme; the default is used when omitted.
+       */
+      palette?: string;
+      /**
+       * Layout identifier. Only applied when the theme is a Hostinger theme; the default is used when omitted.
+       */
+      layout?: string;
+      /**
+       * Font identifier. Only applied when the theme is a Hostinger theme; the default is used when omitted.
+       */
+      font?: string;
     };
     response: any; // Response structure will depend on the API
   };

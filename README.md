@@ -49,15 +49,16 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (153 total)
+- `hostinger-api-mcp` — unified server with every tool (155 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 7 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 37 tools for hosting
+- `hostinger-hosting-mcp` — 35 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
+- `hostinger-wordpress-mcp` — 4 tools for wordpress
 
 Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
 
@@ -1008,43 +1009,6 @@ websites list endpoint to see when your new website becomes available.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/websites`
 
-#### hosting_installWordPressV1
-
-Install WordPress on an existing website.
-
-The website must already exist before calling this endpoint. To create a new
-website first, use POST /api/hosting/v1/websites and poll
-GET /api/hosting/v1/websites until it appears.
-
-Call GET /api/hosting/v1/wordpress/installations filtered by username and
-domain before proceeding to check whether WordPress is already installed on
-the target domain/path. If WordPress already exists and `overwrite` is false
-(the default), the async job will fail.
-
-This operation is asynchronous: a successful response only means the install
-job has been queued, not that WordPress is ready. Installation typically
-takes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered
-by username and domain to track progress. When the installation appears in
-that list, WordPress is ready.
-
-- **Method**: `POST`
-- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/installations`
-
-#### hosting_listWordPressInstallationsV1
-
-List WordPress installations accessible to the authenticated client.
-
-Use this endpoint to discover existing WordPress installations and to poll
-for installation status after calling the install endpoint. When a newly
-requested installation appears in this list, WordPress is ready. Filter by
-username and domain to narrow results to a specific website.
-
-Each installation includes a `valid` flag and, when invalid, a
-`validationError` describing why.
-
-- **Method**: `GET`
-- **Path**: `/api/hosting/v1/wordpress/installations`
-
 ### `hostinger-reach-mcp`
 
 #### reach_deleteAContactV1
@@ -1876,3 +1840,76 @@ Use this endpoint to power off running VPS instances.
 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/stop`
+
+### `hostinger-wordpress-mcp`
+
+#### hosting_installWordPressV1
+
+Install WordPress on an existing website.
+
+The website must already exist before calling this endpoint. To create a new
+website first, use POST /api/hosting/v1/websites and poll
+GET /api/hosting/v1/websites until it appears.
+
+Call GET /api/hosting/v1/wordpress/installations filtered by username and
+domain before proceeding to check whether WordPress is already installed on
+the target domain/path. If WordPress already exists and `overwrite` is false
+(the default), the async job will fail.
+
+This operation is asynchronous: a successful response only means the install
+job has been queued, not that WordPress is ready. Installation typically
+takes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered
+by username and domain to track progress. When the installation appears in
+that list, WordPress is ready.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/installations`
+
+#### hosting_listWordPressInstallationsV1
+
+List WordPress installations accessible to the authenticated client.
+
+Use this endpoint to discover existing WordPress installations and to poll
+for installation status after calling the install endpoint. When a newly
+requested installation appears in this list, WordPress is ready. Filter by
+username and domain to narrow results to a specific website.
+
+Each installation includes a `valid` flag and, when invalid, a
+`validationError` describing why.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/wordpress/installations`
+
+#### hosting_installWordPressPluginsV1
+
+Install one or more plugins on an existing WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id`
+field). Use GET /api/hosting/v1/wordpress/plugins to discover the plugin
+slugs available for installation.
+
+This operation is asynchronous: a successful response only means the install
+job has been queued, not that the plugins are ready.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install`
+
+#### hosting_installWordPressThemeV1
+
+Install a theme on an existing WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id`
+field).
+
+When the theme is one of the Hostinger themes (hostinger-blog,
+hostinger-affiliate-theme, hostinger-ai-theme), the optional `palette`,
+`layout`, and `font` fields are forwarded to the custom installer (defaults:
+palette1, layout1, default). For any other theme they are ignored.
+
+This operation is asynchronous: a successful response only means the install
+job has been queued, not that the theme is ready.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install`
