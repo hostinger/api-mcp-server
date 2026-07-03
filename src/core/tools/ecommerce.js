@@ -158,7 +158,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createACustomSalesChannelV1",
+    "name": "ecommerce_createCustomSalesChannelV1",
     "description": "Create a custom sales channel for a store. Build your own frontend and keep your catalog,\norders, shipping and payments in sync through the Ecommerce API.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels",
@@ -189,6 +189,43 @@ export default [
         "store_id",
         "type",
         "name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
+  },
+  {
+    "name": "ecommerce_updateSalesChannelV1",
+    "description": "Update a custom sales channel. The merchant-facing `name` and the public `url`\n(returned as the channel `domain`) can be changed. Pass `null` to clear a value.",
+    "method": "PATCH",
+    "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels/{sales_channel_id}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "store_id": {
+          "type": "string",
+          "description": "The ID of the store that owns the sales channel."
+        },
+        "sales_channel_id": {
+          "type": "string",
+          "description": "The ID of the sales channel to update."
+        },
+        "name": {
+          "type": "string",
+          "description": "Merchant-facing custom name shown in the sales channels list. Pass null to clear it."
+        },
+        "url": {
+          "type": "string",
+          "description": "Public address where the custom sales channel lives. Pass null to clear it."
+        }
+      },
+      "required": [
+        "store_id",
+        "sales_channel_id"
       ]
     },
     "security": [
@@ -320,6 +357,30 @@ export default [
         }
       },
       "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
+  },
+  {
+    "name": "ecommerce_getStoreMetadataV1",
+    "description": "Get a store's readiness metadata: whether payment methods and shipping are configured,\nplus its default currency. Useful to verify prerequisites before building a storefront.",
+    "method": "GET",
+    "path": "/api/ecommerce/v1/stores/{store_id}/metadata",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "store_id": {
+          "type": "string",
+          "description": "The ID of the store to read metadata for."
+        }
+      },
+      "required": [
+        "store_id"
+      ]
     },
     "security": [
       {

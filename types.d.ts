@@ -904,7 +904,7 @@ the Ecommerce API.
    * Create a custom sales channel for a store. Build your own frontend and keep your catalog,
 orders, shipping and payments in sync through the Ecommerce API.
    */
-  "ecommerce_createACustomSalesChannelV1": {
+  "ecommerce_createCustomSalesChannelV1": {
     params: {
       /**
        * The ID of the store to create the sales channel for.
@@ -920,6 +920,32 @@ orders, shipping and payments in sync through the Ecommerce API.
       name: string;
       /**
        * Optional public address where the custom sales channel lives.
+       */
+      url?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Update a custom sales channel. The merchant-facing `name` and the public `url`
+(returned as the channel `domain`) can be changed. Pass `null` to clear a value.
+   */
+  "ecommerce_updateSalesChannelV1": {
+    params: {
+      /**
+       * The ID of the store that owns the sales channel.
+       */
+      store_id: string;
+      /**
+       * The ID of the sales channel to update.
+       */
+      sales_channel_id: string;
+      /**
+       * Merchant-facing custom name shown in the sales channels list. Pass null to clear it.
+       */
+      name?: string;
+      /**
+       * Public address where the custom sales channel lives. Pass null to clear it.
        */
       url?: string;
     };
@@ -1002,6 +1028,20 @@ A primary sales channel is created alongside the store.
        * sales_channel parameter
        */
       sales_channel?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a store's readiness metadata: whether payment methods and shipping are configured,
+plus its default currency. Useful to verify prerequisites before building a storefront.
+   */
+  "ecommerce_getStoreMetadataV1": {
+    params: {
+      /**
+       * The ID of the store to read metadata for.
+       */
+      store_id: string;
     };
     response: any; // Response structure will depend on the API
   };

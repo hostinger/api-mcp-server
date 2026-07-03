@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (179 total)
+- `hostinger-api-mcp` — unified server with every tool (181 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
-- `hostinger-ecommerce-mcp` — 10 tools for ecommerce
+- `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 41 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
@@ -584,13 +584,21 @@ List a store's active sales channels with their full metadata.
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels`
 
-#### ecommerce_createACustomSalesChannelV1
+#### ecommerce_createCustomSalesChannelV1
 
 Create a custom sales channel for a store. Build your own frontend and keep your catalog,
 orders, shipping and payments in sync through the Ecommerce API.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels`
+
+#### ecommerce_updateSalesChannelV1
+
+Update a custom sales channel. The merchant-facing `name` and the public `url`
+(returned as the channel `domain`) can be changed. Pass `null` to clear a value.
+
+- **Method**: `PATCH`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels/{sales_channel_id}`
 
 #### ecommerce_setStoreShippingV1
 
@@ -623,6 +631,14 @@ A primary sales channel is created alongside the store.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores`
+
+#### ecommerce_getStoreMetadataV1
+
+Get a store's readiness metadata: whether payment methods and shipping are configured,
+plus its default currency. Useful to verify prerequisites before building a storefront.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/metadata`
 
 ### `hostinger-horizons-mcp`
 
