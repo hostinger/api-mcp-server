@@ -3410,6 +3410,60 @@ Each installation includes a `valid` flag and, when invalid, a
   };
 
   /**
+   * Activate an installed plugin on a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the activation
+job has been queued.
+   */
+  "hosting_activateWordPressPluginV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Slug of the installed plugin to activate.
+       */
+      plugin: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Deactivate an installed plugin on a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the
+deactivation job has been queued.
+   */
+  "hosting_deactivateWordPressPluginV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Slug of the installed plugin to deactivate.
+       */
+      plugin: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Install one or more plugins on an existing WordPress installation.
 
 Provide the WordPress installation (software) identifier in the path. It can
@@ -3434,6 +3488,207 @@ job has been queued, not that the plugins are ready.
        * Plugin slugs to install. Use GET /api/hosting/v1/wordpress/plugins to discover available slugs.
        */
       plugins: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List plugins recommended for installation on a WordPress installation that are
+not yet installed.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_listAvailableWordPressPluginsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List plugins installed on a WordPress installation, including their status,
+available updates and known vulnerabilities.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_listInstalledWordPressPluginsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Filter installed plugins by category.
+       */
+      category?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Search the WordPress.org plugin directory for plugins available to install.
+
+Use the returned `slug` values with
+POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
+   */
+  "hosting_searchWordPressPluginsV1": {
+    params: {
+      /**
+       * Search term to match against plugin names. Minimum 3 characters.
+       */
+      search: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List curated plugin suggestions grouped by website type.
+
+Use the returned `slug` values with
+POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
+   */
+  "hosting_listSuggestedWordPressPluginsV1": {
+    params: {
+      /**
+       * Optionally scope suggestions to a specific order.
+       */
+      order_id?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Check whether WooCommerce is installed on any WordPress installation of a
+domain. Optionally filter by domain to scope the check.
+   */
+  "hosting_checkIfWooCommerceIsInstalledV1": {
+    params: {
+      /**
+       * Filter by domain name (exact match)
+       */
+      domain?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Uninstall one or more plugins from a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the uninstall
+job has been queued.
+   */
+  "hosting_uninstallWordPressPluginsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Slugs of the installed plugins to uninstall.
+       */
+      plugins: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Update a Hostinger plugin to its latest version on a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the update job
+has been queued.
+   */
+  "hosting_updateHostingerWordPressPluginV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Slug of the Hostinger plugin to update to its latest version.
+       */
+      slug: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Update one or more installed plugins to their latest version on a WordPress
+installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the update job
+has been queued.
+   */
+  "hosting_updateWordPressPluginsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Slugs of the installed plugins to update to their latest version.
+       */
+      plugins: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Activate an installed theme on a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the activation
+job has been queued.
+   */
+  "hosting_activateWordPressThemeV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Slug of the installed theme to activate.
+       */
+      theme: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -3479,6 +3734,102 @@ job has been queued, not that the theme is ready.
        * Font identifier. Only applied when the theme is a Hostinger theme; the default is used when omitted.
        */
       font?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List themes installed on a WordPress installation, including their status,
+available updates and known vulnerabilities.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_listInstalledWordPressThemesV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List WordPress themes available to install.
+
+Use the returned `slug` values with
+POST /api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install.
+   */
+  "hosting_listWordPressThemesV1": {
+    params: {
+      /**
+       * Optionally scope themes to a specific order.
+       */
+      order_id?: number;
+      /**
+       * Search term to match against theme names.
+       */
+      search?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Uninstall one or more themes from a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the uninstall
+job has been queued.
+   */
+  "hosting_uninstallWordPressThemesV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Slugs of the installed themes to uninstall.
+       */
+      themes: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Update one or more installed themes to their latest version on a WordPress
+installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the update job
+has been queued.
+   */
+  "hosting_updateWordPressThemesV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Slugs of the installed themes to update to their latest version.
+       */
+      themes: array;
     };
     response: any; // Response structure will depend on the API
   };

@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (155 total)
+- `hostinger-api-mcp` — unified server with every tool (170 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
@@ -58,7 +58,7 @@ This package installs the following MCP server commands:
 - `hostinger-hosting-mcp` — 35 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
-- `hostinger-wordpress-mcp` — 4 tools for wordpress
+- `hostinger-wordpress-mcp` — 19 tools for wordpress
 
 Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
 
@@ -1880,6 +1880,32 @@ Each installation includes a `valid` flag and, when invalid, a
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/wordpress/installations`
 
+#### hosting_activateWordPressPluginV1
+
+Activate an installed plugin on a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the activation
+job has been queued.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/activate`
+
+#### hosting_deactivateWordPressPluginV1
+
+Deactivate an installed plugin on a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the
+deactivation job has been queued.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/deactivate`
+
 #### hosting_installWordPressPluginsV1
 
 Install one or more plugins on an existing WordPress installation.
@@ -1894,6 +1920,109 @@ job has been queued, not that the plugins are ready.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install`
+
+#### hosting_listAvailableWordPressPluginsV1
+
+List plugins recommended for installation on a WordPress installation that are
+not yet installed.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/available`
+
+#### hosting_listInstalledWordPressPluginsV1
+
+List plugins installed on a WordPress installation, including their status,
+available updates and known vulnerabilities.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins`
+
+#### hosting_searchWordPressPluginsV1
+
+Search the WordPress.org plugin directory for plugins available to install.
+
+Use the returned `slug` values with
+POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/wordpress/plugins`
+
+#### hosting_listSuggestedWordPressPluginsV1
+
+List curated plugin suggestions grouped by website type.
+
+Use the returned `slug` values with
+POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/wordpress/plugins/suggested`
+
+#### hosting_checkIfWooCommerceIsInstalledV1
+
+Check whether WooCommerce is installed on any WordPress installation of a
+domain. Optionally filter by domain to scope the check.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/wordpress/plugins/is-woocommerce-installed`
+
+#### hosting_uninstallWordPressPluginsV1
+
+Uninstall one or more plugins from a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the uninstall
+job has been queued.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/uninstall`
+
+#### hosting_updateHostingerWordPressPluginV1
+
+Update a Hostinger plugin to its latest version on a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the update job
+has been queued.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/hostinger/update`
+
+#### hosting_updateWordPressPluginsV1
+
+Update one or more installed plugins to their latest version on a WordPress
+installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the update job
+has been queued.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/update`
+
+#### hosting_activateWordPressThemeV1
+
+Activate an installed theme on a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the activation
+job has been queued.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/activate`
 
 #### hosting_installWordPressThemeV1
 
@@ -1913,3 +2042,51 @@ job has been queued, not that the theme is ready.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install`
+
+#### hosting_listInstalledWordPressThemesV1
+
+List themes installed on a WordPress installation, including their status,
+available updates and known vulnerabilities.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes`
+
+#### hosting_listWordPressThemesV1
+
+List WordPress themes available to install.
+
+Use the returned `slug` values with
+POST /api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/wordpress/themes`
+
+#### hosting_uninstallWordPressThemesV1
+
+Uninstall one or more themes from a WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the uninstall
+job has been queued.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/uninstall`
+
+#### hosting_updateWordPressThemesV1
+
+Update one or more installed themes to their latest version on a WordPress
+installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the update job
+has been queued.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/update`

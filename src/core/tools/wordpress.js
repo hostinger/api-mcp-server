@@ -133,6 +133,74 @@ export default [
     "group": "wordpress"
   },
   {
+    "name": "hosting_activateWordPressPluginV1",
+    "description": "Activate an installed plugin on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the activation\njob has been queued.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/activate",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "plugin": {
+          "type": "string",
+          "description": "Slug of the installed plugin to activate."
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "plugin"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_deactivateWordPressPluginV1",
+    "description": "Deactivate an installed plugin on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the\ndeactivation job has been queued.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/deactivate",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "plugin": {
+          "type": "string",
+          "description": "Slug of the installed plugin to deactivate."
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "plugin"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
     "name": "hosting_installWordPressPluginsV1",
     "description": "Install one or more plugins on an existing WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield). Use GET /api/hosting/v1/wordpress/plugins to discover the plugin\nslugs available for installation.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that the plugins are ready.",
     "method": "POST",
@@ -161,6 +229,290 @@ export default [
         "username",
         "software",
         "plugins"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_listAvailableWordPressPluginsV1",
+    "description": "List plugins recommended for installation on a WordPress installation that are\nnot yet installed.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/available",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_listInstalledWordPressPluginsV1",
+    "description": "List plugins installed on a WordPress installation, including their status,\navailable updates and known vulnerabilities.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "category": {
+          "type": "string",
+          "description": "Filter installed plugins by category.",
+          "enum": [
+            "cache"
+          ]
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_searchWordPressPluginsV1",
+    "description": "Search the WordPress.org plugin directory for plugins available to install.\n\nUse the returned `slug` values with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.",
+    "method": "GET",
+    "path": "/api/hosting/v1/wordpress/plugins",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Search term to match against plugin names. Minimum 3 characters."
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_listSuggestedWordPressPluginsV1",
+    "description": "List curated plugin suggestions grouped by website type.\n\nUse the returned `slug` values with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.",
+    "method": "GET",
+    "path": "/api/hosting/v1/wordpress/plugins/suggested",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer",
+          "description": "Optionally scope suggestions to a specific order."
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_checkIfWooCommerceIsInstalledV1",
+    "description": "Check whether WooCommerce is installed on any WordPress installation of a\ndomain. Optionally filter by domain to scope the check.",
+    "method": "GET",
+    "path": "/api/hosting/v1/wordpress/plugins/is-woocommerce-installed",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Filter by domain name (exact match)"
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_uninstallWordPressPluginsV1",
+    "description": "Uninstall one or more plugins from a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the uninstall\njob has been queued.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/uninstall",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "plugins": {
+          "type": "array",
+          "description": "Slugs of the installed plugins to uninstall.",
+          "items": {
+            "type": "string",
+            "description": "Plugin slug"
+          }
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "plugins"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_updateHostingerWordPressPluginV1",
+    "description": "Update a Hostinger plugin to its latest version on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update job\nhas been queued.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/hostinger/update",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "slug": {
+          "type": "string",
+          "description": "Slug of the Hostinger plugin to update to its latest version.",
+          "enum": [
+            "hostinger",
+            "hostinger-ai-assistant",
+            "hostinger-affiliate-plugin",
+            "hostinger-easy-onboarding",
+            "hostinger-reach"
+          ]
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "slug"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_updateWordPressPluginsV1",
+    "description": "Update one or more installed plugins to their latest version on a WordPress\ninstallation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update job\nhas been queued.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/update",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "plugins": {
+          "type": "array",
+          "description": "Slugs of the installed plugins to update to their latest version.",
+          "items": {
+            "type": "string",
+            "description": "Plugin slug"
+          }
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "plugins"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_activateWordPressThemeV1",
+    "description": "Activate an installed theme on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the activation\njob has been queued.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/activate",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "theme": {
+          "type": "string",
+          "description": "Slug of the installed theme to activate."
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "theme"
       ]
     },
     "security": [
@@ -215,6 +567,137 @@ export default [
         "username",
         "software",
         "theme"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_listInstalledWordPressThemesV1",
+    "description": "List themes installed on a WordPress installation, including their status,\navailable updates and known vulnerabilities.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_listWordPressThemesV1",
+    "description": "List WordPress themes available to install.\n\nUse the returned `slug` values with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install.",
+    "method": "GET",
+    "path": "/api/hosting/v1/wordpress/themes",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer",
+          "description": "Optionally scope themes to a specific order."
+        },
+        "search": {
+          "type": "string",
+          "description": "Search term to match against theme names."
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_uninstallWordPressThemesV1",
+    "description": "Uninstall one or more themes from a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the uninstall\njob has been queued.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/uninstall",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "themes": {
+          "type": "array",
+          "description": "Slugs of the installed themes to uninstall.",
+          "items": {
+            "type": "string",
+            "description": "Theme slug"
+          }
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "themes"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_updateWordPressThemesV1",
+    "description": "Update one or more installed themes to their latest version on a WordPress\ninstallation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update job\nhas been queued.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/update",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "themes": {
+          "type": "array",
+          "description": "Slugs of the installed themes to update to their latest version.",
+          "items": {
+            "type": "string",
+            "description": "Theme slug"
+          }
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "themes"
       ]
     },
     "security": [
