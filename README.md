@@ -49,13 +49,13 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (173 total)
+- `hostinger-api-mcp` — unified server with every tool (179 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 10 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 35 tools for hosting
+- `hostinger-hosting-mcp` — 41 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 19 tools for wordpress
@@ -1001,6 +1001,64 @@ or specific order IDs for more targeted results.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/orders`
+
+#### hosting_resetPHPExtensionsV1
+
+Resets all PHP extensions of the website to their default state.
+
+Use it to recover from extension conflicts or restore the original configuration.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions/reset`
+
+#### hosting_getPHPDetailsV1
+
+Returns the full PHP configuration for the website: current version, available versions
+(supported and unsupported), enabled/disabled extensions, options with their current value,
+default, type and the plan limit (`max`), and conflicting extension groups.
+
+Use it to check the current PHP setup before updating the version, extensions or options.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/details`
+
+#### hosting_getPHPInfoV1
+
+Returns the full phpinfo page (HTML) for the website.
+
+Use it to debug PHP issues or inspect the complete PHP environment of the website.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/php-info`
+
+#### hosting_updatePHPExtensionsV1
+
+Enables or disables PHP extensions (modules) for the website.
+
+Use the Get PHP details endpoint to check the current extension states before changing them.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions`
+
+#### hosting_updatePHPOptionsV1
+
+Updates PHP options for the website (e.g. `memory_limit`, `max_execution_time`, `upload_max_filesize`).
+Only provide the options you want to change, inside the `options` object.
+
+Values above the account plan limit are silently capped to that limit, so the request can succeed
+with a smaller applied value. Call the Get PHP details endpoint afterwards to read the applied value.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/options`
+
+#### hosting_updatePHPVersionV1
+
+Changes the PHP version of the website.
+
+Use the Get PHP details endpoint to see the versions available for the website.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/version`
 
 #### hosting_listWebsitesV1
 

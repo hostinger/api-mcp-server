@@ -1715,6 +1715,140 @@ or specific order IDs for more targeted results.
   };
 
   /**
+   * Resets all PHP extensions of the website to their default state.
+
+Use it to recover from extension conflicts or restore the original configuration.
+   */
+  "hosting_resetPHPExtensionsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns the full PHP configuration for the website: current version, available versions
+(supported and unsupported), enabled/disabled extensions, options with their current value,
+default, type and the plan limit (`max`), and conflicting extension groups.
+
+Use it to check the current PHP setup before updating the version, extensions or options.
+   */
+  "hosting_getPHPDetailsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns the full phpinfo page (HTML) for the website.
+
+Use it to debug PHP issues or inspect the complete PHP environment of the website.
+   */
+  "hosting_getPHPInfoV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Enables or disables PHP extensions (modules) for the website.
+
+Use the Get PHP details endpoint to check the current extension states before changing them.
+   */
+  "hosting_updatePHPExtensionsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * PHP extensions to enable.
+       */
+      enable?: array;
+      /**
+       * PHP extensions to disable.
+       */
+      disable?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Updates PHP options for the website (e.g. `memory_limit`, `max_execution_time`, `upload_max_filesize`).
+Only provide the options you want to change, inside the `options` object.
+
+Values above the account plan limit are silently capped to that limit, so the request can succeed
+with a smaller applied value. Call the Get PHP details endpoint afterwards to read the applied value.
+   */
+  "hosting_updatePHPOptionsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Map of PHP options to update, keyed by option name. Only include options you want to change.
+       */
+      options: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Changes the PHP version of the website.
+
+Use the Get PHP details endpoint to see the versions available for the website.
+   */
+  "hosting_updatePHPVersionV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * PHP version to switch the website to.
+       */
+      version: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.
 
 This endpoint returns websites from your hosting accounts as well as
