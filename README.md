@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (170 total)
+- `hostinger-api-mcp` — unified server with every tool (173 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
-- `hostinger-ecommerce-mcp` — 7 tools for ecommerce
+- `hostinger-ecommerce-mcp` — 10 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 35 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
@@ -547,6 +547,15 @@ Use this endpoint to view which domains use specific contact profiles.
 
 ### `hostinger-ecommerce-mcp`
 
+#### ecommerce_getCustomStorefrontSetupInstructionsV1
+
+Retrieve step-by-step setup instructions, formatted as Markdown, for connecting a custom sales
+channel to your store and keeping your catalog, orders, shipping and payments in sync through
+the Ecommerce API.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/miscellaneous/custom-storefront-instructions`
+
 #### ecommerce_enableManualPaymentMethodV1
 
 Enable a manual payment method so the store can accept orders without an online payment provider.
@@ -567,6 +576,21 @@ Create a published physical product with a single variant priced in the store cu
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/physical`
+
+#### ecommerce_listSalesChannelsV1
+
+List a store's active sales channels with their full metadata.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels`
+
+#### ecommerce_createACustomSalesChannelV1
+
+Create a custom sales channel for a store. Build your own frontend and keep your catalog,
+orders, shipping and payments in sync through the Ecommerce API.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels`
 
 #### ecommerce_setStoreShippingV1
 

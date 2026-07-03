@@ -797,6 +797,18 @@ Use this endpoint to view which domains use specific contact profiles.
   };
 
   /**
+   * Retrieve step-by-step setup instructions, formatted as Markdown, for connecting a custom sales
+channel to your store and keeping your catalog, orders, shipping and payments in sync through
+the Ecommerce API.
+   */
+  "ecommerce_getCustomStorefrontSetupInstructionsV1": {
+    params: {
+
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Enable a manual payment method so the store can accept orders without an online payment provider.
    */
   "ecommerce_enableManualPaymentMethodV1": {
@@ -871,6 +883,45 @@ Use this endpoint to view which domains use specific contact profiles.
        * ISO 4217 currency code. Defaults to the store's default currency when omitted.
        */
       currency?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List a store's active sales channels with their full metadata.
+   */
+  "ecommerce_listSalesChannelsV1": {
+    params: {
+      /**
+       * The ID of the store to list sales channels for.
+       */
+      store_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a custom sales channel for a store. Build your own frontend and keep your catalog,
+orders, shipping and payments in sync through the Ecommerce API.
+   */
+  "ecommerce_createACustomSalesChannelV1": {
+    params: {
+      /**
+       * The ID of the store to create the sales channel for.
+       */
+      store_id: string;
+      /**
+       * Sales channel type. Only "custom" channels can be created via the API.
+       */
+      type: string;
+      /**
+       * Merchant-facing custom name shown in the sales channels list.
+       */
+      name: string;
+      /**
+       * Optional public address where the custom sales channel lives.
+       */
+      url?: string;
     };
     response: any; // Response structure will depend on the API
   };

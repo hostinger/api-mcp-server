@@ -1288,6 +1288,23 @@ export default [
     "group": "domains"
   },
   {
+    "name": "ecommerce_getCustomStorefrontSetupInstructionsV1",
+    "description": "Retrieve step-by-step setup instructions, formatted as Markdown, for connecting a custom sales\nchannel to your store and keeping your catalog, orders, shipping and payments in sync through\nthe Ecommerce API.",
+    "method": "GET",
+    "path": "/api/ecommerce/v1/miscellaneous/custom-storefront-instructions",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
+  },
+  {
     "name": "ecommerce_enableManualPaymentMethodV1",
     "description": "Enable a manual payment method so the store can accept orders without an online payment provider.",
     "method": "POST",
@@ -1394,6 +1411,71 @@ export default [
         "store_id",
         "name",
         "price"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
+  },
+  {
+    "name": "ecommerce_listSalesChannelsV1",
+    "description": "List a store's active sales channels with their full metadata.",
+    "method": "GET",
+    "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "store_id": {
+          "type": "string",
+          "description": "The ID of the store to list sales channels for."
+        }
+      },
+      "required": [
+        "store_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
+  },
+  {
+    "name": "ecommerce_createACustomSalesChannelV1",
+    "description": "Create a custom sales channel for a store. Build your own frontend and keep your catalog,\norders, shipping and payments in sync through the Ecommerce API.",
+    "method": "POST",
+    "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "store_id": {
+          "type": "string",
+          "description": "The ID of the store to create the sales channel for."
+        },
+        "type": {
+          "type": "string",
+          "description": "Sales channel type. Only \"custom\" channels can be created via the API.",
+          "enum": [
+            "custom"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Merchant-facing custom name shown in the sales channels list."
+        },
+        "url": {
+          "type": "string",
+          "description": "Optional public address where the custom sales channel lives."
+        }
+      },
+      "required": [
+        "store_id",
+        "type",
+        "name"
       ]
     },
     "security": [
