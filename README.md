@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (181 total)
+- `hostinger-api-mcp` — unified server with every tool (197 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
@@ -58,7 +58,7 @@ This package installs the following MCP server commands:
 - `hostinger-hosting-mcp` — 41 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
-- `hostinger-wordpress-mcp` — 19 tools for wordpress
+- `hostinger-wordpress-mcp` — 35 tools for wordpress
 
 Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
 
@@ -1941,6 +1941,65 @@ Use this endpoint to power off running VPS instances.
 
 ### `hostinger-wordpress-mcp`
 
+#### hosting_showAIOptionStatusV1
+
+Show the current AI option status for the Hostinger Tools plugin on the
+specified WordPress installation. Filter by `option` to return a single
+option, or omit it to return all options.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status`
+
+#### hosting_setAIOptionStatusV1
+
+Enable or disable an AI option for the Hostinger Tools plugin on the specified
+WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status`
+
+#### hosting_checkIfWordPressInstallationsAreValidV1
+
+Check whether one or more WordPress installations are valid and working
+correctly. Detects broken installations caused by missing files, broken
+plugins, themes and similar issues.
+
+Provide the WordPress installation (software) identifiers in the body. They
+can be obtained from GET /api/hosting/v1/wordpress/installations (the `id`
+field).
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/installations/check-is-valid`
+
+#### hosting_deleteWordPressInstallationV1
+
+Delete the specified WordPress installation, with optional file and database
+removal. This removes all associated components including plugins, themes,
+staging websites and any other related data.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}`
+
+#### hosting_detectWordPressInstallationsV1
+
+Trigger a background scan to detect WordPress installations for the account.
+
+This operation is asynchronous: a successful response only means the scan has
+been queued. Poll GET /api/hosting/v1/wordpress/installations to fetch the
+detected installations once the scan completes.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/installations/detect`
+
 #### hosting_installWordPressV1
 
 Install WordPress on an existing website.
@@ -1977,6 +2036,125 @@ Each installation includes a `valid` flag and, when invalid, a
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/wordpress/installations`
+
+#### hosting_listAvailableWordPressCoreUpdatesV1
+
+List available WordPress core updates for the specified installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/updates`
+
+#### hosting_getInstallationJWTTokenV1
+
+Return a JWT token used to authenticate requests against the specified
+WordPress installation, including its MCP (Model Context Protocol) endpoint.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/jwt-token`
+
+#### hosting_showWordPressCoreVersionV1
+
+Show the WordPress core version for the specified installation, along with
+known vulnerabilities affecting it.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/version`
+
+#### hosting_updateWordPressCoreV1
+
+Update the WordPress core for the specified installation (minor update or a
+specific version).
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the update
+job has been queued.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/update`
+
+#### hosting_purgeLiteSpeedCacheV1
+
+Purge the LiteSpeed Cache for the specified WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/purge`
+
+#### hosting_showLiteSpeedCacheStatusV1
+
+Show the LiteSpeed Cache status for the specified WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/status`
+
+#### hosting_createLoginLinksV1
+
+Create temporary auto-login links for the specified WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/login/links`
+
+#### hosting_showMaintenanceStatusV1
+
+Show the maintenance mode status for the specified WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/status`
+
+#### hosting_toggleMaintenanceModeV1
+
+Enable or disable maintenance mode for the specified WordPress installation,
+based on the `enabled` flag.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/toggle`
+
+#### hosting_showMemcachedObjectCacheStatusV1
+
+Show the Memcached object cache status for the specified WordPress
+installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/status`
+
+#### hosting_toggleMemcachedObjectCacheV1
+
+Activate or deactivate the Memcached object cache for the specified WordPress
+installation, based on the `enabled` flag.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/toggle`
 
 #### hosting_activateWordPressPluginV1
 

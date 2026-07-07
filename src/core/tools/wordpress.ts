@@ -11,6 +11,176 @@ export interface OpenApiTool extends Tool {
 
 const tools: OpenApiTool[] = [
   {
+    "name": "hosting_showAIOptionStatusV1",
+    "description": "Show the current AI option status for the Hostinger Tools plugin on the\nspecified WordPress installation. Filter by `option` to return a single\noption, or omit it to return all options.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "option": {
+          "type": "string",
+          "description": "Filter the status by a single AI option.",
+          "enum": [
+            "llmstxt",
+            "web2agent"
+          ]
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_setAIOptionStatusV1",
+    "description": "Enable or disable an AI option for the Hostinger Tools plugin on the specified\nWordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "option": {
+          "type": "string",
+          "description": "AI option name",
+          "enum": [
+            "llmstxt",
+            "web2agent"
+          ]
+        },
+        "enable": {
+          "type": "boolean",
+          "description": "Enable (true) or disable (false) the AI option."
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "option",
+        "enable"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_checkIfWordPressInstallationsAreValidV1",
+    "description": "Check whether one or more WordPress installations are valid and working\ncorrectly. Detects broken installations caused by missing files, broken\nplugins, themes and similar issues.\n\nProvide the WordPress installation (software) identifiers in the body. They\ncan be obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield).",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/installations/check-is-valid",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software_ids": {
+          "type": "array",
+          "description": "WordPress installation (software) identifiers to validate.",
+          "items": {
+            "type": "string",
+            "description": "Software identifier"
+          }
+        },
+        "force": {
+          "type": "boolean",
+          "description": "Force fresh validation without cache. Preferable for troubleshooting purposes."
+        }
+      },
+      "required": [
+        "username",
+        "software_ids"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_deleteWordPressInstallationV1",
+    "description": "Delete the specified WordPress installation, with optional file and database\nremoval. This removes all associated components including plugins, themes,\nstaging websites and any other related data.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_detectWordPressInstallationsV1",
+    "description": "Trigger a background scan to detect WordPress installations for the account.\n\nThis operation is asynchronous: a successful response only means the scan has\nbeen queued. Poll GET /api/hosting/v1/wordpress/installations to fetch the\ndetected installations once the scan completes.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/installations/detect",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        }
+      },
+      "required": [
+        "username"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
     "name": "hosting_installWordPressV1",
     "description": "Install WordPress on an existing website.\n\nThe website must already exist before calling this endpoint. To create a new\nwebsite first, use POST /api/hosting/v1/websites and poll\nGET /api/hosting/v1/websites until it appears.\n\nCall GET /api/hosting/v1/wordpress/installations filtered by username and\ndomain before proceeding to check whether WordPress is already installed on\nthe target domain/path. If WordPress already exists and `overwrite` is false\n(the default), the async job will fail.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that WordPress is ready. Installation typically\ntakes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered\nby username and domain to track progress. When the installation appears in\nthat list, WordPress is ready.",
     "method": "POST",
@@ -134,6 +304,343 @@ const tools: OpenApiTool[] = [
         }
       },
       "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_listAvailableWordPressCoreUpdatesV1",
+    "description": "List available WordPress core updates for the specified installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/updates",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_getInstallationJWTTokenV1",
+    "description": "Return a JWT token used to authenticate requests against the specified\nWordPress installation, including its MCP (Model Context Protocol) endpoint.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/jwt-token",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_showWordPressCoreVersionV1",
+    "description": "Show the WordPress core version for the specified installation, along with\nknown vulnerabilities affecting it.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/version",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_updateWordPressCoreV1",
+    "description": "Update the WordPress core for the specified installation (minor update or a\nspecific version).\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update\njob has been queued.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/update",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "minor": {
+          "type": "boolean",
+          "description": "Update the minor version only."
+        },
+        "version": {
+          "type": "string",
+          "description": "Update to a specific WordPress core version."
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_purgeLiteSpeedCacheV1",
+    "description": "Purge the LiteSpeed Cache for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/purge",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_showLiteSpeedCacheStatusV1",
+    "description": "Show the LiteSpeed Cache status for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_createLoginLinksV1",
+    "description": "Create temporary auto-login links for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/login/links",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_showMaintenanceStatusV1",
+    "description": "Show the maintenance mode status for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_toggleMaintenanceModeV1",
+    "description": "Enable or disable maintenance mode for the specified WordPress installation,\nbased on the `enabled` flag.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/toggle",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable (true) or disable (false) maintenance mode for the WordPress installation."
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "enabled"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_showMemcachedObjectCacheStatusV1",
+    "description": "Show the Memcached object cache status for the specified WordPress\ninstallation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        }
+      },
+      "required": [
+        "username",
+        "software"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_toggleMemcachedObjectCacheV1",
+    "description": "Activate or deactivate the Memcached object cache for the specified WordPress\ninstallation, based on the `enabled` flag.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/toggle",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Activate (true) or deactivate (false) the Memcached object cache for the WordPress installation."
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "enabled"
+      ]
     },
     "security": [
       {

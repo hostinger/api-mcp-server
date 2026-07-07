@@ -3542,6 +3542,127 @@ Use this endpoint to power off running VPS instances.
   };
 
   /**
+   * Show the current AI option status for the Hostinger Tools plugin on the
+specified WordPress installation. Filter by `option` to return a single
+option, or omit it to return all options.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_showAIOptionStatusV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Filter the status by a single AI option.
+       */
+      option?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Enable or disable an AI option for the Hostinger Tools plugin on the specified
+WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_setAIOptionStatusV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * AI option name
+       */
+      option: string;
+      /**
+       * Enable (true) or disable (false) the AI option.
+       */
+      enable: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Check whether one or more WordPress installations are valid and working
+correctly. Detects broken installations caused by missing files, broken
+plugins, themes and similar issues.
+
+Provide the WordPress installation (software) identifiers in the body. They
+can be obtained from GET /api/hosting/v1/wordpress/installations (the `id`
+field).
+   */
+  "hosting_checkIfWordPressInstallationsAreValidV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifiers to validate.
+       */
+      software_ids: array;
+      /**
+       * Force fresh validation without cache. Preferable for troubleshooting purposes.
+       */
+      force?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete the specified WordPress installation, with optional file and database
+removal. This removes all associated components including plugins, themes,
+staging websites and any other related data.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_deleteWordPressInstallationV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Trigger a background scan to detect WordPress installations for the account.
+
+This operation is asynchronous: a successful response only means the scan has
+been queued. Poll GET /api/hosting/v1/wordpress/installations to fetch the
+detected installations once the scan completes.
+   */
+  "hosting_detectWordPressInstallationsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Install WordPress on an existing website.
 
 The website must already exist before calling this endpoint. To create a new
@@ -3630,6 +3751,251 @@ Each installation includes a `valid` flag and, when invalid, a
        * Filter by ownership type. Defaults to "owned". Use "all" to include both owned and managed installations.
        */
       ownership?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List available WordPress core updates for the specified installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_listAvailableWordPressCoreUpdatesV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Return a JWT token used to authenticate requests against the specified
+WordPress installation, including its MCP (Model Context Protocol) endpoint.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_getInstallationJWTTokenV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Show the WordPress core version for the specified installation, along with
+known vulnerabilities affecting it.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_showWordPressCoreVersionV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Update the WordPress core for the specified installation (minor update or a
+specific version).
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+This operation is asynchronous: a successful response only means the update
+job has been queued.
+   */
+  "hosting_updateWordPressCoreV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Update the minor version only.
+       */
+      minor?: boolean;
+      /**
+       * Update to a specific WordPress core version.
+       */
+      version?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Purge the LiteSpeed Cache for the specified WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_purgeLiteSpeedCacheV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Show the LiteSpeed Cache status for the specified WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_showLiteSpeedCacheStatusV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create temporary auto-login links for the specified WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_createLoginLinksV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Show the maintenance mode status for the specified WordPress installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_showMaintenanceStatusV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Enable or disable maintenance mode for the specified WordPress installation,
+based on the `enabled` flag.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_toggleMaintenanceModeV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Enable (true) or disable (false) maintenance mode for the WordPress installation.
+       */
+      enabled: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Show the Memcached object cache status for the specified WordPress
+installation.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_showMemcachedObjectCacheStatusV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Activate or deactivate the Memcached object cache for the specified WordPress
+installation, based on the `enabled` flag.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "hosting_toggleMemcachedObjectCacheV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Activate (true) or deactivate (false) the Memcached object cache for the WordPress installation.
+       */
+      enabled: boolean;
     };
     response: any; // Response structure will depend on the API
   };
