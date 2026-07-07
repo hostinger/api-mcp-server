@@ -258,6 +258,155 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "hosting_clearWebsiteCacheV1",
+    "description": "Permanently clears all server-side cache for the website at once. Use it when content was\nupdated and needs to be visible immediately, or after making major changes.\n\nAlso purges the Hostinger CDN cache when CDN is enabled on the website. For a WordPress\ninstallation living in a subdirectory, pass the directory query parameter to clear its cache.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/clear",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "directory": {
+          "type": "string",
+          "description": "Directory of the website installation to clear, relative to the website root.\nDefaults to the website root."
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_disableCachelessModeV1",
+    "description": "Turns off development (cacheless) mode and returns the website to normal caching. Use it after\nfinishing development work to restore the performance benefits of caching.",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/disable",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_disableWebsiteCacheV1",
+    "description": "Turns off server-side caching for the website until it is enabled again. May impact performance.\nUse it when experiencing cache-related issues; to temporarily bypass caching while developing\nor debugging, prefer enabling cacheless mode instead.\n\nDoes nothing if caching is already disabled.",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/disable",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_enableCachelessModeV1",
+    "description": "Enables development (cacheless) mode where nothing is cached, effectively turning off all\ncaching for the website. Use it while actively developing, testing changes, debugging issues,\nor when real-time updates must be visible. Disable cacheless mode afterwards to restore\nnormal caching.",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/enable",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_enableWebsiteCacheV1",
+    "description": "Turns on server-side caching for the website for better performance. Use it for faster page\nloads, reduced server load, or improved user experience. Recommended for production websites.\n\nDoes nothing if caching is already enabled.",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/enable",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_listAccountCronJobsV1",
     "description": "Returns the list of cron jobs configured for the specified account, including their schedule and command.",
     "method": "GET",

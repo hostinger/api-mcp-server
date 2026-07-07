@@ -49,13 +49,13 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (197 total)
+- `hostinger-api-mcp` — unified server with every tool (202 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 41 tools for hosting
+- `hostinger-hosting-mcp` — 46 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -742,6 +742,56 @@ Retrieve logs for a specified JavaScript application deployment for debugging pu
 
 - **Method**: `custom`
 - **Path**: `custom`
+
+#### hosting_clearWebsiteCacheV1
+
+Permanently clears all server-side cache for the website at once. Use it when content was
+updated and needs to be visible immediately, or after making major changes.
+
+Also purges the Hostinger CDN cache when CDN is enabled on the website. For a WordPress
+installation living in a subdirectory, pass the directory query parameter to clear its cache.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/clear`
+
+#### hosting_disableCachelessModeV1
+
+Turns off development (cacheless) mode and returns the website to normal caching. Use it after
+finishing development work to restore the performance benefits of caching.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/disable`
+
+#### hosting_disableWebsiteCacheV1
+
+Turns off server-side caching for the website until it is enabled again. May impact performance.
+Use it when experiencing cache-related issues; to temporarily bypass caching while developing
+or debugging, prefer enabling cacheless mode instead.
+
+Does nothing if caching is already disabled.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/disable`
+
+#### hosting_enableCachelessModeV1
+
+Enables development (cacheless) mode where nothing is cached, effectively turning off all
+caching for the website. Use it while actively developing, testing changes, debugging issues,
+or when real-time updates must be visible. Disable cacheless mode afterwards to restore
+normal caching.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/enable`
+
+#### hosting_enableWebsiteCacheV1
+
+Turns on server-side caching for the website for better performance. Use it for faster page
+loads, reduced server load, or improved user experience. Recommended for production websites.
+
+Does nothing if caching is already enabled.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/enable`
 
 #### hosting_listAccountCronJobsV1
 
