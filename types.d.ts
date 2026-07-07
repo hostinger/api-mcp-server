@@ -1829,6 +1829,29 @@ Log content may contain ANSI escape sequences (color codes).
   };
 
   /**
+   * Restarts the Node.js server process for the website. Does not rebuild or redeploy the
+application. Use it to apply environment or configuration changes, or to recover a hung
+application.
+
+Only applicable to server-side applications (Express, Next.js, NestJS, etc.). Static
+front-end apps (React, Vue, Vite) have no persistent server process, so restarting them
+has no effect. Returns success even when the website has no server process to restart.
+   */
+  "hosting_restartNode.jsApplicationV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of orders accessible to the authenticated client.
 
 This endpoint returns orders of your hosting accounts as well as orders

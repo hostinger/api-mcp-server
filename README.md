@@ -49,13 +49,13 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (202 total)
+- `hostinger-api-mcp` — unified server with every tool (203 total)
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 46 tools for hosting
+- `hostinger-hosting-mcp` — 47 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1054,6 +1054,19 @@ Log content may contain ANSI escape sequences (color codes).
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/logs`
+
+#### hosting_restartNode.jsApplicationV1
+
+Restarts the Node.js server process for the website. Does not rebuild or redeploy the
+application. Use it to apply environment or configuration changes, or to recover a hung
+application.
+
+Only applicable to server-side applications (Express, Next.js, NestJS, etc.). Static
+front-end apps (React, Vue, Vite) have no persistent server process, so restarting them
+has no effect. Returns success even when the website has no server process to restart.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/server/restart`
 
 #### hosting_listOrdersV1
 
