@@ -1135,10 +1135,12 @@ Defaults to the website root.
   };
 
   /**
-   * Turns off development (cacheless) mode and returns the website to normal caching. Use it after
+   * Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing
+is cached, effectively turning off all caching for the website; use it while actively developing,
+testing changes, debugging issues, or when real-time updates must be visible. Disable it after
 finishing development work to restore the performance benefits of caching.
    */
-  "hosting_disableCachelessModeV1": {
+  "hosting_toggleCachelessModeV1": {
     params: {
       /**
        * username parameter
@@ -1148,18 +1150,23 @@ finishing development work to restore the performance benefits of caching.
        * Domain name
        */
       domain: string;
+      /**
+       * Turn development (cacheless) mode on (true) or off (false) for the website.
+       */
+      enabled: boolean;
     };
     response: any; // Response structure will depend on the API
   };
 
   /**
-   * Turns off server-side caching for the website until it is enabled again. May impact performance.
-Use it when experiencing cache-related issues; to temporarily bypass caching while developing
-or debugging, prefer enabling cacheless mode instead.
+   * Turns server-side caching for the website on or off, based on the enabled flag. Enable it for
+faster page loads, reduced server load, and improved user experience; recommended for production
+websites. Disabling may impact performance; to temporarily bypass caching while developing or
+debugging, prefer toggling cacheless mode instead.
 
-Does nothing if caching is already disabled.
+Does nothing if caching is already in the requested state.
    */
-  "hosting_disableWebsiteCacheV1": {
+  "hosting_toggleWebsiteCacheV1": {
     params: {
       /**
        * username parameter
@@ -1169,46 +1176,10 @@ Does nothing if caching is already disabled.
        * Domain name
        */
       domain: string;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
-   * Enables development (cacheless) mode where nothing is cached, effectively turning off all
-caching for the website. Use it while actively developing, testing changes, debugging issues,
-or when real-time updates must be visible. Disable cacheless mode afterwards to restore
-normal caching.
-   */
-  "hosting_enableCachelessModeV1": {
-    params: {
       /**
-       * username parameter
+       * Turn server-side caching on (true) or off (false) for the website.
        */
-      username: string;
-      /**
-       * Domain name
-       */
-      domain: string;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
-   * Turns on server-side caching for the website for better performance. Use it for faster page
-loads, reduced server load, or improved user experience. Recommended for production websites.
-
-Does nothing if caching is already enabled.
-   */
-  "hosting_enableWebsiteCacheV1": {
-    params: {
-      /**
-       * username parameter
-       */
-      username: string;
-      /**
-       * Domain name
-       */
-      domain: string;
+      enabled: boolean;
     };
     response: any; // Response structure will depend on the API
   };

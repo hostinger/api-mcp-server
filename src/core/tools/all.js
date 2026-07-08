@@ -1779,10 +1779,10 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_disableCachelessModeV1",
-    "description": "Turns off development (cacheless) mode and returns the website to normal caching. Use it after\nfinishing development work to restore the performance benefits of caching.",
+    "name": "hosting_toggleCachelessModeV1",
+    "description": "Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing\nis cached, effectively turning off all caching for the website; use it while actively developing,\ntesting changes, debugging issues, or when real-time updates must be visible. Disable it after\nfinishing development work to restore the performance benefits of caching.",
     "method": "PATCH",
-    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/disable",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/toggle",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -1793,11 +1793,16 @@ export default [
         "domain": {
           "type": "string",
           "description": "Domain name"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Turn development (cacheless) mode on (true) or off (false) for the website."
         }
       },
       "required": [
         "username",
-        "domain"
+        "domain",
+        "enabled"
       ]
     },
     "security": [
@@ -1808,10 +1813,10 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_disableWebsiteCacheV1",
-    "description": "Turns off server-side caching for the website until it is enabled again. May impact performance.\nUse it when experiencing cache-related issues; to temporarily bypass caching while developing\nor debugging, prefer enabling cacheless mode instead.\n\nDoes nothing if caching is already disabled.",
+    "name": "hosting_toggleWebsiteCacheV1",
+    "description": "Turns server-side caching for the website on or off, based on the enabled flag. Enable it for\nfaster page loads, reduced server load, and improved user experience; recommended for production\nwebsites. Disabling may impact performance; to temporarily bypass caching while developing or\ndebugging, prefer toggling cacheless mode instead.\n\nDoes nothing if caching is already in the requested state.",
     "method": "PATCH",
-    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/disable",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/toggle",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -1822,69 +1827,16 @@ export default [
         "domain": {
           "type": "string",
           "description": "Domain name"
-        }
-      },
-      "required": [
-        "username",
-        "domain"
-      ]
-    },
-    "security": [
-      {
-        "apiToken": []
-      }
-    ],
-    "group": "hosting"
-  },
-  {
-    "name": "hosting_enableCachelessModeV1",
-    "description": "Enables development (cacheless) mode where nothing is cached, effectively turning off all\ncaching for the website. Use it while actively developing, testing changes, debugging issues,\nor when real-time updates must be visible. Disable cacheless mode afterwards to restore\nnormal caching.",
-    "method": "PATCH",
-    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/enable",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "username parameter"
         },
-        "domain": {
-          "type": "string",
-          "description": "Domain name"
+        "enabled": {
+          "type": "boolean",
+          "description": "Turn server-side caching on (true) or off (false) for the website."
         }
       },
       "required": [
         "username",
-        "domain"
-      ]
-    },
-    "security": [
-      {
-        "apiToken": []
-      }
-    ],
-    "group": "hosting"
-  },
-  {
-    "name": "hosting_enableWebsiteCacheV1",
-    "description": "Turns on server-side caching for the website for better performance. Use it for faster page\nloads, reduced server load, or improved user experience. Recommended for production websites.\n\nDoes nothing if caching is already enabled.",
-    "method": "PATCH",
-    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/enable",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "username parameter"
-        },
-        "domain": {
-          "type": "string",
-          "description": "Domain name"
-        }
-      },
-      "required": [
-        "username",
-        "domain"
+        "domain",
+        "enabled"
       ]
     },
     "security": [
