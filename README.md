@@ -1163,7 +1163,7 @@ Log content may contain ANSI escape sequences (color codes).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/logs`
 
-#### hosting_restartNode.jsApplicationV1
+#### hosting_restartNode_jsApplicationV1
 
 Restarts the Node.js server process for the website. Does not rebuild or redeploy the
 application. Use it to apply environment or configuration changes, or to recover a hung

@@ -1230,7 +1230,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_restartNode.jsApplicationV1",
+    "name": "hosting_restartNode_jsApplicationV1",
     "description": "Restarts the Node.js server process for the website. Does not rebuild or redeploy the\napplication. Use it to apply environment or configuration changes, or to recover a hung\napplication.\n\nOnly applicable to server-side applications (Express, Next.js, NestJS, etc.). Static\nfront-end apps (React, Vue, Vite) have no persistent server process, so restarting them\nhas no effect. Returns success even when the website has no server process to restart.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/server/restart",

@@ -2060,7 +2060,7 @@ Only applicable to server-side applications (Express, Next.js, NestJS, etc.). St
 front-end apps (React, Vue, Vite) have no persistent server process, so restarting them
 has no effect. Returns success even when the website has no server process to restart.
    */
-  "hosting_restartNode.jsApplicationV1": {
+  "hosting_restartNode_jsApplicationV1": {
     params: {
       /**
        * username parameter
