@@ -49,7 +49,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (201 total)
+- `hostinger-api-mcp` — unified server with every tool (212 total)
+- `hostinger-agency-hosting-mcp` — 11 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
@@ -199,6 +200,130 @@ console.log("Tool result:", result);
 ## Available Tools
 
 This MCP server provides the following tools:
+
+### `hostinger-agency-hosting-mcp`
+
+#### agency-hosting_listAvailableDatacentersForAnAgencyPlanOrderV1
+
+Lists the datacenters available for provisioning a new website on the given Agency Plan
+hosting order.
+
+Each datacenter includes a `pinger_url` you can ping from the client to measure round-trip
+latency; comparing the results across datacenters lets you pick the nearest one (lowest
+ping) before choosing its `code` as the `datacenter_code` when creating a website setup.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/orders/{order_id}/datacenters`
+
+#### agency-hosting_changeAgencyPlanWebsiteDomainV1
+
+Changes the primary domain for an Agency Plan website.
+
+Provide the current domain in the path and the new domain in the request body.
+Set domain to null to revert to the temporary domain.
+
+- **Method**: `PUT`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{from_domain}`
+
+#### agency-hosting_linkDomainToAgencyPlanWebsiteV1
+
+Links a domain to the specified Agency Plan website so it can serve traffic for that domain.
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains`
+
+#### agency-hosting_listAgencyPlanDomainsV1
+
+Returns a paginated list of domains associated with Agency Plan websites accessible to the authenticated client.
+
+Use the website_uuids filter to narrow results to specific websites.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/domains`
+
+#### agency-hosting_unlinkDomainFromAgencyPlanWebsiteV1
+
+Unlinks a domain from the specified Agency Plan website.
+
+The website stops serving traffic on this domain immediately.
+
+Website files and database are preserved, and any other linked domains remain accessible.
+
+If this is the only domain on the website, unlinking leaves the website without an accessible domain.
+
+- **Method**: `DELETE`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}`
+
+#### agency-hosting_provisionANewAgencyPlanWebsiteV1
+
+Provisions a new website on one of your Agency Plan hosting orders.
+
+Choose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach
+your own `domain` — omit it, set it to `null`, or leave it unavailable and a free
+`*.hostingersite.com` subdomain is generated instead — and/or install WordPress by
+supplying the `wordpress` details (admin account, site title, and language).
+
+Common setups:
+- **Plain PHP site**: `flavor` set to `php-fpm`, with `settings.php.version`; omit
+  `wordpress` and `type`.
+- **WordPress site**: `flavor` set to the desired WordPress version (e.g. `wp-7.0`), plus
+  the `wordpress` block (admin account, title, language).
+- **Static/Node.js frontend app**: `flavor` set to `php-fpm` and `type` set to
+  `node-static`.
+
+Provisioning runs in the background, so the response returns immediately with a setup UUID
+that identifies the job. The new website becomes reachable once provisioning finishes.
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/orders/{order_id}/websites/setups`
+
+#### agency-hosting_getAgencyPlanWebsiteSetupStatusV1
+
+Returns the current status of an Agency Plan website setup started via the setups
+endpoint.
+
+Poll this endpoint using the `setup_uuid` returned from the provisioning request until
+`status` becomes `completed`, at which point `website_uid` identifies the new website.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/orders/{order_id}/websites/setups/{setup_uuid}`
+
+#### agency-hosting_buildAgencyPlanWebsiteNodeJSAssetsV1
+
+Builds and deploys a Node.js application for an Agency Plan website from an already-uploaded archive.
+
+Upload the archive to file browser first, then provide its relative path from document root in this request.
+Website contents are overwritten by the build result, which is deployed to public_html.
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/build-assets`
+
+#### agency-hosting_getAgencyPlanWebsiteDetailsV1
+
+Retrieves detailed information about a specific Agency Plan website, including configuration,
+status, metadata, hosting plan details, and resource quotas.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}`
+
+#### agency-hosting_deleteAgencyPlanWebsiteV1
+
+Deletes an Agency Plan website and schedules cleanup of its resources.
+
+This action is irreversible. Website files, databases, and linked domains are removed.
+
+- **Method**: `DELETE`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}`
+
+#### agency-hosting_listRunningAgencyPlanWebsiteProcessesV1
+
+Lists active and recently completed asynchronous processes for an Agency Plan website.
+
+Each process has a unique ID (for tracking), a type, and a status (running, completed, failed).
+Poll this endpoint after initiating async operations (SSL setup, backups, cloning) to track progress.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/processes`
 
 ### `hostinger-billing-mcp`
 

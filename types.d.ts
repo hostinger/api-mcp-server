@@ -160,6 +160,258 @@ export interface APITools {
   };
 
   /**
+   * Lists the datacenters available for provisioning a new website on the given Agency Plan
+hosting order.
+
+Each datacenter includes a `pinger_url` you can ping from the client to measure round-trip
+latency; comparing the results across datacenters lets you pick the nearest one (lowest
+ping) before choosing its `code` as the `datacenter_code` when creating a website setup.
+   */
+  "agency-hosting_listAvailableDatacentersForAnAgencyPlanOrderV1": {
+    params: {
+      /**
+       * Agency Plan order ID
+       */
+      order_id: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Changes the primary domain for an Agency Plan website.
+
+Provide the current domain in the path and the new domain in the request body.
+Set domain to null to revert to the temporary domain.
+   */
+  "agency-hosting_changeAgencyPlanWebsiteDomainV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Current domain name to change from
+       */
+      from_domain: string;
+      /**
+       * New domain to assign to the website. Set to null to revert to the temporary domain.
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Links a domain to the specified Agency Plan website so it can serve traffic for that domain.
+   */
+  "agency-hosting_linkDomainToAgencyPlanWebsiteV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Fully qualified domain name to link to the website
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns a paginated list of domains associated with Agency Plan websites accessible to the authenticated client.
+
+Use the website_uuids filter to narrow results to specific websites.
+   */
+  "agency-hosting_listAgencyPlanDomainsV1": {
+    params: {
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+      /**
+       * Filter by website UIDs
+       */
+      website_uuids?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Unlinks a domain from the specified Agency Plan website.
+
+The website stops serving traffic on this domain immediately.
+
+Website files and database are preserved, and any other linked domains remain accessible.
+
+If this is the only domain on the website, unlinking leaves the website without an accessible domain.
+   */
+  "agency-hosting_unlinkDomainFromAgencyPlanWebsiteV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Provisions a new website on one of your Agency Plan hosting orders.
+
+Choose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach
+your own `domain` — omit it, set it to `null`, or leave it unavailable and a free
+`*.hostingersite.com` subdomain is generated instead — and/or install WordPress by
+supplying the `wordpress` details (admin account, site title, and language).
+
+Common setups:
+- **Plain PHP site**: `flavor` set to `php-fpm`, with `settings.php.version`; omit
+  `wordpress` and `type`.
+- **WordPress site**: `flavor` set to the desired WordPress version (e.g. `wp-7.0`), plus
+  the `wordpress` block (admin account, title, language).
+- **Static/Node.js frontend app**: `flavor` set to `php-fpm` and `type` set to
+  `node-static`.
+
+Provisioning runs in the background, so the response returns immediately with a setup UUID
+that identifies the job. The new website becomes reachable once provisioning finishes.
+   */
+  "agency-hosting_provisionANewAgencyPlanWebsiteV1": {
+    params: {
+      /**
+       * Agency Plan order ID
+       */
+      order_id: number;
+      /**
+       * Datacenter code where the website should be provisioned. Available codes depend on live capacity and are not a fixed set.
+       */
+      datacenter_code: string;
+      /**
+       * Setup flavor: a specific WordPress version in the format `wp-<major>.<minor>` or `wp-<major>.<minor>.<patch>` (e.g. `wp-6.8.2`), or `php-fpm` for a plain PHP stack. Generic versions like `wp-latest` are not allowed.
+       */
+      flavor: string;
+      /**
+       * Website settings
+       */
+      settings: object;
+      /**
+       * Primary domain to attach to the website. Omit or set to null to get a free auto-generated *.hostingersite.com subdomain instead.
+       */
+      domain?: string;
+      /**
+       * Website type
+       */
+      type?: string;
+      /**
+       * WordPress installation options
+       */
+      wordpress?: object;
+      /**
+       * Clone the new website from an existing website
+       */
+      clone?: object;
+      /**
+       * Derive the domain from an existing vhost
+       */
+      derive_domain?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns the current status of an Agency Plan website setup started via the setups
+endpoint.
+
+Poll this endpoint using the `setup_uuid` returned from the provisioning request until
+`status` becomes `completed`, at which point `website_uid` identifies the new website.
+   */
+  "agency-hosting_getAgencyPlanWebsiteSetupStatusV1": {
+    params: {
+      /**
+       * Agency Plan order ID
+       */
+      order_id: number;
+      /**
+       * Website setup UUID
+       */
+      setup_uuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Builds and deploys a Node.js application for an Agency Plan website from an already-uploaded archive.
+
+Upload the archive to file browser first, then provide its relative path from document root in this request.
+Website contents are overwritten by the build result, which is deployed to public_html.
+   */
+  "agency-hosting_buildAgencyPlanWebsiteNodeJSAssetsV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Directory, relative to the website document root, where the uploaded site archive currently lives. Most commonly this is simply `public_html`.
+       */
+      archive_path: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieves detailed information about a specific Agency Plan website, including configuration,
+status, metadata, hosting plan details, and resource quotas.
+   */
+  "agency-hosting_getAgencyPlanWebsiteDetailsV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Deletes an Agency Plan website and schedules cleanup of its resources.
+
+This action is irreversible. Website files, databases, and linked domains are removed.
+   */
+  "agency-hosting_deleteAgencyPlanWebsiteV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Lists active and recently completed asynchronous processes for an Agency Plan website.
+
+Each process has a unique ID (for tracking), a type, and a status (running, completed, failed).
+Poll this endpoint after initiating async operations (SSL setup, backups, cloning) to track progress.
+   */
+  "agency-hosting_listRunningAgencyPlanWebsiteProcessesV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve catalog items available for order.
 
 Prices in catalog items is displayed as cents (without floating point),
