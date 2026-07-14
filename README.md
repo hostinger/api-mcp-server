@@ -49,8 +49,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (212 total)
-- `hostinger-agency-hosting-mcp` — 11 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (213 total)
+- `hostinger-agency-hosting-mcp` — 12 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
@@ -253,6 +253,17 @@ If this is the only domain on the website, unlinking leaves the website without 
 
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}`
+
+#### agency-hosting_importAgencyPlanWebsiteFromArchiveV1
+
+Imports an Agency Plan website from an already-uploaded archive.
+
+Upload the archive to the website's root directory via file browser first, then provide its
+filename in this request. Website contents are overwritten by the archive contents. Supported
+archive types: .zip, .tar, .tar.gz, .tgz.
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/files/import-archive`
 
 #### agency-hosting_provisionANewAgencyPlanWebsiteV1
 

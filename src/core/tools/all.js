@@ -408,6 +408,35 @@ export default [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_importAgencyPlanWebsiteFromArchiveV1",
+    "description": "Imports an Agency Plan website from an already-uploaded archive.\n\nUpload the archive to the website's root directory via file browser first, then provide its\nfilename in this request. Website contents are overwritten by the archive contents. Supported\narchive types: .zip, .tar, .tar.gz, .tgz.",
+    "method": "POST",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/files/import-archive",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "archive_name": {
+          "type": "string",
+          "description": "Archive filename (e.g., archive.zip). The file must already be uploaded to the website's .h5g/ directory."
+        }
+      },
+      "required": [
+        "website_uid",
+        "archive_name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "agency-hosting_provisionANewAgencyPlanWebsiteV1",
     "description": "Provisions a new website on one of your Agency Plan hosting orders.\n\nChoose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach\nyour own `domain` — omit it, set it to `null`, or leave it unavailable and a free\n`*.hostingersite.com` subdomain is generated instead — and/or install WordPress by\nsupplying the `wordpress` details (admin account, site title, and language).\n\nCommon setups:\n- **Plain PHP site**: `flavor` set to `php-fpm`, with `settings.php.version`; omit\n  `wordpress` and `type`.\n- **WordPress site**: `flavor` set to the desired WordPress version (e.g. `wp-7.0`), plus\n  the `wordpress` block (admin account, title, language).\n- **Static/Node.js frontend app**: `flavor` set to `php-fpm` and `type` set to\n  `node-static`.\n\nProvisioning runs in the background, so the response returns immediately with a setup UUID\nthat identifies the job. The new website becomes reachable once provisioning finishes.",
     "method": "POST",

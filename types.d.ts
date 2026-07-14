@@ -265,6 +265,27 @@ If this is the only domain on the website, unlinking leaves the website without 
   };
 
   /**
+   * Imports an Agency Plan website from an already-uploaded archive.
+
+Upload the archive to the website's root directory via file browser first, then provide its
+filename in this request. Website contents are overwritten by the archive contents. Supported
+archive types: .zip, .tar, .tar.gz, .tgz.
+   */
+  "agency-hosting_importAgencyPlanWebsiteFromArchiveV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Archive filename (e.g., archive.zip). The file must already be uploaded to the website's .h5g/ directory.
+       */
+      archive_name: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Provisions a new website on one of your Agency Plan hosting orders.
 
 Choose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach
