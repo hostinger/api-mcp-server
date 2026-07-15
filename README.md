@@ -49,8 +49,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (214 total)
-- `hostinger-agency-hosting-mcp` — 12 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (216 total)
+- `hostinger-agency-hosting-mcp` — 14 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
@@ -202,6 +202,20 @@ console.log("Tool result:", result);
 This MCP server provides the following tools:
 
 ### `hostinger-agency-hosting-mcp`
+
+#### agencyHosting_deployNodeStaticWebsite
+
+Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. For plain PHP applications that should be extracted as-is, use agencyHosting_deployPhpApplication instead. The website UID is automatically resolved from the domain.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### agencyHosting_deployPhpApplication
+
+Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. For node-static websites that require a build step, use agencyHosting_deployNodeStaticWebsite instead. The website UID is automatically resolved from the domain.
+
+- **Method**: `custom`
+- **Path**: `custom`
 
 #### agency-hosting_listAvailableDatacentersForAnAgencyPlanOrderV1
 

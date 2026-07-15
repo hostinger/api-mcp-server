@@ -197,6 +197,10 @@ class MCPServer {
 
   async executeCustomTool(tool, params) {
     switch (tool.name) {
+      case 'agencyHosting_deployNodeStaticWebsite':
+        return await this.handleNodeStaticDeploy(params);
+      case 'agencyHosting_deployPhpApplication':
+        return await this.handlePhpAppDeploy(params);
       case 'hosting_importWordpressWebsite':
         return await this.handleWordpressWebsiteImport(params);
       case 'hosting_deployWordpressPlugin':
@@ -214,6 +218,533 @@ class MCPServer {
       default:
         throw new Error(`Unknown custom tool: ${tool.name}`);
     }
+  }
+
+  agencyHosting_normalizePath(pathString) {
+    return pathString.replace(/\\/g, '/');
+  }
+
+  agencyHosting_generateUploadDir() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 12; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  agencyHosting_validateRequiredParams(params) {
+    const { domain, archivePath, removeArchive } = params;
+
+    if (!domain || typeof domain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    if (!archivePath || typeof archivePath !== 'string') {
+      throw new Error('archivePath is required and must be a string');
+    }
+
+    if (removeArchive !== undefined && typeof removeArchive !== 'boolean') {
+      throw new Error('removeArchive must be a boolean if provided');
+    }
+  }
+
+  agencyHosting_validateArchiveFile(archivePath) {
+    if (!fs.existsSync(archivePath)) {
+      throw new Error(`Archive file not found: ${archivePath}`);
+    }
+
+    const archiveStats = fs.statSync(archivePath);
+    if (!archiveStats.isFile()) {
+      throw new Error(`Archive path is not a file: ${archivePath}`);
+    }
+  }
+
+  agencyHosting_removeArchive(archivePath, removeArchive) {
+    if (!removeArchive) {
+      return false;
+    }
+
+    try {
+      this.log('info', `Removing archive file: ${archivePath}`);
+      fs.unlinkSync(archivePath);
+      this.log('info', `Successfully removed archive file: ${archivePath}`);
+      return true;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to remove archive file: ${errorMessage}`);
+      return false;
+    }
+  }
+
+  async agencyHosting_resolveWebsiteUid(domain) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const perPage = 100;
+
+    try {
+      const bearerToken = await this.getAuthToken();
+      let page = 1;
+      let total = 0;
+
+      do {
+        const url = new URL(
+          `api/agency-hosting/v1/domains?page=${page}&per_page=${perPage}`,
+          baseUrl
+        ).toString();
+
+        const config = {
+          method: 'get',
+          url,
+          headers: {
+            ...this.headers,
+            'Authorization': `Bearer ${bearerToken}`
+          },
+          timeout: 60000, // 60s
+          validateStatus: function (status) {
+            return status < 500;
+          }
+        };
+
+        const response = await axios(config);
+
+        if (response.status !== 200) {
+          throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+        }
+
+        const domains = response.data?.data ?? [];
+        const match = domains.find((item) => item.fqdn === domain);
+        if (match?.website_uid) {
+          this.log('info', `Resolved website UID: ${match.website_uid} for domain: ${domain}`);
+          return match.website_uid;
+        }
+
+        total = response.data?.meta?.total ?? domains.length;
+        page++;
+      } while ((page - 1) * perPage < total);
+
+      throw new Error(`No Agency Plan website found for domain: ${domain}`);
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to resolve website UID for domain ${domain}: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async agencyHosting_fetchUploadCredentials(websiteUid) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/agency-hosting/v1/websites/${websiteUid}/files/upload-urls`, baseUrl).toString();
+
+    try {
+      const bearerToken = await this.getAuthToken();
+
+      const config = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 60000, // 60s
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status !== 200) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to fetch upload credentials: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async agencyHosting_uploadFile(filePath, relativePath, uploadUrl, authRestToken, authToken) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const stats = fs.statSync(filePath);
+        const fileStream = fs.createReadStream(filePath);
+
+        const cleanUploadUrl = uploadUrl.replace(new RegExp('/$'), '');
+        const normalizedPath = this.agencyHosting_normalizePath(relativePath);
+        const uploadUrlWithFile = `${cleanUploadUrl}/${normalizedPath}?override=true`;
+
+        const requestHeaders = {
+          'X-Auth': authToken,
+          'X-Auth-Rest': authRestToken,
+          'upload-length': stats.size.toString(),
+          'upload-offset': '0'
+        };
+
+        try {
+          this.log('debug', `Making pre-upload POST request to ${uploadUrlWithFile}`);
+          await axios.post(uploadUrlWithFile, '', {
+            headers: requestHeaders,
+            timeout: 60000, // 60s
+            validateStatus: function (status) {
+              return status == 201;
+            }
+          });
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+
+          if (axios.isAxiosError(error)) {
+            const responseData = error.response?.data;
+            const responseStatus = error.response?.status;
+            const responseHeaders = error.response?.headers;
+            const responseText = typeof responseData === 'object' ? JSON.stringify(responseData) : responseData;
+
+            this.log('error', 'Pre-upload POST request failed - Full Response Details:', {
+              status: responseStatus,
+              headers: responseHeaders,
+              data: responseText,
+              message: errorMessage
+            });
+            reject(new Error(`Pre-upload request failed: ${errorMessage}`));
+            return;
+          } else {
+            this.log('error', `Pre-upload POST request failed: ${errorMessage}`);
+            reject(new Error(`Pre-upload request failed: ${errorMessage}`));
+            return;
+          }
+        }
+
+        const upload = new tus.Upload(fileStream, {
+          uploadUrl: uploadUrlWithFile,
+          retryDelays: [1000, 2000, 4000, 8000, 16000, 20000],
+          uploadDataDuringCreation: false,
+          parallelUploads: 1,
+          chunkSize: 10485760,
+          headers: requestHeaders,
+          removeFingerprintOnSuccess: true,
+          uploadSize: stats.size,
+          metadata: {
+            filename: path.basename(relativePath)
+          },
+          onError: (error) => {
+            this.log('error', `TUS upload error for ${relativePath}`, { error: error.message });
+            reject(new Error(`Upload failed: ${error.message}`));
+          },
+          onSuccess: () => {
+            this.log('info', `TUS upload completed for ${relativePath}`, { url: upload.url });
+            resolve({
+              url: upload.url || uploadUrlWithFile,
+              filename: relativePath
+            });
+          }
+        });
+
+        upload.start();
+
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.log('error', `Error preparing upload for ${filePath}`, { error: errorMessage });
+        reject(new Error(`Failed to prepare upload: ${errorMessage}`));
+      }
+    });
+  }
+
+  async agencyHosting_deployNodeStatic_triggerBuildAssets(websiteUid, archivePath) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/agency-hosting/v1/websites/${websiteUid}/build-assets`, baseUrl).toString();
+
+    try {
+      const bearerToken = await this.getAuthToken();
+
+      const config = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          archive_path: archivePath
+        },
+        timeout: 60000,
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      this.log('info', `Successfully triggered build for website ${websiteUid}`);
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger build: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async handleNodeStaticDeploy(params) {
+    const { domain, archivePath, removeArchive = true } = params;
+
+    this.agencyHosting_validateRequiredParams(params);
+    this.agencyHosting_validateArchiveFile(archivePath);
+
+    this.log('info', `Resolving website UID from domain: ${domain}`);
+    const websiteUid = await this.agencyHosting_resolveWebsiteUid(domain);
+
+    this.log('info', `Starting archive upload for ${domain}`);
+
+    let uploadCredentials;
+    try {
+      uploadCredentials = await this.agencyHosting_fetchUploadCredentials(websiteUid);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch upload credentials: ${errorMessage}`);
+    }
+
+    const { url: uploadUrl, auth_key: authToken, rest_auth_key: authRestToken } = uploadCredentials;
+
+    if (!uploadUrl || !authToken || !authRestToken) {
+      throw new Error('Invalid upload credentials received from API');
+    }
+
+    const archiveBasename = path.basename(archivePath);
+    const uploadDir = `.h5g/${this.agencyHosting_generateUploadDir()}`;
+    let uploadResult;
+    try {
+      uploadResult = await this.agencyHosting_uploadFile(
+        archivePath,
+        `${uploadDir}/${archiveBasename}`,
+        uploadUrl,
+        authRestToken,
+        authToken
+      );
+
+      this.log('info', `Successfully uploaded archive: ${archiveBasename}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to upload archive: ${errorMessage}`);
+    }
+
+    let deployResult;
+    try {
+      this.log('info', `Triggering build for ${domain}`);
+      deployResult = await this.agencyHosting_deployNodeStatic_triggerBuildAssets(websiteUid, uploadDir);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger build: ${errorMessage}`);
+      const archiveRemoved = this.agencyHosting_removeArchive(archivePath, removeArchive);
+
+      return {
+        upload: {
+          status: 'success',
+          data: {
+            filename: uploadResult.filename
+          }
+        },
+        deploy: {
+          status: 'error',
+          error: errorMessage
+        },
+        removeArchive: {
+          status: archiveRemoved ? 'success' : 'skipped'
+        }
+      };
+    }
+
+    const archiveRemoved = this.agencyHosting_removeArchive(archivePath, removeArchive);
+
+    return {
+      upload: {
+        status: 'success',
+        data: {
+          filename: uploadResult.filename
+        }
+      },
+      deploy: {
+        status: 'success',
+        data: deployResult
+      },
+      removeArchive: {
+        status: archiveRemoved ? 'success' : 'skipped'
+      }
+    };
+  }
+
+  async agencyHosting_deployPhpApp_triggerImportArchive(websiteUid, archiveName) {
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/agency-hosting/v1/websites/${websiteUid}/files/import-archive`, baseUrl).toString();
+
+    try {
+      const bearerToken = await this.getAuthToken();
+
+      const config = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          archive_name: archiveName
+        },
+        timeout: 60000,
+        validateStatus: function (status) {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
+      }
+
+      this.log('info', `Successfully triggered import for website ${websiteUid}`);
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger import: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  async handlePhpAppDeploy(params) {
+    const { domain, archivePath, removeArchive = true } = params;
+
+    this.agencyHosting_validateRequiredParams(params);
+    this.agencyHosting_validateArchiveFile(archivePath);
+
+    this.log('info', `Resolving website UID from domain: ${domain}`);
+    const websiteUid = await this.agencyHosting_resolveWebsiteUid(domain);
+
+    this.log('info', `Starting archive upload for ${domain}`);
+
+    let uploadCredentials;
+    try {
+      uploadCredentials = await this.agencyHosting_fetchUploadCredentials(websiteUid);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch upload credentials: ${errorMessage}`);
+    }
+
+    const { url: uploadUrl, auth_key: authToken, rest_auth_key: authRestToken } = uploadCredentials;
+
+    if (!uploadUrl || !authToken || !authRestToken) {
+      throw new Error('Invalid upload credentials received from API');
+    }
+
+    const archiveBasename = path.basename(archivePath);
+    let uploadResult;
+    try {
+      uploadResult = await this.agencyHosting_uploadFile(
+        archivePath,
+        `.h5g/${archiveBasename}`,
+        uploadUrl,
+        authRestToken,
+        authToken
+      );
+
+      this.log('info', `Successfully uploaded archive: ${archiveBasename}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to upload archive: ${errorMessage}`);
+    }
+
+    let deployResult;
+    try {
+      this.log('info', `Triggering import for ${domain}`);
+      deployResult = await this.agencyHosting_deployPhpApp_triggerImportArchive(websiteUid, archiveBasename);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger import: ${errorMessage}`);
+      const archiveRemoved = this.agencyHosting_removeArchive(archivePath, removeArchive);
+
+      return {
+        upload: {
+          status: 'success',
+          data: {
+            filename: uploadResult.filename
+          }
+        },
+        deploy: {
+          status: 'error',
+          error: errorMessage
+        },
+        removeArchive: {
+          status: archiveRemoved ? 'success' : 'skipped'
+        }
+      };
+    }
+
+    const archiveRemoved = this.agencyHosting_removeArchive(archivePath, removeArchive);
+
+    return {
+      upload: {
+        status: 'success',
+        data: {
+          filename: uploadResult.filename
+        }
+      },
+      deploy: {
+        status: 'success',
+        data: deployResult
+      },
+      removeArchive: {
+        status: archiveRemoved ? 'success' : 'skipped'
+      }
+    };
   }
 
   normalizePath(pathString) {
