@@ -17,7 +17,7 @@ import fs from "fs";
 import path from "path";
 
 // Load environment variables
-dotenvConfig();
+dotenvConfig({ quiet: true });
 
 const SECURITY_SCHEMES = {
   "apiToken": {
