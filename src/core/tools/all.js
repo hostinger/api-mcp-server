@@ -3521,6 +3521,30 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "hosting_deleteWebsiteV1",
+    "description": "Permanently deletes a website and all of its data. This action is destructive\nand cannot be undone. Always ask the user for explicit confirmation before\ncalling this endpoint.\n\nAll website files, databases and related configuration will be removed.\nThe hosting plan itself is kept, so a new website can be created on it afterwards.\n\nThe confirm field must be boolean true, otherwise the request is rejected.\n\nSupported websites: main and addon domain websites on web hosting plans, and\nWebsite Builder websites. Parked domains and subdomains cannot be deleted with\nthis endpoint. The domain must be the exact website domain, not a preview\ndomain or an alias.\n\nReturns 404 when the domain does not exist or does not belong to the\nauthenticated client.\n\nWebsite removal is processed asynchronously and can take a few minutes to\ncomplete. The response returns before the removal finishes.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/websites/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "reach_deleteAContactV1",
     "description": "Delete a contact with the specified UUID.\n\nThis endpoint permanently removes a contact from the email marketing system.",
     "method": "DELETE",

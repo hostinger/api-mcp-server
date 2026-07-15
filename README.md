@@ -49,14 +49,14 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (213 total)
+- `hostinger-api-mcp` — unified server with every tool (214 total)
 - `hostinger-agency-hosting-mcp` — 12 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 18 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 45 tools for hosting
+- `hostinger-hosting-mcp` — 46 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1288,6 +1288,31 @@ websites list endpoint to see when your new website becomes available.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/websites`
+
+#### hosting_deleteWebsiteV1
+
+Permanently deletes a website and all of its data. This action is destructive
+and cannot be undone. Always ask the user for explicit confirmation before
+calling this endpoint.
+
+All website files, databases and related configuration will be removed.
+The hosting plan itself is kept, so a new website can be created on it afterwards.
+
+The confirm field must be boolean true, otherwise the request is rejected.
+
+Supported websites: main and addon domain websites on web hosting plans, and
+Website Builder websites. Parked domains and subdomains cannot be deleted with
+this endpoint. The domain must be the exact website domain, not a preview
+domain or an alias.
+
+Returns 404 when the domain does not exist or does not belong to the
+authenticated client.
+
+Website removal is processed asynchronously and can take a few minutes to
+complete. The response returns before the removal finishes.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/websites/{domain}`
 
 ### `hostinger-reach-mcp`
 

@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/all.js';
 
-startServer({ name: 'hostinger-api-mcp', version: '1.5.7', tools });
+startServer({ name: 'hostinger-api-mcp', version: '1.6.0', tools });
