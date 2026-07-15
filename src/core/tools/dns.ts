@@ -7,6 +7,10 @@ export interface OpenApiTool extends Tool {
   security: unknown[];
   custom?: boolean;
   group?: string;
+  topic?: string;
+  handlerMethod?: string;
+  templateFile?: string;
+  templateFileTS?: string;
 }
 
 const tools: OpenApiTool[] = [

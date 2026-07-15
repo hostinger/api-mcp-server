@@ -25,8 +25,13 @@ dotenvConfig();
 interface OpenApiTool extends Tool {
   method: string;
   path: string;
-  security: any[];
+  security: unknown[];
   custom?: boolean;
+  group?: string;
+  topic?: string;
+  handlerMethod?: string;
+  templateFile?: string;
+  templateFileTS?: string;
 }
 
 interface SecurityScheme {
@@ -167,8 +172,8 @@ class MCPServer {
 
     // Handle tool execution requests
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      const { id, name, arguments: params } = request.params;
-      this.log('debug', "Handling CallTool request", { id, name, params });
+      const { name, arguments: params } = request.params;
+      this.log('debug', "Handling CallTool request", { name, params });
 
       let toolName: string | undefined;
       let toolDetails: OpenApiTool | undefined;
@@ -2009,11 +2014,10 @@ class MCPServer {
    * Only sends to MCP if we're connected
    */
   private log(level: 'debug' | 'info' | 'warning' | 'error', message: string, data?: any): void {
-    // Always log to stderr for visibility
-    console.error(`[${level.toUpperCase()}] ${message}${data ? ': ' + JSON.stringify(data) : ''}`);
-
-    // Only try to send via MCP if we're in debug mode or it's important
+    // Debug logs (which may include request params) only reach stderr when
+    // DEBUG=true; info/warning/error always log. This gate also guards the MCP send.
     if (this.debug || level !== 'debug') {
+      console.error(`[${level.toUpperCase()}] ${message}${data ? ': ' + JSON.stringify(data) : ''}`);
       try {
         // Only send if server exists and is connected
         if (this.server && (this.server as any).isConnected) {
