@@ -2059,7 +2059,7 @@ class MCPServer {
       });
 
       // Set up CORS for all routes
-      app.options("*", (req, res) => {
+      app.options("/{*splat}", (req, res) => {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, x-session-id");
