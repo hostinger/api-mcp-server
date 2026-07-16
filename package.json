@@ -1,6 +1,6 @@
 {
   "name": "hostinger-api-mcp",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "mcpName": "io.github.hostinger/hostinger-api-mcp",
   "description": "MCP server for Hostinger API",
   "repository": {

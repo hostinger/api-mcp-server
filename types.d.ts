@@ -988,6 +988,22 @@ Use this endpoint to make domain owner's information publicly visible.
   };
 
   /**
+   * Retrieve renewal information for a specified domain, including its status and current
+expiration date.
+
+Use this endpoint to build renewal automation and expiry monitoring for a single domain.
+   */
+  "domains_getDomainRenewalInformationV1": {
+    params: {
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Set nameservers for a specified domain.
 
 Be aware, that improper nameserver configuration can lead to the domain being unresolvable or unavailable.

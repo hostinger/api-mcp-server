@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (216 total)
+- `hostinger-api-mcp` — unified server with every tool (217 total)
 - `hostinger-agency-hosting-mcp` — 14 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
-- `hostinger-domains-mcp` — 18 tools for domains
+- `hostinger-domains-mcp` — 19 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 46 tools for hosting
@@ -638,6 +638,16 @@ Use this endpoint to make domain owner's information publicly visible.
 
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/portfolio/{domain}/privacy-protection`
+
+#### domains_getDomainRenewalInformationV1
+
+Retrieve renewal information for a specified domain, including its status and current
+expiration date.
+
+Use this endpoint to build renewal automation and expiry monitoring for a single domain.
+
+- **Method**: `GET`
+- **Path**: `/api/domains/v1/portfolio/{domain}/renewal`
 
 #### domains_updateDomainNameserversV1
 

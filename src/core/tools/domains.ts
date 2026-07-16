@@ -360,6 +360,30 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
+    "name": "domains_getDomainRenewalInformationV1",
+    "description": "Retrieve renewal information for a specified domain, including its status and current\nexpiration date.\n\nUse this endpoint to build renewal automation and expiry monitoring for a single domain.",
+    "method": "GET",
+    "path": "/api/domains/v1/portfolio/{domain}/renewal",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_updateDomainNameserversV1",
     "description": "Set nameservers for a specified domain.\n\nBe aware, that improper nameserver configuration can lead to the domain being unresolvable or unavailable.\n\nUse this endpoint to configure custom DNS hosting for domains.",
     "method": "PUT",
