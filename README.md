@@ -49,14 +49,14 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (217 total)
+- `hostinger-api-mcp` — unified server with every tool (219 total)
 - `hostinger-agency-hosting-mcp` — 14 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 19 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 46 tools for hosting
+- `hostinger-hosting-mcp` — 48 tools for hosting
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1210,6 +1210,49 @@ has no effect. Returns success even when the website has no server process to re
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/server/restart`
+
+#### hosting_listNode_jsVulnerabilitiesV1
+
+Lists known npm package vulnerabilities detected on a Node.js website, enriched with
+advisory metadata (severity, CVSS score, CVE, advisory URL). Results are sorted from
+the most severe to the least severe, then by publish date (newest first). Use the
+`severities` query parameter to filter.
+
+Vulnerabilities with `is_patchable` set to `true` can be auto-fixed via the
+`Patch Node.js Vulnerabilities` endpoint, which opens a GitHub pull request with
+updated package versions. Auto-fix is only available for websites deployed from a
+connected GitHub repository. Vulnerabilities with `is_patching_in_progress` set to
+`true` are already included in an open patch pull request; while any patch pull
+request is open, new patch requests for this website are rejected until it is merged
+or closed.
+
+Data comes from periodic dependency scans, so it may lag behind the latest deployment.
+An empty list means the most recent scan found no vulnerabilities; it does not
+guarantee the current deployment is vulnerability-free. Available on Business and
+Cloud Hosting plans.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/vulnerabilities`
+
+#### hosting_patchNode_jsVulnerabilitiesV1
+
+Patches the selected Node.js vulnerabilities by updating the affected package versions
+in `package.json` and opening a GitHub pull request in the connected repository. The
+customer reviews and merges the pull request; merging triggers the automatic deployment.
+
+Auto-fix is only available for websites deployed from a connected GitHub repository.
+Websites deployed from an archive have no auto-fix path and return a 404. The Hostinger
+GitHub App needs write access to the repository; without it the request fails with a
+403 explaining the missing permission.
+
+Only vulnerabilities with `is_patchable` set to `true` can be patched. Non-patchable
+IDs in the selection are skipped; the pull request covers the patchable subset, listed
+in `patched_vulnerability_ids`. Selections without any patchable vulnerability are
+rejected with a 422. Only one patch pull request can be open at a time per website;
+close or merge it before patching again. Available on Business and Cloud Hosting plans.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/vulnerabilities/patch`
 
 #### hosting_listOrdersV1
 
