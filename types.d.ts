@@ -430,6 +430,21 @@ Website contents are overwritten by the build result, which is deployed to publi
   };
 
   /**
+   * Clears cache for all domains associated with an Agency Plan website, including its preview domain.
+
+This operation clears all cache types for the website.
+   */
+  "agency-hosting_clearAgencyPlanWebsiteCacheV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Returns a paginated list of cron jobs configured for an Agency Plan website.
 
 Each entry includes the schedule expression and the command executed on that schedule.

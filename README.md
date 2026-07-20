@@ -49,8 +49,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (222 total)
-- `hostinger-agency-hosting-mcp` — 17 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (223 total)
+- `hostinger-agency-hosting-mcp` — 18 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 19 tools for domains
@@ -322,6 +322,15 @@ Website contents are overwritten by the build result, which is deployed to publi
 
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/build-assets`
+
+#### agency-hosting_clearAgencyPlanWebsiteCacheV1
+
+Clears cache for all domains associated with an Agency Plan website, including its preview domain.
+
+This operation clears all cache types for the website.
+
+- **Method**: `DELETE`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cache`
 
 #### agency-hosting_listAgencyPlanWebsiteCronJobsV1
 
