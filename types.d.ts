@@ -430,6 +430,71 @@ Website contents are overwritten by the build result, which is deployed to publi
   };
 
   /**
+   * Returns a paginated list of cron jobs configured for an Agency Plan website.
+
+Each entry includes the schedule expression and the command executed on that schedule.
+   */
+  "agency-hosting_listAgencyPlanWebsiteCronJobsV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Creates a cron job for an Agency Plan website from a schedule expression and a command.
+
+Returns the created cron job, including its uuid, which is required to delete the cron job.
+   */
+  "agency-hosting_createAgencyPlanWebsiteCronJobV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Cron schedule expression (standard 5-field crontab syntax).
+       */
+      time: string;
+      /**
+       * Command to run on the schedule. Must not contain pipe (|) or redirection (<, >) characters.
+       */
+      command: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently deletes the cron job identified by its uuid from an Agency Plan website.
+
+The operation is idempotent: deleting a cron job that does not exist succeeds without error.
+   */
+  "agency-hosting_deleteAgencyPlanWebsiteCronJobV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Unique identifier of the cron job as returned by the list cron jobs endpoint.
+       */
+      uuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieves detailed information about a specific Agency Plan website, including configuration,
 status, metadata, hosting plan details, and resource quotas.
    */

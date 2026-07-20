@@ -471,6 +471,101 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_listAgencyPlanWebsiteCronJobsV1",
+    "description": "Returns a paginated list of cron jobs configured for an Agency Plan website.\n\nEach entry includes the schedule expression and the command executed on that schedule.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/cron-jobs",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "website_uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_createAgencyPlanWebsiteCronJobV1",
+    "description": "Creates a cron job for an Agency Plan website from a schedule expression and a command.\n\nReturns the created cron job, including its uuid, which is required to delete the cron job.",
+    "method": "POST",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/cron-jobs",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "time": {
+          "type": "string",
+          "description": "Cron schedule expression (standard 5-field crontab syntax)."
+        },
+        "command": {
+          "type": "string",
+          "description": "Command to run on the schedule. Must not contain pipe (|) or redirection (<, >) characters."
+        }
+      },
+      "required": [
+        "website_uid",
+        "time",
+        "command"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_deleteAgencyPlanWebsiteCronJobV1",
+    "description": "Permanently deletes the cron job identified by its uuid from an Agency Plan website.\n\nThe operation is idempotent: deleting a cron job that does not exist succeeds without error.",
+    "method": "DELETE",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/cron-jobs/{uuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "Unique identifier of the cron job as returned by the list cron jobs endpoint."
+        }
+      },
+      "required": [
+        "website_uid",
+        "uuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "agency-hosting_getAgencyPlanWebsiteDetailsV1",
     "description": "Retrieves detailed information about a specific Agency Plan website, including configuration,\nstatus, metadata, hosting plan details, and resource quotas.",
     "method": "GET",

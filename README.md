@@ -49,8 +49,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (219 total)
-- `hostinger-agency-hosting-mcp` — 14 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (222 total)
+- `hostinger-agency-hosting-mcp` — 17 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 19 tools for domains
@@ -322,6 +322,33 @@ Website contents are overwritten by the build result, which is deployed to publi
 
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/build-assets`
+
+#### agency-hosting_listAgencyPlanWebsiteCronJobsV1
+
+Returns a paginated list of cron jobs configured for an Agency Plan website.
+
+Each entry includes the schedule expression and the command executed on that schedule.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs`
+
+#### agency-hosting_createAgencyPlanWebsiteCronJobV1
+
+Creates a cron job for an Agency Plan website from a schedule expression and a command.
+
+Returns the created cron job, including its uuid, which is required to delete the cron job.
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs`
+
+#### agency-hosting_deleteAgencyPlanWebsiteCronJobV1
+
+Permanently deletes the cron job identified by its uuid from an Agency Plan website.
+
+The operation is idempotent: deleting a cron job that does not exist succeeds without error.
+
+- **Method**: `DELETE`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs/{uuid}`
 
 #### agency-hosting_getAgencyPlanWebsiteDetailsV1
 
