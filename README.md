@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (225 total)
+- `hostinger-api-mcp` — unified server with every tool (228 total)
 - `hostinger-agency-hosting-mcp` — 18 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
-- `hostinger-domains-mcp` — 20 tools for domains
+- `hostinger-domains-mcp` — 23 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
@@ -604,6 +604,18 @@ Use this endpoint to set up domain redirects to other URLs.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/forwarding`
 
+#### domains_getDomainAuthorizationCodeV1
+
+Retrieve the authorization (EPP) code for a specified domain so it can be transferred
+away from Hostinger to another registrar.
+
+Requesting a new code invalidates any code retrieved previously.
+
+Use this endpoint to obtain the code required to transfer a domain to another registrar.
+
+- **Method**: `GET`
+- **Path**: `/api/domains/v1/portfolio/{domain}/auth-code`
+
 #### domains_enableDomainLockV1
 
 Enable domain lock for the domain.
@@ -705,6 +717,24 @@ Use this endpoint to configure custom DNS hosting for domains.
 
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/nameservers`
+
+#### domains_getTransferV1
+
+Retrieve the transfer for a specified domain.
+
+Use this endpoint to track an incoming or outgoing registrar transfer and its status.
+
+- **Method**: `GET`
+- **Path**: `/api/domains/v1/transfers/{domain}`
+
+#### domains_getTransferListV1
+
+Retrieve all domain transfers in your portfolio.
+
+Use this endpoint to monitor incoming and outgoing registrar transfers across your domains.
+
+- **Method**: `GET`
+- **Path**: `/api/domains/v1/transfers`
 
 #### domains_getWHOISProfileV1
 

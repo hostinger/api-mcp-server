@@ -951,6 +951,24 @@ Use this endpoint to set up domain redirects to other URLs.
   };
 
   /**
+   * Retrieve the authorization (EPP) code for a specified domain so it can be transferred
+away from Hostinger to another registrar.
+
+Requesting a new code invalidates any code retrieved previously.
+
+Use this endpoint to obtain the code required to transfer a domain to another registrar.
+   */
+  "domains_getDomainAuthorizationCodeV1": {
+    params: {
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Enable domain lock for the domain.
 
 When domain lock is enabled,
@@ -1135,6 +1153,33 @@ Use this endpoint to configure custom DNS hosting for domains.
        * Fourth name server
        */
       ns4?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve the transfer for a specified domain.
+
+Use this endpoint to track an incoming or outgoing registrar transfer and its status.
+   */
+  "domains_getTransferV1": {
+    params: {
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve all domain transfers in your portfolio.
+
+Use this endpoint to monitor incoming and outgoing registrar transfers across your domains.
+   */
+  "domains_getTransferListV1": {
+    params: {
+
     };
     response: any; // Response structure will depend on the API
   };

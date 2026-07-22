@@ -1597,6 +1597,30 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
+    "name": "domains_getDomainAuthorizationCodeV1",
+    "description": "Retrieve the authorization (EPP) code for a specified domain so it can be transferred\naway from Hostinger to another registrar.\n\nRequesting a new code invalidates any code retrieved previously.\n\nUse this endpoint to obtain the code required to transfer a domain to another registrar.",
+    "method": "GET",
+    "path": "/api/domains/v1/portfolio/{domain}/auth-code",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_enableDomainLockV1",
     "description": "Enable domain lock for the domain.\n\nWhen domain lock is enabled,\nthe domain cannot be transferred to another registrar without first disabling the lock.\n\nUse this endpoint to secure domains against unauthorized transfers.",
     "method": "PUT",
@@ -1859,6 +1883,47 @@ const tools: OpenApiTool[] = [
         "ns1",
         "ns2"
       ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_getTransferV1",
+    "description": "Retrieve the transfer for a specified domain.\n\nUse this endpoint to track an incoming or outgoing registrar transfer and its status.",
+    "method": "GET",
+    "path": "/api/domains/v1/transfers/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_getTransferListV1",
+    "description": "Retrieve all domain transfers in your portfolio.\n\nUse this endpoint to monitor incoming and outgoing registrar transfers across your domains.",
+    "method": "GET",
+    "path": "/api/domains/v1/transfers",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
     },
     "security": [
       {
