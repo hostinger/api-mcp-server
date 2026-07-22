@@ -2572,6 +2572,42 @@ complete. The response returns before the removal finishes.
   };
 
   /**
+   * Retrieve a paginated list of mail orders associated with your account.
+
+Use this endpoint to monitor your mail services, including their status,
+plan, attached domain, and expiration details.
+   */
+  "mail_getMailOrderListV1": {
+    params: {
+      /**
+       * Filter orders by domain name (exact match)
+       */
+      domain?: string;
+      /**
+       * Filter orders by status
+       */
+      status?: string;
+      /**
+       * Filter orders by trial state
+       */
+      is_trial?: boolean;
+      /**
+       * Sort orders by field. Prefix with `-` for descending order.
+       */
+      sort?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Delete a contact with the specified UUID.
 
 This endpoint permanently removes a contact from the email marketing system.
