@@ -590,6 +590,183 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_listAgencyPlanWebsiteDatabasesV1",
+    "description": "Returns a paginated list of MySQL databases created for an Agency Plan website.\n\nEach entry includes the database's non-system users.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/databases",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "website_uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_createAgencyPlanWebsiteDatabaseV1",
+    "description": "Creates a MySQL database with a dedicated user for an Agency Plan website.\n\nThe database name, username, and password must all be provided by the caller.",
+    "method": "POST",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/databases",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "database_name": {
+          "type": "string",
+          "description": "Database name to create (alphanumeric characters)."
+        },
+        "database_user": {
+          "type": "string",
+          "description": "Database username to create alongside the database (alphanumeric characters)."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for the database user (requires mixed case, letters, and numbers)."
+        }
+      },
+      "required": [
+        "website_uid",
+        "database_name",
+        "database_user",
+        "password"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_deleteAgencyPlanWebsiteDatabaseV1",
+    "description": "Permanently deletes a MySQL database and all its data from an Agency Plan website, including its users.\n\nThe operation is idempotent: deleting a database that does not exist succeeds without error.",
+    "method": "DELETE",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "database_name": {
+          "type": "string",
+          "description": "Full database name as returned by the list databases endpoint."
+        }
+      },
+      "required": [
+        "website_uid",
+        "database_name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_createAgencyPlanWebsiteDatabaseUserV1",
+    "description": "Creates a user for an existing database on an Agency Plan website.\n\nEach database supports a single non-system user; creating a user for a database that already has one fails.",
+    "method": "POST",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "database_name": {
+          "type": "string",
+          "description": "Full database name as returned by the list databases endpoint."
+        },
+        "database_user": {
+          "type": "string",
+          "description": "Database username to create (alphanumeric and underscores)."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for the database user (requires mixed case, letters, and numbers)."
+        },
+        "host": {
+          "type": "string",
+          "description": "Host the user connects from (IPv4, IPv6, % wildcard, or localhost). Defaults to localhost."
+        }
+      },
+      "required": [
+        "website_uid",
+        "database_name",
+        "database_user",
+        "password"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_deleteAgencyPlanWebsiteDatabaseUserV1",
+    "description": "Permanently deletes a database user from an Agency Plan website database, revoking all access it had.\n\nThe operation is idempotent: deleting a user that does not exist succeeds without error.",
+    "method": "DELETE",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users/{database_user_name}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "database_name": {
+          "type": "string",
+          "description": "Full database name as returned by the list databases endpoint."
+        },
+        "database_user_name": {
+          "type": "string",
+          "description": "Database username as returned by the list databases endpoint."
+        }
+      },
+      "required": [
+        "website_uid",
+        "database_name",
+        "database_user_name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "agency-hosting_getAgencyPlanWebsiteDetailsV1",
     "description": "Retrieves detailed information about a specific Agency Plan website, including configuration,\nstatus, metadata, hosting plan details, and resource quotas.",
     "method": "GET",

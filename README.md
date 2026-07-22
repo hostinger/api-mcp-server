@@ -49,8 +49,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (228 total)
-- `hostinger-agency-hosting-mcp` — 18 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (233 total)
+- `hostinger-agency-hosting-mcp` — 23 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 23 tools for domains
@@ -359,6 +359,51 @@ The operation is idempotent: deleting a cron job that does not exist succeeds wi
 
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs/{uuid}`
+
+#### agency-hosting_listAgencyPlanWebsiteDatabasesV1
+
+Returns a paginated list of MySQL databases created for an Agency Plan website.
+
+Each entry includes the database's non-system users.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases`
+
+#### agency-hosting_createAgencyPlanWebsiteDatabaseV1
+
+Creates a MySQL database with a dedicated user for an Agency Plan website.
+
+The database name, username, and password must all be provided by the caller.
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases`
+
+#### agency-hosting_deleteAgencyPlanWebsiteDatabaseV1
+
+Permanently deletes a MySQL database and all its data from an Agency Plan website, including its users.
+
+The operation is idempotent: deleting a database that does not exist succeeds without error.
+
+- **Method**: `DELETE`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}`
+
+#### agency-hosting_createAgencyPlanWebsiteDatabaseUserV1
+
+Creates a user for an existing database on an Agency Plan website.
+
+Each database supports a single non-system user; creating a user for a database that already has one fails.
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users`
+
+#### agency-hosting_deleteAgencyPlanWebsiteDatabaseUserV1
+
+Permanently deletes a database user from an Agency Plan website database, revoking all access it had.
+
+The operation is idempotent: deleting a user that does not exist succeeds without error.
+
+- **Method**: `DELETE`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users/{database_user_name}`
 
 #### agency-hosting_getAgencyPlanWebsiteDetailsV1
 

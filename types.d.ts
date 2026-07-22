@@ -510,6 +510,129 @@ The operation is idempotent: deleting a cron job that does not exist succeeds wi
   };
 
   /**
+   * Returns a paginated list of MySQL databases created for an Agency Plan website.
+
+Each entry includes the database's non-system users.
+   */
+  "agency-hosting_listAgencyPlanWebsiteDatabasesV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Creates a MySQL database with a dedicated user for an Agency Plan website.
+
+The database name, username, and password must all be provided by the caller.
+   */
+  "agency-hosting_createAgencyPlanWebsiteDatabaseV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Database name to create (alphanumeric characters).
+       */
+      database_name: string;
+      /**
+       * Database username to create alongside the database (alphanumeric characters).
+       */
+      database_user: string;
+      /**
+       * Password for the database user (requires mixed case, letters, and numbers).
+       */
+      password: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently deletes a MySQL database and all its data from an Agency Plan website, including its users.
+
+The operation is idempotent: deleting a database that does not exist succeeds without error.
+   */
+  "agency-hosting_deleteAgencyPlanWebsiteDatabaseV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Full database name as returned by the list databases endpoint.
+       */
+      database_name: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Creates a user for an existing database on an Agency Plan website.
+
+Each database supports a single non-system user; creating a user for a database that already has one fails.
+   */
+  "agency-hosting_createAgencyPlanWebsiteDatabaseUserV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Full database name as returned by the list databases endpoint.
+       */
+      database_name: string;
+      /**
+       * Database username to create (alphanumeric and underscores).
+       */
+      database_user: string;
+      /**
+       * Password for the database user (requires mixed case, letters, and numbers).
+       */
+      password: string;
+      /**
+       * Host the user connects from (IPv4, IPv6, % wildcard, or localhost). Defaults to localhost.
+       */
+      host?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently deletes a database user from an Agency Plan website database, revoking all access it had.
+
+The operation is idempotent: deleting a user that does not exist succeeds without error.
+   */
+  "agency-hosting_deleteAgencyPlanWebsiteDatabaseUserV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Full database name as returned by the list databases endpoint.
+       */
+      database_name: string;
+      /**
+       * Database username as returned by the list databases endpoint.
+       */
+      database_user_name: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieves detailed information about a specific Agency Plan website, including configuration,
 status, metadata, hosting plan details, and resource quotas.
    */
