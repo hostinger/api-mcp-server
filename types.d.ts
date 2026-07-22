@@ -890,6 +890,29 @@ Use this endpoint to view current redirect configuration for domains.
   };
 
   /**
+   * Update domain forwarding configuration.
+
+Use this endpoint to modify existing redirect configuration for domains.
+   */
+  "domains_updateDomainForwardingV1": {
+    params: {
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Redirect type
+       */
+      redirect_type: string;
+      /**
+       * URL to forward domain to
+       */
+      redirect_url: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Delete domain forwarding data.
 
 Use this endpoint to remove redirect configuration from domains.

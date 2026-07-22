@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (224 total)
+- `hostinger-api-mcp` — unified server with every tool (225 total)
 - `hostinger-agency-hosting-mcp` — 18 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
-- `hostinger-domains-mcp` — 19 tools for domains
+- `hostinger-domains-mcp` — 20 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
@@ -575,6 +575,15 @@ Retrieve domain forwarding data.
 Use this endpoint to view current redirect configuration for domains.
 
 - **Method**: `GET`
+- **Path**: `/api/domains/v1/forwarding/{domain}`
+
+#### domains_updateDomainForwardingV1
+
+Update domain forwarding configuration.
+
+Use this endpoint to modify existing redirect configuration for domains.
+
+- **Method**: `PUT`
 - **Path**: `/api/domains/v1/forwarding/{domain}`
 
 #### domains_deleteDomainForwardingV1

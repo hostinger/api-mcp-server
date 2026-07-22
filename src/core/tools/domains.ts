@@ -93,6 +93,44 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
+    "name": "domains_updateDomainForwardingV1",
+    "description": "Update domain forwarding configuration.\n\nUse this endpoint to modify existing redirect configuration for domains.",
+    "method": "PUT",
+    "path": "/api/domains/v1/forwarding/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "redirect_type": {
+          "type": "string",
+          "description": "Redirect type",
+          "enum": [
+            "301",
+            "302"
+          ]
+        },
+        "redirect_url": {
+          "type": "string",
+          "description": "URL to forward domain to"
+        }
+      },
+      "required": [
+        "domain",
+        "redirect_type",
+        "redirect_url"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_deleteDomainForwardingV1",
     "description": "Delete domain forwarding data.\n\nUse this endpoint to remove redirect configuration from domains.",
     "method": "DELETE",
