@@ -2763,6 +2763,39 @@ complete. The response returns before the removal finishes.
   };
 
   /**
+   * Retrieve a paginated list of mailboxes belonging to a mail order.
+
+Use this endpoint to monitor mailboxes of your mail service, including
+their status, enabled protocols, attached resource counts, and
+periodically synced usage numbers (usage may lag behind live values).
+   */
+  "mail_getMailboxListV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Filter mailboxes whose email address contains the given string
+       */
+      search?: string;
+      /**
+       * Sort mailboxes by field. Prefix with `-` for descending order.
+       */
+      sort?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of mail orders associated with your account.
 
 Use this endpoint to monitor your mail services, including their status,

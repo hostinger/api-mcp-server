@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (233 total)
+- `hostinger-api-mcp` — unified server with every tool (234 total)
 - `hostinger-agency-hosting-mcp` — 23 tools for agency-hosting
 - `hostinger-billing-mcp` — 7 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -57,7 +57,7 @@ This package installs the following MCP server commands:
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
-- `hostinger-mail-mcp` — 1 tools for mail
+- `hostinger-mail-mcp` — 2 tools for mail
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1503,6 +1503,17 @@ complete. The response returns before the removal finishes.
 - **Path**: `/api/hosting/v1/websites/{domain}`
 
 ### `hostinger-mail-mcp`
+
+#### mail_getMailboxListV1
+
+Retrieve a paginated list of mailboxes belonging to a mail order.
+
+Use this endpoint to monitor mailboxes of your mail service, including
+their status, enabled protocols, attached resource counts, and
+periodically synced usage numbers (usage may lag behind live values).
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/mailboxes`
 
 #### mail_getMailOrderListV1
 
