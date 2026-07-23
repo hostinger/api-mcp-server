@@ -1126,6 +1126,59 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
+    "name": "billing_createPurchaseOrderV1",
+    "description": "Create a purchase order for any Hostinger product.\n\nThis unified endpoint places an order for one or more catalog items and\nworks across all Hostinger products, leveraging the existing billing\ninfrastructure. Use the [catalog endpoint](#tag/billing-catalog) to look\nup the `item_id` values available for purchase.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nThis endpoint only places the order. Product-specific provisioning\n(e.g. VPS setup or domain registration) is not performed here — once the\norder completes, use the relevant product endpoints or\n[hPanel](https://hpanel.hostinger.com/) to finalize setup.\n\nUse this endpoint to purchase any product available in the catalog.",
+    "method": "POST",
+    "path": "/api/billing/v1/orders",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "payment_method_id": {
+          "type": "integer",
+          "description": "Payment method ID, default will be used if not provided"
+        },
+        "items": {
+          "type": "array",
+          "description": "Catalog price items to purchase",
+          "items": {
+            "type": "object",
+            "description": "items parameter",
+            "properties": {
+              "item_id": {
+                "type": "string",
+                "description": "Catalog price item ID"
+              },
+              "quantity": {
+                "type": "integer",
+                "description": "Quantity to purchase"
+              }
+            },
+            "required": [
+              "item_id"
+            ]
+          }
+        },
+        "coupons": {
+          "type": "array",
+          "description": "Discount coupon codes",
+          "items": {
+            "type": "string",
+            "description": "coupons parameter"
+          }
+        }
+      },
+      "required": [
+        "items"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "billing"
+  },
+  {
     "name": "billing_setDefaultPaymentMethodV1",
     "description": "Set the default payment method for your account.\n\nUse this endpoint to configure the primary payment method for future orders.",
     "method": "POST",

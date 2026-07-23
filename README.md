@@ -49,9 +49,9 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (234 total)
+- `hostinger-api-mcp` — unified server with every tool (235 total)
 - `hostinger-agency-hosting-mcp` — 23 tools for agency-hosting
-- `hostinger-billing-mcp` — 7 tools for billing
+- `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 23 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
@@ -445,6 +445,27 @@ Use this endpoint to view available services and pricing before placing orders.
 
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/catalog`
+
+#### billing_createPurchaseOrderV1
+
+Create a purchase order for any Hostinger product.
+
+This unified endpoint places an order for one or more catalog items and
+works across all Hostinger products, leveraging the existing billing
+infrastructure. Use the [catalog endpoint](#tag/billing-catalog) to look
+up the `item_id` values available for purchase.
+
+If no payment method is provided, your default payment method will be used automatically.
+
+This endpoint only places the order. Product-specific provisioning
+(e.g. VPS setup or domain registration) is not performed here — once the
+order completes, use the relevant product endpoints or
+[hPanel](https://hpanel.hostinger.com/) to finalize setup.
+
+Use this endpoint to purchase any product available in the catalog.
+
+- **Method**: `POST`
+- **Path**: `/api/billing/v1/orders`
 
 #### billing_setDefaultPaymentMethodV1
 

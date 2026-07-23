@@ -700,6 +700,41 @@ Use this endpoint to view available services and pricing before placing orders.
   };
 
   /**
+   * Create a purchase order for any Hostinger product.
+
+This unified endpoint places an order for one or more catalog items and
+works across all Hostinger products, leveraging the existing billing
+infrastructure. Use the [catalog endpoint](#tag/billing-catalog) to look
+up the `item_id` values available for purchase.
+
+If no payment method is provided, your default payment method will be used automatically.
+
+This endpoint only places the order. Product-specific provisioning
+(e.g. VPS setup or domain registration) is not performed here — once the
+order completes, use the relevant product endpoints or
+[hPanel](https://hpanel.hostinger.com/) to finalize setup.
+
+Use this endpoint to purchase any product available in the catalog.
+   */
+  "billing_createPurchaseOrderV1": {
+    params: {
+      /**
+       * Payment method ID, default will be used if not provided
+       */
+      payment_method_id?: number;
+      /**
+       * Catalog price items to purchase
+       */
+      items: array;
+      /**
+       * Discount coupon codes
+       */
+      coupons?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Set the default payment method for your account.
 
 Use this endpoint to configure the primary payment method for future orders.
