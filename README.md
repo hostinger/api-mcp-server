@@ -49,8 +49,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (238 total)
-- `hostinger-agency-hosting-mcp` — 23 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (241 total)
+- `hostinger-agency-hosting-mcp` — 26 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 23 tools for domains
@@ -431,6 +431,28 @@ Poll this endpoint after initiating async operations (SSL setup, backups, clonin
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/processes`
+
+#### agency-hosting_changeAgencyPlanWebsiteWordPressCoreVersionV1
+
+Changes the installed WordPress core version on an Agency Plan website to one of the versions available for installation.
+
+- **Method**: `PATCH`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/version`
+
+#### agency-hosting_getAgencyPlanWebsiteWordPressSettingsV1
+
+Returns the current WordPress settings for an Agency Plan website: installed core version,
+LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings`
+
+#### agency-hosting_listAvailableWordPressVersionsForAnAgencyPlanWebsiteV1
+
+Lists the WordPress core versions available for installation on an Agency Plan website.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/versions`
 
 ### `hostinger-billing-mcp`
 

@@ -1082,6 +1082,83 @@ export default [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_changeAgencyPlanWebsiteWordPressCoreVersionV1",
+    "description": "Changes the installed WordPress core version on an Agency Plan website to one of the versions available for installation.",
+    "method": "PATCH",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/version",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "version": {
+          "type": "string",
+          "description": "Target WordPress core version to install. Must be one of the available versions."
+        }
+      },
+      "required": [
+        "website_uid",
+        "version"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_getAgencyPlanWebsiteWordPressSettingsV1",
+    "description": "Returns the current WordPress settings for an Agency Plan website: installed core version,\nLiteSpeed Cache plugin status, object cache status, and maintenance mode status.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        }
+      },
+      "required": [
+        "website_uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_listAvailableWordPressVersionsForAnAgencyPlanWebsiteV1",
+    "description": "Lists the WordPress core versions available for installation on an Agency Plan website.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/versions",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        }
+      },
+      "required": [
+        "website_uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "billing_getCatalogItemListV1",
     "description": "Retrieve catalog items available for order.\n\nPrices in catalog items is displayed as cents (without floating point),\ne.g: float `17.99` is displayed as integer `1799`.\n\nUse this endpoint to view available services and pricing before placing orders.",
     "method": "GET",

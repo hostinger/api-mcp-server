@@ -678,6 +678,50 @@ Poll this endpoint after initiating async operations (SSL setup, backups, clonin
   };
 
   /**
+   * Changes the installed WordPress core version on an Agency Plan website to one of the versions available for installation.
+   */
+  "agency-hosting_changeAgencyPlanWebsiteWordPressCoreVersionV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Target WordPress core version to install. Must be one of the available versions.
+       */
+      version: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns the current WordPress settings for an Agency Plan website: installed core version,
+LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
+   */
+  "agency-hosting_getAgencyPlanWebsiteWordPressSettingsV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Lists the WordPress core versions available for installation on an Agency Plan website.
+   */
+  "agency-hosting_listAvailableWordPressVersionsForAnAgencyPlanWebsiteV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve catalog items available for order.
 
 Prices in catalog items is displayed as cents (without floating point),
