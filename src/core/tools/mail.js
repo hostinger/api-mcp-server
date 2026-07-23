@@ -45,6 +45,40 @@ export default [
     "group": "mail"
   },
   {
+    "name": "mail_createMailboxV1",
+    "description": "Create a mailbox under the given mail order. The full email address is\ncomposed from the given local part and the domain of the order.",
+    "method": "POST",
+    "path": "/api/mail/v1/orders/{orderId}/mailboxes",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "local_part": {
+          "type": "string",
+          "description": "Local part of the mailbox address (the part before the @). The domain is taken from the order. Must start and end with a letter or digit; single dots, underscores and hyphens are allowed in between."
+        },
+        "password": {
+          "type": "string",
+          "description": "Mailbox password. Minimum 8 characters with uppercase, lowercase, number and special character."
+        }
+      },
+      "required": [
+        "orderId",
+        "local_part",
+        "password"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
     "name": "mail_getMailOrderListV1",
     "description": "Retrieve a paginated list of mail orders associated with your account.\n\nUse this endpoint to monitor your mail services, including their status,\nplan, attached domain, and expiration details.",
     "method": "GET",

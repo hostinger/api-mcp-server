@@ -2831,6 +2831,28 @@ periodically synced usage numbers (usage may lag behind live values).
   };
 
   /**
+   * Create a mailbox under the given mail order. The full email address is
+composed from the given local part and the domain of the order.
+   */
+  "mail_createMailboxV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Local part of the mailbox address (the part before the @). The domain is taken from the order. Must start and end with a letter or digit; single dots, underscores and hyphens are allowed in between.
+       */
+      local_part: string;
+      /**
+       * Mailbox password. Minimum 8 characters with uppercase, lowercase, number and special character.
+       */
+      password: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of mail orders associated with your account.
 
 Use this endpoint to monitor your mail services, including their status,
