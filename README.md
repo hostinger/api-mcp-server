@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (236 total)
+- `hostinger-api-mcp` — unified server with every tool (238 total)
 - `hostinger-agency-hosting-mcp` — 23 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -57,7 +57,7 @@ This package installs the following MCP server commands:
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
-- `hostinger-mail-mcp` — 3 tools for mail
+- `hostinger-mail-mcp` — 5 tools for mail
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1543,6 +1543,21 @@ composed from the given local part and the domain of the order.
 
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/orders/{orderId}/mailboxes`
+
+#### mail_deleteMailboxV1
+
+Delete a mailbox. The mailbox is soft-deleted and stays restorable
+for a limited period before it is permanently removed.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}`
+
+#### mail_changeMailboxPasswordV1
+
+Change the password of a mailbox.
+
+- **Method**: `PATCH`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/password`
 
 #### mail_getMailOrderListV1
 

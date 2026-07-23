@@ -79,6 +79,59 @@ export default [
     "group": "mail"
   },
   {
+    "name": "mail_deleteMailboxV1",
+    "description": "Delete a mailbox. The mailbox is soft-deleted and stays restorable\nfor a limited period before it is permanently removed.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        }
+      },
+      "required": [
+        "mailboxId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_changeMailboxPasswordV1",
+    "description": "Change the password of a mailbox.",
+    "method": "PATCH",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/password",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        },
+        "password": {
+          "type": "string",
+          "description": "New mailbox password. Minimum 8 characters with uppercase, lowercase, number and special character; must not be a commonly used password."
+        }
+      },
+      "required": [
+        "mailboxId",
+        "password"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
     "name": "mail_getMailOrderListV1",
     "description": "Retrieve a paginated list of mail orders associated with your account.\n\nUse this endpoint to monitor your mail services, including their status,\nplan, attached domain, and expiration details.",
     "method": "GET",

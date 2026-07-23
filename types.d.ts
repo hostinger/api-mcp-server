@@ -2853,6 +2853,37 @@ composed from the given local part and the domain of the order.
   };
 
   /**
+   * Delete a mailbox. The mailbox is soft-deleted and stays restorable
+for a limited period before it is permanently removed.
+   */
+  "mail_deleteMailboxV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Change the password of a mailbox.
+   */
+  "mail_changeMailboxPasswordV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+      /**
+       * New mailbox password. Minimum 8 characters with uppercase, lowercase, number and special character; must not be a commonly used password.
+       */
+      password: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of mail orders associated with your account.
 
 Use this endpoint to monitor your mail services, including their status,
