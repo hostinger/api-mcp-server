@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (241 total)
+- `hostinger-api-mcp` — unified server with every tool (246 total)
 - `hostinger-agency-hosting-mcp` — 26 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -57,7 +57,7 @@ This package installs the following MCP server commands:
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
-- `hostinger-mail-mcp` — 5 tools for mail
+- `hostinger-mail-mcp` — 10 tools for mail
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1547,7 +1547,55 @@ complete. The response returns before the removal finishes.
 
 ### `hostinger-mail-mcp`
 
-#### mail_getMailboxListV1
+#### mail_listAccessLogsV1
+
+Retrieve paginated access logs for the domain attached to the given
+mail order. Supports filtering by account, date range, protocol,
+status, and deletion flag. Results are sorted by timestamp descending.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/logs/access`
+
+#### mail_listActionLogsV1
+
+Retrieve paginated account action logs (administrative and user
+actions) for the given mail order. Supports filtering by account,
+date range, and status. Results are sorted by timestamp descending.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/logs/action`
+
+#### mail_listInboundLogsV1
+
+Retrieve paginated inbound (received mail) delivery logs for the
+domain attached to the given mail order. Supports filtering by
+account, date range, status, sender, and recipient. Results are
+sorted by timestamp descending.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/logs/inbound`
+
+#### mail_listMailboxActionLogsV1
+
+Retrieve paginated mailbox action logs (message and mailbox events)
+for a mailbox in the given mail order. The mailbox email must belong
+to the order's domain. Supports date range and event type filters.
+Results are sorted by timestamp descending.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/logs/mailbox-actions`
+
+#### mail_listOutboundLogsV1
+
+Retrieve paginated outbound (sent mail) delivery logs for the domain
+attached to the given mail order. Supports filtering by account, date
+range, status, sender, and recipient. Results are sorted by timestamp
+descending.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/logs/outbound`
+
+#### mail_listMailboxesV1
 
 Retrieve a paginated list of mailboxes belonging to a mail order.
 
@@ -1581,7 +1629,7 @@ Change the password of a mailbox.
 - **Method**: `PATCH`
 - **Path**: `/api/mail/v1/mailboxes/{mailboxId}/password`
 
-#### mail_getMailOrderListV1
+#### mail_listOrdersV1
 
 Retrieve a paginated list of mail orders associated with your account.
 

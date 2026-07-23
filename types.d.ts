@@ -2842,13 +2842,255 @@ complete. The response returns before the removal finishes.
   };
 
   /**
+   * Retrieve paginated access logs for the domain attached to the given
+mail order. Supports filtering by account, date range, protocol,
+status, and deletion flag. Results are sorted by timestamp descending.
+   */
+  "mail_listAccessLogsV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Filter log entries by a specific email account
+       */
+      account?: string;
+      /**
+       * Exact date filter (YYYY-MM-DD). Takes precedence over `from_date`/`to_date` when both are given.
+       */
+      date?: string;
+      /**
+       * Date range start (RFC 3339)
+       */
+      from_date?: string;
+      /**
+       * Date range end (RFC 3339)
+       */
+      to_date?: string;
+      /**
+       * Filter log entries by status
+       */
+      status?: string;
+      /**
+       * Filter access log entries by protocol
+       */
+      protocol?: string;
+      /**
+       * Filter access log entries by whether the session had deletions
+       */
+      has_deletions?: boolean;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve paginated account action logs (administrative and user
+actions) for the given mail order. Supports filtering by account,
+date range, and status. Results are sorted by timestamp descending.
+   */
+  "mail_listActionLogsV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Filter log entries by a specific email account
+       */
+      account?: string;
+      /**
+       * Exact date filter (YYYY-MM-DD). Takes precedence over `from_date`/`to_date` when both are given.
+       */
+      date?: string;
+      /**
+       * Date range start (RFC 3339)
+       */
+      from_date?: string;
+      /**
+       * Date range end (RFC 3339)
+       */
+      to_date?: string;
+      /**
+       * Filter log entries by status
+       */
+      status?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve paginated inbound (received mail) delivery logs for the
+domain attached to the given mail order. Supports filtering by
+account, date range, status, sender, and recipient. Results are
+sorted by timestamp descending.
+   */
+  "mail_listInboundLogsV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Filter log entries by a specific email account
+       */
+      account?: string;
+      /**
+       * Exact date filter (YYYY-MM-DD). Takes precedence over `from_date`/`to_date` when both are given.
+       */
+      date?: string;
+      /**
+       * Date range start (RFC 3339)
+       */
+      from_date?: string;
+      /**
+       * Date range end (RFC 3339)
+       */
+      to_date?: string;
+      /**
+       * Filter log entries by status
+       */
+      status?: string;
+      /**
+       * Filter log entries by sender. Accepts a full email address or a domain.
+       */
+      sender?: string;
+      /**
+       * Filter log entries by recipient. Accepts a full email address or a domain.
+       */
+      recipient?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve paginated mailbox action logs (message and mailbox events)
+for a mailbox in the given mail order. The mailbox email must belong
+to the order's domain. Supports date range and event type filters.
+Results are sorted by timestamp descending.
+   */
+  "mail_listMailboxActionLogsV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Mailbox email address. Must belong to the order's domain.
+       */
+      email: string;
+      /**
+       * Exact date filter (YYYY-MM-DD). Takes precedence over `from_date`/`to_date` when both are given.
+       */
+      date?: string;
+      /**
+       * Date range start (RFC 3339)
+       */
+      from_date?: string;
+      /**
+       * Date range end (RFC 3339)
+       */
+      to_date?: string;
+      /**
+       * Filter mailbox action log entries by event type
+       */
+      event?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve paginated outbound (sent mail) delivery logs for the domain
+attached to the given mail order. Supports filtering by account, date
+range, status, sender, and recipient. Results are sorted by timestamp
+descending.
+   */
+  "mail_listOutboundLogsV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Filter log entries by a specific email account
+       */
+      account?: string;
+      /**
+       * Exact date filter (YYYY-MM-DD). Takes precedence over `from_date`/`to_date` when both are given.
+       */
+      date?: string;
+      /**
+       * Date range start (RFC 3339)
+       */
+      from_date?: string;
+      /**
+       * Date range end (RFC 3339)
+       */
+      to_date?: string;
+      /**
+       * Filter log entries by status
+       */
+      status?: string;
+      /**
+       * Filter log entries by sender. Accepts a full email address or a domain.
+       */
+      sender?: string;
+      /**
+       * Filter log entries by recipient. Accepts a full email address or a domain.
+       */
+      recipient?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of mailboxes belonging to a mail order.
 
 Use this endpoint to monitor mailboxes of your mail service, including
 their status, enabled protocols, attached resource counts, and
 periodically synced usage numbers (usage may lag behind live values).
    */
-  "mail_getMailboxListV1": {
+  "mail_listMailboxesV1": {
     params: {
       /**
        * Order resource ID
@@ -2933,7 +3175,7 @@ for a limited period before it is permanently removed.
 Use this endpoint to monitor your mail services, including their status,
 plan, attached domain, and expiration details.
    */
-  "mail_getMailOrderListV1": {
+  "mail_listOrdersV1": {
     params: {
       /**
        * Filter orders by domain name (exact match)
