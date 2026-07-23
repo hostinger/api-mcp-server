@@ -3256,6 +3256,158 @@ every delivery.
   };
 
   /**
+   * Retrieve a paginated list of webhook delivery logs for the given mail
+order, including delivery outcome, duration, and retry counts.
+Supports filtering by mailbox.
+   */
+  "mail_listWebhookDeliveryLogsV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Filter by the mailbox resource ID the webhooks are attached to
+       */
+      mailbox_id?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve the details of a single webhook. The webhook secret is never
+included; it is returned only when a webhook is created or its secret
+is regenerated.
+   */
+  "mail_getWebhookV1": {
+    params: {
+      /**
+       * Webhook ID (returned when the webhook was created)
+       */
+      webhookId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently delete a webhook. This action cannot be undone. After
+deletion the URL no longer receives event notifications.
+   */
+  "mail_deleteWebhookV1": {
+    params: {
+      /**
+       * Webhook ID (returned when the webhook was created)
+       */
+      webhookId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Partially update a webhook. Only the fields included in the request
+body are changed; omitted fields retain their current values. Pass
+`"description": null` to clear the description.
+   */
+  "mail_updateWebhookV1": {
+    params: {
+      /**
+       * Webhook ID (returned when the webhook was created)
+       */
+      webhookId: string;
+      /**
+       * New human-readable name for the webhook
+       */
+      name?: string;
+      /**
+       * New description, or null to clear it
+       */
+      description?: string;
+      /**
+       * Replaces the full list of subscribed events
+       */
+      events?: array;
+      /**
+       * New status for the webhook
+       */
+      status?: string;
+      /**
+       * New URL to deliver events to
+       */
+      url?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of webhooks belonging to the given mail
+order. Supports filtering by mailbox and status. The webhook secret
+is never included; it is returned only when a webhook is created or
+its secret is regenerated.
+   */
+  "mail_listWebhooksV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Filter by the mailbox resource ID the webhooks are attached to
+       */
+      mailbox_id?: string;
+      /**
+       * Filter webhooks by status
+       */
+      status?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Regenerate the secret of a webhook. The previous secret is
+immediately invalidated. The new secret is returned only in this
+response and is sent as a bearer token with every delivery.
+   */
+  "mail_regenerateWebhookSecretV1": {
+    params: {
+      /**
+       * Webhook ID (returned when the webhook was created)
+       */
+      webhookId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Send a test delivery to the webhook URL and return the result. Test
+requests are rate limited upstream.
+   */
+  "mail_testWebhookV1": {
+    params: {
+      /**
+       * Webhook ID (returned when the webhook was created)
+       */
+      webhookId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Delete a contact with the specified UUID.
 
 This endpoint permanently removes a contact from the email marketing system.

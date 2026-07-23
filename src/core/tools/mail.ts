@@ -595,6 +595,239 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "mail"
+  },
+  {
+    "name": "mail_listWebhookDeliveryLogsV1",
+    "description": "Retrieve a paginated list of webhook delivery logs for the given mail\norder, including delivery outcome, duration, and retry counts.\nSupports filtering by mailbox.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/webhooks/delivery-logs",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "mailbox_id": {
+          "type": "string",
+          "description": "Filter by the mailbox resource ID the webhooks are attached to"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_getWebhookV1",
+    "description": "Retrieve the details of a single webhook. The webhook secret is never\nincluded; it is returned only when a webhook is created or its secret\nis regenerated.",
+    "method": "GET",
+    "path": "/api/mail/v1/webhooks/{webhookId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "webhookId": {
+          "type": "string",
+          "description": "Webhook ID (returned when the webhook was created)"
+        }
+      },
+      "required": [
+        "webhookId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_deleteWebhookV1",
+    "description": "Permanently delete a webhook. This action cannot be undone. After\ndeletion the URL no longer receives event notifications.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/webhooks/{webhookId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "webhookId": {
+          "type": "string",
+          "description": "Webhook ID (returned when the webhook was created)"
+        }
+      },
+      "required": [
+        "webhookId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_updateWebhookV1",
+    "description": "Partially update a webhook. Only the fields included in the request\nbody are changed; omitted fields retain their current values. Pass\n`\"description\": null` to clear the description.",
+    "method": "PATCH",
+    "path": "/api/mail/v1/webhooks/{webhookId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "webhookId": {
+          "type": "string",
+          "description": "Webhook ID (returned when the webhook was created)"
+        },
+        "name": {
+          "type": "string",
+          "description": "New human-readable name for the webhook"
+        },
+        "description": {
+          "type": "string",
+          "description": "New description, or null to clear it"
+        },
+        "events": {
+          "type": "array",
+          "description": "Replaces the full list of subscribed events",
+          "items": {
+            "type": "string",
+            "description": "events parameter",
+            "enum": [
+              "message.received"
+            ]
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": "New status for the webhook",
+          "enum": [
+            "active",
+            "disabled",
+            "paused"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "description": "New URL to deliver events to"
+        }
+      },
+      "required": [
+        "webhookId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listWebhooksV1",
+    "description": "Retrieve a paginated list of webhooks belonging to the given mail\norder. Supports filtering by mailbox and status. The webhook secret\nis never included; it is returned only when a webhook is created or\nits secret is regenerated.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/webhooks",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "mailbox_id": {
+          "type": "string",
+          "description": "Filter by the mailbox resource ID the webhooks are attached to"
+        },
+        "status": {
+          "type": "string",
+          "description": "Filter webhooks by status",
+          "enum": [
+            "active",
+            "disabled",
+            "paused"
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_regenerateWebhookSecretV1",
+    "description": "Regenerate the secret of a webhook. The previous secret is\nimmediately invalidated. The new secret is returned only in this\nresponse and is sent as a bearer token with every delivery.",
+    "method": "POST",
+    "path": "/api/mail/v1/webhooks/{webhookId}/regenerate-secret",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "webhookId": {
+          "type": "string",
+          "description": "Webhook ID (returned when the webhook was created)"
+        }
+      },
+      "required": [
+        "webhookId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_testWebhookV1",
+    "description": "Send a test delivery to the webhook URL and return the result. Test\nrequests are rate limited upstream.",
+    "method": "POST",
+    "path": "/api/mail/v1/webhooks/{webhookId}/test",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "webhookId": {
+          "type": "string",
+          "description": "Webhook ID (returned when the webhook was created)"
+        }
+      },
+      "required": [
+        "webhookId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
   }
 ];
 export default tools;

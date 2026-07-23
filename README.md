@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (248 total)
+- `hostinger-api-mcp` — unified server with every tool (255 total)
 - `hostinger-agency-hosting-mcp` — 26 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -57,7 +57,7 @@ This package installs the following MCP server commands:
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
-- `hostinger-mail-mcp` — 12 tools for mail
+- `hostinger-mail-mcp` — 19 tools for mail
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1656,6 +1656,68 @@ every delivery.
 
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/mailboxes/{mailboxId}/webhooks`
+
+#### mail_listWebhookDeliveryLogsV1
+
+Retrieve a paginated list of webhook delivery logs for the given mail
+order, including delivery outcome, duration, and retry counts.
+Supports filtering by mailbox.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/webhooks/delivery-logs`
+
+#### mail_getWebhookV1
+
+Retrieve the details of a single webhook. The webhook secret is never
+included; it is returned only when a webhook is created or its secret
+is regenerated.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/webhooks/{webhookId}`
+
+#### mail_deleteWebhookV1
+
+Permanently delete a webhook. This action cannot be undone. After
+deletion the URL no longer receives event notifications.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/webhooks/{webhookId}`
+
+#### mail_updateWebhookV1
+
+Partially update a webhook. Only the fields included in the request
+body are changed; omitted fields retain their current values. Pass
+`"description": null` to clear the description.
+
+- **Method**: `PATCH`
+- **Path**: `/api/mail/v1/webhooks/{webhookId}`
+
+#### mail_listWebhooksV1
+
+Retrieve a paginated list of webhooks belonging to the given mail
+order. Supports filtering by mailbox and status. The webhook secret
+is never included; it is returned only when a webhook is created or
+its secret is regenerated.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/webhooks`
+
+#### mail_regenerateWebhookSecretV1
+
+Regenerate the secret of a webhook. The previous secret is
+immediately invalidated. The new secret is returned only in this
+response and is sent as a bearer token with every delivery.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/webhooks/{webhookId}/regenerate-secret`
+
+#### mail_testWebhookV1
+
+Send a test delivery to the webhook URL and return the result. Test
+requests are rate limited upstream.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/webhooks/{webhookId}/test`
 
 ### `hostinger-reach-mcp`
 
