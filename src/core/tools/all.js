@@ -4248,6 +4248,111 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "mail_createAPITokenV1",
+    "description": "Create an API token for the given mail order. The token grants access\nto the [Hostinger Email API](https://api.mail.hostinger.com/), where\nyou can provision and manage the mailboxes it is scoped to.\n\nThe plaintext token is returned only in this response, never again.\nA maximum of 10 tokens can exist per order. Use\n`scope.has_all_mailboxes` to cover all current and future mailboxes,\nor list specific mailboxes in `scope.mailbox_ids`.",
+    "method": "POST",
+    "path": "/api/mail/v1/orders/{orderId}/api-tokens",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable label for this token"
+        },
+        "scope": {
+          "type": "object",
+          "description": "Mailbox scope this token can access",
+          "properties": {
+            "has_all_mailboxes": {
+              "type": "boolean",
+              "description": "Grant access to all current and future mailboxes of the order"
+            },
+            "mailbox_ids": {
+              "type": "array",
+              "description": "Required when `has_all_mailboxes` is false. Mailbox resource IDs of this order.",
+              "items": {
+                "type": "string",
+                "description": "mailbox_ids parameter"
+              }
+            }
+          },
+          "required": [
+            "has_all_mailboxes"
+          ]
+        }
+      },
+      "required": [
+        "orderId",
+        "name",
+        "scope"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_revokeAPITokenV1",
+    "description": "Revoke an API token. The token immediately loses access to the\n[Hostinger Email API](https://api.mail.hostinger.com/). This action\ncannot be undone.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/api-tokens/{tokenId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "tokenId": {
+          "type": "string",
+          "description": "API token ID (returned when the token was created)"
+        }
+      },
+      "required": [
+        "tokenId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listAPITokensV1",
+    "description": "Retrieve a paginated list of\n[Hostinger Email API](https://api.mail.hostinger.com/) tokens across\nall your mail orders, optionally filtered by order. Plaintext tokens\nare never included; they are returned only when a token is created.",
+    "method": "GET",
+    "path": "/api/mail/v1/api-tokens",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "description": "Filter tokens by order resource ID. Single value or comma-separated list."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
     "name": "mail_listAccessLogsV1",
     "description": "Retrieve paginated access logs for the domain attached to the given\nmail order. Supports filtering by account, date range, protocol,\nstatus, and deletion flag. Results are sorted by timestamp descending.",
     "method": "GET",

@@ -2842,6 +2842,73 @@ complete. The response returns before the removal finishes.
   };
 
   /**
+   * Create an API token for the given mail order. The token grants access
+to the [Hostinger Email API](https://api.mail.hostinger.com/), where
+you can provision and manage the mailboxes it is scoped to.
+
+The plaintext token is returned only in this response, never again.
+A maximum of 10 tokens can exist per order. Use
+`scope.has_all_mailboxes` to cover all current and future mailboxes,
+or list specific mailboxes in `scope.mailbox_ids`.
+   */
+  "mail_createAPITokenV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Human-readable label for this token
+       */
+      name: string;
+      /**
+       * Mailbox scope this token can access
+       */
+      scope: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Revoke an API token. The token immediately loses access to the
+[Hostinger Email API](https://api.mail.hostinger.com/). This action
+cannot be undone.
+   */
+  "mail_revokeAPITokenV1": {
+    params: {
+      /**
+       * API token ID (returned when the token was created)
+       */
+      tokenId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of
+[Hostinger Email API](https://api.mail.hostinger.com/) tokens across
+all your mail orders, optionally filtered by order. Plaintext tokens
+are never included; they are returned only when a token is created.
+   */
+  "mail_listAPITokensV1": {
+    params: {
+      /**
+       * Filter tokens by order resource ID. Single value or comma-separated list.
+       */
+      order_id?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve paginated access logs for the domain attached to the given
 mail order. Supports filtering by account, date range, protocol,
 status, and deletion flag. Results are sorted by timestamp descending.
