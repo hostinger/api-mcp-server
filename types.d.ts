@@ -3206,6 +3206,56 @@ plan, attached domain, and expiration details.
   };
 
   /**
+   * Retrieve the plan the given mail order was purchased with, including
+domain-level and mailbox-level quotas, limits, and protocol
+availability.
+   */
+  "mail_getOrderPlanV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a webhook for the given mailbox. The generated secret is
+returned only in this response and is sent as a bearer token with
+every delivery.
+   */
+  "mail_createWebhookV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+      /**
+       * Human-readable name for this webhook
+       */
+      name: string;
+      /**
+       * Optional description of the webhook's purpose
+       */
+      description?: string;
+      /**
+       * Events that trigger this webhook
+       */
+      events: array;
+      /**
+       * Initial status of the webhook
+       */
+      status?: string;
+      /**
+       * Publicly reachable URL that receives the webhook POST requests
+       */
+      url: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Delete a contact with the specified UUID.
 
 This endpoint permanently removes a contact from the email marketing system.

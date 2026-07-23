@@ -4747,6 +4747,89 @@ export default [
     "group": "mail"
   },
   {
+    "name": "mail_getOrderPlanV1",
+    "description": "Retrieve the plan the given mail order was purchased with, including\ndomain-level and mailbox-level quotas, limits, and protocol\navailability.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/plan",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_createWebhookV1",
+    "description": "Create a webhook for the given mailbox. The generated secret is\nreturned only in this response and is sent as a bearer token with\nevery delivery.",
+    "method": "POST",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/webhooks",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name for this webhook"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the webhook's purpose"
+        },
+        "events": {
+          "type": "array",
+          "description": "Events that trigger this webhook",
+          "items": {
+            "type": "string",
+            "description": "events parameter",
+            "enum": [
+              "message.received"
+            ]
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": "Initial status of the webhook",
+          "enum": [
+            "active",
+            "disabled",
+            "paused"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "description": "Publicly reachable URL that receives the webhook POST requests"
+        }
+      },
+      "required": [
+        "mailboxId",
+        "name",
+        "events",
+        "url"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
     "name": "reach_deleteAContactV1",
     "description": "Delete a contact with the specified UUID.\n\nThis endpoint permanently removes a contact from the email marketing system.",
     "method": "DELETE",

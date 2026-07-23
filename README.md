@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (246 total)
+- `hostinger-api-mcp` — unified server with every tool (248 total)
 - `hostinger-agency-hosting-mcp` — 26 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -57,7 +57,7 @@ This package installs the following MCP server commands:
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
-- `hostinger-mail-mcp` — 10 tools for mail
+- `hostinger-mail-mcp` — 12 tools for mail
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1638,6 +1638,24 @@ plan, attached domain, and expiration details.
 
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders`
+
+#### mail_getOrderPlanV1
+
+Retrieve the plan the given mail order was purchased with, including
+domain-level and mailbox-level quotas, limits, and protocol
+availability.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/plan`
+
+#### mail_createWebhookV1
+
+Create a webhook for the given mailbox. The generated secret is
+returned only in this response and is sent as a bearer token with
+every delivery.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/webhooks`
 
 ### `hostinger-reach-mcp`
 
