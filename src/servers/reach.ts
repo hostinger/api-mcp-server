@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/reach.js';
 
-startServer({ name: 'hostinger-reach-mcp', version: '1.20.1', tools });
+startServer({ name: 'hostinger-reach-mcp', version: '1.20.2', tools });

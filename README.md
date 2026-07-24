@@ -49,8 +49,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (258 total)
-- `hostinger-agency-hosting-mcp` — 26 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (259 total)
+- `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 23 tools for domains
@@ -279,6 +279,13 @@ archive types: .zip, .tar, .tar.gz, .tgz.
 
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/files/import-archive`
+
+#### agency-hosting_listAgencyPlanOrdersV1
+
+Returns a paginated list of Agency Plan orders accessible to the authenticated client.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/orders`
 
 #### agency-hosting_provisionANewAgencyPlanWebsiteV1
 

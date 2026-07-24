@@ -328,6 +328,23 @@ archive types: .zip, .tar, .tar.gz, .tgz.
   };
 
   /**
+   * Returns a paginated list of Agency Plan orders accessible to the authenticated client.
+   */
+  "agency-hosting_listAgencyPlanOrdersV1": {
+    params: {
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Provisions a new website on one of your Agency Plan hosting orders.
 
 Choose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach
