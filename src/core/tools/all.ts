@@ -4393,6 +4393,154 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
+    "name": "mail_createAutoreplyV1",
+    "description": "Create an automatic reply for the given mailbox. A mailbox can have\nonly one autoreply. Omit `starts_at` to activate the autoreply\nimmediately and omit `ends_at` to keep it active indefinitely.",
+    "method": "POST",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/autoreplies",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject of the automatic reply"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body of the automatic reply"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Sender display name used for the reply"
+        },
+        "starts_at": {
+          "type": "string",
+          "description": "When the autoreply becomes active. Defaults to now."
+        },
+        "ends_at": {
+          "type": "string",
+          "description": "When the autoreply stops. Omit for an indefinite autoreply."
+        }
+      },
+      "required": [
+        "mailboxId",
+        "subject",
+        "body"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_updateAutoreplyV1",
+    "description": "Replace the autoreply with the given content and schedule. Omitted\noptional fields are cleared: omit `starts_at` to activate the\nautoreply immediately and omit `ends_at` to keep it active\nindefinitely.",
+    "method": "PUT",
+    "path": "/api/mail/v1/autoreplies/{autoreplyId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "autoreplyId": {
+          "type": "string",
+          "description": "Autoreply resource ID"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject of the automatic reply"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body of the automatic reply"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Sender display name used for the reply"
+        },
+        "starts_at": {
+          "type": "string",
+          "description": "When the autoreply becomes active. Defaults to now."
+        },
+        "ends_at": {
+          "type": "string",
+          "description": "When the autoreply stops. Omit for an indefinite autoreply."
+        }
+      },
+      "required": [
+        "autoreplyId",
+        "subject",
+        "body"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_deleteAutoreplyV1",
+    "description": "Delete the autoreply of a mailbox. The mailbox stops sending\nautomatic replies immediately.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/autoreplies/{autoreplyId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "autoreplyId": {
+          "type": "string",
+          "description": "Autoreply resource ID"
+        }
+      },
+      "required": [
+        "autoreplyId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listAutorepliesV1",
+    "description": "Retrieve a paginated list of autoreplies across all mailboxes of a\nmail order.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/autoreplies",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
     "name": "mail_listAccessLogsV1",
     "description": "Retrieve paginated access logs for the domain attached to the given\nmail order. Supports filtering by account, date range, protocol,\nstatus, and deletion flag. Results are sorted by timestamp descending.",
     "method": "GET",

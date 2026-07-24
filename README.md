@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (259 total)
+- `hostinger-api-mcp` — unified server with every tool (263 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -57,7 +57,7 @@ This package installs the following MCP server commands:
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
-- `hostinger-mail-mcp` — 22 tools for mail
+- `hostinger-mail-mcp` — 26 tools for mail
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1586,6 +1586,41 @@ are never included; they are returned only when a token is created.
 
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/api-tokens`
+
+#### mail_createAutoreplyV1
+
+Create an automatic reply for the given mailbox. A mailbox can have
+only one autoreply. Omit `starts_at` to activate the autoreply
+immediately and omit `ends_at` to keep it active indefinitely.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/autoreplies`
+
+#### mail_updateAutoreplyV1
+
+Replace the autoreply with the given content and schedule. Omitted
+optional fields are cleared: omit `starts_at` to activate the
+autoreply immediately and omit `ends_at` to keep it active
+indefinitely.
+
+- **Method**: `PUT`
+- **Path**: `/api/mail/v1/autoreplies/{autoreplyId}`
+
+#### mail_deleteAutoreplyV1
+
+Delete the autoreply of a mailbox. The mailbox stops sending
+automatic replies immediately.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/autoreplies/{autoreplyId}`
+
+#### mail_listAutorepliesV1
+
+Retrieve a paginated list of autoreplies across all mailboxes of a
+mail order.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/autoreplies`
 
 #### mail_listAccessLogsV1
 

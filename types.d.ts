@@ -2926,6 +2926,113 @@ are never included; they are returned only when a token is created.
   };
 
   /**
+   * Create an automatic reply for the given mailbox. A mailbox can have
+only one autoreply. Omit `starts_at` to activate the autoreply
+immediately and omit `ends_at` to keep it active indefinitely.
+   */
+  "mail_createAutoreplyV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+      /**
+       * Subject of the automatic reply
+       */
+      subject: string;
+      /**
+       * Body of the automatic reply
+       */
+      body: string;
+      /**
+       * Sender display name used for the reply
+       */
+      display_name?: string;
+      /**
+       * When the autoreply becomes active. Defaults to now.
+       */
+      starts_at?: string;
+      /**
+       * When the autoreply stops. Omit for an indefinite autoreply.
+       */
+      ends_at?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Replace the autoreply with the given content and schedule. Omitted
+optional fields are cleared: omit `starts_at` to activate the
+autoreply immediately and omit `ends_at` to keep it active
+indefinitely.
+   */
+  "mail_updateAutoreplyV1": {
+    params: {
+      /**
+       * Autoreply resource ID
+       */
+      autoreplyId: string;
+      /**
+       * Subject of the automatic reply
+       */
+      subject: string;
+      /**
+       * Body of the automatic reply
+       */
+      body: string;
+      /**
+       * Sender display name used for the reply
+       */
+      display_name?: string;
+      /**
+       * When the autoreply becomes active. Defaults to now.
+       */
+      starts_at?: string;
+      /**
+       * When the autoreply stops. Omit for an indefinite autoreply.
+       */
+      ends_at?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete the autoreply of a mailbox. The mailbox stops sending
+automatic replies immediately.
+   */
+  "mail_deleteAutoreplyV1": {
+    params: {
+      /**
+       * Autoreply resource ID
+       */
+      autoreplyId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of autoreplies across all mailboxes of a
+mail order.
+   */
+  "mail_listAutorepliesV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve paginated access logs for the domain attached to the given
 mail order. Supports filtering by account, date range, protocol,
 status, and deletion flag. Results are sorted by timestamp descending.
