@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (263 total)
+- `hostinger-api-mcp` — unified server with every tool (268 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -57,7 +57,7 @@ This package installs the following MCP server commands:
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
-- `hostinger-mail-mcp` — 26 tools for mail
+- `hostinger-mail-mcp` — 31 tools for mail
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1621,6 +1621,47 @@ mail order.
 
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/autoreplies`
+
+#### mail_createForwarderV1
+
+Create a forwarder from the given mailbox to the destination address.
+The destination receives a confirmation email and forwarding becomes
+active only after it is confirmed.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/forwarders`
+
+#### mail_deleteForwarderV1
+
+Delete a forwarder. The mailbox stops forwarding messages to the
+destination address immediately.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/forwarders/{forwarderId}`
+
+#### mail_listForwardersV1
+
+Retrieve a paginated list of forwarders across all mailboxes of a
+mail order.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/forwarders`
+
+#### mail_resendForwarderConfirmationV1
+
+Resend the confirmation email to the destination address of an
+unconfirmed forwarder.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/forwarders/{forwarderId}/confirmation/resend`
+
+#### mail_updateForwarderKeepCopySettingV1
+
+Enable or disable keeping a copy of forwarded messages in the
+mailbox.
+
+- **Method**: `PATCH`
+- **Path**: `/api/mail/v1/forwarders/{forwarderId}/keep-copy`
 
 #### mail_listAccessLogsV1
 

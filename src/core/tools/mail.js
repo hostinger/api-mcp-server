@@ -254,6 +254,148 @@ export default [
     "group": "mail"
   },
   {
+    "name": "mail_createForwarderV1",
+    "description": "Create a forwarder from the given mailbox to the destination address.\nThe destination receives a confirmation email and forwarding becomes\nactive only after it is confirmed.",
+    "method": "POST",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/forwarders",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        },
+        "destination": {
+          "type": "string",
+          "description": "Email address the messages will be forwarded to"
+        },
+        "is_keep_copy_enabled": {
+          "type": "boolean",
+          "description": "Whether to keep a copy of forwarded messages in the mailbox. Defaults to false."
+        }
+      },
+      "required": [
+        "mailboxId",
+        "destination"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_deleteForwarderV1",
+    "description": "Delete a forwarder. The mailbox stops forwarding messages to the\ndestination address immediately.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/forwarders/{forwarderId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "forwarderId": {
+          "type": "string",
+          "description": "Forwarder resource ID"
+        }
+      },
+      "required": [
+        "forwarderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listForwardersV1",
+    "description": "Retrieve a paginated list of forwarders across all mailboxes of a\nmail order.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/forwarders",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_resendForwarderConfirmationV1",
+    "description": "Resend the confirmation email to the destination address of an\nunconfirmed forwarder.",
+    "method": "POST",
+    "path": "/api/mail/v1/forwarders/{forwarderId}/confirmation/resend",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "forwarderId": {
+          "type": "string",
+          "description": "Forwarder resource ID"
+        }
+      },
+      "required": [
+        "forwarderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_updateForwarderKeepCopySettingV1",
+    "description": "Enable or disable keeping a copy of forwarded messages in the\nmailbox.",
+    "method": "PATCH",
+    "path": "/api/mail/v1/forwarders/{forwarderId}/keep-copy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "forwarderId": {
+          "type": "string",
+          "description": "Forwarder resource ID"
+        },
+        "is_keep_copy_enabled": {
+          "type": "boolean",
+          "description": "Whether to keep a copy of forwarded messages in the mailbox"
+        }
+      },
+      "required": [
+        "forwarderId",
+        "is_keep_copy_enabled"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
     "name": "mail_listAccessLogsV1",
     "description": "Retrieve paginated access logs for the domain attached to the given\nmail order. Supports filtering by account, date range, protocol,\nstatus, and deletion flag. Results are sorted by timestamp descending.",
     "method": "GET",

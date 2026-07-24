@@ -3033,6 +3033,97 @@ mail order.
   };
 
   /**
+   * Create a forwarder from the given mailbox to the destination address.
+The destination receives a confirmation email and forwarding becomes
+active only after it is confirmed.
+   */
+  "mail_createForwarderV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+      /**
+       * Email address the messages will be forwarded to
+       */
+      destination: string;
+      /**
+       * Whether to keep a copy of forwarded messages in the mailbox. Defaults to false.
+       */
+      is_keep_copy_enabled?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a forwarder. The mailbox stops forwarding messages to the
+destination address immediately.
+   */
+  "mail_deleteForwarderV1": {
+    params: {
+      /**
+       * Forwarder resource ID
+       */
+      forwarderId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of forwarders across all mailboxes of a
+mail order.
+   */
+  "mail_listForwardersV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Resend the confirmation email to the destination address of an
+unconfirmed forwarder.
+   */
+  "mail_resendForwarderConfirmationV1": {
+    params: {
+      /**
+       * Forwarder resource ID
+       */
+      forwarderId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Enable or disable keeping a copy of forwarded messages in the
+mailbox.
+   */
+  "mail_updateForwarderKeepCopySettingV1": {
+    params: {
+      /**
+       * Forwarder resource ID
+       */
+      forwarderId: string;
+      /**
+       * Whether to keep a copy of forwarded messages in the mailbox
+       */
+      is_keep_copy_enabled: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve paginated access logs for the domain attached to the given
 mail order. Supports filtering by account, date range, protocol,
 status, and deletion flag. Results are sorted by timestamp descending.
