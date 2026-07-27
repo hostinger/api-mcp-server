@@ -2071,7 +2071,7 @@ The database name must be the full name returned by the list databases endpoint.
 Provide an IPv4/IPv6 address, or "%" to allow any host. The database name must be
 the full name returned by the list databases endpoint.
    */
-  "hosting_createAccountDatabaseRemoteConnectionV1": {
+  "hosting_createDatabaseRemoteConnectionV1": {
     params: {
       /**
        * username parameter
@@ -2096,7 +2096,7 @@ Identify the rule with the required ip query parameter (the IPv4/IPv6 address, o
 exactly as returned by the list remote connections endpoint). The database name must be
 the full name returned by the list databases endpoint.
    */
-  "hosting_deleteAccountDatabaseRemoteConnectionV1": {
+  "hosting_deleteDatabaseRemoteConnectionV1": {
     params: {
       /**
        * username parameter
@@ -2121,7 +2121,7 @@ exactly as returned by the list remote connections endpoint.
 
 Use the domain filter to only return rules for databases assigned to a specific domain.
    */
-  "hosting_listAccountDatabaseRemoteConnectionsV1": {
+  "hosting_listDatabaseRemoteConnectionsV1": {
     params: {
       /**
        * username parameter

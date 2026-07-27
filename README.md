@@ -1178,7 +1178,7 @@ The database name must be the full name returned by the list databases endpoint.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}`
 
-#### hosting_createAccountDatabaseRemoteConnectionV1
+#### hosting_createDatabaseRemoteConnectionV1
 
 Allows a remote host to connect to the specified database.
 
@@ -1188,7 +1188,7 @@ the full name returned by the list databases endpoint.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections`
 
-#### hosting_deleteAccountDatabaseRemoteConnectionV1
+#### hosting_deleteDatabaseRemoteConnectionV1
 
 Permanently removes a remote-access rule, revoking the given host's remote access to the database.
 
@@ -1199,7 +1199,7 @@ the full name returned by the list databases endpoint.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections`
 
-#### hosting_listAccountDatabaseRemoteConnectionsV1
+#### hosting_listDatabaseRemoteConnectionsV1
 
 Returns the remote-access rules for the specified account: the remote hosts
 (IPv4/IPv6 addresses, or "%" for any host) allowed to connect to the account databases.
