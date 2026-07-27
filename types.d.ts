@@ -328,6 +328,23 @@ archive types: .zip, .tar, .tar.gz, .tgz.
   };
 
   /**
+   * Returns a paginated list of Agency Plan orders accessible to the authenticated client.
+   */
+  "agency-hosting_listAgencyPlanOrdersV1": {
+    params: {
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Provisions a new website on one of your Agency Plan hosting orders.
 
 Choose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach
@@ -2054,7 +2071,7 @@ The database name must be the full name returned by the list databases endpoint.
 Provide an IPv4/IPv6 address, or "%" to allow any host. The database name must be
 the full name returned by the list databases endpoint.
    */
-  "hosting_createAccountDatabaseRemoteConnectionV1": {
+  "hosting_createDatabaseRemoteConnectionV1": {
     params: {
       /**
        * username parameter
@@ -2079,7 +2096,7 @@ Identify the rule with the required ip query parameter (the IPv4/IPv6 address, o
 exactly as returned by the list remote connections endpoint). The database name must be
 the full name returned by the list databases endpoint.
    */
-  "hosting_deleteAccountDatabaseRemoteConnectionV1": {
+  "hosting_deleteDatabaseRemoteConnectionV1": {
     params: {
       /**
        * username parameter
@@ -2104,7 +2121,7 @@ exactly as returned by the list remote connections endpoint.
 
 Use the domain filter to only return rules for databases assigned to a specific domain.
    */
-  "hosting_listAccountDatabaseRemoteConnectionsV1": {
+  "hosting_listDatabaseRemoteConnectionsV1": {
     params: {
       /**
        * username parameter
@@ -2837,6 +2854,392 @@ complete. The response returns before the removal finishes.
        * Domain name
        */
       domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create an alias for the given mailbox. The alias address is formed
+from the given local part and the domain of the mailbox. Messages
+sent to the alias are delivered to the mailbox.
+   */
+  "mail_createAliasV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+      /**
+       * Local part of the alias address (the part before the @). The domain is taken from the mailbox. Case-insensitive and stored lowercase; must start and end with a letter or digit; single dots, underscores and hyphens are allowed in between.
+       */
+      local_part: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete an alias. Messages sent to the alias address are no longer
+delivered to the mailbox.
+   */
+  "mail_deleteAliasV1": {
+    params: {
+      /**
+       * Alias resource ID
+       */
+      aliasId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of aliases across all mailboxes of a mail
+order.
+   */
+  "mail_listAliasesV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create an API token for the given mail order. The token grants access
+to the [Hostinger Email API](https://api.mail.hostinger.com/), where
+you can provision and manage the mailboxes it is scoped to.
+
+The plaintext token is returned only in this response, never again.
+A maximum of 10 tokens can exist per order. Use
+`scope.has_all_mailboxes` to cover all current and future mailboxes,
+or list specific mailboxes in `scope.mailbox_ids`.
+   */
+  "mail_createAPITokenV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Human-readable label for this token
+       */
+      name: string;
+      /**
+       * Mailbox scope this token can access
+       */
+      scope: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Revoke an API token. The token immediately loses access to the
+[Hostinger Email API](https://api.mail.hostinger.com/). This action
+cannot be undone.
+   */
+  "mail_revokeAPITokenV1": {
+    params: {
+      /**
+       * API token ID (returned when the token was created)
+       */
+      tokenId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of
+[Hostinger Email API](https://api.mail.hostinger.com/) tokens across
+all your mail orders, optionally filtered by order. Plaintext tokens
+are never included; they are returned only when a token is created.
+   */
+  "mail_listAPITokensV1": {
+    params: {
+      /**
+       * Filter tokens by order resource ID. Single value or comma-separated list.
+       */
+      order_id?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create an automatic reply for the given mailbox. A mailbox can have
+only one autoreply. Omit `starts_at` to activate the autoreply
+immediately and omit `ends_at` to keep it active indefinitely.
+   */
+  "mail_createAutoreplyV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+      /**
+       * Subject of the automatic reply
+       */
+      subject: string;
+      /**
+       * Body of the automatic reply
+       */
+      body: string;
+      /**
+       * Sender display name used for the reply
+       */
+      display_name?: string;
+      /**
+       * When the autoreply becomes active. Defaults to now.
+       */
+      starts_at?: string;
+      /**
+       * When the autoreply stops. Omit for an indefinite autoreply.
+       */
+      ends_at?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Replace the autoreply with the given content and schedule. Omitted
+optional fields are cleared: omit `starts_at` to activate the
+autoreply immediately and omit `ends_at` to keep it active
+indefinitely.
+   */
+  "mail_updateAutoreplyV1": {
+    params: {
+      /**
+       * Autoreply resource ID
+       */
+      autoreplyId: string;
+      /**
+       * Subject of the automatic reply
+       */
+      subject: string;
+      /**
+       * Body of the automatic reply
+       */
+      body: string;
+      /**
+       * Sender display name used for the reply
+       */
+      display_name?: string;
+      /**
+       * When the autoreply becomes active. Defaults to now.
+       */
+      starts_at?: string;
+      /**
+       * When the autoreply stops. Omit for an indefinite autoreply.
+       */
+      ends_at?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete the autoreply of a mailbox. The mailbox stops sending
+automatic replies immediately.
+   */
+  "mail_deleteAutoreplyV1": {
+    params: {
+      /**
+       * Autoreply resource ID
+       */
+      autoreplyId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of autoreplies across all mailboxes of a
+mail order.
+   */
+  "mail_listAutorepliesV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a catch-all that routes all messages sent to unknown addresses
+of the domain to the given mailbox. The mailbox address receives a
+confirmation email and the catch-all becomes active only after it is
+confirmed. A domain can have only one catch-all.
+   */
+  "mail_createCatchAllV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a catch-all. Messages sent to unknown addresses of the domain
+are no longer routed to the mailbox.
+   */
+  "mail_deleteCatchAllV1": {
+    params: {
+      /**
+       * Catch-all resource ID
+       */
+      catchallId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of catch-alls across all mailboxes of a
+mail order.
+   */
+  "mail_listCatchAllsV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Resend the confirmation email to the mailbox address of an
+unconfirmed catch-all.
+   */
+  "mail_resendCatchAllConfirmationV1": {
+    params: {
+      /**
+       * Catch-all resource ID
+       */
+      catchallId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a forwarder from the given mailbox to the destination address.
+The destination receives a confirmation email and forwarding becomes
+active only after it is confirmed.
+   */
+  "mail_createForwarderV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+      /**
+       * Email address the messages will be forwarded to
+       */
+      destination: string;
+      /**
+       * Whether to keep a copy of forwarded messages in the mailbox. Defaults to false.
+       */
+      is_keep_copy_enabled?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a forwarder. The mailbox stops forwarding messages to the
+destination address immediately.
+   */
+  "mail_deleteForwarderV1": {
+    params: {
+      /**
+       * Forwarder resource ID
+       */
+      forwarderId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of forwarders across all mailboxes of a
+mail order.
+   */
+  "mail_listForwardersV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Resend the confirmation email to the destination address of an
+unconfirmed forwarder.
+   */
+  "mail_resendForwarderConfirmationV1": {
+    params: {
+      /**
+       * Forwarder resource ID
+       */
+      forwarderId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Enable or disable keeping a copy of forwarded messages in the
+mailbox.
+   */
+  "mail_updateForwarderKeepCopySettingV1": {
+    params: {
+      /**
+       * Forwarder resource ID
+       */
+      forwarderId: string;
+      /**
+       * Whether to keep a copy of forwarded messages in the mailbox
+       */
+      is_keep_copy_enabled: boolean;
     };
     response: any; // Response structure will depend on the API
   };

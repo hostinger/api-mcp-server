@@ -626,7 +626,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_createAccountDatabaseRemoteConnectionV1",
+    "name": "hosting_createDatabaseRemoteConnectionV1",
     "description": "Allows a remote host to connect to the specified database.\n\nProvide an IPv4/IPv6 address, or \"%\" to allow any host. The database name must be\nthe full name returned by the list databases endpoint.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections",
@@ -660,7 +660,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteAccountDatabaseRemoteConnectionV1",
+    "name": "hosting_deleteDatabaseRemoteConnectionV1",
     "description": "Permanently removes a remote-access rule, revoking the given host's remote access to the database.\n\nIdentify the rule with the required ip query parameter (the IPv4/IPv6 address, or \"%\",\nexactly as returned by the list remote connections endpoint). The database name must be\nthe full name returned by the list databases endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections",
@@ -694,7 +694,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listAccountDatabaseRemoteConnectionsV1",
+    "name": "hosting_listDatabaseRemoteConnectionsV1",
     "description": "Returns the remote-access rules for the specified account: the remote hosts\n(IPv4/IPv6 addresses, or \"%\" for any host) allowed to connect to the account databases.\n\nUse the domain filter to only return rules for databases assigned to a specific domain.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/databases/remote-connections",

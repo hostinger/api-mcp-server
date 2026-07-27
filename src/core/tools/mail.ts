@@ -15,6 +15,590 @@ export interface OpenApiTool extends Tool {
 
 const tools: OpenApiTool[] = [
   {
+    "name": "mail_createAliasV1",
+    "description": "Create an alias for the given mailbox. The alias address is formed\nfrom the given local part and the domain of the mailbox. Messages\nsent to the alias are delivered to the mailbox.",
+    "method": "POST",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/aliases",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        },
+        "local_part": {
+          "type": "string",
+          "description": "Local part of the alias address (the part before the @). The domain is taken from the mailbox. Case-insensitive and stored lowercase; must start and end with a letter or digit; single dots, underscores and hyphens are allowed in between."
+        }
+      },
+      "required": [
+        "mailboxId",
+        "local_part"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_deleteAliasV1",
+    "description": "Delete an alias. Messages sent to the alias address are no longer\ndelivered to the mailbox.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/aliases/{aliasId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "aliasId": {
+          "type": "string",
+          "description": "Alias resource ID"
+        }
+      },
+      "required": [
+        "aliasId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listAliasesV1",
+    "description": "Retrieve a paginated list of aliases across all mailboxes of a mail\norder.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/aliases",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_createAPITokenV1",
+    "description": "Create an API token for the given mail order. The token grants access\nto the [Hostinger Email API](https://api.mail.hostinger.com/), where\nyou can provision and manage the mailboxes it is scoped to.\n\nThe plaintext token is returned only in this response, never again.\nA maximum of 10 tokens can exist per order. Use\n`scope.has_all_mailboxes` to cover all current and future mailboxes,\nor list specific mailboxes in `scope.mailbox_ids`.",
+    "method": "POST",
+    "path": "/api/mail/v1/orders/{orderId}/api-tokens",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable label for this token"
+        },
+        "scope": {
+          "type": "object",
+          "description": "Mailbox scope this token can access",
+          "properties": {
+            "has_all_mailboxes": {
+              "type": "boolean",
+              "description": "Grant access to all current and future mailboxes of the order"
+            },
+            "mailbox_ids": {
+              "type": "array",
+              "description": "Required when `has_all_mailboxes` is false. Mailbox resource IDs of this order.",
+              "items": {
+                "type": "string",
+                "description": "mailbox_ids parameter"
+              }
+            }
+          },
+          "required": [
+            "has_all_mailboxes"
+          ]
+        }
+      },
+      "required": [
+        "orderId",
+        "name",
+        "scope"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_revokeAPITokenV1",
+    "description": "Revoke an API token. The token immediately loses access to the\n[Hostinger Email API](https://api.mail.hostinger.com/). This action\ncannot be undone.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/api-tokens/{tokenId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "tokenId": {
+          "type": "string",
+          "description": "API token ID (returned when the token was created)"
+        }
+      },
+      "required": [
+        "tokenId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listAPITokensV1",
+    "description": "Retrieve a paginated list of\n[Hostinger Email API](https://api.mail.hostinger.com/) tokens across\nall your mail orders, optionally filtered by order. Plaintext tokens\nare never included; they are returned only when a token is created.",
+    "method": "GET",
+    "path": "/api/mail/v1/api-tokens",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "string",
+          "description": "Filter tokens by order resource ID. Single value or comma-separated list."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_createAutoreplyV1",
+    "description": "Create an automatic reply for the given mailbox. A mailbox can have\nonly one autoreply. Omit `starts_at` to activate the autoreply\nimmediately and omit `ends_at` to keep it active indefinitely.",
+    "method": "POST",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/autoreplies",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject of the automatic reply"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body of the automatic reply"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Sender display name used for the reply"
+        },
+        "starts_at": {
+          "type": "string",
+          "description": "When the autoreply becomes active. Defaults to now."
+        },
+        "ends_at": {
+          "type": "string",
+          "description": "When the autoreply stops. Omit for an indefinite autoreply."
+        }
+      },
+      "required": [
+        "mailboxId",
+        "subject",
+        "body"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_updateAutoreplyV1",
+    "description": "Replace the autoreply with the given content and schedule. Omitted\noptional fields are cleared: omit `starts_at` to activate the\nautoreply immediately and omit `ends_at` to keep it active\nindefinitely.",
+    "method": "PUT",
+    "path": "/api/mail/v1/autoreplies/{autoreplyId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "autoreplyId": {
+          "type": "string",
+          "description": "Autoreply resource ID"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject of the automatic reply"
+        },
+        "body": {
+          "type": "string",
+          "description": "Body of the automatic reply"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Sender display name used for the reply"
+        },
+        "starts_at": {
+          "type": "string",
+          "description": "When the autoreply becomes active. Defaults to now."
+        },
+        "ends_at": {
+          "type": "string",
+          "description": "When the autoreply stops. Omit for an indefinite autoreply."
+        }
+      },
+      "required": [
+        "autoreplyId",
+        "subject",
+        "body"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_deleteAutoreplyV1",
+    "description": "Delete the autoreply of a mailbox. The mailbox stops sending\nautomatic replies immediately.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/autoreplies/{autoreplyId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "autoreplyId": {
+          "type": "string",
+          "description": "Autoreply resource ID"
+        }
+      },
+      "required": [
+        "autoreplyId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listAutorepliesV1",
+    "description": "Retrieve a paginated list of autoreplies across all mailboxes of a\nmail order.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/autoreplies",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_createCatchAllV1",
+    "description": "Create a catch-all that routes all messages sent to unknown addresses\nof the domain to the given mailbox. The mailbox address receives a\nconfirmation email and the catch-all becomes active only after it is\nconfirmed. A domain can have only one catch-all.",
+    "method": "POST",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/catchalls",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        }
+      },
+      "required": [
+        "mailboxId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_deleteCatchAllV1",
+    "description": "Delete a catch-all. Messages sent to unknown addresses of the domain\nare no longer routed to the mailbox.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/catchalls/{catchallId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "catchallId": {
+          "type": "string",
+          "description": "Catch-all resource ID"
+        }
+      },
+      "required": [
+        "catchallId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listCatchAllsV1",
+    "description": "Retrieve a paginated list of catch-alls across all mailboxes of a\nmail order.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/catchalls",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_resendCatchAllConfirmationV1",
+    "description": "Resend the confirmation email to the mailbox address of an\nunconfirmed catch-all.",
+    "method": "POST",
+    "path": "/api/mail/v1/catchalls/{catchallId}/confirmation/resend",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "catchallId": {
+          "type": "string",
+          "description": "Catch-all resource ID"
+        }
+      },
+      "required": [
+        "catchallId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_createForwarderV1",
+    "description": "Create a forwarder from the given mailbox to the destination address.\nThe destination receives a confirmation email and forwarding becomes\nactive only after it is confirmed.",
+    "method": "POST",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/forwarders",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        },
+        "destination": {
+          "type": "string",
+          "description": "Email address the messages will be forwarded to"
+        },
+        "is_keep_copy_enabled": {
+          "type": "boolean",
+          "description": "Whether to keep a copy of forwarded messages in the mailbox. Defaults to false."
+        }
+      },
+      "required": [
+        "mailboxId",
+        "destination"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_deleteForwarderV1",
+    "description": "Delete a forwarder. The mailbox stops forwarding messages to the\ndestination address immediately.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/forwarders/{forwarderId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "forwarderId": {
+          "type": "string",
+          "description": "Forwarder resource ID"
+        }
+      },
+      "required": [
+        "forwarderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listForwardersV1",
+    "description": "Retrieve a paginated list of forwarders across all mailboxes of a\nmail order.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/forwarders",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_resendForwarderConfirmationV1",
+    "description": "Resend the confirmation email to the destination address of an\nunconfirmed forwarder.",
+    "method": "POST",
+    "path": "/api/mail/v1/forwarders/{forwarderId}/confirmation/resend",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "forwarderId": {
+          "type": "string",
+          "description": "Forwarder resource ID"
+        }
+      },
+      "required": [
+        "forwarderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_updateForwarderKeepCopySettingV1",
+    "description": "Enable or disable keeping a copy of forwarded messages in the\nmailbox.",
+    "method": "PATCH",
+    "path": "/api/mail/v1/forwarders/{forwarderId}/keep-copy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "forwarderId": {
+          "type": "string",
+          "description": "Forwarder resource ID"
+        },
+        "is_keep_copy_enabled": {
+          "type": "boolean",
+          "description": "Whether to keep a copy of forwarded messages in the mailbox"
+        }
+      },
+      "required": [
+        "forwarderId",
+        "is_keep_copy_enabled"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
     "name": "mail_listAccessLogsV1",
     "description": "Retrieve paginated access logs for the domain attached to the given\nmail order. Supports filtering by account, date range, protocol,\nstatus, and deletion flag. Results are sorted by timestamp descending.",
     "method": "GET",

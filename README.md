@@ -49,15 +49,15 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (255 total)
-- `hostinger-agency-hosting-mcp` — 26 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (275 total)
+- `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 23 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
-- `hostinger-mail-mcp` — 19 tools for mail
+- `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -279,6 +279,13 @@ archive types: .zip, .tar, .tar.gz, .tgz.
 
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/files/import-archive`
+
+#### agency-hosting_listAgencyPlanOrdersV1
+
+Returns a paginated list of Agency Plan orders accessible to the authenticated client.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/orders`
 
 #### agency-hosting_provisionANewAgencyPlanWebsiteV1
 
@@ -1171,7 +1178,7 @@ The database name must be the full name returned by the list databases endpoint.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}`
 
-#### hosting_createAccountDatabaseRemoteConnectionV1
+#### hosting_createDatabaseRemoteConnectionV1
 
 Allows a remote host to connect to the specified database.
 
@@ -1181,7 +1188,7 @@ the full name returned by the list databases endpoint.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections`
 
-#### hosting_deleteAccountDatabaseRemoteConnectionV1
+#### hosting_deleteDatabaseRemoteConnectionV1
 
 Permanently removes a remote-access rule, revoking the given host's remote access to the database.
 
@@ -1192,7 +1199,7 @@ the full name returned by the list databases endpoint.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections`
 
-#### hosting_listAccountDatabaseRemoteConnectionsV1
+#### hosting_listDatabaseRemoteConnectionsV1
 
 Returns the remote-access rules for the specified account: the remote hosts
 (IPv4/IPv6 addresses, or "%" for any host) allowed to connect to the account databases.
@@ -1546,6 +1553,174 @@ complete. The response returns before the removal finishes.
 - **Path**: `/api/hosting/v1/websites/{domain}`
 
 ### `hostinger-mail-mcp`
+
+#### mail_createAliasV1
+
+Create an alias for the given mailbox. The alias address is formed
+from the given local part and the domain of the mailbox. Messages
+sent to the alias are delivered to the mailbox.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/aliases`
+
+#### mail_deleteAliasV1
+
+Delete an alias. Messages sent to the alias address are no longer
+delivered to the mailbox.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/aliases/{aliasId}`
+
+#### mail_listAliasesV1
+
+Retrieve a paginated list of aliases across all mailboxes of a mail
+order.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/aliases`
+
+#### mail_createAPITokenV1
+
+Create an API token for the given mail order. The token grants access
+to the [Hostinger Email API](https://api.mail.hostinger.com/), where
+you can provision and manage the mailboxes it is scoped to.
+
+The plaintext token is returned only in this response, never again.
+A maximum of 10 tokens can exist per order. Use
+`scope.has_all_mailboxes` to cover all current and future mailboxes,
+or list specific mailboxes in `scope.mailbox_ids`.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/orders/{orderId}/api-tokens`
+
+#### mail_revokeAPITokenV1
+
+Revoke an API token. The token immediately loses access to the
+[Hostinger Email API](https://api.mail.hostinger.com/). This action
+cannot be undone.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/api-tokens/{tokenId}`
+
+#### mail_listAPITokensV1
+
+Retrieve a paginated list of
+[Hostinger Email API](https://api.mail.hostinger.com/) tokens across
+all your mail orders, optionally filtered by order. Plaintext tokens
+are never included; they are returned only when a token is created.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/api-tokens`
+
+#### mail_createAutoreplyV1
+
+Create an automatic reply for the given mailbox. A mailbox can have
+only one autoreply. Omit `starts_at` to activate the autoreply
+immediately and omit `ends_at` to keep it active indefinitely.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/autoreplies`
+
+#### mail_updateAutoreplyV1
+
+Replace the autoreply with the given content and schedule. Omitted
+optional fields are cleared: omit `starts_at` to activate the
+autoreply immediately and omit `ends_at` to keep it active
+indefinitely.
+
+- **Method**: `PUT`
+- **Path**: `/api/mail/v1/autoreplies/{autoreplyId}`
+
+#### mail_deleteAutoreplyV1
+
+Delete the autoreply of a mailbox. The mailbox stops sending
+automatic replies immediately.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/autoreplies/{autoreplyId}`
+
+#### mail_listAutorepliesV1
+
+Retrieve a paginated list of autoreplies across all mailboxes of a
+mail order.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/autoreplies`
+
+#### mail_createCatchAllV1
+
+Create a catch-all that routes all messages sent to unknown addresses
+of the domain to the given mailbox. The mailbox address receives a
+confirmation email and the catch-all becomes active only after it is
+confirmed. A domain can have only one catch-all.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/catchalls`
+
+#### mail_deleteCatchAllV1
+
+Delete a catch-all. Messages sent to unknown addresses of the domain
+are no longer routed to the mailbox.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/catchalls/{catchallId}`
+
+#### mail_listCatchAllsV1
+
+Retrieve a paginated list of catch-alls across all mailboxes of a
+mail order.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/catchalls`
+
+#### mail_resendCatchAllConfirmationV1
+
+Resend the confirmation email to the mailbox address of an
+unconfirmed catch-all.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/catchalls/{catchallId}/confirmation/resend`
+
+#### mail_createForwarderV1
+
+Create a forwarder from the given mailbox to the destination address.
+The destination receives a confirmation email and forwarding becomes
+active only after it is confirmed.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/forwarders`
+
+#### mail_deleteForwarderV1
+
+Delete a forwarder. The mailbox stops forwarding messages to the
+destination address immediately.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/forwarders/{forwarderId}`
+
+#### mail_listForwardersV1
+
+Retrieve a paginated list of forwarders across all mailboxes of a
+mail order.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/forwarders`
+
+#### mail_resendForwarderConfirmationV1
+
+Resend the confirmation email to the destination address of an
+unconfirmed forwarder.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/forwarders/{forwarderId}/confirmation/resend`
+
+#### mail_updateForwarderKeepCopySettingV1
+
+Enable or disable keeping a copy of forwarded messages in the
+mailbox.
+
+- **Method**: `PATCH`
+- **Path**: `/api/mail/v1/forwarders/{forwarderId}/keep-copy`
 
 #### mail_listAccessLogsV1
 
