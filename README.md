@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (268 total)
+- `hostinger-api-mcp` — unified server with every tool (275 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 8 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -57,7 +57,7 @@ This package installs the following MCP server commands:
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
-- `hostinger-mail-mcp` — 31 tools for mail
+- `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 12 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
@@ -1554,6 +1554,31 @@ complete. The response returns before the removal finishes.
 
 ### `hostinger-mail-mcp`
 
+#### mail_createAliasV1
+
+Create an alias for the given mailbox. The alias address is formed
+from the given local part and the domain of the mailbox. Messages
+sent to the alias are delivered to the mailbox.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/aliases`
+
+#### mail_deleteAliasV1
+
+Delete an alias. Messages sent to the alias address are no longer
+delivered to the mailbox.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/aliases/{aliasId}`
+
+#### mail_listAliasesV1
+
+Retrieve a paginated list of aliases across all mailboxes of a mail
+order.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/aliases`
+
 #### mail_createAPITokenV1
 
 Create an API token for the given mail order. The token grants access
@@ -1621,6 +1646,40 @@ mail order.
 
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/autoreplies`
+
+#### mail_createCatchAllV1
+
+Create a catch-all that routes all messages sent to unknown addresses
+of the domain to the given mailbox. The mailbox address receives a
+confirmation email and the catch-all becomes active only after it is
+confirmed. A domain can have only one catch-all.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/mailboxes/{mailboxId}/catchalls`
+
+#### mail_deleteCatchAllV1
+
+Delete a catch-all. Messages sent to unknown addresses of the domain
+are no longer routed to the mailbox.
+
+- **Method**: `DELETE`
+- **Path**: `/api/mail/v1/catchalls/{catchallId}`
+
+#### mail_listCatchAllsV1
+
+Retrieve a paginated list of catch-alls across all mailboxes of a
+mail order.
+
+- **Method**: `GET`
+- **Path**: `/api/mail/v1/orders/{orderId}/catchalls`
+
+#### mail_resendCatchAllConfirmationV1
+
+Resend the confirmation email to the mailbox address of an
+unconfirmed catch-all.
+
+- **Method**: `POST`
+- **Path**: `/api/mail/v1/catchalls/{catchallId}/confirmation/resend`
 
 #### mail_createForwarderV1
 

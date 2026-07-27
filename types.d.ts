@@ -2859,6 +2859,61 @@ complete. The response returns before the removal finishes.
   };
 
   /**
+   * Create an alias for the given mailbox. The alias address is formed
+from the given local part and the domain of the mailbox. Messages
+sent to the alias are delivered to the mailbox.
+   */
+  "mail_createAliasV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+      /**
+       * Local part of the alias address (the part before the @). The domain is taken from the mailbox. Case-insensitive and stored lowercase; must start and end with a letter or digit; single dots, underscores and hyphens are allowed in between.
+       */
+      local_part: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete an alias. Messages sent to the alias address are no longer
+delivered to the mailbox.
+   */
+  "mail_deleteAliasV1": {
+    params: {
+      /**
+       * Alias resource ID
+       */
+      aliasId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of aliases across all mailboxes of a mail
+order.
+   */
+  "mail_listAliasesV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Create an API token for the given mail order. The token grants access
 to the [Hostinger Email API](https://api.mail.hostinger.com/), where
 you can provision and manage the mailboxes it is scoped to.
@@ -3028,6 +3083,72 @@ mail order.
        * Number of items per page
        */
       per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a catch-all that routes all messages sent to unknown addresses
+of the domain to the given mailbox. The mailbox address receives a
+confirmation email and the catch-all becomes active only after it is
+confirmed. A domain can have only one catch-all.
+   */
+  "mail_createCatchAllV1": {
+    params: {
+      /**
+       * Mailbox resource ID
+       */
+      mailboxId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a catch-all. Messages sent to unknown addresses of the domain
+are no longer routed to the mailbox.
+   */
+  "mail_deleteCatchAllV1": {
+    params: {
+      /**
+       * Catch-all resource ID
+       */
+      catchallId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve a paginated list of catch-alls across all mailboxes of a
+mail order.
+   */
+  "mail_listCatchAllsV1": {
+    params: {
+      /**
+       * Order resource ID
+       */
+      orderId: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Resend the confirmation email to the mailbox address of an
+unconfirmed catch-all.
+   */
+  "mail_resendCatchAllConfirmationV1": {
+    params: {
+      /**
+       * Catch-all resource ID
+       */
+      catchallId: string;
     };
     response: any; // Response structure will depend on the API
   };

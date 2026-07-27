@@ -1,6 +1,91 @@
 // Auto-generated tool list for group: mail
 export default [
   {
+    "name": "mail_createAliasV1",
+    "description": "Create an alias for the given mailbox. The alias address is formed\nfrom the given local part and the domain of the mailbox. Messages\nsent to the alias are delivered to the mailbox.",
+    "method": "POST",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/aliases",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        },
+        "local_part": {
+          "type": "string",
+          "description": "Local part of the alias address (the part before the @). The domain is taken from the mailbox. Case-insensitive and stored lowercase; must start and end with a letter or digit; single dots, underscores and hyphens are allowed in between."
+        }
+      },
+      "required": [
+        "mailboxId",
+        "local_part"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_deleteAliasV1",
+    "description": "Delete an alias. Messages sent to the alias address are no longer\ndelivered to the mailbox.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/aliases/{aliasId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "aliasId": {
+          "type": "string",
+          "description": "Alias resource ID"
+        }
+      },
+      "required": [
+        "aliasId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listAliasesV1",
+    "description": "Retrieve a paginated list of aliases across all mailboxes of a mail\norder.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/aliases",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
     "name": "mail_createAPITokenV1",
     "description": "Create an API token for the given mail order. The token grants access\nto the [Hostinger Email API](https://api.mail.hostinger.com/), where\nyou can provision and manage the mailboxes it is scoped to.\n\nThe plaintext token is returned only in this response, never again.\nA maximum of 10 tokens can exist per order. Use\n`scope.has_all_mailboxes` to cover all current and future mailboxes,\nor list specific mailboxes in `scope.mailbox_ids`.",
     "method": "POST",
@@ -244,6 +329,110 @@ export default [
       },
       "required": [
         "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_createCatchAllV1",
+    "description": "Create a catch-all that routes all messages sent to unknown addresses\nof the domain to the given mailbox. The mailbox address receives a\nconfirmation email and the catch-all becomes active only after it is\nconfirmed. A domain can have only one catch-all.",
+    "method": "POST",
+    "path": "/api/mail/v1/mailboxes/{mailboxId}/catchalls",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "Mailbox resource ID"
+        }
+      },
+      "required": [
+        "mailboxId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_deleteCatchAllV1",
+    "description": "Delete a catch-all. Messages sent to unknown addresses of the domain\nare no longer routed to the mailbox.",
+    "method": "DELETE",
+    "path": "/api/mail/v1/catchalls/{catchallId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "catchallId": {
+          "type": "string",
+          "description": "Catch-all resource ID"
+        }
+      },
+      "required": [
+        "catchallId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_listCatchAllsV1",
+    "description": "Retrieve a paginated list of catch-alls across all mailboxes of a\nmail order.",
+    "method": "GET",
+    "path": "/api/mail/v1/orders/{orderId}/catchalls",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Order resource ID"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "orderId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "mail"
+  },
+  {
+    "name": "mail_resendCatchAllConfirmationV1",
+    "description": "Resend the confirmation email to the mailbox address of an\nunconfirmed catch-all.",
+    "method": "POST",
+    "path": "/api/mail/v1/catchalls/{catchallId}/confirmation/resend",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "catchallId": {
+          "type": "string",
+          "description": "Catch-all resource ID"
+        }
+      },
+      "required": [
+        "catchallId"
       ]
     },
     "security": [
