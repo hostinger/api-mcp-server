@@ -117,3 +117,31 @@ jobs:
 
       - name: Publish to MCP Registry
         run: ./mcp-publisher publish
+
+  notify-failure:
+    needs: [release, publish-npmjs, release-github, publish-mcp]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack on release failure
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          errors: true
+          webhook: ${{ secrets.PLATFORM_INCIDENT_SLACK_CHANNEL_WEBHOOK }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: ":rotating_light: Release failed in ${{ github.repository }}"
+            blocks:
+              - type: section
+                text:
+                  type: mrkdwn
+                  text: |
+                    :rotating_light: *Release failed:* `${{ github.repository }}`
+                    *Commit:* <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|${{ github.sha }}>
+              - type: actions
+                elements:
+                  - type: button
+                    text:
+                      type: plain_text
+                      text: "View failed run"
+                    url: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
