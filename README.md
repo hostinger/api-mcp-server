@@ -1,5 +1,7 @@
 # hostinger-api-mcp
 
+[![MCP Toplist](https://mcptoplist.com/badge/io.github.hostinger%2Fhostinger-api-mcp.svg)](https://mcptoplist.com/server/io.github.hostinger%2Fhostinger-api-mcp)
+
 Model Context Protocol (MCP) server for Hostinger API.
 
 ## Prerequisites
