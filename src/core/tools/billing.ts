@@ -27,7 +27,8 @@ const tools: OpenApiTool[] = [
           "description": "Filter catalog items by category",
           "enum": [
             "DOMAIN",
-            "VPS"
+            "VPS",
+            "EMAIL"
           ]
         },
         "name": {
