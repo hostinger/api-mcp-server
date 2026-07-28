@@ -20,7 +20,7 @@ For anything that needs a server or a server-side build (Express, Next.js, NestJ
 
 ## WordPress → `hosting_importWordpressWebsite` / plugin & theme tools
 
-Only when the user explicitly wants WordPress. Site imports take an archive plus a `.sql` dump and can run for several minutes.
+Only when the user explicitly wants a WordPress *site* migrated or themed. Site imports take an archive plus a `.sql` dump and can run for several minutes. (WordPress as a headless content backend behind an agent-built frontend is a different flow — that's `WORDPRESS.md`, installed fresh via the API, not imported here.)
 
 ## Verify (every deploy)
 

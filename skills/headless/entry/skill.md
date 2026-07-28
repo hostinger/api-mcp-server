@@ -1,6 +1,6 @@
 ---
 name: hostinger-headless-entry
-description: "Build a complete website on Hostinger from a single prompt — hosting, domain, and (optionally) a store with real checkout. The deterministic first steps — verifying the Hostinger MCP server and signing in — are handled by a single bootstrap script; the agent then installs the full skill and hands the run to it. Triggers: build me a site, create a website, make me a website, online store, I want to sell X, start a business online, launch a site, ecommerce, portfolio, business website, sell online, online shop, connect this project to Hostinger, host this on Hostinger, deploy this to Hostinger."
+description: "Build a complete website on Hostinger from a single prompt — hosting, domain, and (optionally) a store with real checkout or a blog/CMS the owner edits in WordPress. The deterministic first steps — verifying the Hostinger MCP server and signing in — are handled by a single bootstrap script; the agent then installs the full skill and hands the run to it. Triggers: build me a site, create a website, make me a website, online store, I want to sell X, start a business online, launch a site, ecommerce, portfolio, blog, business website, sell online, online shop, add a blog to my site, connect this project to Hostinger, host this on Hostinger, deploy this to Hostinger."
 ---
 
 # Hostinger Headless Skill — cold-start entry
@@ -73,7 +73,7 @@ npx skills add hostinger/api-mcp-server --yes
 
 If the installer is unavailable, fetch the files directly instead — the full set is listed in the skill folder at `https://github.com/hostinger/api-mcp-server/tree/main/skills/headless`.
 
-Then open `headless/SKILL.md` and follow it. That skill owns the rest of the run — it resolves the operation (create / connect / iterate), checks the account has a usable hosting plan, provisions the website and domain, seeds the store when commerce is requested, builds, deploys, and verifies.
+Then open `headless/SKILL.md` and follow it. That skill owns the rest of the run — it resolves the operation (create / connect / iterate), checks the account has a usable hosting plan, provisions the website and domain, seeds the store when commerce is requested, sets up a WordPress content backend when the owner needs to edit content themselves, builds, deploys, and verifies.
 
-- Don't provision hosting, create stores, or deploy by hand here — the skill does all of that (`references/SETUP.md`, `references/DEPLOYMENT.md`, `references/STORE.md`). This entry stops at signed in.
+- Don't provision hosting, create stores, install WordPress, or deploy by hand here — the skill does all of that (`references/SETUP.md`, `references/DEPLOYMENT.md`, `references/STORE.md`, `references/WORDPRESS.md`). This entry stops at signed in.
 - You're already authenticated from Phase 1, so every Hostinger MCP tool call will work without prompting again.
