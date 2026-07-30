@@ -1399,6 +1399,42 @@ export default [
     "group": "billing"
   },
   {
+    "name": "billing_renewSubscriptionV1",
+    "description": "Create a renewal order for an existing Hostinger subscription.\n\nThis endpoint places a renewal order for a single subscription, leveraging\nthe existing billing infrastructure. Use the\n[subscriptions endpoint](#tag/billing-subscriptions) to look up the\n`subscriptionId` values available for renewal.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nUse this endpoint to renew any subscription available in your account.",
+    "method": "POST",
+    "path": "/api/billing/v1/subscriptions/{subscriptionId}/renew",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "subscriptionId": {
+          "type": "string",
+          "description": "Subscription ID"
+        },
+        "payment_method_id": {
+          "type": "integer",
+          "description": "Payment method ID, default will be used if not provided"
+        },
+        "coupons": {
+          "type": "array",
+          "description": "Discount coupon codes",
+          "items": {
+            "type": "string",
+            "description": "coupons parameter"
+          }
+        }
+      },
+      "required": [
+        "subscriptionId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "billing"
+  },
+  {
     "name": "DNS_getDNSSnapshotV1",
     "description": "Retrieve particular DNS snapshot with contents of DNS zone records.\n\nUse this endpoint to view historical DNS configurations for domains.",
     "method": "GET",

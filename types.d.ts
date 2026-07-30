@@ -883,6 +883,36 @@ Use this endpoint when enable auto-renewal for a subscription.
   };
 
   /**
+   * Create a renewal order for an existing Hostinger subscription.
+
+This endpoint places a renewal order for a single subscription, leveraging
+the existing billing infrastructure. Use the
+[subscriptions endpoint](#tag/billing-subscriptions) to look up the
+`subscriptionId` values available for renewal.
+
+If no payment method is provided, your default payment method will be used automatically.
+
+Use this endpoint to renew any subscription available in your account.
+   */
+  "billing_renewSubscriptionV1": {
+    params: {
+      /**
+       * Subscription ID
+       */
+      subscriptionId: string;
+      /**
+       * Payment method ID, default will be used if not provided
+       */
+      payment_method_id?: number;
+      /**
+       * Discount coupon codes
+       */
+      coupons?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve particular DNS snapshot with contents of DNS zone records.
 
 Use this endpoint to view historical DNS configurations for domains.

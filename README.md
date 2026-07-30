@@ -49,9 +49,9 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (275 total)
+- `hostinger-api-mcp` — unified server with every tool (276 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
-- `hostinger-billing-mcp` — 8 tools for billing
+- `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 23 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
@@ -552,6 +552,22 @@ Use this endpoint when enable auto-renewal for a subscription.
 
 - **Method**: `PATCH`
 - **Path**: `/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/enable`
+
+#### billing_renewSubscriptionV1
+
+Create a renewal order for an existing Hostinger subscription.
+
+This endpoint places a renewal order for a single subscription, leveraging
+the existing billing infrastructure. Use the
+[subscriptions endpoint](#tag/billing-subscriptions) to look up the
+`subscriptionId` values available for renewal.
+
+If no payment method is provided, your default payment method will be used automatically.
+
+Use this endpoint to renew any subscription available in your account.
+
+- **Method**: `POST`
+- **Path**: `/api/billing/v1/subscriptions/{subscriptionId}/renew`
 
 ### `hostinger-dns-mcp`
 
