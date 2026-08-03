@@ -1805,7 +1805,7 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_stopVirtualMachineV1",
-    "description": "Stop a specified virtual machine.\n\nIf the virtual machine is already stopped, the request will still be processed without any effect.\n\nUse this endpoint to power off running VPS instances.",
+    "description": "Stop a specified virtual machine.\n\nIf the virtual machine is already stopped, the request will still be processed without any effect.\n\nThis is a compute-only power state change and does not affect billing. To stop future charges,\ndisable auto-renewal on the owning subscription.\n\nUse this endpoint to power off running VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/stop",
     "inputSchema": {

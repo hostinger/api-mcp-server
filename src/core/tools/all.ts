@@ -2303,6 +2303,54 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
+    "name": "domains_unsetDefaultWHOISProfileV1",
+    "description": "Unset WHOIS contact profile as default.\n\nThe profile itself is kept, it is only no longer pre-selected for its TLD.\n\nUse this endpoint to stop reusing contact information for new registrations.",
+    "method": "DELETE",
+    "path": "/api/domains/v1/whois/default/{whoisId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "whoisId": {
+          "type": "integer",
+          "description": "WHOIS ID"
+        }
+      },
+      "required": [
+        "whoisId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_setWHOISProfileAsDefaultV1",
+    "description": "Set WHOIS contact profile as default.\n\nThe default profile is pre-selected for the TLD it belongs to when registering new domains.\n\nUse this endpoint to avoid picking contact information for every registration.",
+    "method": "PATCH",
+    "path": "/api/domains/v1/whois/default/{whoisId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "whoisId": {
+          "type": "integer",
+          "description": "WHOIS ID"
+        }
+      },
+      "required": [
+        "whoisId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_getWHOISProfileV1",
     "description": "Retrieve a WHOIS contact profile.\n\nUse this endpoint to view domain registration contact information.",
     "method": "GET",
@@ -7929,7 +7977,7 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_stopVirtualMachineV1",
-    "description": "Stop a specified virtual machine.\n\nIf the virtual machine is already stopped, the request will still be processed without any effect.\n\nUse this endpoint to power off running VPS instances.",
+    "description": "Stop a specified virtual machine.\n\nIf the virtual machine is already stopped, the request will still be processed without any effect.\n\nThis is a compute-only power state change and does not affect billing. To stop future charges,\ndisable auto-renewal on the owning subscription.\n\nUse this endpoint to power off running VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/stop",
     "inputSchema": {

@@ -529,6 +529,54 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
+    "name": "domains_unsetDefaultWHOISProfileV1",
+    "description": "Unset WHOIS contact profile as default.\n\nThe profile itself is kept, it is only no longer pre-selected for its TLD.\n\nUse this endpoint to stop reusing contact information for new registrations.",
+    "method": "DELETE",
+    "path": "/api/domains/v1/whois/default/{whoisId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "whoisId": {
+          "type": "integer",
+          "description": "WHOIS ID"
+        }
+      },
+      "required": [
+        "whoisId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_setWHOISProfileAsDefaultV1",
+    "description": "Set WHOIS contact profile as default.\n\nThe default profile is pre-selected for the TLD it belongs to when registering new domains.\n\nUse this endpoint to avoid picking contact information for every registration.",
+    "method": "PATCH",
+    "path": "/api/domains/v1/whois/default/{whoisId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "whoisId": {
+          "type": "integer",
+          "description": "WHOIS ID"
+        }
+      },
+      "required": [
+        "whoisId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_getWHOISProfileV1",
     "description": "Retrieve a WHOIS contact profile.\n\nUse this endpoint to view domain registration contact information.",
     "method": "GET",

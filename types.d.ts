@@ -1434,6 +1434,40 @@ Use this endpoint to monitor incoming and outgoing registrar transfers across yo
   };
 
   /**
+   * Unset WHOIS contact profile as default.
+
+The profile itself is kept, it is only no longer pre-selected for its TLD.
+
+Use this endpoint to stop reusing contact information for new registrations.
+   */
+  "domains_unsetDefaultWHOISProfileV1": {
+    params: {
+      /**
+       * WHOIS ID
+       */
+      whoisId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Set WHOIS contact profile as default.
+
+The default profile is pre-selected for the TLD it belongs to when registering new domains.
+
+Use this endpoint to avoid picking contact information for every registration.
+   */
+  "domains_setWHOISProfileAsDefaultV1": {
+    params: {
+      /**
+       * WHOIS ID
+       */
+      whoisId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a WHOIS contact profile.
 
 Use this endpoint to view domain registration contact information.
@@ -5409,6 +5443,9 @@ Use this endpoint to power on stopped VPS instances.
    * Stop a specified virtual machine.
 
 If the virtual machine is already stopped, the request will still be processed without any effect.
+
+This is a compute-only power state change and does not affect billing. To stop future charges,
+disable auto-renewal on the owning subscription.
 
 Use this endpoint to power off running VPS instances.
    */
