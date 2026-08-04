@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (278 total)
+- `hostinger-api-mcp` — unified server with every tool (281 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
-- `hostinger-domains-mcp` — 25 tools for domains
+- `hostinger-domains-mcp` — 28 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
@@ -715,6 +715,27 @@ Use this endpoint to set up domain redirects to other URLs.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/forwarding`
 
+#### domains_getPendingIRTPVerificationV1
+
+Retrieve a pending IRTP verification for a domain.
+
+Both the old and new registrant must confirm it before the WHOIS change takes effect.
+
+Use this endpoint to check the status of a WHOIS change awaiting registrant confirmation.
+
+- **Method**: `GET`
+- **Path**: `/api/domains/v1/irtp/{domain}`
+
+#### domains_cancelPendingIRTPVerificationV1
+
+Cancel a pending IRTP verification.
+
+Use this endpoint to back out of a WHOIS change that is stuck waiting on registrant confirmation,
+for example when the confirmation email cannot be received, without waiting out the 5-day expiry.
+
+- **Method**: `DELETE`
+- **Path**: `/api/domains/v1/irtp/{domain}`
+
 #### domains_getDomainAuthorizationCodeV1
 
 Retrieve the authorization (EPP) code for a specified domain so it can be transferred
@@ -847,16 +868,22 @@ Use this endpoint to monitor incoming and outgoing registrar transfers across yo
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/transfers`
 
-#### domains_unsetDefaultWHOISProfileV1
+#### domains_changeWHOISProfileForDomainV1
 
-Unset WHOIS contact profile as default.
+Change WHOIS contact profile for a domain.
 
-The profile itself is kept, it is only no longer pre-selected for its TLD.
+Repoints the given contact roles to a new WHOIS profile and submits the change to the registry.
+The profile currently assigned to those roles is resolved automatically;
+the request fails if the given roles are not all on the same profile today.
 
-Use this endpoint to stop reusing contact information for new registrations.
+Changing transfer sensitive fields on the owner contact starts an IRTP verification.
 
-- **Method**: `DELETE`
-- **Path**: `/api/domains/v1/whois/default/{whoisId}`
+The change is processed asynchronously.
+
+Use this endpoint to move a registered domain onto different contact information.
+
+- **Method**: `PUT`
+- **Path**: `/api/domains/v1/whois/change`
 
 #### domains_setWHOISProfileAsDefaultV1
 
@@ -866,7 +893,18 @@ The default profile is pre-selected for the TLD it belongs to when registering n
 
 Use this endpoint to avoid picking contact information for every registration.
 
-- **Method**: `PATCH`
+- **Method**: `PUT`
+- **Path**: `/api/domains/v1/whois/default/{whoisId}`
+
+#### domains_unsetDefaultWHOISProfileV1
+
+Unset WHOIS contact profile as default.
+
+The profile itself is kept, it is only no longer pre-selected for its TLD.
+
+Use this endpoint to stop reusing contact information for new registrations.
+
+- **Method**: `DELETE`
 - **Path**: `/api/domains/v1/whois/default/{whoisId}`
 
 #### domains_getWHOISProfileV1

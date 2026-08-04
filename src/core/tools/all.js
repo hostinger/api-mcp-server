@@ -1953,6 +1953,54 @@ export default [
     "group": "domains"
   },
   {
+    "name": "domains_getPendingIRTPVerificationV1",
+    "description": "Retrieve a pending IRTP verification for a domain.\n\nBoth the old and new registrant must confirm it before the WHOIS change takes effect.\n\nUse this endpoint to check the status of a WHOIS change awaiting registrant confirmation.",
+    "method": "GET",
+    "path": "/api/domains/v1/irtp/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_cancelPendingIRTPVerificationV1",
+    "description": "Cancel a pending IRTP verification.\n\nUse this endpoint to back out of a WHOIS change that is stuck waiting on registrant confirmation,\nfor example when the confirmation email cannot be received, without waiting out the 5-day expiry.",
+    "method": "DELETE",
+    "path": "/api/domains/v1/irtp/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_getDomainAuthorizationCodeV1",
     "description": "Retrieve the authorization (EPP) code for a specified domain so it can be transferred\naway from Hostinger to another registrar.\n\nRequesting a new code invalidates any code retrieved previously.\n\nUse this endpoint to obtain the code required to transfer a domain to another registrar.",
     "method": "GET",
@@ -2289,9 +2337,53 @@ export default [
     "group": "domains"
   },
   {
-    "name": "domains_unsetDefaultWHOISProfileV1",
-    "description": "Unset WHOIS contact profile as default.\n\nThe profile itself is kept, it is only no longer pre-selected for its TLD.\n\nUse this endpoint to stop reusing contact information for new registrations.",
-    "method": "DELETE",
+    "name": "domains_changeWHOISProfileForDomainV1",
+    "description": "Change WHOIS contact profile for a domain.\n\nRepoints the given contact roles to a new WHOIS profile and submits the change to the registry.\nThe profile currently assigned to those roles is resolved automatically;\nthe request fails if the given roles are not all on the same profile today.\n\nChanging transfer sensitive fields on the owner contact starts an IRTP verification.\n\nThe change is processed asynchronously.\n\nUse this endpoint to move a registered domain onto different contact information.",
+    "method": "PUT",
+    "path": "/api/domains/v1/whois/change",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "new_whois_id": {
+          "type": "integer",
+          "description": "WHOIS profile ID to assign to the domain"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "change_for": {
+          "type": "array",
+          "description": "Contact roles to repoint to the new WHOIS profile",
+          "items": {
+            "type": "string",
+            "description": "change_for parameter",
+            "enum": [
+              "owner",
+              "admin",
+              "billing",
+              "tech"
+            ]
+          }
+        }
+      },
+      "required": [
+        "new_whois_id",
+        "domain",
+        "change_for"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_setWHOISProfileAsDefaultV1",
+    "description": "Set WHOIS contact profile as default.\n\nThe default profile is pre-selected for the TLD it belongs to when registering new domains.\n\nUse this endpoint to avoid picking contact information for every registration.",
+    "method": "PUT",
     "path": "/api/domains/v1/whois/default/{whoisId}",
     "inputSchema": {
       "type": "object",
@@ -2313,9 +2405,9 @@ export default [
     "group": "domains"
   },
   {
-    "name": "domains_setWHOISProfileAsDefaultV1",
-    "description": "Set WHOIS contact profile as default.\n\nThe default profile is pre-selected for the TLD it belongs to when registering new domains.\n\nUse this endpoint to avoid picking contact information for every registration.",
-    "method": "PATCH",
+    "name": "domains_unsetDefaultWHOISProfileV1",
+    "description": "Unset WHOIS contact profile as default.\n\nThe profile itself is kept, it is only no longer pre-selected for its TLD.\n\nUse this endpoint to stop reusing contact information for new registrations.",
+    "method": "DELETE",
     "path": "/api/domains/v1/whois/default/{whoisId}",
     "inputSchema": {
       "type": "object",

@@ -1200,6 +1200,39 @@ Use this endpoint to set up domain redirects to other URLs.
   };
 
   /**
+   * Retrieve a pending IRTP verification for a domain.
+
+Both the old and new registrant must confirm it before the WHOIS change takes effect.
+
+Use this endpoint to check the status of a WHOIS change awaiting registrant confirmation.
+   */
+  "domains_getPendingIRTPVerificationV1": {
+    params: {
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Cancel a pending IRTP verification.
+
+Use this endpoint to back out of a WHOIS change that is stuck waiting on registrant confirmation,
+for example when the confirmation email cannot be received, without waiting out the 5-day expiry.
+   */
+  "domains_cancelPendingIRTPVerificationV1": {
+    params: {
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve the authorization (EPP) code for a specified domain so it can be transferred
 away from Hostinger to another registrar.
 
@@ -1434,18 +1467,32 @@ Use this endpoint to monitor incoming and outgoing registrar transfers across yo
   };
 
   /**
-   * Unset WHOIS contact profile as default.
+   * Change WHOIS contact profile for a domain.
 
-The profile itself is kept, it is only no longer pre-selected for its TLD.
+Repoints the given contact roles to a new WHOIS profile and submits the change to the registry.
+The profile currently assigned to those roles is resolved automatically;
+the request fails if the given roles are not all on the same profile today.
 
-Use this endpoint to stop reusing contact information for new registrations.
+Changing transfer sensitive fields on the owner contact starts an IRTP verification.
+
+The change is processed asynchronously.
+
+Use this endpoint to move a registered domain onto different contact information.
    */
-  "domains_unsetDefaultWHOISProfileV1": {
+  "domains_changeWHOISProfileForDomainV1": {
     params: {
       /**
-       * WHOIS ID
+       * WHOIS profile ID to assign to the domain
        */
-      whoisId: number;
+      new_whois_id: number;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Contact roles to repoint to the new WHOIS profile
+       */
+      change_for: array;
     };
     response: any; // Response structure will depend on the API
   };
@@ -1458,6 +1505,23 @@ The default profile is pre-selected for the TLD it belongs to when registering n
 Use this endpoint to avoid picking contact information for every registration.
    */
   "domains_setWHOISProfileAsDefaultV1": {
+    params: {
+      /**
+       * WHOIS ID
+       */
+      whoisId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Unset WHOIS contact profile as default.
+
+The profile itself is kept, it is only no longer pre-selected for its TLD.
+
+Use this endpoint to stop reusing contact information for new registrations.
+   */
+  "domains_unsetDefaultWHOISProfileV1": {
     params: {
       /**
        * WHOIS ID
