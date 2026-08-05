@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (281 total)
+- `hostinger-api-mcp` — unified server with every tool (289 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
-- `hostinger-domains-mcp` — 28 tools for domains
+- `hostinger-domains-mcp` — 36 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
@@ -735,6 +735,113 @@ for example when the confirmation email cannot be received, without waiting out 
 
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/irtp/{domain}`
+
+#### domains_getIncomingDomainMoveV1
+
+Retrieve the incoming move for a specified domain.
+
+Returns 404 when no account is moving this domain to you.
+
+Use this endpoint to check whether a domain addressed to you is still waiting to be accepted.
+
+- **Method**: `GET`
+- **Path**: `/api/domains/v1/move/incoming/{domain}`
+
+#### domains_acceptIncomingDomainMoveV1
+
+Accept an incoming move for a specified domain.
+
+The provided WHOIS profiles become the contacts of the domain, so they must belong
+to your account and satisfy the requirements of the TLD. Only the contact types the
+domain actually uses are applied, but all four profile IDs have to be provided.
+
+The move has to still be waiting for your decision, already accepted moves
+cannot be accepted again.
+
+Accepting does not complete the move. A confirmation email is sent to the email address of
+the new owner contact, and the domain changes hands only after the change is confirmed from it.
+Until then the move stays in the `activating` status, which can be followed with the
+[incoming move endpoint](#tag/domains-move).
+
+Use this endpoint to take ownership of a domain offered to you.
+
+- **Method**: `PUT`
+- **Path**: `/api/domains/v1/move/incoming/{domain}`
+
+#### domains_rejectIncomingDomainMoveV1
+
+Reject an incoming move for a specified domain.
+
+The domain stays in the account which initiated the move.
+Moves you have already accepted cannot be rejected anymore.
+
+Use this endpoint to decline a domain you do not want to take over.
+
+- **Method**: `DELETE`
+- **Path**: `/api/domains/v1/move/incoming/{domain}`
+
+#### domains_getIncomingDomainMoveListV1
+
+Retrieve all domains other Hostinger accounts are moving to your account.
+
+Moves of every status are returned, including the ones which already completed.
+
+Use this endpoint to find domains waiting for you to accept them.
+
+- **Method**: `GET`
+- **Path**: `/api/domains/v1/move/incoming`
+
+#### domains_getOutgoingDomainMoveV1
+
+Retrieve the outgoing move for a specified domain.
+
+Returns 404 when the domain has no move in progress.
+
+Use this endpoint to track the status of a move you have initiated for a single domain.
+
+- **Method**: `GET`
+- **Path**: `/api/domains/v1/move/outgoing/{domain}`
+
+#### domains_startOutgoingDomainMoveV1
+
+Initiate a move of a specified domain to another Hostinger account.
+
+The receiving account has to already exist and accept the move before the domain changes hands.
+
+The domain must be active. The subscription it belongs to is resolved automatically,
+and the request is rejected with a 404 status code when the domain has no domain
+subscription of its own.
+
+Domains protected by premium protection require an additional verification step,
+such requests are rejected with a 428 status code.
+
+Use this endpoint to hand a domain over to another Hostinger user.
+
+- **Method**: `POST`
+- **Path**: `/api/domains/v1/move/outgoing/{domain}`
+
+#### domains_cancelOutgoingDomainMoveV1
+
+Cancel an outgoing move for a specified domain.
+
+The move can only be cancelled while the receiving account has not accepted it yet.
+The domain stays in your account.
+
+Use this endpoint to withdraw a move you no longer want to complete.
+
+- **Method**: `DELETE`
+- **Path**: `/api/domains/v1/move/outgoing/{domain}`
+
+#### domains_getOutgoingDomainMoveListV1
+
+Retrieve all domains you are moving to other Hostinger accounts.
+
+Only moves which have not completed yet are returned.
+
+Use this endpoint to track moves you have initiated and the accounts they are addressed to.
+
+- **Method**: `GET`
+- **Path**: `/api/domains/v1/move/outgoing`
 
 #### domains_getDomainAuthorizationCodeV1
 

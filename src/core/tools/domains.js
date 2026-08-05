@@ -227,6 +227,222 @@ export default [
     "group": "domains"
   },
   {
+    "name": "domains_getIncomingDomainMoveV1",
+    "description": "Retrieve the incoming move for a specified domain.\n\nReturns 404 when no account is moving this domain to you.\n\nUse this endpoint to check whether a domain addressed to you is still waiting to be accepted.",
+    "method": "GET",
+    "path": "/api/domains/v1/move/incoming/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "force_sync": {
+          "type": "boolean",
+          "description": "Re-check the move against the registry before responding. Only has an effect while the move is in the `activating` status."
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_acceptIncomingDomainMoveV1",
+    "description": "Accept an incoming move for a specified domain.\n\nThe provided WHOIS profiles become the contacts of the domain, so they must belong\nto your account and satisfy the requirements of the TLD. Only the contact types the\ndomain actually uses are applied, but all four profile IDs have to be provided.\n\nThe move has to still be waiting for your decision, already accepted moves\ncannot be accepted again.\n\nAccepting does not complete the move. A confirmation email is sent to the email address of\nthe new owner contact, and the domain changes hands only after the change is confirmed from it.\nUntil then the move stays in the `activating` status, which can be followed with the\n[incoming move endpoint](#tag/domains-move).\n\nUse this endpoint to take ownership of a domain offered to you.",
+    "method": "PUT",
+    "path": "/api/domains/v1/move/incoming/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "domain_contacts": {
+          "type": "object",
+          "description": "WHOIS profiles of the accepting account. Only the contact types required by the TLD are applied, but all four IDs must be provided.",
+          "properties": {
+            "owner_id": {
+              "type": "integer",
+              "description": "Owner contact WHOIS record ID"
+            },
+            "admin_id": {
+              "type": "integer",
+              "description": "Administrative contact WHOIS record ID"
+            },
+            "billing_id": {
+              "type": "integer",
+              "description": "Billing contact WHOIS record ID"
+            },
+            "tech_id": {
+              "type": "integer",
+              "description": "Technical contact WHOIS record ID"
+            }
+          },
+          "required": [
+            "owner_id",
+            "admin_id",
+            "billing_id",
+            "tech_id"
+          ]
+        }
+      },
+      "required": [
+        "domain",
+        "domain_contacts"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_rejectIncomingDomainMoveV1",
+    "description": "Reject an incoming move for a specified domain.\n\nThe domain stays in the account which initiated the move.\nMoves you have already accepted cannot be rejected anymore.\n\nUse this endpoint to decline a domain you do not want to take over.",
+    "method": "DELETE",
+    "path": "/api/domains/v1/move/incoming/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_getIncomingDomainMoveListV1",
+    "description": "Retrieve all domains other Hostinger accounts are moving to your account.\n\nMoves of every status are returned, including the ones which already completed.\n\nUse this endpoint to find domains waiting for you to accept them.",
+    "method": "GET",
+    "path": "/api/domains/v1/move/incoming",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_getOutgoingDomainMoveV1",
+    "description": "Retrieve the outgoing move for a specified domain.\n\nReturns 404 when the domain has no move in progress.\n\nUse this endpoint to track the status of a move you have initiated for a single domain.",
+    "method": "GET",
+    "path": "/api/domains/v1/move/outgoing/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_startOutgoingDomainMoveV1",
+    "description": "Initiate a move of a specified domain to another Hostinger account.\n\nThe receiving account has to already exist and accept the move before the domain changes hands.\n\nThe domain must be active. The subscription it belongs to is resolved automatically,\nand the request is rejected with a 404 status code when the domain has no domain\nsubscription of its own.\n\nDomains protected by premium protection require an additional verification step,\nsuch requests are rejected with a 428 status code.\n\nUse this endpoint to hand a domain over to another Hostinger user.",
+    "method": "POST",
+    "path": "/api/domains/v1/move/outgoing/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "new_customer_email": {
+          "type": "string",
+          "description": "Email address of the Hostinger account receiving the domain"
+        }
+      },
+      "required": [
+        "domain",
+        "new_customer_email"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_cancelOutgoingDomainMoveV1",
+    "description": "Cancel an outgoing move for a specified domain.\n\nThe move can only be cancelled while the receiving account has not accepted it yet.\nThe domain stays in your account.\n\nUse this endpoint to withdraw a move you no longer want to complete.",
+    "method": "DELETE",
+    "path": "/api/domains/v1/move/outgoing/{domain}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_getOutgoingDomainMoveListV1",
+    "description": "Retrieve all domains you are moving to other Hostinger accounts.\n\nOnly moves which have not completed yet are returned.\n\nUse this endpoint to track moves you have initiated and the accounts they are addressed to.",
+    "method": "GET",
+    "path": "/api/domains/v1/move/outgoing",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_getDomainAuthorizationCodeV1",
     "description": "Retrieve the authorization (EPP) code for a specified domain so it can be transferred\naway from Hostinger to another registrar.\n\nRequesting a new code invalidates any code retrieved previously.\n\nUse this endpoint to obtain the code required to transfer a domain to another registrar.",
     "method": "GET",
