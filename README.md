@@ -49,11 +49,11 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (289 total)
+- `hostinger-api-mcp` — unified server with every tool (291 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
-- `hostinger-domains-mcp` — 36 tools for domains
+- `hostinger-domains-mcp` — 38 tools for domains
 - `hostinger-ecommerce-mcp` — 12 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
@@ -855,6 +855,29 @@ Use this endpoint to obtain the code required to transfer a domain to another re
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/portfolio/{domain}/auth-code`
 
+#### domains_claimFreeDomainV1
+
+Claim a free domain available on your account and register it.
+
+Unlike purchasing a domain, this consumes a free domain you already have,
+so no payment method is required.
+
+A successful response means the domain is registered. If registration fails, login to
+[hPanel](https://hpanel.hostinger.com/) and check domain registration status.
+
+If no WHOIS information is provided, default contact information for that TLD will be used.
+Before making request, ensure WHOIS information for desired TLD exists in your account.
+
+Some TLDs require `additional_details` to be provided and these will be validated before claiming.
+
+Requests which cannot be fulfilled are rejected with an error code in the response body,
+for example `2037` when no free domain is available.
+
+Use this endpoint to register a domain using a free domain from your account.
+
+- **Method**: `POST`
+- **Path**: `/api/domains/v1/portfolio/claim`
+
 #### domains_enableDomainLockV1
 
 Enable domain lock for the domain.
@@ -956,6 +979,30 @@ Use this endpoint to configure custom DNS hosting for domains.
 
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/nameservers`
+
+#### domains_claimFreeDomainTransferV1
+
+Claim a free domain transfer available on your account and start the transfer.
+
+Unlike purchasing a transfer, this consumes a free domain transfer you already have,
+so no payment method is required.
+
+Before making request, unlock the domain at the current registrar and get its authorization
+code. The transfer is validated first, so domains which cannot be transferred are rejected
+before the free domain transfer is consumed.
+
+A successful response means the transfer has been started. Completion depends on the current
+registrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).
+
+If no WHOIS information is provided, default contact information for that TLD will be used.
+Before making request, ensure WHOIS information for desired TLD exists in your account.
+
+Requests which cannot be fulfilled are rejected with an error code in the response body.
+
+Use this endpoint to transfer a domain using a free domain transfer from your account.
+
+- **Method**: `POST`
+- **Path**: `/api/domains/v1/transfers/claim`
 
 #### domains_getTransferV1
 

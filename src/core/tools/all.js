@@ -2241,6 +2241,57 @@ export default [
     "group": "domains"
   },
   {
+    "name": "domains_claimFreeDomainV1",
+    "description": "Claim a free domain available on your account and register it.\n\nUnlike purchasing a domain, this consumes a free domain you already have,\nso no payment method is required.\n\nA successful response means the domain is registered. If registration fails, login to\n[hPanel](https://hpanel.hostinger.com/) and check domain registration status.\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nSome TLDs require `additional_details` to be provided and these will be validated before claiming.\n\nRequests which cannot be fulfilled are rejected with an error code in the response body,\nfor example `2037` when no free domain is available.\n\nUse this endpoint to register a domain using a free domain from your account.",
+    "method": "POST",
+    "path": "/api/domains/v1/portfolio/claim",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "domain_contacts": {
+          "type": "object",
+          "description": "Domain contact information",
+          "properties": {
+            "owner_id": {
+              "type": "integer",
+              "description": "Owner contact WHOIS record ID"
+            },
+            "admin_id": {
+              "type": "integer",
+              "description": "Administrative contact WHOIS record ID"
+            },
+            "billing_id": {
+              "type": "integer",
+              "description": "Billing contact WHOIS record ID"
+            },
+            "tech_id": {
+              "type": "integer",
+              "description": "Technical contact WHOIS record ID"
+            }
+          }
+        },
+        "additional_details": {
+          "type": "object",
+          "description": "Additional registration data, possible values depends on TLD",
+          "properties": {}
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_enableDomainLockV1",
     "description": "Enable domain lock for the domain.\n\nWhen domain lock is enabled,\nthe domain cannot be transferred to another registrar without first disabling the lock.\n\nUse this endpoint to secure domains against unauthorized transfers.",
     "method": "PUT",
@@ -2502,6 +2553,61 @@ export default [
         "domain",
         "ns1",
         "ns2"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
+    "name": "domains_claimFreeDomainTransferV1",
+    "description": "Claim a free domain transfer available on your account and start the transfer.\n\nUnlike purchasing a transfer, this consumes a free domain transfer you already have,\nso no payment method is required.\n\nBefore making request, unlock the domain at the current registrar and get its authorization\ncode. The transfer is validated first, so domains which cannot be transferred are rejected\nbefore the free domain transfer is consumed.\n\nA successful response means the transfer has been started. Completion depends on the current\nregistrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nRequests which cannot be fulfilled are rejected with an error code in the response body.\n\nUse this endpoint to transfer a domain using a free domain transfer from your account.",
+    "method": "POST",
+    "path": "/api/domains/v1/transfers/claim",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "auth_code": {
+          "type": "string",
+          "description": "Authorization code from the current registrar"
+        },
+        "domain_contacts": {
+          "type": "object",
+          "description": "Domain contact information",
+          "properties": {
+            "owner_id": {
+              "type": "integer",
+              "description": "Owner contact WHOIS record ID"
+            },
+            "admin_id": {
+              "type": "integer",
+              "description": "Administrative contact WHOIS record ID"
+            },
+            "billing_id": {
+              "type": "integer",
+              "description": "Billing contact WHOIS record ID"
+            },
+            "tech_id": {
+              "type": "integer",
+              "description": "Technical contact WHOIS record ID"
+            }
+          }
+        },
+        "should_keep_ns": {
+          "type": "boolean",
+          "description": "Keep the existing nameservers of the domain"
+        }
+      },
+      "required": [
+        "domain",
+        "auth_code"
       ]
     },
     "security": [

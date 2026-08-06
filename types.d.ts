@@ -1412,6 +1412,43 @@ Use this endpoint to obtain the code required to transfer a domain to another re
   };
 
   /**
+   * Claim a free domain available on your account and register it.
+
+Unlike purchasing a domain, this consumes a free domain you already have,
+so no payment method is required.
+
+A successful response means the domain is registered. If registration fails, login to
+[hPanel](https://hpanel.hostinger.com/) and check domain registration status.
+
+If no WHOIS information is provided, default contact information for that TLD will be used.
+Before making request, ensure WHOIS information for desired TLD exists in your account.
+
+Some TLDs require `additional_details` to be provided and these will be validated before claiming.
+
+Requests which cannot be fulfilled are rejected with an error code in the response body,
+for example `2037` when no free domain is available.
+
+Use this endpoint to register a domain using a free domain from your account.
+   */
+  "domains_claimFreeDomainV1": {
+    params: {
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Domain contact information
+       */
+      domain_contacts?: object;
+      /**
+       * Additional registration data, possible values depends on TLD
+       */
+      additional_details?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Enable domain lock for the domain.
 
 When domain lock is enabled,
@@ -1596,6 +1633,48 @@ Use this endpoint to configure custom DNS hosting for domains.
        * Fourth name server
        */
       ns4?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Claim a free domain transfer available on your account and start the transfer.
+
+Unlike purchasing a transfer, this consumes a free domain transfer you already have,
+so no payment method is required.
+
+Before making request, unlock the domain at the current registrar and get its authorization
+code. The transfer is validated first, so domains which cannot be transferred are rejected
+before the free domain transfer is consumed.
+
+A successful response means the transfer has been started. Completion depends on the current
+registrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).
+
+If no WHOIS information is provided, default contact information for that TLD will be used.
+Before making request, ensure WHOIS information for desired TLD exists in your account.
+
+Requests which cannot be fulfilled are rejected with an error code in the response body.
+
+Use this endpoint to transfer a domain using a free domain transfer from your account.
+   */
+  "domains_claimFreeDomainTransferV1": {
+    params: {
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Authorization code from the current registrar
+       */
+      auth_code: string;
+      /**
+       * Domain contact information
+       */
+      domain_contacts?: object;
+      /**
+       * Keep the existing nameservers of the domain
+       */
+      should_keep_ns?: boolean;
     };
     response: any; // Response structure will depend on the API
   };
