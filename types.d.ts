@@ -4666,6 +4666,185 @@ Segments are used to organize and group contacts based on specific criteria.
   };
 
   /**
+   * Assign a tag to a single contact.
+
+Unlike the bulk endpoint this is applied immediately rather than queued. Assigning a tag
+the contact already carries succeeds without duplicating it.
+   */
+  "reach_assignAContactToATagV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Tag uuid parameter
+       */
+      tagUuid: string;
+      /**
+       * Contact uuid parameter
+       */
+      contactUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Remove a tag from a single contact.
+
+Unlike the bulk endpoint this is applied immediately rather than queued. Neither the tag
+nor the contact is deleted.
+   */
+  "reach_removeAContactFromATagV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Tag uuid parameter
+       */
+      tagUuid: string;
+      /**
+       * Contact uuid parameter
+       */
+      contactUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Assign a tag to many contacts at once.
+
+Pass `contact_uuids` to target specific contacts, or `all_contacts` to target every contact
+in the profile. The work is queued, so a success response means it was accepted rather than
+finished. Contacts that already carry the tag are left alone.
+   */
+  "reach_assignContactsToATagV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Tag uuid parameter
+       */
+      tagUuid: string;
+      /**
+       * Contacts to apply the change to. Required unless all_contacts is true.
+       */
+      contact_uuids?: array;
+      /**
+       * Apply to every contact in the profile
+       */
+      all_contacts?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Remove a tag from many contacts at once.
+
+Pass `contact_uuids` to target specific contacts, or `all_contacts` to target every contact
+in the profile. The work is queued, so a success response means it was accepted rather than
+finished. The tag itself and the contacts are not deleted.
+   */
+  "reach_removeContactsFromATagV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Tag uuid parameter
+       */
+      tagUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a tag and remove it from every contact carrying it.
+
+The contacts themselves are not deleted. This is idempotent: deleting a tag that does not
+exist in the profile still succeeds.
+   */
+  "reach_deleteATagV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Tag uuid parameter
+       */
+      tagUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Rename a tag.
+
+The contacts assigned to the tag are unaffected. Names are unique within a profile, so
+renaming a tag to a name that is already taken is rejected.
+   */
+  "reach_renameATagV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Tag uuid parameter
+       */
+      tagUuid: string;
+      /**
+       * New tag name
+       */
+      value: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get all tags defined in a profile.
+
+Tags are the way contacts are grouped in Reach, and can be used to filter the contact
+list or to build segments.
+   */
+  "reach_listProfileTagsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create tags in a profile.
+
+Names that already exist in the profile are not duplicated: the existing tag is returned
+instead, so the call is safe to repeat. Every tag in the request is returned, whether it
+was created now or already existed.
+   */
+  "reach_createOrFindTagsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * names parameter
+       */
+      names: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve the DNS configuration status for a profile's domain.
 
 This endpoint reports the state of MX, SPF, DKIM and DMARC records, including the

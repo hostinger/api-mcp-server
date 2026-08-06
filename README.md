@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (300 total)
+- `hostinger-api-mcp` — unified server with every tool (308 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -58,7 +58,7 @@ This package installs the following MCP server commands:
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
-- `hostinger-reach-mcp` — 21 tools for reach
+- `hostinger-reach-mcp` — 29 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
 
@@ -2332,6 +2332,89 @@ Segments are used to organize and group contacts based on specific criteria.
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments/{segmentUuid}`
+
+#### reach_assignAContactToATagV1
+
+Assign a tag to a single contact.
+
+Unlike the bulk endpoint this is applied immediately rather than queued. Assigning a tag
+the contact already carries succeeds without duplicating it.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts/{contactUuid}`
+
+#### reach_removeAContactFromATagV1
+
+Remove a tag from a single contact.
+
+Unlike the bulk endpoint this is applied immediately rather than queued. Neither the tag
+nor the contact is deleted.
+
+- **Method**: `DELETE`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts/{contactUuid}`
+
+#### reach_assignContactsToATagV1
+
+Assign a tag to many contacts at once.
+
+Pass `contact_uuids` to target specific contacts, or `all_contacts` to target every contact
+in the profile. The work is queued, so a success response means it was accepted rather than
+finished. Contacts that already carry the tag are left alone.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts`
+
+#### reach_removeContactsFromATagV1
+
+Remove a tag from many contacts at once.
+
+Pass `contact_uuids` to target specific contacts, or `all_contacts` to target every contact
+in the profile. The work is queued, so a success response means it was accepted rather than
+finished. The tag itself and the contacts are not deleted.
+
+- **Method**: `DELETE`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts`
+
+#### reach_deleteATagV1
+
+Delete a tag and remove it from every contact carrying it.
+
+The contacts themselves are not deleted. This is idempotent: deleting a tag that does not
+exist in the profile still succeeds.
+
+- **Method**: `DELETE`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}`
+
+#### reach_renameATagV1
+
+Rename a tag.
+
+The contacts assigned to the tag are unaffected. Names are unique within a profile, so
+renaming a tag to a name that is already taken is rejected.
+
+- **Method**: `PATCH`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}`
+
+#### reach_listProfileTagsV1
+
+Get all tags defined in a profile.
+
+Tags are the way contacts are grouped in Reach, and can be used to filter the contact
+list or to build segments.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/tags`
+
+#### reach_createOrFindTagsV1
+
+Create tags in a profile.
+
+Names that already exist in the profile are not duplicated: the existing tag is returned
+instead, so the call is safe to repeat. Every tag in the request is returned, whether it
+was created now or already existed.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/tags`
 
 #### reach_getProfileDomainDNSStatusV1
 

@@ -810,6 +810,264 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
+    "name": "reach_assignAContactToATagV1",
+    "description": "Assign a tag to a single contact.\n\nUnlike the bulk endpoint this is applied immediately rather than queued. Assigning a tag\nthe contact already carries succeeds without duplicating it.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts/{contactUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "tagUuid": {
+          "type": "string",
+          "description": "Tag uuid parameter"
+        },
+        "contactUuid": {
+          "type": "string",
+          "description": "Contact uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "tagUuid",
+        "contactUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_removeAContactFromATagV1",
+    "description": "Remove a tag from a single contact.\n\nUnlike the bulk endpoint this is applied immediately rather than queued. Neither the tag\nnor the contact is deleted.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts/{contactUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "tagUuid": {
+          "type": "string",
+          "description": "Tag uuid parameter"
+        },
+        "contactUuid": {
+          "type": "string",
+          "description": "Contact uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "tagUuid",
+        "contactUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_assignContactsToATagV1",
+    "description": "Assign a tag to many contacts at once.\n\nPass `contact_uuids` to target specific contacts, or `all_contacts` to target every contact\nin the profile. The work is queued, so a success response means it was accepted rather than\nfinished. Contacts that already carry the tag are left alone.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "tagUuid": {
+          "type": "string",
+          "description": "Tag uuid parameter"
+        },
+        "contact_uuids": {
+          "type": "array",
+          "description": "Contacts to apply the change to. Required unless all_contacts is true.",
+          "items": {
+            "type": "string",
+            "description": "contact_uuids parameter"
+          }
+        },
+        "all_contacts": {
+          "type": "boolean",
+          "description": "Apply to every contact in the profile"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "tagUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_removeContactsFromATagV1",
+    "description": "Remove a tag from many contacts at once.\n\nPass `contact_uuids` to target specific contacts, or `all_contacts` to target every contact\nin the profile. The work is queued, so a success response means it was accepted rather than\nfinished. The tag itself and the contacts are not deleted.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "tagUuid": {
+          "type": "string",
+          "description": "Tag uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "tagUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_deleteATagV1",
+    "description": "Delete a tag and remove it from every contact carrying it.\n\nThe contacts themselves are not deleted. This is idempotent: deleting a tag that does not\nexist in the profile still succeeds.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "tagUuid": {
+          "type": "string",
+          "description": "Tag uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "tagUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_renameATagV1",
+    "description": "Rename a tag.\n\nThe contacts assigned to the tag are unaffected. Names are unique within a profile, so\nrenaming a tag to a name that is already taken is rejected.",
+    "method": "PATCH",
+    "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "tagUuid": {
+          "type": "string",
+          "description": "Tag uuid parameter"
+        },
+        "value": {
+          "type": "string",
+          "description": "New tag name"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "tagUuid",
+        "value"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_listProfileTagsV1",
+    "description": "Get all tags defined in a profile.\n\nTags are the way contacts are grouped in Reach, and can be used to filter the contact\nlist or to build segments.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/tags",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_createOrFindTagsV1",
+    "description": "Create tags in a profile.\n\nNames that already exist in the profile are not duplicated: the existing tag is returned\ninstead, so the call is safe to repeat. Every tag in the request is returned, whether it\nwas created now or already existed.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/tags",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "names": {
+          "type": "array",
+          "description": "names parameter",
+          "items": {
+            "type": "string",
+            "description": "names parameter"
+          }
+        }
+      },
+      "required": [
+        "profileUuid",
+        "names"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_getProfileDomainDNSStatusV1",
     "description": "Retrieve the DNS configuration status for a profile's domain.\n\nThis endpoint reports the state of MX, SPF, DKIM and DMARC records, including the\nactual records found and the suggested records required for correct email delivery.",
     "method": "GET",

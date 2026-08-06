@@ -29,7 +29,7 @@ const SECURITY_SCHEMES = {
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 1.28.0
+ * Generated from OpenAPI spec version 1.29.0
  */
 class MCPServer {
   constructor({ name, version, tools }) {
