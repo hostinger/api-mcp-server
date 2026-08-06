@@ -4182,6 +4182,10 @@ requests are rate limited upstream.
    * Delete a contact with the specified UUID.
 
 This endpoint permanently removes a contact from the email marketing system.
+
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to the
+client's default profile and cannot delete contacts of any other profile. Use
+`DELETE /api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}` instead.
    */
   "reach_deleteAContactV1": {
     params: {
@@ -4189,6 +4193,100 @@ This endpoint permanently removes a contact from the email marketing system.
        * UUID of the contact to delete
        */
       uuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a custom contact field.
+
+Every value contacts hold for the field is deleted with it, and for the choice types so
+are its options. The contacts themselves are not affected.
+   */
+  "reach_deleteAContactFieldV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Contact field uuid parameter
+       */
+      fieldUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Rename a custom contact field and, for the choice types, replace its option set.
+
+Options carrying a uuid are kept and relabelled, options without one are created, and any
+existing option left out of the list is deleted along with the values contacts hold for
+it. The field type and slug cannot be changed.
+   */
+  "reach_updateAContactFieldV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Contact field uuid parameter
+       */
+      fieldUuid: string;
+      /**
+       * label parameter
+       */
+      label: string;
+      /**
+       * Replaces the option set when provided. Entries carrying a uuid are kept and relabelled, entries without one are created, and any existing option missing from the list is deleted along with the values contacts hold for it.
+       */
+      options?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get the custom contact fields defined in a profile.
+
+Custom fields let you store your own attributes on contacts. The returned uuids are what
+you pass to the contact update endpoint to set values, and choice fields also list the
+options available to pick from.
+   */
+  "reach_listContactFieldsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Define a new custom contact field in a profile.
+
+The `slug` is derived from the label and, like the field type, cannot be changed later.
+Use the returned uuid to set values on contacts.
+   */
+  "reach_createAContactFieldV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Immutable once the field exists
+       */
+      type: string;
+      /**
+       * label parameter
+       */
+      label: string;
+      /**
+       * Required for single_choice and multi_choice, ignored for the scalar types. Labels must be unique regardless of casing.
+       */
+      options?: array;
     };
     response: any; // Response structure will depend on the API
   };
@@ -4210,6 +4308,11 @@ This endpoint returns a list of contact groups that can be used to organize cont
 
 This endpoint returns a paginated list of contacts with their basic information.
 You can filter contacts by group UUID and subscription status.
+
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to the
+client's default profile and cannot list contacts of any other profile. Use
+`GET /api/reach/v1/profiles/{profileUuid}/contacts` instead, which also replaces the
+group filter with a tag filter.
    */
   "reach_listContactsV1": {
     params: {
@@ -4239,6 +4342,201 @@ the contact will be created with a pending status and a confirmation email will 
    */
   "reach_createANewContactV1": {
     params: {
+      /**
+       * email parameter
+       */
+      email: string;
+      /**
+       * name parameter
+       */
+      name?: string;
+      /**
+       * surname parameter
+       */
+      surname?: string;
+      /**
+       * Phone number in E.164 format (leading "+" then 7-15 digits)
+       */
+      phone?: string;
+      /**
+       * note parameter
+       */
+      note?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get the full details of a single contact.
+
+Alongside the contact's own attributes this returns the tags assigned to it and the
+values it holds for the profile's custom contact fields.
+   */
+  "reach_getContactDetailsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Contact uuid parameter
+       */
+      contactUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently delete a contact from a profile.
+
+The contact is removed together with its custom field values and tag assignments.
+   */
+  "reach_deleteAProfileContactV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Contact uuid parameter
+       */
+      contactUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Update a contact's attributes and custom field values.
+
+Only the properties present in the request body are changed, so a partial body is enough
+to change a single attribute. Sending a property as `null` clears it.
+
+The response carries the contact's core attributes. Read back its tags, custom field
+values, source and note with `GET /api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}`.
+   */
+  "reach_updateAContactV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Contact uuid parameter
+       */
+      contactUuid: string;
+      /**
+       * email parameter
+       */
+      email?: string;
+      /**
+       * name parameter
+       */
+      name?: string;
+      /**
+       * surname parameter
+       */
+      surname?: string;
+      /**
+       * Phone number in E.164 format (leading "+" then 7-15 digits)
+       */
+      phone?: string;
+      /**
+       * subscription_status parameter
+       */
+      subscription_status?: string;
+      /**
+       * note parameter
+       */
+      note?: string;
+      /**
+       * Set custom field values. Omit to leave untouched, send an empty array to clear them all.
+       */
+      fields?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create many contacts in a profile in a single call.
+
+The contacts are imported in the background, so a success response means the import was
+accepted rather than finished. Contacts whose email already exists in the profile are
+left as they are. If double opt-in is enabled, new contacts start off pending and are
+sent a confirmation email.
+   */
+  "reach_createContactsInBulkV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * contacts parameter
+       */
+      contacts: array;
+      /**
+       * Existing tags to attach to every created contact
+       */
+      tag_uuids?: array;
+      /**
+       * Note applied to every created contact
+       */
+      note?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a paginated list of contacts belonging to a profile.
+
+Contacts can be filtered by subscription status, by tag, and by an email search term.
+The `meta.total` field of the response is the number of contacts matching the filters,
+so calling this endpoint without filters gives the profile's total contact count.
+   */
+  "reach_listProfileContactsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Filter contacts by subscription status
+       */
+      subscription_status?: string;
+      /**
+       * Filter contacts by tag UUID
+       */
+      tag_uuid?: string;
+      /**
+       * Search contacts by email
+       */
+      search?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a new contact in the email marketing system.
+
+This endpoint allows you to create a new contact with basic information like name, email, and surname.
+
+If double opt-in is enabled, the contact will be created with a pending status
+and a confirmation email will be sent.
+   */
+  "reach_createNewContactsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
       /**
        * email parameter
        */
@@ -4363,44 +4661,6 @@ Segments are used to organize and group contacts based on specific criteria.
        * Segment uuid parameter
        */
       segmentUuid: string;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
-   * Create a new contact in the email marketing system.
-
-This endpoint allows you to create a new contact with basic information like name, email, and surname.
-
-If double opt-in is enabled, the contact will be created with a pending status
-and a confirmation email will be sent.
-   */
-  "reach_createNewContactsV1": {
-    params: {
-      /**
-       * Profile uuid parameter
-       */
-      profileUuid: string;
-      /**
-       * email parameter
-       */
-      email: string;
-      /**
-       * name parameter
-       */
-      name?: string;
-      /**
-       * surname parameter
-       */
-      surname?: string;
-      /**
-       * Phone number in E.164 format (leading "+" then 7-15 digits)
-       */
-      phone?: string;
-      /**
-       * note parameter
-       */
-      note?: string;
     };
     response: any; // Response structure will depend on the API
   };
