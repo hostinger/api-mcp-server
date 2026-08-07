@@ -583,7 +583,7 @@ export default [
   },
   {
     "name": "reach_listSegmentsV1",
-    "description": "Get a list of all contact segments.\n\nThis endpoint returns a list of contact segments that can be used to organize contacts.",
+    "description": "Get a list of all contact segments.\n\nThis endpoint returns a list of contact segments that can be used to organize contacts.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to\nthe client's default profile and cannot list the segments of any other profile. Use\n`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.",
     "method": "GET",
     "path": "/api/reach/v1/segmentation/segments",
     "inputSchema": {
@@ -600,7 +600,7 @@ export default [
   },
   {
     "name": "reach_createANewContactSegmentV1",
-    "description": "Create a new contact segment.\n\nThis endpoint allows creating a new contact segment that can be used to organize contacts.\nThe segment can be configured with specific criteria like email, name, subscription status, etc.",
+    "description": "Create a new contact segment.\n\nThis endpoint allows creating a new contact segment that can be used to organize contacts.\nThe segment can be configured with specific criteria like email, name, subscription status, etc.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to\nthe client's default profile and cannot create segments in any other profile. Use\n`POST /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.",
     "method": "POST",
     "path": "/api/reach/v1/segmentation/segments",
     "inputSchema": {
@@ -639,6 +639,8 @@ export default [
                   "not_dropped",
                   "bounced",
                   "not_bounced",
+                  "soft_bounced",
+                  "not_soft_bounced",
                   "opened",
                   "not_opened",
                   "clicked",
@@ -703,6 +705,35 @@ export default [
     "group": "reach"
   },
   {
+    "name": "reach_countProfileSegmentContactsV1",
+    "description": "Count the contacts currently matching a segment without listing them.\n\nCheaper than paging through the segment contacts endpoint when only the size is needed.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/count",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "segmentUuid": {
+          "type": "string",
+          "description": "Segment uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "segmentUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_listProfileSegmentContactsV1",
     "description": "Retrieve contacts associated with a specific segment for a given profile.\n\nThis endpoint allows you to fetch and filter contacts that belong to a particular segment,\nidentified by its UUID, scoped to a specific profile.",
     "method": "GET",
@@ -740,8 +771,297 @@ export default [
     "group": "reach"
   },
   {
+    "name": "reach_getProfileSegmentDetailsV1",
+    "description": "Get a single segment of a profile, including the conditions that define it.\n\nTo retrieve the contacts currently matching those conditions, use the segment contacts\nendpoint instead.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "segmentUuid": {
+          "type": "string",
+          "description": "Segment uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "segmentUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_updateAProfileSegmentV1",
+    "description": "Rename a segment and/or replace the conditions that define it.\n\n`name` is always required. Omit `conditions` to rename without touching the conditions;\nsupply them and they replace the existing set entirely rather than being merged into it.\nContacts are never modified, but which of them match the segment can change immediately.",
+    "method": "PUT",
+    "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "segmentUuid": {
+          "type": "string",
+          "description": "Segment uuid parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "name parameter"
+        },
+        "conditions": {
+          "type": "array",
+          "description": "Replaces the existing conditions entirely. Omit to keep the current ones.",
+          "items": {
+            "type": "object",
+            "description": "conditions parameter",
+            "properties": {
+              "attribute": {
+                "type": "string",
+                "description": "A built-in contact attribute, or `cf:{fieldUuid}` to target a custom\ncontact field. Custom fields are addressed by field UUID; their slug\nis not accepted.\n\nBuilt-in attributes: `email`, `note`, `domain`, `source`,\n`opt_in_method`, `subscription_status`, `subscribed_at`,\n`unsubscribed_at`, `created_at`, `tag`, `campaigns`, `processed`,\n`opened`, `clicked`, `delivered`, `bounced`, `soft_bounced`,\n`dropped`.\n\nWhich operators are accepted depends on the attribute."
+              },
+              "operator": {
+                "type": "string",
+                "description": "operator parameter",
+                "enum": [
+                  "equals",
+                  "not_equals",
+                  "contains",
+                  "not_contains",
+                  "gte",
+                  "lte",
+                  "exists",
+                  "within_last_days",
+                  "not_within_last_days",
+                  "older_than_days",
+                  "processed",
+                  "not_processed",
+                  "delivered",
+                  "not_delivered",
+                  "dropped",
+                  "not_dropped",
+                  "bounced",
+                  "not_bounced",
+                  "soft_bounced",
+                  "not_soft_bounced",
+                  "opened",
+                  "not_opened",
+                  "clicked",
+                  "not_clicked",
+                  "unsubscribed",
+                  "not_unsubscribed"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "description": "Always a string, including for numeric and date comparisons"
+              }
+            },
+            "required": [
+              "attribute",
+              "operator",
+              "value"
+            ]
+          }
+        },
+        "logic": {
+          "type": "string",
+          "description": "How to combine multiple conditions. Required when conditions are given.",
+          "enum": [
+            "AND",
+            "OR"
+          ]
+        }
+      },
+      "required": [
+        "profileUuid",
+        "segmentUuid",
+        "name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_deleteAProfileSegmentV1",
+    "description": "Delete a segment.\n\nOnly the segment definition is removed. The contacts that matched it are left untouched.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "segmentUuid": {
+          "type": "string",
+          "description": "Segment uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "segmentUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_listProfileSegmentsV1",
+    "description": "Get a paginated list of the segments defined in a profile.\n\nEach entry carries the number of contacts currently matching it, which is recalculated on\nread rather than stored. Use `count_type` to count either every matching contact or only\nthe subscribed ones.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "count_type": {
+          "type": "string",
+          "description": "Which matching contacts to count for each segment",
+          "enum": [
+            "all",
+            "subscribed"
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_createAProfileSegmentV1",
+    "description": "Create a segment in a profile.\n\nA segment is a saved set of conditions rather than a fixed list, so its membership changes\nas contacts change. Creating one does not modify any contact.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "name parameter"
+        },
+        "conditions": {
+          "type": "array",
+          "description": "Conditions a contact must satisfy to fall into the segment",
+          "items": {
+            "type": "object",
+            "description": "conditions parameter",
+            "properties": {
+              "attribute": {
+                "type": "string",
+                "description": "A built-in contact attribute, or `cf:{fieldUuid}` to target a custom\ncontact field. Custom fields are addressed by field UUID; their slug\nis not accepted.\n\nBuilt-in attributes: `email`, `note`, `domain`, `source`,\n`opt_in_method`, `subscription_status`, `subscribed_at`,\n`unsubscribed_at`, `created_at`, `tag`, `campaigns`, `processed`,\n`opened`, `clicked`, `delivered`, `bounced`, `soft_bounced`,\n`dropped`.\n\nWhich operators are accepted depends on the attribute."
+              },
+              "operator": {
+                "type": "string",
+                "description": "operator parameter",
+                "enum": [
+                  "equals",
+                  "not_equals",
+                  "contains",
+                  "not_contains",
+                  "gte",
+                  "lte",
+                  "exists",
+                  "within_last_days",
+                  "not_within_last_days",
+                  "older_than_days",
+                  "processed",
+                  "not_processed",
+                  "delivered",
+                  "not_delivered",
+                  "dropped",
+                  "not_dropped",
+                  "bounced",
+                  "not_bounced",
+                  "soft_bounced",
+                  "not_soft_bounced",
+                  "opened",
+                  "not_opened",
+                  "clicked",
+                  "not_clicked",
+                  "unsubscribed",
+                  "not_unsubscribed"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "description": "Always a string, including for numeric and date comparisons"
+              }
+            },
+            "required": [
+              "attribute",
+              "operator",
+              "value"
+            ]
+          }
+        },
+        "logic": {
+          "type": "string",
+          "description": "How to combine multiple conditions",
+          "enum": [
+            "AND",
+            "OR"
+          ]
+        }
+      },
+      "required": [
+        "profileUuid",
+        "name",
+        "conditions",
+        "logic"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_listSegmentContactsV1",
-    "description": "Retrieve contacts associated with a specific segment.\n\nThis endpoint allows you to fetch and filter contacts that belong to a particular segment,\nidentified by its UUID.",
+    "description": "Retrieve contacts associated with a specific segment.\n\nThis endpoint allows you to fetch and filter contacts that belong to a particular segment,\nidentified by its UUID.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to\nthe client's default profile and cannot read segments of any other profile. Use\n`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts` instead.",
     "method": "GET",
     "path": "/api/reach/v1/segmentation/segments/{segmentUuid}/contacts",
     "inputSchema": {
@@ -773,7 +1093,7 @@ export default [
   },
   {
     "name": "reach_getSegmentDetailsV1",
-    "description": "Get details of a specific segment.\n\nThis endpoint retrieves information about a single segment identified by UUID.\nSegments are used to organize and group contacts based on specific criteria.",
+    "description": "Get details of a specific segment.\n\nThis endpoint retrieves information about a single segment identified by UUID.\nSegments are used to organize and group contacts based on specific criteria.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to\nthe client's default profile and cannot read segments of any other profile. Use\n`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}` instead.",
     "method": "GET",
     "path": "/api/reach/v1/segmentation/segments/{segmentUuid}",
     "inputSchema": {

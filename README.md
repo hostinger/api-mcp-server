@@ -49,7 +49,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (308 total)
+- `hostinger-api-mcp` — unified server with every tool (314 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -58,7 +58,7 @@ This package installs the following MCP server commands:
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 48 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
-- `hostinger-reach-mcp` — 29 tools for reach
+- `hostinger-reach-mcp` — 35 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
 
@@ -2290,6 +2290,10 @@ Get a list of all contact segments.
 
 This endpoint returns a list of contact segments that can be used to organize contacts.
 
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to
+the client's default profile and cannot list the segments of any other profile. Use
+`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.
+
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments`
 
@@ -2300,8 +2304,21 @@ Create a new contact segment.
 This endpoint allows creating a new contact segment that can be used to organize contacts.
 The segment can be configured with specific criteria like email, name, subscription status, etc.
 
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to
+the client's default profile and cannot create segments in any other profile. Use
+`POST /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.
+
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/segmentation/segments`
+
+#### reach_countProfileSegmentContactsV1
+
+Count the contacts currently matching a segment without listing them.
+
+Cheaper than paging through the segment contacts endpoint when only the size is needed.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/count`
 
 #### reach_listProfileSegmentContactsV1
 
@@ -2313,12 +2330,67 @@ identified by its UUID, scoped to a specific profile.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts`
 
+#### reach_getProfileSegmentDetailsV1
+
+Get a single segment of a profile, including the conditions that define it.
+
+To retrieve the contacts currently matching those conditions, use the segment contacts
+endpoint instead.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}`
+
+#### reach_updateAProfileSegmentV1
+
+Rename a segment and/or replace the conditions that define it.
+
+`name` is always required. Omit `conditions` to rename without touching the conditions;
+supply them and they replace the existing set entirely rather than being merged into it.
+Contacts are never modified, but which of them match the segment can change immediately.
+
+- **Method**: `PUT`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}`
+
+#### reach_deleteAProfileSegmentV1
+
+Delete a segment.
+
+Only the segment definition is removed. The contacts that matched it are left untouched.
+
+- **Method**: `DELETE`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}`
+
+#### reach_listProfileSegmentsV1
+
+Get a paginated list of the segments defined in a profile.
+
+Each entry carries the number of contacts currently matching it, which is recalculated on
+read rather than stored. Use `count_type` to count either every matching contact or only
+the subscribed ones.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments`
+
+#### reach_createAProfileSegmentV1
+
+Create a segment in a profile.
+
+A segment is a saved set of conditions rather than a fixed list, so its membership changes
+as contacts change. Creating one does not modify any contact.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments`
+
 #### reach_listSegmentContactsV1
 
 Retrieve contacts associated with a specific segment.
 
 This endpoint allows you to fetch and filter contacts that belong to a particular segment,
 identified by its UUID.
+
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to
+the client's default profile and cannot read segments of any other profile. Use
+`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts` instead.
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments/{segmentUuid}/contacts`
@@ -2329,6 +2401,10 @@ Get details of a specific segment.
 
 This endpoint retrieves information about a single segment identified by UUID.
 Segments are used to organize and group contacts based on specific criteria.
+
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to
+the client's default profile and cannot read segments of any other profile. Use
+`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}` instead.
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments/{segmentUuid}`

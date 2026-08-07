@@ -4565,6 +4565,10 @@ and a confirmation email will be sent.
    * Get a list of all contact segments.
 
 This endpoint returns a list of contact segments that can be used to organize contacts.
+
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to
+the client's default profile and cannot list the segments of any other profile. Use
+`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.
    */
   "reach_listSegmentsV1": {
     params: {
@@ -4578,6 +4582,10 @@ This endpoint returns a list of contact segments that can be used to organize co
 
 This endpoint allows creating a new contact segment that can be used to organize contacts.
 The segment can be configured with specific criteria like email, name, subscription status, etc.
+
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to
+the client's default profile and cannot create segments in any other profile. Use
+`POST /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.
    */
   "reach_createANewContactSegmentV1": {
     params: {
@@ -4593,6 +4601,25 @@ The segment can be configured with specific criteria like email, name, subscript
        * logic parameter
        */
       logic: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Count the contacts currently matching a segment without listing them.
+
+Cheaper than paging through the segment contacts endpoint when only the size is needed.
+   */
+  "reach_countProfileSegmentContactsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Segment uuid parameter
+       */
+      segmentUuid: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -4626,10 +4653,143 @@ identified by its UUID, scoped to a specific profile.
   };
 
   /**
+   * Get a single segment of a profile, including the conditions that define it.
+
+To retrieve the contacts currently matching those conditions, use the segment contacts
+endpoint instead.
+   */
+  "reach_getProfileSegmentDetailsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Segment uuid parameter
+       */
+      segmentUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Rename a segment and/or replace the conditions that define it.
+
+`name` is always required. Omit `conditions` to rename without touching the conditions;
+supply them and they replace the existing set entirely rather than being merged into it.
+Contacts are never modified, but which of them match the segment can change immediately.
+   */
+  "reach_updateAProfileSegmentV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Segment uuid parameter
+       */
+      segmentUuid: string;
+      /**
+       * name parameter
+       */
+      name: string;
+      /**
+       * Replaces the existing conditions entirely. Omit to keep the current ones.
+       */
+      conditions?: array;
+      /**
+       * How to combine multiple conditions. Required when conditions are given.
+       */
+      logic?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a segment.
+
+Only the segment definition is removed. The contacts that matched it are left untouched.
+   */
+  "reach_deleteAProfileSegmentV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Segment uuid parameter
+       */
+      segmentUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a paginated list of the segments defined in a profile.
+
+Each entry carries the number of contacts currently matching it, which is recalculated on
+read rather than stored. Use `count_type` to count either every matching contact or only
+the subscribed ones.
+   */
+  "reach_listProfileSegmentsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Which matching contacts to count for each segment
+       */
+      count_type?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a segment in a profile.
+
+A segment is a saved set of conditions rather than a fixed list, so its membership changes
+as contacts change. Creating one does not modify any contact.
+   */
+  "reach_createAProfileSegmentV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * name parameter
+       */
+      name: string;
+      /**
+       * Conditions a contact must satisfy to fall into the segment
+       */
+      conditions: array;
+      /**
+       * How to combine multiple conditions
+       */
+      logic: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve contacts associated with a specific segment.
 
 This endpoint allows you to fetch and filter contacts that belong to a particular segment,
 identified by its UUID.
+
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to
+the client's default profile and cannot read segments of any other profile. Use
+`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts` instead.
    */
   "reach_listSegmentContactsV1": {
     params: {
@@ -4654,6 +4814,10 @@ identified by its UUID.
 
 This endpoint retrieves information about a single segment identified by UUID.
 Segments are used to organize and group contacts based on specific criteria.
+
+**Deprecated.** This endpoint cannot target a profile, so it always falls back to
+the client's default profile and cannot read segments of any other profile. Use
+`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}` instead.
    */
   "reach_getSegmentDetailsV1": {
     params: {
