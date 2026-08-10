@@ -664,9 +664,9 @@ status, metadata, hosting plan details, and resource quotas.
   };
 
   /**
-   * Deletes an Agency Plan website and schedules cleanup of its resources.
-
-This action is irreversible. Website files, databases, and linked domains are removed.
+   * Permanently deletes an Agency Plan website. Deletion is processed asynchronously: the
+website is immediately transitioned to a deleting state and the underlying server
+resources are removed in the background.
    */
   "agency-hosting_deleteAgencyPlanWebsiteV1": {
     params: {
