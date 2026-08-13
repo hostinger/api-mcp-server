@@ -238,7 +238,7 @@ Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file
 - **Method**: `custom`
 - **Path**: `custom`
 
-#### agency-hosting_listAvailableDatacentersForAnAgencyPlanOrderV1
+#### agency-hosting_listAvailableDatacentersV1
 
 Lists the datacenters available for provisioning a new website on the given Agency Plan
 hosting order.
@@ -250,7 +250,7 @@ ping) before choosing its `code` as the `datacenter_code` when creating a websit
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/datacenters`
 
-#### agency-hosting_changeAgencyPlanWebsiteDomainV1
+#### agency-hosting_changeWebsiteDomainV1
 
 Changes the primary domain for an Agency Plan website.
 
@@ -260,14 +260,14 @@ Set domain to null to revert to the temporary domain.
 - **Method**: `PUT`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{from_domain}`
 
-#### agency-hosting_linkDomainToAgencyPlanWebsiteV1
+#### agency-hosting_linkDomainToWebsiteV1
 
 Links a domain to the specified Agency Plan website so it can serve traffic for that domain.
 
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains`
 
-#### agency-hosting_listAgencyPlanDomainsV1
+#### agency-hosting_listDomainsV1
 
 Returns a paginated list of domains associated with Agency Plan websites accessible to the authenticated client.
 
@@ -276,7 +276,7 @@ Use the website_uuids filter to narrow results to specific websites.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/domains`
 
-#### agency-hosting_unlinkDomainFromAgencyPlanWebsiteV1
+#### agency-hosting_unlinkDomainFromWebsiteV1
 
 Unlinks a domain from the specified Agency Plan website.
 
@@ -289,7 +289,7 @@ If this is the only domain on the website, unlinking leaves the website without 
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}`
 
-#### agency-hosting_importAgencyPlanWebsiteFromArchiveV1
+#### agency-hosting_importWebsiteFromArchiveV1
 
 Imports an Agency Plan website from an already-uploaded archive.
 
@@ -300,14 +300,14 @@ archive types: .zip, .tar, .tar.gz, .tgz.
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/files/import-archive`
 
-#### agency-hosting_listAgencyPlanOrdersV1
+#### agency-hosting_listOrdersV1
 
 Returns a paginated list of Agency Plan orders accessible to the authenticated client.
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders`
 
-#### agency-hosting_provisionANewAgencyPlanWebsiteV1
+#### agency-hosting_createANewWebsiteV1
 
 Provisions a new website on one of your Agency Plan hosting orders.
 
@@ -330,7 +330,7 @@ that identifies the job. The new website becomes reachable once provisioning fin
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/websites/setups`
 
-#### agency-hosting_getAgencyPlanWebsiteSetupStatusV1
+#### agency-hosting_getWebsiteSetupStatusV1
 
 Returns the current status of an Agency Plan website setup started via the setups
 endpoint.
@@ -341,7 +341,7 @@ Poll this endpoint using the `setup_uuid` returned from the provisioning request
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/websites/setups/{setup_uuid}`
 
-#### agency-hosting_buildAgencyPlanWebsiteNodeJSAssetsV1
+#### agency-hosting_buildWebsiteNodeJSAssetsV1
 
 Builds and deploys a Node.js application for an Agency Plan website from an already-uploaded archive.
 
@@ -351,7 +351,7 @@ Website contents are overwritten by the build result, which is deployed to publi
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/build-assets`
 
-#### agency-hosting_clearAgencyPlanWebsiteCacheV1
+#### agency-hosting_clearWebsiteCacheV1
 
 Clears cache for all domains associated with an Agency Plan website, including its preview domain.
 
@@ -360,7 +360,7 @@ This operation clears all cache types for the website.
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cache`
 
-#### agency-hosting_listAgencyPlanWebsiteCronJobsV1
+#### agency-hosting_listWebsiteCronJobsV1
 
 Returns a paginated list of cron jobs configured for an Agency Plan website.
 
@@ -369,7 +369,7 @@ Each entry includes the schedule expression and the command executed on that sch
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs`
 
-#### agency-hosting_createAgencyPlanWebsiteCronJobV1
+#### agency-hosting_createWebsiteCronJobV1
 
 Creates a cron job for an Agency Plan website from a schedule expression and a command.
 
@@ -378,7 +378,7 @@ Returns the created cron job, including its uuid, which is required to delete th
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs`
 
-#### agency-hosting_deleteAgencyPlanWebsiteCronJobV1
+#### agency-hosting_deleteWebsiteCronJobV1
 
 Permanently deletes the cron job identified by its uuid from an Agency Plan website.
 
@@ -387,7 +387,7 @@ The operation is idempotent: deleting a cron job that does not exist succeeds wi
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs/{uuid}`
 
-#### agency-hosting_listAgencyPlanWebsiteDatabasesV1
+#### agency-hosting_listWebsiteDatabasesV1
 
 Returns a paginated list of MySQL databases created for an Agency Plan website.
 
@@ -396,7 +396,7 @@ Each entry includes the database's non-system users.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases`
 
-#### agency-hosting_createAgencyPlanWebsiteDatabaseV1
+#### agency-hosting_createWebsiteDatabaseV1
 
 Creates a MySQL database with a dedicated user for an Agency Plan website.
 
@@ -405,7 +405,7 @@ The database name, username, and password must all be provided by the caller.
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases`
 
-#### agency-hosting_deleteAgencyPlanWebsiteDatabaseV1
+#### agency-hosting_deleteWebsiteDatabaseV1
 
 Permanently deletes a MySQL database and all its data from an Agency Plan website, including its users.
 
@@ -414,7 +414,7 @@ The operation is idempotent: deleting a database that does not exist succeeds wi
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}`
 
-#### agency-hosting_createAgencyPlanWebsiteDatabaseUserV1
+#### agency-hosting_createWebsiteDatabaseUserV1
 
 Creates a user for an existing database on an Agency Plan website.
 
@@ -423,7 +423,7 @@ Each database supports a single non-system user; creating a user for a database 
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users`
 
-#### agency-hosting_deleteAgencyPlanWebsiteDatabaseUserV1
+#### agency-hosting_deleteWebsiteDatabaseUserV1
 
 Permanently deletes a database user from an Agency Plan website database, revoking all access it had.
 
@@ -432,7 +432,7 @@ The operation is idempotent: deleting a user that does not exist succeeds withou
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users/{database_user_name}`
 
-#### agency-hosting_getAgencyPlanWebsiteDetailsV1
+#### agency-hosting_getWebsiteDetailsV1
 
 Retrieves detailed information about a specific Agency Plan website, including configuration,
 status, metadata, hosting plan details, and resource quotas.
@@ -440,7 +440,7 @@ status, metadata, hosting plan details, and resource quotas.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}`
 
-#### agency-hosting_deleteAgencyPlanWebsiteV1
+#### agency-hosting_deleteWebsiteV1
 
 Permanently deletes an Agency Plan website. Deletion is processed asynchronously: the
 website is immediately transitioned to a deleting state and the underlying server
@@ -449,7 +449,7 @@ resources are removed in the background.
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}`
 
-#### agency-hosting_listRunningAgencyPlanWebsiteProcessesV1
+#### agency-hosting_listWebsiteProcessesV1
 
 Lists active and recently completed asynchronous processes for an Agency Plan website.
 
@@ -459,14 +459,14 @@ Poll this endpoint after initiating async operations (SSL setup, backups, clonin
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/processes`
 
-#### agency-hosting_changeAgencyPlanWebsiteWordPressCoreVersionV1
+#### agency-hosting_changeWordPressVersionV1
 
 Changes the installed WordPress core version on an Agency Plan website to one of the versions available for installation.
 
 - **Method**: `PATCH`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/version`
 
-#### agency-hosting_getAgencyPlanWebsiteWordPressSettingsV1
+#### agency-hosting_getWordPressSettingsV1
 
 Returns the current WordPress settings for an Agency Plan website: installed core version,
 LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
@@ -474,7 +474,7 @@ LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings`
 
-#### agency-hosting_listAvailableWordPressVersionsForAnAgencyPlanWebsiteV1
+#### agency-hosting_listAvailableWordPressVersionsV1
 
 Lists the WordPress core versions available for installation on an Agency Plan website.
 

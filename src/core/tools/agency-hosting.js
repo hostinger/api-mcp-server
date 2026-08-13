@@ -69,7 +69,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAvailableDatacentersForAnAgencyPlanOrderV1",
+    "name": "agency-hosting_listAvailableDatacentersV1",
     "description": "Lists the datacenters available for provisioning a new website on the given Agency Plan\nhosting order.\n\nEach datacenter includes a `pinger_url` you can ping from the client to measure round-trip\nlatency; comparing the results across datacenters lets you pick the nearest one (lowest\nping) before choosing its `code` as the `datacenter_code` when creating a website setup.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/orders/{order_id}/datacenters",
@@ -93,7 +93,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_changeAgencyPlanWebsiteDomainV1",
+    "name": "agency-hosting_changeWebsiteDomainV1",
     "description": "Changes the primary domain for an Agency Plan website.\n\nProvide the current domain in the path and the new domain in the request body.\nSet domain to null to revert to the temporary domain.",
     "method": "PUT",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/domains/{from_domain}",
@@ -127,7 +127,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_linkDomainToAgencyPlanWebsiteV1",
+    "name": "agency-hosting_linkDomainToWebsiteV1",
     "description": "Links a domain to the specified Agency Plan website so it can serve traffic for that domain.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/domains",
@@ -156,7 +156,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAgencyPlanDomainsV1",
+    "name": "agency-hosting_listDomainsV1",
     "description": "Returns a paginated list of domains associated with Agency Plan websites accessible to the authenticated client.\n\nUse the website_uuids filter to narrow results to specific websites.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/domains",
@@ -190,7 +190,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_unlinkDomainFromAgencyPlanWebsiteV1",
+    "name": "agency-hosting_unlinkDomainFromWebsiteV1",
     "description": "Unlinks a domain from the specified Agency Plan website.\n\nThe website stops serving traffic on this domain immediately.\n\nWebsite files and database are preserved, and any other linked domains remain accessible.\n\nIf this is the only domain on the website, unlinking leaves the website without an accessible domain.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}",
@@ -219,7 +219,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_importAgencyPlanWebsiteFromArchiveV1",
+    "name": "agency-hosting_importWebsiteFromArchiveV1",
     "description": "Imports an Agency Plan website from an already-uploaded archive.\n\nUpload the archive to the website's root directory via file browser first, then provide its\nfilename in this request. Website contents are overwritten by the archive contents. Supported\narchive types: .zip, .tar, .tar.gz, .tgz.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/files/import-archive",
@@ -248,7 +248,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAgencyPlanOrdersV1",
+    "name": "agency-hosting_listOrdersV1",
     "description": "Returns a paginated list of Agency Plan orders accessible to the authenticated client.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/orders",
@@ -274,7 +274,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_provisionANewAgencyPlanWebsiteV1",
+    "name": "agency-hosting_createANewWebsiteV1",
     "description": "Provisions a new website on one of your Agency Plan hosting orders.\n\nChoose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach\nyour own `domain` — omit it, set it to `null`, or leave it unavailable and a free\n`*.hostingersite.com` subdomain is generated instead — and/or install WordPress by\nsupplying the `wordpress` details (admin account, site title, and language).\n\nCommon setups:\n- **Plain PHP site**: `flavor` set to `php-fpm`, with `settings.php.version`; omit\n  `wordpress` and `type`.\n- **WordPress site**: `flavor` set to the desired WordPress version (e.g. `wp-7.0`), plus\n  the `wordpress` block (admin account, title, language).\n- **Static/Node.js frontend app**: `flavor` set to `php-fpm` and `type` set to\n  `node-static`.\n\nProvisioning runs in the background, so the response returns immediately with a setup UUID\nthat identifies the job. The new website becomes reachable once provisioning finishes.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/orders/{order_id}/websites/setups",
@@ -425,7 +425,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getAgencyPlanWebsiteSetupStatusV1",
+    "name": "agency-hosting_getWebsiteSetupStatusV1",
     "description": "Returns the current status of an Agency Plan website setup started via the setups\nendpoint.\n\nPoll this endpoint using the `setup_uuid` returned from the provisioning request until\n`status` becomes `completed`, at which point `website_uid` identifies the new website.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/orders/{order_id}/websites/setups/{setup_uuid}",
@@ -454,7 +454,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_buildAgencyPlanWebsiteNodeJSAssetsV1",
+    "name": "agency-hosting_buildWebsiteNodeJSAssetsV1",
     "description": "Builds and deploys a Node.js application for an Agency Plan website from an already-uploaded archive.\n\nUpload the archive to file browser first, then provide its relative path from document root in this request.\nWebsite contents are overwritten by the build result, which is deployed to public_html.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/build-assets",
@@ -483,7 +483,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_clearAgencyPlanWebsiteCacheV1",
+    "name": "agency-hosting_clearWebsiteCacheV1",
     "description": "Clears cache for all domains associated with an Agency Plan website, including its preview domain.\n\nThis operation clears all cache types for the website.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/cache",
@@ -507,7 +507,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAgencyPlanWebsiteCronJobsV1",
+    "name": "agency-hosting_listWebsiteCronJobsV1",
     "description": "Returns a paginated list of cron jobs configured for an Agency Plan website.\n\nEach entry includes the schedule expression and the command executed on that schedule.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/cron-jobs",
@@ -539,7 +539,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createAgencyPlanWebsiteCronJobV1",
+    "name": "agency-hosting_createWebsiteCronJobV1",
     "description": "Creates a cron job for an Agency Plan website from a schedule expression and a command.\n\nReturns the created cron job, including its uuid, which is required to delete the cron job.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/cron-jobs",
@@ -573,7 +573,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteAgencyPlanWebsiteCronJobV1",
+    "name": "agency-hosting_deleteWebsiteCronJobV1",
     "description": "Permanently deletes the cron job identified by its uuid from an Agency Plan website.\n\nThe operation is idempotent: deleting a cron job that does not exist succeeds without error.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/cron-jobs/{uuid}",
@@ -602,7 +602,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAgencyPlanWebsiteDatabasesV1",
+    "name": "agency-hosting_listWebsiteDatabasesV1",
     "description": "Returns a paginated list of MySQL databases created for an Agency Plan website.\n\nEach entry includes the database's non-system users.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases",
@@ -634,7 +634,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createAgencyPlanWebsiteDatabaseV1",
+    "name": "agency-hosting_createWebsiteDatabaseV1",
     "description": "Creates a MySQL database with a dedicated user for an Agency Plan website.\n\nThe database name, username, and password must all be provided by the caller.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases",
@@ -673,7 +673,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteAgencyPlanWebsiteDatabaseV1",
+    "name": "agency-hosting_deleteWebsiteDatabaseV1",
     "description": "Permanently deletes a MySQL database and all its data from an Agency Plan website, including its users.\n\nThe operation is idempotent: deleting a database that does not exist succeeds without error.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}",
@@ -702,7 +702,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createAgencyPlanWebsiteDatabaseUserV1",
+    "name": "agency-hosting_createWebsiteDatabaseUserV1",
     "description": "Creates a user for an existing database on an Agency Plan website.\n\nEach database supports a single non-system user; creating a user for a database that already has one fails.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users",
@@ -745,7 +745,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteAgencyPlanWebsiteDatabaseUserV1",
+    "name": "agency-hosting_deleteWebsiteDatabaseUserV1",
     "description": "Permanently deletes a database user from an Agency Plan website database, revoking all access it had.\n\nThe operation is idempotent: deleting a user that does not exist succeeds without error.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users/{database_user_name}",
@@ -779,7 +779,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getAgencyPlanWebsiteDetailsV1",
+    "name": "agency-hosting_getWebsiteDetailsV1",
     "description": "Retrieves detailed information about a specific Agency Plan website, including configuration,\nstatus, metadata, hosting plan details, and resource quotas.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}",
@@ -803,7 +803,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteAgencyPlanWebsiteV1",
+    "name": "agency-hosting_deleteWebsiteV1",
     "description": "Permanently deletes an Agency Plan website. Deletion is processed asynchronously: the\nwebsite is immediately transitioned to a deleting state and the underlying server\nresources are removed in the background.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}",
@@ -827,7 +827,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listRunningAgencyPlanWebsiteProcessesV1",
+    "name": "agency-hosting_listWebsiteProcessesV1",
     "description": "Lists active and recently completed asynchronous processes for an Agency Plan website.\n\nEach process has a unique ID (for tracking), a type, and a status (running, completed, failed).\nPoll this endpoint after initiating async operations (SSL setup, backups, cloning) to track progress.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/processes",
@@ -851,7 +851,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_changeAgencyPlanWebsiteWordPressCoreVersionV1",
+    "name": "agency-hosting_changeWordPressVersionV1",
     "description": "Changes the installed WordPress core version on an Agency Plan website to one of the versions available for installation.",
     "method": "PATCH",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/version",
@@ -880,7 +880,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getAgencyPlanWebsiteWordPressSettingsV1",
+    "name": "agency-hosting_getWordPressSettingsV1",
     "description": "Returns the current WordPress settings for an Agency Plan website: installed core version,\nLiteSpeed Cache plugin status, object cache status, and maintenance mode status.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings",
@@ -904,7 +904,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAvailableWordPressVersionsForAnAgencyPlanWebsiteV1",
+    "name": "agency-hosting_listAvailableWordPressVersionsV1",
     "description": "Lists the WordPress core versions available for installation on an Agency Plan website.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/versions",

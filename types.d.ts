@@ -209,7 +209,7 @@ Each datacenter includes a `pinger_url` you can ping from the client to measure 
 latency; comparing the results across datacenters lets you pick the nearest one (lowest
 ping) before choosing its `code` as the `datacenter_code` when creating a website setup.
    */
-  "agency-hosting_listAvailableDatacentersForAnAgencyPlanOrderV1": {
+  "agency-hosting_listAvailableDatacentersV1": {
     params: {
       /**
        * Agency Plan order ID
@@ -225,7 +225,7 @@ ping) before choosing its `code` as the `datacenter_code` when creating a websit
 Provide the current domain in the path and the new domain in the request body.
 Set domain to null to revert to the temporary domain.
    */
-  "agency-hosting_changeAgencyPlanWebsiteDomainV1": {
+  "agency-hosting_changeWebsiteDomainV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -246,7 +246,7 @@ Set domain to null to revert to the temporary domain.
   /**
    * Links a domain to the specified Agency Plan website so it can serve traffic for that domain.
    */
-  "agency-hosting_linkDomainToAgencyPlanWebsiteV1": {
+  "agency-hosting_linkDomainToWebsiteV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -265,7 +265,7 @@ Set domain to null to revert to the temporary domain.
 
 Use the website_uuids filter to narrow results to specific websites.
    */
-  "agency-hosting_listAgencyPlanDomainsV1": {
+  "agency-hosting_listDomainsV1": {
     params: {
       /**
        * Page number
@@ -292,7 +292,7 @@ Website files and database are preserved, and any other linked domains remain ac
 
 If this is the only domain on the website, unlinking leaves the website without an accessible domain.
    */
-  "agency-hosting_unlinkDomainFromAgencyPlanWebsiteV1": {
+  "agency-hosting_unlinkDomainFromWebsiteV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -313,7 +313,7 @@ Upload the archive to the website's root directory via file browser first, then 
 filename in this request. Website contents are overwritten by the archive contents. Supported
 archive types: .zip, .tar, .tar.gz, .tgz.
    */
-  "agency-hosting_importAgencyPlanWebsiteFromArchiveV1": {
+  "agency-hosting_importWebsiteFromArchiveV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -330,7 +330,7 @@ archive types: .zip, .tar, .tar.gz, .tgz.
   /**
    * Returns a paginated list of Agency Plan orders accessible to the authenticated client.
    */
-  "agency-hosting_listAgencyPlanOrdersV1": {
+  "agency-hosting_listOrdersV1": {
     params: {
       /**
        * Page number
@@ -363,7 +363,7 @@ Common setups:
 Provisioning runs in the background, so the response returns immediately with a setup UUID
 that identifies the job. The new website becomes reachable once provisioning finishes.
    */
-  "agency-hosting_provisionANewAgencyPlanWebsiteV1": {
+  "agency-hosting_createANewWebsiteV1": {
     params: {
       /**
        * Agency Plan order ID
@@ -412,7 +412,7 @@ endpoint.
 Poll this endpoint using the `setup_uuid` returned from the provisioning request until
 `status` becomes `completed`, at which point `website_uid` identifies the new website.
    */
-  "agency-hosting_getAgencyPlanWebsiteSetupStatusV1": {
+  "agency-hosting_getWebsiteSetupStatusV1": {
     params: {
       /**
        * Agency Plan order ID
@@ -432,7 +432,7 @@ Poll this endpoint using the `setup_uuid` returned from the provisioning request
 Upload the archive to file browser first, then provide its relative path from document root in this request.
 Website contents are overwritten by the build result, which is deployed to public_html.
    */
-  "agency-hosting_buildAgencyPlanWebsiteNodeJSAssetsV1": {
+  "agency-hosting_buildWebsiteNodeJSAssetsV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -451,7 +451,7 @@ Website contents are overwritten by the build result, which is deployed to publi
 
 This operation clears all cache types for the website.
    */
-  "agency-hosting_clearAgencyPlanWebsiteCacheV1": {
+  "agency-hosting_clearWebsiteCacheV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -466,7 +466,7 @@ This operation clears all cache types for the website.
 
 Each entry includes the schedule expression and the command executed on that schedule.
    */
-  "agency-hosting_listAgencyPlanWebsiteCronJobsV1": {
+  "agency-hosting_listWebsiteCronJobsV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -489,7 +489,7 @@ Each entry includes the schedule expression and the command executed on that sch
 
 Returns the created cron job, including its uuid, which is required to delete the cron job.
    */
-  "agency-hosting_createAgencyPlanWebsiteCronJobV1": {
+  "agency-hosting_createWebsiteCronJobV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -512,7 +512,7 @@ Returns the created cron job, including its uuid, which is required to delete th
 
 The operation is idempotent: deleting a cron job that does not exist succeeds without error.
    */
-  "agency-hosting_deleteAgencyPlanWebsiteCronJobV1": {
+  "agency-hosting_deleteWebsiteCronJobV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -531,7 +531,7 @@ The operation is idempotent: deleting a cron job that does not exist succeeds wi
 
 Each entry includes the database's non-system users.
    */
-  "agency-hosting_listAgencyPlanWebsiteDatabasesV1": {
+  "agency-hosting_listWebsiteDatabasesV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -554,7 +554,7 @@ Each entry includes the database's non-system users.
 
 The database name, username, and password must all be provided by the caller.
    */
-  "agency-hosting_createAgencyPlanWebsiteDatabaseV1": {
+  "agency-hosting_createWebsiteDatabaseV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -581,7 +581,7 @@ The database name, username, and password must all be provided by the caller.
 
 The operation is idempotent: deleting a database that does not exist succeeds without error.
    */
-  "agency-hosting_deleteAgencyPlanWebsiteDatabaseV1": {
+  "agency-hosting_deleteWebsiteDatabaseV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -600,7 +600,7 @@ The operation is idempotent: deleting a database that does not exist succeeds wi
 
 Each database supports a single non-system user; creating a user for a database that already has one fails.
    */
-  "agency-hosting_createAgencyPlanWebsiteDatabaseUserV1": {
+  "agency-hosting_createWebsiteDatabaseUserV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -631,7 +631,7 @@ Each database supports a single non-system user; creating a user for a database 
 
 The operation is idempotent: deleting a user that does not exist succeeds without error.
    */
-  "agency-hosting_deleteAgencyPlanWebsiteDatabaseUserV1": {
+  "agency-hosting_deleteWebsiteDatabaseUserV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -653,7 +653,7 @@ The operation is idempotent: deleting a user that does not exist succeeds withou
    * Retrieves detailed information about a specific Agency Plan website, including configuration,
 status, metadata, hosting plan details, and resource quotas.
    */
-  "agency-hosting_getAgencyPlanWebsiteDetailsV1": {
+  "agency-hosting_getWebsiteDetailsV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -668,7 +668,7 @@ status, metadata, hosting plan details, and resource quotas.
 website is immediately transitioned to a deleting state and the underlying server
 resources are removed in the background.
    */
-  "agency-hosting_deleteAgencyPlanWebsiteV1": {
+  "agency-hosting_deleteWebsiteV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -684,7 +684,7 @@ resources are removed in the background.
 Each process has a unique ID (for tracking), a type, and a status (running, completed, failed).
 Poll this endpoint after initiating async operations (SSL setup, backups, cloning) to track progress.
    */
-  "agency-hosting_listRunningAgencyPlanWebsiteProcessesV1": {
+  "agency-hosting_listWebsiteProcessesV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -697,7 +697,7 @@ Poll this endpoint after initiating async operations (SSL setup, backups, clonin
   /**
    * Changes the installed WordPress core version on an Agency Plan website to one of the versions available for installation.
    */
-  "agency-hosting_changeAgencyPlanWebsiteWordPressCoreVersionV1": {
+  "agency-hosting_changeWordPressVersionV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -715,7 +715,7 @@ Poll this endpoint after initiating async operations (SSL setup, backups, clonin
    * Returns the current WordPress settings for an Agency Plan website: installed core version,
 LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
    */
-  "agency-hosting_getAgencyPlanWebsiteWordPressSettingsV1": {
+  "agency-hosting_getWordPressSettingsV1": {
     params: {
       /**
        * Agency Plan website UID
@@ -728,7 +728,7 @@ LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
   /**
    * Lists the WordPress core versions available for installation on an Agency Plan website.
    */
-  "agency-hosting_listAvailableWordPressVersionsForAnAgencyPlanWebsiteV1": {
+  "agency-hosting_listAvailableWordPressVersionsV1": {
     params: {
       /**
        * Agency Plan website UID
