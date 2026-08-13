@@ -1825,14 +1825,12 @@ websites list endpoint to see when your new website becomes available.
 
 #### hosting_deleteWebsiteV1
 
-Permanently deletes a website and all of its data. This action is destructive
-and cannot be undone. Always ask the user for explicit confirmation before
-calling this endpoint.
+This endpoint permanently removes a website and all of its data. This action
+cannot be undone. Before calling it, make sure the user understands the
+consequences and explicitly confirms that they want to proceed.
 
 All website files, databases and related configuration will be removed.
 The hosting plan itself is kept, so a new website can be created on it afterwards.
-
-The confirm field must be boolean true, otherwise the request is rejected.
 
 Supported websites: main and addon domain websites on web hosting plans, and
 Website Builder websites. Parked domains and subdomains cannot be deleted with
