@@ -2841,9 +2841,9 @@ are listed but never traversed into or resolved.
        */
       offset?: number;
       /**
-       * Filter by entry type, e.g. file,directory. Array or comma-separated. Omit for all types.
+       * Filter by entry type, e.g. file,directory. Omit for all types.
        */
-      file_types?: string;
+      file_types?: array;
     };
     response: any; // Response structure will depend on the API
   };

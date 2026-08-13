@@ -4283,8 +4283,18 @@ const tools: OpenApiTool[] = [
           "description": "Number of entries to skip. Page with offset + item count until reaching total_items."
         },
         "file_types": {
-          "type": "string",
-          "description": "Filter by entry type, e.g. file,directory. Array or comma-separated. Omit for all types."
+          "type": "array",
+          "description": "Filter by entry type, e.g. file,directory. Omit for all types.",
+          "items": {
+            "type": "string",
+            "description": "file_types parameter",
+            "enum": [
+              "file",
+              "directory",
+              "symlink",
+              "other"
+            ]
+          }
         }
       },
       "required": [
