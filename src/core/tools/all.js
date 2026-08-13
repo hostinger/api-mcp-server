@@ -1,7 +1,7 @@
 // Auto-generated tool list for group: all
 export default [
   {
-    "name": "agencyHosting_deployNodeStaticWebsite",
+    "name": "agency-hosting_deployNodeStaticWebsite",
     "topic": "agency-hosting",
     "description": "Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. For plain PHP applications that should be extracted as-is, use agencyHosting_deployPhpApplication instead. The website UID is automatically resolved from the domain.",
     "method": "",
@@ -35,7 +35,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agencyHosting_deployPhpApplication",
+    "name": "agency-hosting_deployPhpApplication",
     "topic": "agency-hosting",
     "description": "Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. For node-static websites that require a build step, use agencyHosting_deployNodeStaticWebsite instead. The website UID is automatically resolved from the domain.",
     "method": "",

@@ -197,9 +197,9 @@ class MCPServer {
 
   async executeCustomTool(tool, params) {
     switch (tool.name) {
-      case 'agencyHosting_deployNodeStaticWebsite':
+      case 'agency-hosting_deployNodeStaticWebsite':
         return await this.handleNodeStaticDeploy(params);
-      case 'agencyHosting_deployPhpApplication':
+      case 'agency-hosting_deployPhpApplication':
         return await this.handlePhpAppDeploy(params);
       case 'hosting_importWordpressWebsite':
         return await this.handleWordpressWebsiteImport(params);
