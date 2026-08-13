@@ -1047,6 +1047,97 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "hosting_listWebsiteFilesAndDirectoriesV1",
+    "description": "List files and directories under a website's document root.\n\nUse `directory` to browse a subdirectory relative to the document root. Symlinked entries\nare listed but never traversed into or resolved.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/domains/{domain}/files",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "directory": {
+          "type": "string",
+          "description": "Directory path to check"
+        },
+        "max_depth": {
+          "type": "integer",
+          "description": "How many directory levels deep to recurse."
+        },
+        "max_items": {
+          "type": "integer",
+          "description": "Max number of entries to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of entries to skip. Page with offset + item count until reaching total_items."
+        },
+        "file_types": {
+          "type": "string",
+          "description": "Filter by entry type, e.g. file,directory. Array or comma-separated. Omit for all types."
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_getWebsiteFileContentV1",
+    "description": "Get a single file's content, relative to a website's document root.\n\nRead-only; refuses symlinks, oversized files, non-text file types, and files identified as\ncontaining secrets (e.g. credential files) — none of these are returned by this endpoint.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/domains/{domain}/files/content",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "path": {
+          "type": "string",
+          "description": "File path, relative to the document root."
+        },
+        "from_line": {
+          "type": "integer",
+          "description": "Line offset to start reading from."
+        },
+        "max_lines": {
+          "type": "integer",
+          "description": "Max number of lines to return."
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "path"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_listNodeJSBuildsV1",
     "description": "Retrieve a paginated list of Node.js build processes for a specific website.\n\nEach build represents a single run of the Node.js build pipeline. Use the `states`\nquery parameter to filter results by build state (pending, running, completed, failed).\nUse the `uuid` from a build to poll its output via the `Get Node.js Build Logs` endpoint.",
     "method": "GET",
