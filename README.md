@@ -69,12 +69,12 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (318 total)
+- `hostinger-api-mcp` — unified server with every tool (319 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
-- `hostinger-ecommerce-mcp` — 12 tools for ecommerce
+- `hostinger-ecommerce-mcp` — 13 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 50 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
@@ -1183,6 +1183,15 @@ Create a published physical product with a single variant priced in the store cu
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/physical`
+
+#### ecommerce_uploadAndAttachAProductImageV1
+
+Upload a raster image (JPEG, PNG, GIF or WebP, max 15MB) and attach it to a product in a single call.
+The image is virus-scanned and validated by content, then stored on the CDN. Set is_thumbnail to make
+it the product's primary image.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images`
 
 #### ecommerce_listSalesChannelsV1
 

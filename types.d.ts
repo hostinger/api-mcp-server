@@ -2000,6 +2000,34 @@ the Ecommerce API.
   };
 
   /**
+   * Upload a raster image (JPEG, PNG, GIF or WebP, max 15MB) and attach it to a product in a single call.
+The image is virus-scanned and validated by content, then stored on the CDN. Set is_thumbnail to make
+it the product's primary image.
+   */
+  "ecommerce_uploadAndAttachAProductImageV1": {
+    params: {
+      /**
+       * The ID of the store the product belongs to.
+       */
+      store_id: string;
+      /**
+       * The ID of the product to attach the image to.
+       */
+      product_id: string;
+      /**
+       * Raster image file (JPEG, PNG, GIF or WebP), maximum 15MB. SVG is not accepted.
+       */
+      image: string;
+      /**
+       * When true, the image becomes the product's thumbnail (primary image). When omitted, it becomes the
+thumbnail only if the product does not have one yet.
+       */
+      is_thumbnail?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * List a store's active sales channels with their full metadata.
    */
   "ecommerce_listSalesChannelsV1": {

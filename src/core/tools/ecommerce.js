@@ -134,6 +134,44 @@ export default [
     "group": "ecommerce"
   },
   {
+    "name": "ecommerce_uploadAndAttachAProductImageV1",
+    "description": "Upload a raster image (JPEG, PNG, GIF or WebP, max 15MB) and attach it to a product in a single call.\nThe image is virus-scanned and validated by content, then stored on the CDN. Set is_thumbnail to make\nit the product's primary image.",
+    "method": "POST",
+    "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "store_id": {
+          "type": "string",
+          "description": "The ID of the store the product belongs to."
+        },
+        "product_id": {
+          "type": "string",
+          "description": "The ID of the product to attach the image to."
+        },
+        "image": {
+          "type": "string",
+          "description": "Raster image file (JPEG, PNG, GIF or WebP), maximum 15MB. SVG is not accepted."
+        },
+        "is_thumbnail": {
+          "type": "boolean",
+          "description": "When true, the image becomes the product's thumbnail (primary image). When omitted, it becomes the\nthumbnail only if the product does not have one yet."
+        }
+      },
+      "required": [
+        "store_id",
+        "product_id",
+        "image"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
+  },
+  {
     "name": "ecommerce_listSalesChannelsV1",
     "description": "List a store's active sales channels with their full metadata.",
     "method": "GET",
