@@ -3100,7 +3100,7 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_uploadAndAttachAProductImageV1",
-    "description": "Upload a raster image (JPEG, PNG, GIF or WebP, max 15MB) and attach it to a product in a single call.\nThe image is virus-scanned and validated by content, then stored on the CDN. Set is_thumbnail to make\nit the product's primary image.",
+    "description": "Fetch a raster image (JPEG, PNG, GIF or WebP, max 15MB) from a URL and attach it to a product in a\nsingle call. The image is virus-scanned and validated by content, then stored on the CDN. Set\nis_thumbnail to make it the product's primary image.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images",
     "inputSchema": {
@@ -3114,9 +3114,9 @@ const tools: OpenApiTool[] = [
           "type": "string",
           "description": "The ID of the product to attach the image to."
         },
-        "image": {
+        "image_url": {
           "type": "string",
-          "description": "Raster image file (JPEG, PNG, GIF or WebP), maximum 15MB. SVG is not accepted."
+          "description": "Publicly reachable URL of the raster image (JPEG, PNG, GIF or WebP), maximum 15MB. The image is\nfetched, virus-scanned and validated by content, then stored on the CDN. SVG is not accepted."
         },
         "is_thumbnail": {
           "type": "boolean",
@@ -3126,7 +3126,7 @@ const tools: OpenApiTool[] = [
       "required": [
         "store_id",
         "product_id",
-        "image"
+        "image_url"
       ]
     },
     "security": [
