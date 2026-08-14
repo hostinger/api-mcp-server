@@ -2997,6 +2997,35 @@ export default [
     "group": "ecommerce"
   },
   {
+    "name": "ecommerce_createAProductImageUploadURLV1",
+    "description": "Returns a signed URL to upload a product image to (multipart/form-data POST). Then call the\nattach-image endpoint with the returned object_name to scan and attach it to the product.",
+    "method": "POST",
+    "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images/upload-url",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "store_id": {
+          "type": "string",
+          "description": "The ID of the store the product belongs to."
+        },
+        "product_id": {
+          "type": "string",
+          "description": "The ID of the product the image will be attached to."
+        }
+      },
+      "required": [
+        "store_id",
+        "product_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
+  },
+  {
     "name": "ecommerce_createDigitalProductV1",
     "description": "Create a published digital product with a single variant and an optional external download link.",
     "method": "POST",
@@ -3102,7 +3131,11 @@ export default [
         },
         "image_url": {
           "type": "string",
-          "description": "Publicly reachable URL of the raster image (JPEG, PNG, GIF or WebP), maximum 15MB. The image is\nfetched, virus-scanned and validated by content, then stored on the CDN. SVG is not accepted."
+          "description": "Publicly reachable URL of the raster image (JPEG, PNG, GIF or WebP), maximum 15MB. The image is\nfetched, virus-scanned and validated by content, then stored on the CDN. SVG is not accepted.\nProvide either this or object_name."
+        },
+        "object_name": {
+          "type": "string",
+          "description": "Key returned by the upload-url endpoint. Provide this instead of image_url to attach an uploaded image."
         },
         "is_thumbnail": {
           "type": "boolean",
@@ -3111,8 +3144,7 @@ export default [
       },
       "required": [
         "store_id",
-        "product_id",
-        "image_url"
+        "product_id"
       ]
     },
     "security": [

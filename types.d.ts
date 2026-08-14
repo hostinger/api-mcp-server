@@ -1938,6 +1938,24 @@ the Ecommerce API.
   };
 
   /**
+   * Returns a signed URL to upload a product image to (multipart/form-data POST). Then call the
+attach-image endpoint with the returned object_name to scan and attach it to the product.
+   */
+  "ecommerce_createAProductImageUploadURLV1": {
+    params: {
+      /**
+       * The ID of the store the product belongs to.
+       */
+      store_id: string;
+      /**
+       * The ID of the product the image will be attached to.
+       */
+      product_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Create a published digital product with a single variant and an optional external download link.
    */
   "ecommerce_createDigitalProductV1": {
@@ -2017,8 +2035,13 @@ is_thumbnail to make it the product's primary image.
       /**
        * Publicly reachable URL of the raster image (JPEG, PNG, GIF or WebP), maximum 15MB. The image is
 fetched, virus-scanned and validated by content, then stored on the CDN. SVG is not accepted.
+Provide either this or object_name.
        */
-      image_url: string;
+      image_url?: string;
+      /**
+       * Key returned by the upload-url endpoint. Provide this instead of image_url to attach an uploaded image.
+       */
+      object_name?: string;
       /**
        * When true, the image becomes the product's thumbnail (primary image). When omitted, it becomes the
 thumbnail only if the product does not have one yet.

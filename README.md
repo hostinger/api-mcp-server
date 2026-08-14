@@ -69,12 +69,12 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (319 total)
+- `hostinger-api-mcp` — unified server with every tool (320 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
-- `hostinger-ecommerce-mcp` — 13 tools for ecommerce
+- `hostinger-ecommerce-mcp` — 14 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 50 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
@@ -1169,6 +1169,14 @@ Enable a manual payment method so the store can accept orders without an online 
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/payment-methods/manual`
+
+#### ecommerce_createAProductImageUploadURLV1
+
+Returns a signed URL to upload a product image to (multipart/form-data POST). Then call the
+attach-image endpoint with the returned object_name to scan and attach it to the product.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images/upload-url`
 
 #### ecommerce_createDigitalProductV1
 
