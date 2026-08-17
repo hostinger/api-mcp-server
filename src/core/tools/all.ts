@@ -6415,6 +6415,113 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
+    "name": "reach_getAutomationDetailsV1",
+    "description": "Get a single automation with the counts of contacts that entered it, are moving through it,\nfinished it or failed on the way.\n\nThis describes the automation itself. To see the workflow it runs, use the steps endpoint.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/automations/{automationUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "automationUuid": {
+          "type": "string",
+          "description": "Automation uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "automationUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_listAutomationsV1",
+    "description": "Get a paginated list of the automations in a profile.\n\nEvery automation comes with the counts of contacts that entered it, are moving through it,\nfinished it or failed on the way. Those counts describe the contact journey and are not\nemail engagement metrics - for opens, clicks and unsubscribes use the campaign statistics\nendpoint instead.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/automations",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "status": {
+          "type": "string",
+          "description": "Filter automations by status.\n\nThere is no `completed` status. An automation that has finished for every contact still\nreports `active`.",
+          "enum": [
+            "active",
+            "paused",
+            "draft"
+          ]
+        },
+        "sort_direction": {
+          "type": "string",
+          "description": "Order automations by creation date. Newest first unless set to `asc`.",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_listAutomationStepsV1",
+    "description": "Get the workflow of an automation as a flat list of steps.\n\nThe steps form a tree rather than a straight line: follow `parent_uuid` to reconstruct the\nbranches, and use `step_order` to order the steps that share a parent. An automation with no\nsteps yet returns an empty list.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/automations/{automationUuid}/steps",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "automationUuid": {
+          "type": "string",
+          "description": "Automation uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "automationUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_deleteAContactV1",
     "description": "Delete a contact with the specified UUID.\n\nThis endpoint permanently removes a contact from the email marketing system.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to the\nclient's default profile and cannot delete contacts of any other profile. Use\n`DELETE /api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}` instead.",
     "method": "DELETE",

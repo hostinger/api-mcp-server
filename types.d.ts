@@ -4347,6 +4347,84 @@ requests are rate limited upstream.
   };
 
   /**
+   * Get a single automation with the counts of contacts that entered it, are moving through it,
+finished it or failed on the way.
+
+This describes the automation itself. To see the workflow it runs, use the steps endpoint.
+   */
+  "reach_getAutomationDetailsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Automation uuid parameter
+       */
+      automationUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a paginated list of the automations in a profile.
+
+Every automation comes with the counts of contacts that entered it, are moving through it,
+finished it or failed on the way. Those counts describe the contact journey and are not
+email engagement metrics - for opens, clicks and unsubscribes use the campaign statistics
+endpoint instead.
+   */
+  "reach_listAutomationsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Filter automations by status.
+
+There is no `completed` status. An automation that has finished for every contact still
+reports `active`.
+       */
+      status?: string;
+      /**
+       * Order automations by creation date. Newest first unless set to `asc`.
+       */
+      sort_direction?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get the workflow of an automation as a flat list of steps.
+
+The steps form a tree rather than a straight line: follow `parent_uuid` to reconstruct the
+branches, and use `step_order` to order the steps that share a parent. An automation with no
+steps yet returns an empty list.
+   */
+  "reach_listAutomationStepsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Automation uuid parameter
+       */
+      automationUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Delete a contact with the specified UUID.
 
 This endpoint permanently removes a contact from the email marketing system.

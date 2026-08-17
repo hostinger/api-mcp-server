@@ -69,7 +69,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (320 total)
+- `hostinger-api-mcp` — unified server with every tool (323 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -78,7 +78,7 @@ This package installs the following MCP server commands:
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 50 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
-- `hostinger-reach-mcp` — 35 tools for reach
+- `hostinger-reach-mcp` — 38 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
 
@@ -2206,6 +2206,39 @@ requests are rate limited upstream.
 - **Path**: `/api/mail/v1/webhooks/{webhookId}/test`
 
 ### `hostinger-reach-mcp`
+
+#### reach_getAutomationDetailsV1
+
+Get a single automation with the counts of contacts that entered it, are moving through it,
+finished it or failed on the way.
+
+This describes the automation itself. To see the workflow it runs, use the steps endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/automations/{automationUuid}`
+
+#### reach_listAutomationsV1
+
+Get a paginated list of the automations in a profile.
+
+Every automation comes with the counts of contacts that entered it, are moving through it,
+finished it or failed on the way. Those counts describe the contact journey and are not
+email engagement metrics - for opens, clicks and unsubscribes use the campaign statistics
+endpoint instead.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/automations`
+
+#### reach_listAutomationStepsV1
+
+Get the workflow of an automation as a flat list of steps.
+
+The steps form a tree rather than a straight line: follow `parent_uuid` to reconstruct the
+branches, and use `step_order` to order the steps that share a parent. An automation with no
+steps yet returns an empty list.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/automations/{automationUuid}/steps`
 
 #### reach_deleteAContactV1
 
