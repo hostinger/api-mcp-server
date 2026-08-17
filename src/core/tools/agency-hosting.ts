@@ -262,6 +262,40 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_listAgencyPlanOrderDiskUsageMetricsV1",
+    "description": "Returns aggregated disk and inode usage for the Agency Plan order over the\nselected time frame, plus the plan quotas. Figures cover the whole order\naccount. Values may be up to one hour stale. CPU, memory, and process usage\nare on the resource-usage-metrics endpoint.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/orders/{order_id}/disk-usage-metrics",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer",
+          "description": "Agency Plan order ID"
+        },
+        "time_frame_days": {
+          "type": "integer",
+          "description": "Length of the window in days, ending now. Bucket size grows with the window.",
+          "enum": [
+            1,
+            7,
+            14,
+            30
+          ]
+        }
+      },
+      "required": [
+        "order_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "agency-hosting_listOrdersV1",
     "description": "Returns a paginated list of Agency Plan orders accessible to the authenticated client.",
     "method": "GET",
@@ -279,6 +313,41 @@ const tools: OpenApiTool[] = [
         }
       },
       "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_listOrderResourceUsageMetricsV1",
+    "description": "Returns aggregated CPU, memory, and process usage for the Agency Plan order\nover the selected time frame, plus the plan quotas and a per-website\nbreakdown. Each website is identified by uid. Suspended and deleted websites\nare excluded from both the order totals and the per-website breakdown.\nValues may be up to one hour stale. Disk and inode usage are on the\ndisk-usage-metrics endpoint.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/orders/{order_id}/resource-usage-metrics",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer",
+          "description": "Agency Plan order ID"
+        },
+        "time_frame_hours": {
+          "type": "integer",
+          "description": "Length of the window in hours, ending now. Bucket size grows with the window.",
+          "enum": [
+            1,
+            24,
+            168,
+            336,
+            720
+          ]
+        }
+      },
+      "required": [
+        "order_id"
+      ]
     },
     "security": [
       {

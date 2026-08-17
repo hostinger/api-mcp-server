@@ -69,8 +69,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (340 total)
-- `hostinger-agency-hosting-mcp` — 34 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (342 total)
+- `hostinger-agency-hosting-mcp` — 36 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
@@ -300,12 +300,34 @@ archive types: .zip, .tar, .tar.gz, .tgz.
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/files/import-archive`
 
+#### agency-hosting_listAgencyPlanOrderDiskUsageMetricsV1
+
+Returns aggregated disk and inode usage for the Agency Plan order over the
+selected time frame, plus the plan quotas. Figures cover the whole order
+account. Values may be up to one hour stale. CPU, memory, and process usage
+are on the resource-usage-metrics endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/orders/{order_id}/disk-usage-metrics`
+
 #### agency-hosting_listOrdersV1
 
 Returns a paginated list of Agency Plan orders accessible to the authenticated client.
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders`
+
+#### agency-hosting_listOrderResourceUsageMetricsV1
+
+Returns aggregated CPU, memory, and process usage for the Agency Plan order
+over the selected time frame, plus the plan quotas and a per-website
+breakdown. Each website is identified by uid. Suspended and deleted websites
+are excluded from both the order totals and the per-website breakdown.
+Values may be up to one hour stale. Disk and inode usage are on the
+disk-usage-metrics endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/orders/{order_id}/resource-usage-metrics`
 
 #### agency-hosting_listPHPExtensionsForAWebsiteV1
 

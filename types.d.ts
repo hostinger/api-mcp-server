@@ -328,6 +328,26 @@ archive types: .zip, .tar, .tar.gz, .tgz.
   };
 
   /**
+   * Returns aggregated disk and inode usage for the Agency Plan order over the
+selected time frame, plus the plan quotas. Figures cover the whole order
+account. Values may be up to one hour stale. CPU, memory, and process usage
+are on the resource-usage-metrics endpoint.
+   */
+  "agency-hosting_listAgencyPlanOrderDiskUsageMetricsV1": {
+    params: {
+      /**
+       * Agency Plan order ID
+       */
+      order_id: number;
+      /**
+       * Length of the window in days, ending now. Bucket size grows with the window.
+       */
+      time_frame_days?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Returns a paginated list of Agency Plan orders accessible to the authenticated client.
    */
   "agency-hosting_listOrdersV1": {
@@ -340,6 +360,28 @@ archive types: .zip, .tar, .tar.gz, .tgz.
        * Number of items per page
        */
       per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns aggregated CPU, memory, and process usage for the Agency Plan order
+over the selected time frame, plus the plan quotas and a per-website
+breakdown. Each website is identified by uid. Suspended and deleted websites
+are excluded from both the order totals and the per-website breakdown.
+Values may be up to one hour stale. Disk and inode usage are on the
+disk-usage-metrics endpoint.
+   */
+  "agency-hosting_listOrderResourceUsageMetricsV1": {
+    params: {
+      /**
+       * Agency Plan order ID
+       */
+      order_id: number;
+      /**
+       * Length of the window in hours, ending now. Bucket size grows with the window.
+       */
+      time_frame_hours?: number;
     };
     response: any; // Response structure will depend on the API
   };
