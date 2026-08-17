@@ -1233,14 +1233,24 @@ export default [
           "description": "Node.js application type override",
           "enum": [
             "create-react-app",
+            "gatsby",
             "vite",
             "angular",
             "react",
             "vue",
             "parcel",
+            "next",
+            "nuxt",
+            "nest",
             "express",
             "fastify",
-            "nest"
+            "astro",
+            "svelte",
+            "svelte-kit",
+            "hono",
+            "react-router",
+            "nitro",
+            "other"
           ]
         },
         "root_directory": {
