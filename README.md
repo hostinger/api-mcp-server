@@ -69,14 +69,14 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (337 total)
+- `hostinger-api-mcp` — unified server with every tool (340 total)
 - `hostinger-agency-hosting-mcp` — 34 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
 - `hostinger-ecommerce-mcp` — 14 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 50 tools for hosting
+- `hostinger-hosting-mcp` — 53 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 45 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
@@ -1857,6 +1857,29 @@ Use the Get PHP details endpoint to see the versions available for the website.
 
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/version`
+
+#### hosting_listWebsiteRedirectsV1
+
+Returns a paginated list of redirects configured for the selected website.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/redirects`
+
+#### hosting_createWebsiteRedirectV1
+
+Creates a redirect from a URL on the selected website to another URL or IP address.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/redirects`
+
+#### hosting_deleteWebsiteRedirectV1
+
+Permanently deletes the redirect identified by its source URL.
+
+Pass the `from` value exactly as returned by the list redirects endpoint.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/redirects`
 
 #### hosting_listWebsitesV1
 

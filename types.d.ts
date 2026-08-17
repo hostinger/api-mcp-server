@@ -3398,6 +3398,79 @@ Use the Get PHP details endpoint to see the versions available for the website.
   };
 
   /**
+   * Returns a paginated list of redirects configured for the selected website.
+   */
+  "hosting_listWebsiteRedirectsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Creates a redirect from a URL on the selected website to another URL or IP address.
+   */
+  "hosting_createWebsiteRedirectV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Source URL on the selected website
+       */
+      from: string;
+      /**
+       * Destination URL or IP address
+       */
+      to: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently deletes the redirect identified by its source URL.
+
+Pass the `from` value exactly as returned by the list redirects endpoint.
+   */
+  "hosting_deleteWebsiteRedirectV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Source URL returned by the list redirects endpoint.
+       */
+      from: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.
 
 This endpoint returns websites from your hosting accounts as well as
