@@ -1599,10 +1599,124 @@ export default [
     "group": "reach"
   },
   {
+    "name": "reach_getFormDetailsV1",
+    "description": "Get a single form with the URL of its hosted template and the tags it applies to the contacts\nit captures.\n\nThere is no ready-made embed snippet in the response - either serve the template HTML yourself\nor build your own embed around the form uuid.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "formUuid": {
+          "type": "string",
+          "description": "Form uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "formUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_deleteFormV1",
+    "description": "Permanently delete a form together with its template.\n\nA form that has already captured submissions cannot be deleted, so that the contacts it collected\nare never silently discarded - pause the form instead to stop it collecting new ones. Views alone\ndo not block deletion.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "formUuid": {
+          "type": "string",
+          "description": "Form uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "formUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_listFormsV1",
+    "description": "Get a paginated list of the signup forms in a profile.\n\nEach form carries a reference to the template that renders it. Get the form details for a\ndirectly usable template URL and for the tags the form puts on the contacts it captures.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/forms",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_getProfileDomainDNSStatusV1",
     "description": "Retrieve the DNS configuration status for a profile's domain.\n\nThis endpoint reports the state of MX, SPF, DKIM and DMARC records, including the\nactual records found and the suggested records required for correct email delivery.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/domains/dns-status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_getRemainingPlanLimitsV1",
+    "description": "Get how much of the plan is left for the current period.\n\nTwo things to keep in mind before you build alerting on this. The period is a calendar month\nrather than a billing anniversary, so the counters reset on the 1st no matter when the\nsubscription started. And usage is tracked per order, so every profile on the same order shares\none pool and reports the same numbers here. Only the current period is available, past usage is\nnot kept.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/limits",
     "inputSchema": {
       "type": "object",
       "properties": {

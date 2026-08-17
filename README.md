@@ -69,7 +69,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (326 total)
+- `hostinger-api-mcp` — unified server with every tool (330 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -78,7 +78,7 @@ This package installs the following MCP server commands:
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 50 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
-- `hostinger-reach-mcp` — 41 tools for reach
+- `hostinger-reach-mcp` — 45 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
 
@@ -2640,6 +2640,38 @@ was created now or already existed.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/tags`
 
+#### reach_getFormDetailsV1
+
+Get a single form with the URL of its hosted template and the tags it applies to the contacts
+it captures.
+
+There is no ready-made embed snippet in the response - either serve the template HTML yourself
+or build your own embed around the form uuid.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}`
+
+#### reach_deleteFormV1
+
+Permanently delete a form together with its template.
+
+A form that has already captured submissions cannot be deleted, so that the contacts it collected
+are never silently discarded - pause the form instead to stop it collecting new ones. Views alone
+do not block deletion.
+
+- **Method**: `DELETE`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}`
+
+#### reach_listFormsV1
+
+Get a paginated list of the signup forms in a profile.
+
+Each form carries a reference to the template that renders it. Get the form details for a
+directly usable template URL and for the tags the form puts on the contacts it captures.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/forms`
+
 #### reach_getProfileDomainDNSStatusV1
 
 Retrieve the DNS configuration status for a profile's domain.
@@ -2649,6 +2681,19 @@ actual records found and the suggested records required for correct email delive
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/domains/dns-status`
+
+#### reach_getRemainingPlanLimitsV1
+
+Get how much of the plan is left for the current period.
+
+Two things to keep in mind before you build alerting on this. The period is a calendar month
+rather than a billing anniversary, so the counters reset on the 1st no matter when the
+subscription started. And usage is tracked per order, so every profile on the same order shares
+one pool and reports the same numbers here. Only the current period is available, past usage is
+not kept.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/limits`
 
 #### reach_listProfilesV1
 

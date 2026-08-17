@@ -5341,12 +5341,97 @@ was created now or already existed.
   };
 
   /**
+   * Get a single form with the URL of its hosted template and the tags it applies to the contacts
+it captures.
+
+There is no ready-made embed snippet in the response - either serve the template HTML yourself
+or build your own embed around the form uuid.
+   */
+  "reach_getFormDetailsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Form uuid parameter
+       */
+      formUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Permanently delete a form together with its template.
+
+A form that has already captured submissions cannot be deleted, so that the contacts it collected
+are never silently discarded - pause the form instead to stop it collecting new ones. Views alone
+do not block deletion.
+   */
+  "reach_deleteFormV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Form uuid parameter
+       */
+      formUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a paginated list of the signup forms in a profile.
+
+Each form carries a reference to the template that renders it. Get the form details for a
+directly usable template URL and for the tags the form puts on the contacts it captures.
+   */
+  "reach_listFormsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve the DNS configuration status for a profile's domain.
 
 This endpoint reports the state of MX, SPF, DKIM and DMARC records, including the
 actual records found and the suggested records required for correct email delivery.
    */
   "reach_getProfileDomainDNSStatusV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get how much of the plan is left for the current period.
+
+Two things to keep in mind before you build alerting on this. The period is a calendar month
+rather than a billing anniversary, so the counters reset on the 1st no matter when the
+subscription started. And usage is tracked per order, so every profile on the same order shares
+one pool and reports the same numbers here. Only the current period is available, past usage is
+not kept.
+   */
+  "reach_getRemainingPlanLimitsV1": {
     params: {
       /**
        * Profile uuid parameter
