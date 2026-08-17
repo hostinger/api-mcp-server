@@ -4425,6 +4425,92 @@ steps yet returns an empty list.
   };
 
   /**
+   * Get a single campaign with its sender, subject, template reference, targeting and delivery
+progress.
+
+This describes how the campaign was set up and how far it has got. For opens, clicks and
+unsubscribes use the campaign statistics endpoint.
+   */
+  "reach_getCampaignDetailsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Campaign uuid parameter
+       */
+      campaignUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a paginated list of the campaigns in a profile.
+
+Each campaign carries its headline engagement rates. Filter by status to find drafts,
+scheduled, sending or sent campaigns, keeping in mind that a fully sent campaign has the
+status `publish`. By default only regular campaigns are returned - pass `type` to get the
+emails sent by automations or the double opt-in confirmations instead.
+   */
+  "reach_listCampaignsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Filter campaigns by status.
+
+A fully sent campaign has the status `publish`. There is no `sent` status, and campaigns can
+be neither paused nor archived.
+       */
+      status?: string;
+      /**
+       * Filter campaigns by type.
+
+Defaults to `campaign`, which leaves out the emails sent by automations and the double
+opt-in confirmations.
+       */
+      type?: string;
+      /**
+       * Order campaigns by creation date. Newest first unless set to `asc`.
+       */
+      sort_direction?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get the performance of a campaign: delivery, opens, clicks and unsubscribes, with the
+matching rates.
+
+Every count is unique contacts rather than raw events, so a contact who opens the same email
+five times is counted once.
+   */
+  "reach_getCampaignPerformanceV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Campaign uuid parameter
+       */
+      campaignUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Delete a contact with the specified UUID.
 
 This endpoint permanently removes a contact from the email marketing system.

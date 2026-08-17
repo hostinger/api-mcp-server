@@ -6522,6 +6522,124 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
+    "name": "reach_getCampaignDetailsV1",
+    "description": "Get a single campaign with its sender, subject, template reference, targeting and delivery\nprogress.\n\nThis describes how the campaign was set up and how far it has got. For opens, clicks and\nunsubscribes use the campaign statistics endpoint.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "campaignUuid": {
+          "type": "string",
+          "description": "Campaign uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "campaignUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_listCampaignsV1",
+    "description": "Get a paginated list of the campaigns in a profile.\n\nEach campaign carries its headline engagement rates. Filter by status to find drafts,\nscheduled, sending or sent campaigns, keeping in mind that a fully sent campaign has the\nstatus `publish`. By default only regular campaigns are returned - pass `type` to get the\nemails sent by automations or the double opt-in confirmations instead.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/campaigns",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "status": {
+          "type": "string",
+          "description": "Filter campaigns by status.\n\nA fully sent campaign has the status `publish`. There is no `sent` status, and campaigns can\nbe neither paused nor archived.",
+          "enum": [
+            "draft",
+            "scheduled",
+            "sending",
+            "publish",
+            "failed"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "description": "Filter campaigns by type.\n\nDefaults to `campaign`, which leaves out the emails sent by automations and the double\nopt-in confirmations.",
+          "enum": [
+            "campaign",
+            "automation",
+            "double_opt_in"
+          ]
+        },
+        "sort_direction": {
+          "type": "string",
+          "description": "Order campaigns by creation date. Newest first unless set to `asc`.",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_getCampaignPerformanceV1",
+    "description": "Get the performance of a campaign: delivery, opens, clicks and unsubscribes, with the\nmatching rates.\n\nEvery count is unique contacts rather than raw events, so a contact who opens the same email\nfive times is counted once.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}/statistics",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "campaignUuid": {
+          "type": "string",
+          "description": "Campaign uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "campaignUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_deleteAContactV1",
     "description": "Delete a contact with the specified UUID.\n\nThis endpoint permanently removes a contact from the email marketing system.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to the\nclient's default profile and cannot delete contacts of any other profile. Use\n`DELETE /api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}` instead.",
     "method": "DELETE",

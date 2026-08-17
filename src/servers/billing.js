@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/billing.js';
 
-startServer({ name: 'hostinger-billing-mcp', version: '1.36.0', tools });
+startServer({ name: 'hostinger-billing-mcp', version: '1.37.0', tools });

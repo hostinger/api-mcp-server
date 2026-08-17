@@ -69,7 +69,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (323 total)
+- `hostinger-api-mcp` — unified server with every tool (326 total)
 - `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -78,7 +78,7 @@ This package installs the following MCP server commands:
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 50 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
-- `hostinger-reach-mcp` — 38 tools for reach
+- `hostinger-reach-mcp` — 41 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 35 tools for wordpress
 
@@ -2239,6 +2239,40 @@ steps yet returns an empty list.
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/automations/{automationUuid}/steps`
+
+#### reach_getCampaignDetailsV1
+
+Get a single campaign with its sender, subject, template reference, targeting and delivery
+progress.
+
+This describes how the campaign was set up and how far it has got. For opens, clicks and
+unsubscribes use the campaign statistics endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}`
+
+#### reach_listCampaignsV1
+
+Get a paginated list of the campaigns in a profile.
+
+Each campaign carries its headline engagement rates. Filter by status to find drafts,
+scheduled, sending or sent campaigns, keeping in mind that a fully sent campaign has the
+status `publish`. By default only regular campaigns are returned - pass `type` to get the
+emails sent by automations or the double opt-in confirmations instead.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns`
+
+#### reach_getCampaignPerformanceV1
+
+Get the performance of a campaign: delivery, opens, clicks and unsubscribes, with the
+matching rates.
+
+Every count is unique contacts rather than raw events, so a contact who opens the same email
+five times is counted once.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}/statistics`
 
 #### reach_deleteAContactV1
 
