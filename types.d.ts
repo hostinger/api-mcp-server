@@ -345,6 +345,109 @@ archive types: .zip, .tar, .tar.gz, .tgz.
   };
 
   /**
+   * Lists every PHP extension available to an Agency Plan website and whether it is currently enabled.
+   */
+  "agency-hosting_listPHPExtensionsForAWebsiteV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Replaces the set of PHP extensions enabled on an Agency Plan website with the ones provided. Any toggleable extension not in the request is disabled, so call the extensions endpoint first and send the full desired set. Extensions compiled into PHP, reported with the "built-in" state, are always active and are unaffected.
+   */
+  "agency-hosting_replaceWebsitePHPExtensionsV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Extension names, exactly as returned by the extensions endpoint.
+       */
+      extensions: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Lists the php.ini directives that can be configured for an Agency Plan website, each with its default, the value currently in effect, and the values it accepts.
+   */
+  "agency-hosting_listPHPOptionsForAWebsiteV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Replaces the custom php.ini values on an Agency Plan website with the ones provided. Any option not in the request is reset to its default, so call the options endpoint first and send the full desired set. Sending an empty array resets every option to its default.
+   */
+  "agency-hosting_replaceWebsitePHPOptionsV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * Option names and values. Each name must be one of the options returned by the options endpoint, and each value must satisfy that option's allowed_values when it declares them.
+       */
+      options: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Lists the PHP versions available to websites created under an Agency Plan order, determined by the server the order is hosted on. Use this before creating a website; for a website that already exists, call the website-scoped versions endpoint instead.
+   */
+  "agency-hosting_listAvailablePHPVersionsForAnOrderV1": {
+    params: {
+      /**
+       * Agency Plan order ID
+       */
+      order_id: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Lists the PHP versions an Agency Plan website can be switched to. The version the website is currently running is returned as settings.php.version by the website details endpoint.
+   */
+  "agency-hosting_listAvailablePHPVersionsForAWebsiteV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Switches an Agency Plan website to a different PHP version. Call the available versions endpoint first to see which versions can be selected. The website restarts on the new version, so requests served during the switch may fail and code that is incompatible with the target version will break.
+   */
+  "agency-hosting_updateWebsitePHPVersionV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+      /**
+       * PHP version to switch the website to, as major.minor. Must be one of the versions returned by the available versions endpoint.
+       */
+      version: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Provisions a new website on one of your Agency Plan hosting orders.
 
 Choose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach

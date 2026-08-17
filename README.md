@@ -69,8 +69,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (330 total)
-- `hostinger-agency-hosting-mcp` — 27 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (337 total)
+- `hostinger-agency-hosting-mcp` — 34 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
@@ -306,6 +306,55 @@ Returns a paginated list of Agency Plan orders accessible to the authenticated c
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders`
+
+#### agency-hosting_listPHPExtensionsForAWebsiteV1
+
+Lists every PHP extension available to an Agency Plan website and whether it is currently enabled.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/extensions`
+
+#### agency-hosting_replaceWebsitePHPExtensionsV1
+
+Replaces the set of PHP extensions enabled on an Agency Plan website with the ones provided. Any toggleable extension not in the request is disabled, so call the extensions endpoint first and send the full desired set. Extensions compiled into PHP, reported with the "built-in" state, are always active and are unaffected.
+
+- **Method**: `PUT`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/extensions`
+
+#### agency-hosting_listPHPOptionsForAWebsiteV1
+
+Lists the php.ini directives that can be configured for an Agency Plan website, each with its default, the value currently in effect, and the values it accepts.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/options`
+
+#### agency-hosting_replaceWebsitePHPOptionsV1
+
+Replaces the custom php.ini values on an Agency Plan website with the ones provided. Any option not in the request is reset to its default, so call the options endpoint first and send the full desired set. Sending an empty array resets every option to its default.
+
+- **Method**: `PUT`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/options`
+
+#### agency-hosting_listAvailablePHPVersionsForAnOrderV1
+
+Lists the PHP versions available to websites created under an Agency Plan order, determined by the server the order is hosted on. Use this before creating a website; for a website that already exists, call the website-scoped versions endpoint instead.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/orders/{order_id}/websites/php-settings/versions`
+
+#### agency-hosting_listAvailablePHPVersionsForAWebsiteV1
+
+Lists the PHP versions an Agency Plan website can be switched to. The version the website is currently running is returned as settings.php.version by the website details endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/versions`
+
+#### agency-hosting_updateWebsitePHPVersionV1
+
+Switches an Agency Plan website to a different PHP version. Call the available versions endpoint first to see which versions can be selected. The website restarts on the new version, so requests served during the switch may fail and code that is incompatible with the target version will break.
+
+- **Method**: `PATCH`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/version`
 
 #### agency-hosting_createANewWebsiteV1
 

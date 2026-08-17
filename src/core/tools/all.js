@@ -531,6 +531,211 @@ export default [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_listPHPExtensionsForAWebsiteV1",
+    "description": "Lists every PHP extension available to an Agency Plan website and whether it is currently enabled.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/extensions",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        }
+      },
+      "required": [
+        "website_uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_replaceWebsitePHPExtensionsV1",
+    "description": "Replaces the set of PHP extensions enabled on an Agency Plan website with the ones provided. Any toggleable extension not in the request is disabled, so call the extensions endpoint first and send the full desired set. Extensions compiled into PHP, reported with the \"built-in\" state, are always active and are unaffected.",
+    "method": "PUT",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/extensions",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "extensions": {
+          "type": "array",
+          "description": "Extension names, exactly as returned by the extensions endpoint.",
+          "items": {
+            "type": "string",
+            "description": "extensions parameter"
+          }
+        }
+      },
+      "required": [
+        "website_uid",
+        "extensions"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_listPHPOptionsForAWebsiteV1",
+    "description": "Lists the php.ini directives that can be configured for an Agency Plan website, each with its default, the value currently in effect, and the values it accepts.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/options",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        }
+      },
+      "required": [
+        "website_uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_replaceWebsitePHPOptionsV1",
+    "description": "Replaces the custom php.ini values on an Agency Plan website with the ones provided. Any option not in the request is reset to its default, so call the options endpoint first and send the full desired set. Sending an empty array resets every option to its default.",
+    "method": "PUT",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/options",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "options": {
+          "type": "array",
+          "description": "Option names and values. Each name must be one of the options returned by the options endpoint, and each value must satisfy that option's allowed_values when it declares them.",
+          "items": {
+            "type": "object",
+            "description": "options parameter",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "php.ini directive name."
+              },
+              "value": {
+                "type": "string",
+                "description": "Value to apply."
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ]
+          }
+        }
+      },
+      "required": [
+        "website_uid",
+        "options"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_listAvailablePHPVersionsForAnOrderV1",
+    "description": "Lists the PHP versions available to websites created under an Agency Plan order, determined by the server the order is hosted on. Use this before creating a website; for a website that already exists, call the website-scoped versions endpoint instead.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/orders/{order_id}/websites/php-settings/versions",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer",
+          "description": "Agency Plan order ID"
+        }
+      },
+      "required": [
+        "order_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_listAvailablePHPVersionsForAWebsiteV1",
+    "description": "Lists the PHP versions an Agency Plan website can be switched to. The version the website is currently running is returned as settings.php.version by the website details endpoint.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/versions",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        }
+      },
+      "required": [
+        "website_uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_updateWebsitePHPVersionV1",
+    "description": "Switches an Agency Plan website to a different PHP version. Call the available versions endpoint first to see which versions can be selected. The website restarts on the new version, so requests served during the switch may fail and code that is incompatible with the target version will break.",
+    "method": "PATCH",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/version",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "version": {
+          "type": "string",
+          "description": "PHP version to switch the website to, as major.minor. Must be one of the versions returned by the available versions endpoint."
+        }
+      },
+      "required": [
+        "website_uid",
+        "version"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "agency-hosting_createANewWebsiteV1",
     "description": "Provisions a new website on one of your Agency Plan hosting orders.\n\nChoose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach\nyour own `domain` — omit it, set it to `null`, or leave it unavailable and a free\n`*.hostingersite.com` subdomain is generated instead — and/or install WordPress by\nsupplying the `wordpress` details (admin account, site title, and language).\n\nCommon setups:\n- **Plain PHP site**: `flavor` set to `php-fpm`, with `settings.php.version`; omit\n  `wordpress` and `type`.\n- **WordPress site**: `flavor` set to the desired WordPress version (e.g. `wp-7.0`), plus\n  the `wordpress` block (admin account, title, language).\n- **Static/Node.js frontend app**: `flavor` set to `php-fpm` and `type` set to\n  `node-static`.\n\nProvisioning runs in the background, so the response returns immediately with a setup UUID\nthat identifies the job. The new website becomes reachable once provisioning finishes.",
     "method": "POST",
