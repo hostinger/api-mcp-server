@@ -69,18 +69,18 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (342 total)
-- `hostinger-agency-hosting-mcp` — 36 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (350 total)
+- `hostinger-agency-hosting-mcp` — 37 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
 - `hostinger-ecommerce-mcp` — 14 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 53 tools for hosting
+- `hostinger-hosting-mcp` — 57 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 45 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
-- `hostinger-wordpress-mcp` — 35 tools for wordpress
+- `hostinger-wordpress-mcp` — 38 tools for wordpress
 
 Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
 
@@ -288,6 +288,49 @@ If this is the only domain on the website, unlinking leaves the website without 
 
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}`
+
+#### agency-hosting_generateUploadURLV1
+
+Generate a file browser upload URL with authentication credentials for uploading files
+to an Agency Plan website's file storage.
+
+Returns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the
+website's file storage via the TUS resumable upload protocol (TUS 1.0.0). Send
+`X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request below.
+
+1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers
+   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.
+2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or
+   `PATCH` requests with an `upload-offset` header tracking progress) until complete.
+
+`relative_file_path` is the destination path inside the website's file storage, e.g.
+`app.zip`.
+
+Instead of a TUS client, plain `curl` also works:
+```
+FILE=app.zip
+SIZE=$(stat -f%z "$FILE")   # stat -c%s on Linux
+
+curl -i -X POST "{url}/${FILE}?override=true" \
+  -H "X-Auth: {auth_key}" \
+  -H "X-Auth-Rest: {rest_auth_key}" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Upload-Length: ${SIZE}" \
+  -H "Upload-Offset: 0"
+# -> 201 Created
+
+curl -i -X PATCH "{url}/${FILE}?override=true" \
+  -H "X-Auth: {auth_key}" \
+  -H "X-Auth-Rest: {rest_auth_key}" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Content-Type: application/offset+octet-stream" \
+  -H "Upload-Offset: 0" \
+  --data-binary "@${FILE}"
+# -> 204 No Content, Upload-Offset response header equals SIZE when done
+```
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/files/upload-urls`
 
 #### agency-hosting_importWebsiteFromArchiveV1
 
@@ -1684,6 +1727,49 @@ Skip this verification when using Hostinger's free subdomains (*.hostingersite.c
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/verify-ownership`
 
+#### hosting_generateUploadURLV1
+
+Generate a file browser upload URL with authentication credentials
+for uploading files directly to a website's file storage.
+
+Returns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the
+website's `public_html` directory via the TUS resumable upload protocol (TUS 1.0.0).
+Send `X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request
+below.
+
+1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers
+   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.
+2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or
+   `PATCH` requests with an `upload-offset` header tracking progress) until complete.
+
+`relative_file_path` is the destination path inside `public_html`, e.g. `app.zip`.
+
+Instead of a TUS client, plain `curl` also works:
+```
+FILE=app.zip
+SIZE=$(stat -f%z "$FILE")   # stat -c%s on Linux
+
+curl -i -X POST "{url}/${FILE}?override=true" \
+  -H "X-Auth: {auth_key}" \
+  -H "X-Auth-Rest: {rest_auth_key}" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Upload-Length: ${SIZE}" \
+  -H "Upload-Offset: 0"
+# -> 201 Created
+
+curl -i -X PATCH "{url}/${FILE}?override=true" \
+  -H "X-Auth: {auth_key}" \
+  -H "X-Auth-Rest: {rest_auth_key}" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Content-Type: application/offset+octet-stream" \
+  -H "Upload-Offset: 0" \
+  --data-binary "@${FILE}"
+# -> 204 No Content, Upload-Offset response header equals SIZE when done
+```
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/files/upload-urls`
+
 #### hosting_listWebsiteFilesAndDirectoriesV1
 
 List files and directories under a website's document root.
@@ -1715,9 +1801,33 @@ Use the `uuid` from a build to poll its output via the `Get Node.js Build Logs` 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds`
 
+#### hosting_startNode_jsBuildV1
+
+Start a Node.js build process using files already present on the website's file storage.
+
+WARNING: on success this overwrites the website's existing contents and cannot be
+undone — verify this is intended before calling this endpoint.
+
+The `source_type` must be `archive` and `source_options.archive_path` must point to an
+existing archive file on the server (relative to the website document root).
+Use the `Generate Upload URL` endpoint to obtain credentials and upload the archive first.
+
+To auto-detect build settings from an archive before starting, first call the
+`Get Node.js Build Settings from Archive` endpoint. To upload an archive and start
+a build in one step, use the `Create Node.js Build from Archive` endpoint instead.
+
+The returned build `uuid` can be used to poll progress and retrieve logs via
+the `Get Node.js Build Logs` endpoint.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds`
+
 #### hosting_createNodeJSBuildFromArchiveV1
 
 Upload a project archive, auto-detect build settings, and immediately start a Node.js build.
+
+WARNING: on success this overwrites the website's existing contents and cannot be
+undone — verify this is intended before calling this endpoint.
 
 This is the recommended single-step approach for deploying a Node.js application.
 The archive is uploaded to the website's file storage, build settings are auto-detected
@@ -1740,6 +1850,22 @@ the `Get Node.js Build Logs` endpoint.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/from-archive`
+
+#### hosting_getNode_jsBuildSettingsFromArchiveV1
+
+Auto-detect Node.js build settings from a package.json inside an archive already on the server.
+
+Use this before calling `Start Node.js Build` to preview what settings will be used,
+or to let the user review and override values (framework, node version, root directory,
+output directory, build script) before committing to a build.
+
+The archive must already be present on the website's file storage. Use the
+`Generate Upload URL` endpoint to obtain credentials and upload the archive first.
+To upload an archive and start a build in one step without inspecting settings first,
+use the `Create Node.js Build from Archive` endpoint instead.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/from-archive`
 
 #### hosting_getNodeJSBuildLogsV1
 
@@ -1940,6 +2066,24 @@ websites list endpoint to see when your new website becomes available.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/websites`
+
+#### hosting_deployStaticSiteArchiveV1
+
+Deploy a static application from an archive file.
+
+WARNING: this overwrites the website's existing contents and cannot be undone —
+verify this is intended before calling this endpoint.
+
+This endpoint allows you to deploy a static application from an archive
+file that has been uploaded to the website's directory.
+
+This only works for static sites (pre-built HTML/CSS/JS with no build step). For
+Node.js applications, use `Create NodeJS build from archive` instead, or
+`Start Node.js build` if the archive is already uploaded. For WordPress sites,
+use `Import WordPress website`.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/deploy`
 
 #### hosting_deleteWebsiteV1
 
@@ -3579,6 +3723,19 @@ detected installations once the scan completes.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/installations/detect`
 
+#### hosting_importWordPressWebsiteV1
+
+Import WordPress website to the specified domain.
+
+WARNING: this overwrites the website's existing contents and cannot be undone —
+verify this is intended before calling this endpoint.
+
+This endpoint allows you to import a WordPress website from archive and
+database files that have been uploaded to the website's directory.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/import`
+
 #### hosting_installWordPressV1
 
 Install WordPress on an existing website.
@@ -3761,6 +3918,16 @@ deactivation job has been queued.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/deactivate`
 
+#### hosting_deployWordPressPluginV1
+
+Deploy a WordPress plugin from an already uploaded directory.
+
+This endpoint allows you to deploy a WordPress plugin that has been uploaded to the website's directory.
+The plugin will be activated and made available in the WordPress admin panel.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/plugins/deploy`
+
 #### hosting_installWordPressPluginsV1
 
 Install one or more plugins on an existing WordPress installation.
@@ -3878,6 +4045,16 @@ job has been queued.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/activate`
+
+#### hosting_deployWordPressThemeV1
+
+Deploy a WordPress theme from an already uploaded directory.
+
+This endpoint allows you to deploy a WordPress theme that has been uploaded to the website's directory.
+The theme can be optionally activated after deployment.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/themes/deploy`
 
 #### hosting_installWordPressThemeV1
 

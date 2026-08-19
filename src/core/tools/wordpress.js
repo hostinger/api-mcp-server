@@ -171,6 +171,45 @@ export default [
     "group": "wordpress"
   },
   {
+    "name": "hosting_importWordPressWebsiteV1",
+    "description": "Import WordPress website to the specified domain.\n\nWARNING: this overwrites the website's existing contents and cannot be undone —\nverify this is intended before calling this endpoint.\n\nThis endpoint allows you to import a WordPress website from archive and\ndatabase files that have been uploaded to the website's directory.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/import",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "archive_path": {
+          "type": "string",
+          "description": "Path to the WordPress archive file (relative to website root)"
+        },
+        "sql_path": {
+          "type": "string",
+          "description": "Path to the database SQL file (relative to website root)"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "archive_path",
+        "sql_path"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
     "name": "hosting_installWordPressV1",
     "description": "Install WordPress on an existing website.\n\nThe website must already exist before calling this endpoint. To create a new\nwebsite first, use POST /api/hosting/v1/websites and poll\nGET /api/hosting/v1/websites until it appears.\n\nCall GET /api/hosting/v1/wordpress/installations filtered by username and\ndomain before proceeding to check whether WordPress is already installed on\nthe target domain/path. If WordPress already exists and `overwrite` is false\n(the default), the async job will fail.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that WordPress is ready. Installation typically\ntakes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered\nby username and domain to track progress. When the installation appears in\nthat list, WordPress is ready.",
     "method": "POST",
@@ -708,6 +747,45 @@ export default [
     "group": "wordpress"
   },
   {
+    "name": "hosting_deployWordPressPluginV1",
+    "description": "Deploy a WordPress plugin from an already uploaded directory.\n\nThis endpoint allows you to deploy a WordPress plugin that has been uploaded to the website's directory.\nThe plugin will be activated and made available in the WordPress admin panel.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/plugins/deploy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "slug": {
+          "type": "string",
+          "description": "Slug of the plugin"
+        },
+        "plugin_path": {
+          "type": "string",
+          "description": "Relative path to the plugin directory from wp-content/plugins"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "slug",
+        "plugin_path"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
     "name": "hosting_installWordPressPluginsV1",
     "description": "Install one or more plugins on an existing WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield). Use GET /api/hosting/v1/wordpress/plugins to discover the plugin\nslugs available for installation.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that the plugins are ready.",
     "method": "POST",
@@ -1020,6 +1098,49 @@ export default [
         "username",
         "software",
         "theme"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_deployWordPressThemeV1",
+    "description": "Deploy a WordPress theme from an already uploaded directory.\n\nThis endpoint allows you to deploy a WordPress theme that has been uploaded to the website's directory.\nThe theme can be optionally activated after deployment.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/themes/deploy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "slug": {
+          "type": "string",
+          "description": "Slug of the theme"
+        },
+        "theme_path": {
+          "type": "string",
+          "description": "Relative path to the theme directory from wp-content/themes"
+        },
+        "is_activated": {
+          "type": "boolean",
+          "description": "Whether to activate the theme after deployment"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "slug",
+        "theme_path"
       ]
     },
     "security": [

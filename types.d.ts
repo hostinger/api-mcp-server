@@ -307,6 +307,55 @@ If this is the only domain on the website, unlinking leaves the website without 
   };
 
   /**
+   * Generate a file browser upload URL with authentication credentials for uploading files
+to an Agency Plan website's file storage.
+
+Returns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the
+website's file storage via the TUS resumable upload protocol (TUS 1.0.0). Send
+`X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request below.
+
+1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers
+   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.
+2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or
+   `PATCH` requests with an `upload-offset` header tracking progress) until complete.
+
+`relative_file_path` is the destination path inside the website's file storage, e.g.
+`app.zip`.
+
+Instead of a TUS client, plain `curl` also works:
+```
+FILE=app.zip
+SIZE=$(stat -f%z "$FILE")   # stat -c%s on Linux
+
+curl -i -X POST "{url}/${FILE}?override=true" \
+  -H "X-Auth: {auth_key}" \
+  -H "X-Auth-Rest: {rest_auth_key}" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Upload-Length: ${SIZE}" \
+  -H "Upload-Offset: 0"
+# -> 201 Created
+
+curl -i -X PATCH "{url}/${FILE}?override=true" \
+  -H "X-Auth: {auth_key}" \
+  -H "X-Auth-Rest: {rest_auth_key}" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Content-Type: application/offset+octet-stream" \
+  -H "Upload-Offset: 0" \
+  --data-binary "@${FILE}"
+# -> 204 No Content, Upload-Offset response header equals SIZE when done
+```
+   */
+  "agency-hosting_generateUploadURLV1": {
+    params: {
+      /**
+       * Agency Plan website UID
+       */
+      website_uid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Imports an Agency Plan website from an already-uploaded archive.
 
 Upload the archive to the website's root directory via file browser first, then provide its
@@ -2978,6 +3027,59 @@ Skip this verification when using Hostinger's free subdomains (*.hostingersite.c
   };
 
   /**
+   * Generate a file browser upload URL with authentication credentials
+for uploading files directly to a website's file storage.
+
+Returns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the
+website's `public_html` directory via the TUS resumable upload protocol (TUS 1.0.0).
+Send `X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request
+below.
+
+1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers
+   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.
+2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or
+   `PATCH` requests with an `upload-offset` header tracking progress) until complete.
+
+`relative_file_path` is the destination path inside `public_html`, e.g. `app.zip`.
+
+Instead of a TUS client, plain `curl` also works:
+```
+FILE=app.zip
+SIZE=$(stat -f%z "$FILE")   # stat -c%s on Linux
+
+curl -i -X POST "{url}/${FILE}?override=true" \
+  -H "X-Auth: {auth_key}" \
+  -H "X-Auth-Rest: {rest_auth_key}" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Upload-Length: ${SIZE}" \
+  -H "Upload-Offset: 0"
+# -> 201 Created
+
+curl -i -X PATCH "{url}/${FILE}?override=true" \
+  -H "X-Auth: {auth_key}" \
+  -H "X-Auth-Rest: {rest_auth_key}" \
+  -H "Tus-Resumable: 1.0.0" \
+  -H "Content-Type: application/offset+octet-stream" \
+  -H "Upload-Offset: 0" \
+  --data-binary "@${FILE}"
+# -> 204 No Content, Upload-Offset response header equals SIZE when done
+```
+   */
+  "hosting_generateUploadURLV1": {
+    params: {
+      /**
+       * Account username
+       */
+      username: string;
+      /**
+       * Website domain
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * List files and directories under a website's document root.
 
 Use `directory` to browse a subdirectory relative to the document root. Symlinked entries
@@ -3083,7 +3185,77 @@ Use the `uuid` from a build to poll its output via the `Get Node.js Build Logs` 
   };
 
   /**
+   * Start a Node.js build process using files already present on the website's file storage.
+
+WARNING: on success this overwrites the website's existing contents and cannot be
+undone — verify this is intended before calling this endpoint.
+
+The `source_type` must be `archive` and `source_options.archive_path` must point to an
+existing archive file on the server (relative to the website document root).
+Use the `Generate Upload URL` endpoint to obtain credentials and upload the archive first.
+
+To auto-detect build settings from an archive before starting, first call the
+`Get Node.js Build Settings from Archive` endpoint. To upload an archive and start
+a build in one step, use the `Create Node.js Build from Archive` endpoint instead.
+
+The returned build `uuid` can be used to poll progress and retrieve logs via
+the `Get Node.js Build Logs` endpoint.
+   */
+  "hosting_startNode_jsBuildV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Node.js version
+       */
+      node_version: number;
+      /**
+       * Node.js application type
+       */
+      app_type: string;
+      /**
+       * Application root directory (where package.json is located) relative to public_html
+       */
+      root_directory: string;
+      /**
+       * Build output directory relative to the root directory
+       */
+      output_directory: string;
+      /**
+       * Build script that will be ran to build the application
+       */
+      build_script: string;
+      /**
+       * The main entry point file for the application
+       */
+      entry_file?: string;
+      /**
+       * Package manager
+       */
+      package_manager?: string;
+      /**
+       * The source type of the files
+       */
+      source_type: string;
+      /**
+       * Source-specific options
+       */
+      source_options: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Upload a project archive, auto-detect build settings, and immediately start a Node.js build.
+
+WARNING: on success this overwrites the website's existing contents and cannot be
+undone — verify this is intended before calling this endpoint.
 
 This is the recommended single-step approach for deploying a Node.js application.
 The archive is uploaded to the website's file storage, build settings are auto-detected
@@ -3146,6 +3318,36 @@ the `Get Node.js Build Logs` endpoint.
        * Package manager override
        */
       package_manager?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Auto-detect Node.js build settings from a package.json inside an archive already on the server.
+
+Use this before calling `Start Node.js Build` to preview what settings will be used,
+or to let the user review and override values (framework, node version, root directory,
+output directory, build script) before committing to a build.
+
+The archive must already be present on the website's file storage. Use the
+`Generate Upload URL` endpoint to obtain credentials and upload the archive first.
+To upload an archive and start a build in one step without inspecting settings first,
+use the `Create Node.js Build from Archive` endpoint instead.
+   */
+  "hosting_getNode_jsBuildSettingsFromArchiveV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * The path to the archive file relative to the document root of the vhost
+       */
+      archive_path: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -3586,6 +3788,38 @@ websites list endpoint to see when your new website becomes available.
        * Datacenter code. This parameter is required when creating the first website on a new hosting plan.
        */
       datacenter_code?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Deploy a static application from an archive file.
+
+WARNING: this overwrites the website's existing contents and cannot be undone —
+verify this is intended before calling this endpoint.
+
+This endpoint allows you to deploy a static application from an archive
+file that has been uploaded to the website's directory.
+
+This only works for static sites (pre-built HTML/CSS/JS with no build step). For
+Node.js applications, use `Create NodeJS build from archive` instead, or
+`Start Node.js build` if the archive is already uploaded. For WordPress sites,
+use `Import WordPress website`.
+   */
+  "hosting_deployStaticSiteArchiveV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Relative path to the archive file from website root directory
+       */
+      archive_path: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -7130,6 +7364,37 @@ detected installations once the scan completes.
   };
 
   /**
+   * Import WordPress website to the specified domain.
+
+WARNING: this overwrites the website's existing contents and cannot be undone —
+verify this is intended before calling this endpoint.
+
+This endpoint allows you to import a WordPress website from archive and
+database files that have been uploaded to the website's directory.
+   */
+  "hosting_importWordPressWebsiteV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Path to the WordPress archive file (relative to website root)
+       */
+      archive_path: string;
+      /**
+       * Path to the database SQL file (relative to website root)
+       */
+      sql_path: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Install WordPress on an existing website.
 
 The website must already exist before calling this endpoint. To create a new
@@ -7522,6 +7787,34 @@ deactivation job has been queued.
   };
 
   /**
+   * Deploy a WordPress plugin from an already uploaded directory.
+
+This endpoint allows you to deploy a WordPress plugin that has been uploaded to the website's directory.
+The plugin will be activated and made available in the WordPress admin panel.
+   */
+  "hosting_deployWordPressPluginV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Slug of the plugin
+       */
+      slug: string;
+      /**
+       * Relative path to the plugin directory from wp-content/plugins
+       */
+      plugin_path: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Install one or more plugins on an existing WordPress installation.
 
 Provide the WordPress installation (software) identifier in the path. It can
@@ -7747,6 +8040,38 @@ job has been queued.
        * Slug of the installed theme to activate.
        */
       theme: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Deploy a WordPress theme from an already uploaded directory.
+
+This endpoint allows you to deploy a WordPress theme that has been uploaded to the website's directory.
+The theme can be optionally activated after deployment.
+   */
+  "hosting_deployWordPressThemeV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Slug of the theme
+       */
+      slug: string;
+      /**
+       * Relative path to the theme directory from wp-content/themes
+       */
+      theme_path: string;
+      /**
+       * Whether to activate the theme after deployment
+       */
+      is_activated?: boolean;
     };
     response: any; // Response structure will depend on the API
   };

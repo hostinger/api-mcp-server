@@ -476,6 +476,30 @@ export default [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_generateUploadURLV1",
+    "description": "Generate a file browser upload URL with authentication credentials for uploading files\nto an Agency Plan website's file storage.\n\nReturns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the\nwebsite's file storage via the TUS resumable upload protocol (TUS 1.0.0). Send\n`X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request below.\n\n1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers\n   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.\n2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or\n   `PATCH` requests with an `upload-offset` header tracking progress) until complete.\n\n`relative_file_path` is the destination path inside the website's file storage, e.g.\n`app.zip`.\n\nInstead of a TUS client, plain `curl` also works:\n```\nFILE=app.zip\nSIZE=$(stat -f%z \"$FILE\")   # stat -c%s on Linux\n\ncurl -i -X POST \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Upload-Length: ${SIZE}\" \\\n  -H \"Upload-Offset: 0\"\n# -> 201 Created\n\ncurl -i -X PATCH \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Content-Type: application/offset+octet-stream\" \\\n  -H \"Upload-Offset: 0\" \\\n  --data-binary \"@${FILE}\"\n# -> 204 No Content, Upload-Offset response header equals SIZE when done\n```",
+    "method": "POST",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/files/upload-urls",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        }
+      },
+      "required": [
+        "website_uid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "agency-hosting_importWebsiteFromArchiveV1",
     "description": "Imports an Agency Plan website from an already-uploaded archive.\n\nUpload the archive to the website's root directory via file browser first, then provide its\nfilename in this request. Website contents are overwritten by the archive contents. Supported\narchive types: .zip, .tar, .tar.gz, .tgz.",
     "method": "POST",
@@ -4543,6 +4567,35 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "hosting_generateUploadURLV1",
+    "description": "Generate a file browser upload URL with authentication credentials\nfor uploading files directly to a website's file storage.\n\nReturns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the\nwebsite's `public_html` directory via the TUS resumable upload protocol (TUS 1.0.0).\nSend `X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request\nbelow.\n\n1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers\n   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.\n2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or\n   `PATCH` requests with an `upload-offset` header tracking progress) until complete.\n\n`relative_file_path` is the destination path inside `public_html`, e.g. `app.zip`.\n\nInstead of a TUS client, plain `curl` also works:\n```\nFILE=app.zip\nSIZE=$(stat -f%z \"$FILE\")   # stat -c%s on Linux\n\ncurl -i -X POST \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Upload-Length: ${SIZE}\" \\\n  -H \"Upload-Offset: 0\"\n# -> 201 Created\n\ncurl -i -X PATCH \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Content-Type: application/offset+octet-stream\" \\\n  -H \"Upload-Offset: 0\" \\\n  --data-binary \"@${FILE}\"\n# -> 204 No Content, Upload-Offset response header equals SIZE when done\n```",
+    "method": "POST",
+    "path": "/api/hosting/v1/files/upload-urls",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Account username"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Website domain"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_listWebsiteFilesAndDirectoriesV1",
     "description": "List files and directories under a website's document root.\n\nUse `directory` to browse a subdirectory relative to the document root. Symlinked entries\nare listed but never traversed into or resolved.",
     "method": "GET",
@@ -4695,8 +4748,121 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "hosting_startNode_jsBuildV1",
+    "description": "Start a Node.js build process using files already present on the website's file storage.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nThe `source_type` must be `archive` and `source_options.archive_path` must point to an\nexisting archive file on the server (relative to the website document root).\nUse the `Generate Upload URL` endpoint to obtain credentials and upload the archive first.\n\nTo auto-detect build settings from an archive before starting, first call the\n`Get Node.js Build Settings from Archive` endpoint. To upload an archive and start\na build in one step, use the `Create Node.js Build from Archive` endpoint instead.\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "node_version": {
+          "type": "integer",
+          "description": "Node.js version",
+          "enum": [
+            18,
+            20,
+            22,
+            24
+          ]
+        },
+        "app_type": {
+          "type": "string",
+          "description": "Node.js application type",
+          "enum": [
+            "create-react-app",
+            "gatsby",
+            "vite",
+            "angular",
+            "react",
+            "vue",
+            "parcel",
+            "next",
+            "nuxt",
+            "nest",
+            "express",
+            "fastify",
+            "astro",
+            "svelte",
+            "svelte-kit",
+            "hono",
+            "react-router",
+            "nitro",
+            "other"
+          ]
+        },
+        "root_directory": {
+          "type": "string",
+          "description": "Application root directory (where package.json is located) relative to public_html"
+        },
+        "output_directory": {
+          "type": "string",
+          "description": "Build output directory relative to the root directory"
+        },
+        "build_script": {
+          "type": "string",
+          "description": "Build script that will be ran to build the application"
+        },
+        "entry_file": {
+          "type": "string",
+          "description": "The main entry point file for the application"
+        },
+        "package_manager": {
+          "type": "string",
+          "description": "Package manager",
+          "enum": [
+            "npm",
+            "yarn",
+            "pnpm"
+          ]
+        },
+        "source_type": {
+          "type": "string",
+          "description": "The source type of the files",
+          "enum": [
+            "archive"
+          ]
+        },
+        "source_options": {
+          "type": "object",
+          "description": "Source-specific options",
+          "properties": {
+            "archive_path": {
+              "type": "string",
+              "description": "The path to the archive file relative to the document root of the vhost (required if source is \"archive\")"
+            }
+          }
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "node_version",
+        "app_type",
+        "root_directory",
+        "output_directory",
+        "build_script",
+        "source_type",
+        "source_options"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_createNodeJSBuildFromArchiveV1",
-    "description": "Upload a project archive, auto-detect build settings, and immediately start a Node.js build.\n\nThis is the recommended single-step approach for deploying a Node.js application.\nThe archive is uploaded to the website's file storage, build settings are auto-detected\nfrom the package.json inside the archive, and the build process starts automatically.\nOptional override fields take precedence over auto-detected values.\nMaximum archive size is 50MB.\n\nBefore archiving, exclude `node_modules/` and any build output directories\n(e.g. `dist/`, `.next/`, `build/`) — they are not needed because the build\nprocess runs the install step automatically, and including them unnecessarily\nincreases the archive size. This also helps keep the archive well under the 50MB limit.\n\nExample (zip):\n```\nzip -r archive.zip . --exclude \"node_modules/*\" --exclude \"dist/*\"\n```\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
+    "description": "Upload a project archive, auto-detect build settings, and immediately start a Node.js build.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nThis is the recommended single-step approach for deploying a Node.js application.\nThe archive is uploaded to the website's file storage, build settings are auto-detected\nfrom the package.json inside the archive, and the build process starts automatically.\nOptional override fields take precedence over auto-detected values.\nMaximum archive size is 50MB.\n\nBefore archiving, exclude `node_modules/` and any build output directories\n(e.g. `dist/`, `.next/`, `build/`) — they are not needed because the build\nprocess runs the install step automatically, and including them unnecessarily\nincreases the archive size. This also helps keep the archive well under the 50MB limit.\n\nExample (zip):\n```\nzip -r archive.zip . --exclude \"node_modules/*\" --exclude \"dist/*\"\n```\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/from-archive",
     "inputSchema": {
@@ -4779,6 +4945,40 @@ export default [
         "username",
         "domain",
         "archive"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_getNode_jsBuildSettingsFromArchiveV1",
+    "description": "Auto-detect Node.js build settings from a package.json inside an archive already on the server.\n\nUse this before calling `Start Node.js Build` to preview what settings will be used,\nor to let the user review and override values (framework, node version, root directory,\noutput directory, build script) before committing to a build.\n\nThe archive must already be present on the website's file storage. Use the\n`Generate Upload URL` endpoint to obtain credentials and upload the archive first.\nTo upload an archive and start a build in one step without inspecting settings first,\nuse the `Create Node.js Build from Archive` endpoint instead.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/from-archive",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "archive_path": {
+          "type": "string",
+          "description": "The path to the archive file relative to the document root of the vhost"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "archive_path"
       ]
     },
     "security": [
@@ -5362,6 +5562,40 @@ export default [
       "required": [
         "domain",
         "order_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_deployStaticSiteArchiveV1",
+    "description": "Deploy a static application from an archive file.\n\nWARNING: this overwrites the website's existing contents and cannot be undone —\nverify this is intended before calling this endpoint.\n\nThis endpoint allows you to deploy a static application from an archive\nfile that has been uploaded to the website's directory.\n\nThis only works for static sites (pre-built HTML/CSS/JS with no build step). For\nNode.js applications, use `Create NodeJS build from archive` instead, or\n`Start Node.js build` if the archive is already uploaded. For WordPress sites,\nuse `Import WordPress website`.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/deploy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "archive_path": {
+          "type": "string",
+          "description": "Relative path to the archive file from website root directory"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "archive_path"
       ]
     },
     "security": [
@@ -10531,6 +10765,45 @@ export default [
     "group": "wordpress"
   },
   {
+    "name": "hosting_importWordPressWebsiteV1",
+    "description": "Import WordPress website to the specified domain.\n\nWARNING: this overwrites the website's existing contents and cannot be undone —\nverify this is intended before calling this endpoint.\n\nThis endpoint allows you to import a WordPress website from archive and\ndatabase files that have been uploaded to the website's directory.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/import",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "archive_path": {
+          "type": "string",
+          "description": "Path to the WordPress archive file (relative to website root)"
+        },
+        "sql_path": {
+          "type": "string",
+          "description": "Path to the database SQL file (relative to website root)"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "archive_path",
+        "sql_path"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
     "name": "hosting_installWordPressV1",
     "description": "Install WordPress on an existing website.\n\nThe website must already exist before calling this endpoint. To create a new\nwebsite first, use POST /api/hosting/v1/websites and poll\nGET /api/hosting/v1/websites until it appears.\n\nCall GET /api/hosting/v1/wordpress/installations filtered by username and\ndomain before proceeding to check whether WordPress is already installed on\nthe target domain/path. If WordPress already exists and `overwrite` is false\n(the default), the async job will fail.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that WordPress is ready. Installation typically\ntakes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered\nby username and domain to track progress. When the installation appears in\nthat list, WordPress is ready.",
     "method": "POST",
@@ -11068,6 +11341,45 @@ export default [
     "group": "wordpress"
   },
   {
+    "name": "hosting_deployWordPressPluginV1",
+    "description": "Deploy a WordPress plugin from an already uploaded directory.\n\nThis endpoint allows you to deploy a WordPress plugin that has been uploaded to the website's directory.\nThe plugin will be activated and made available in the WordPress admin panel.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/plugins/deploy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "slug": {
+          "type": "string",
+          "description": "Slug of the plugin"
+        },
+        "plugin_path": {
+          "type": "string",
+          "description": "Relative path to the plugin directory from wp-content/plugins"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "slug",
+        "plugin_path"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
     "name": "hosting_installWordPressPluginsV1",
     "description": "Install one or more plugins on an existing WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield). Use GET /api/hosting/v1/wordpress/plugins to discover the plugin\nslugs available for installation.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that the plugins are ready.",
     "method": "POST",
@@ -11380,6 +11692,49 @@ export default [
         "username",
         "software",
         "theme"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "hosting_deployWordPressThemeV1",
+    "description": "Deploy a WordPress theme from an already uploaded directory.\n\nThis endpoint allows you to deploy a WordPress theme that has been uploaded to the website's directory.\nThe theme can be optionally activated after deployment.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/themes/deploy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "slug": {
+          "type": "string",
+          "description": "Slug of the theme"
+        },
+        "theme_path": {
+          "type": "string",
+          "description": "Relative path to the theme directory from wp-content/themes"
+        },
+        "is_activated": {
+          "type": "boolean",
+          "description": "Whether to activate the theme after deployment"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "slug",
+        "theme_path"
       ]
     },
     "security": [

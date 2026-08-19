@@ -1061,6 +1061,35 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_generateUploadURLV1",
+    "description": "Generate a file browser upload URL with authentication credentials\nfor uploading files directly to a website's file storage.\n\nReturns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the\nwebsite's `public_html` directory via the TUS resumable upload protocol (TUS 1.0.0).\nSend `X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request\nbelow.\n\n1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers\n   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.\n2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or\n   `PATCH` requests with an `upload-offset` header tracking progress) until complete.\n\n`relative_file_path` is the destination path inside `public_html`, e.g. `app.zip`.\n\nInstead of a TUS client, plain `curl` also works:\n```\nFILE=app.zip\nSIZE=$(stat -f%z \"$FILE\")   # stat -c%s on Linux\n\ncurl -i -X POST \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Upload-Length: ${SIZE}\" \\\n  -H \"Upload-Offset: 0\"\n# -> 201 Created\n\ncurl -i -X PATCH \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Content-Type: application/offset+octet-stream\" \\\n  -H \"Upload-Offset: 0\" \\\n  --data-binary \"@${FILE}\"\n# -> 204 No Content, Upload-Offset response header equals SIZE when done\n```",
+    "method": "POST",
+    "path": "/api/hosting/v1/files/upload-urls",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Account username"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Website domain"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_listWebsiteFilesAndDirectoriesV1",
     "description": "List files and directories under a website's document root.\n\nUse `directory` to browse a subdirectory relative to the document root. Symlinked entries\nare listed but never traversed into or resolved.",
     "method": "GET",
@@ -1213,8 +1242,121 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_startNode_jsBuildV1",
+    "description": "Start a Node.js build process using files already present on the website's file storage.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nThe `source_type` must be `archive` and `source_options.archive_path` must point to an\nexisting archive file on the server (relative to the website document root).\nUse the `Generate Upload URL` endpoint to obtain credentials and upload the archive first.\n\nTo auto-detect build settings from an archive before starting, first call the\n`Get Node.js Build Settings from Archive` endpoint. To upload an archive and start\na build in one step, use the `Create Node.js Build from Archive` endpoint instead.\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "node_version": {
+          "type": "integer",
+          "description": "Node.js version",
+          "enum": [
+            18,
+            20,
+            22,
+            24
+          ]
+        },
+        "app_type": {
+          "type": "string",
+          "description": "Node.js application type",
+          "enum": [
+            "create-react-app",
+            "gatsby",
+            "vite",
+            "angular",
+            "react",
+            "vue",
+            "parcel",
+            "next",
+            "nuxt",
+            "nest",
+            "express",
+            "fastify",
+            "astro",
+            "svelte",
+            "svelte-kit",
+            "hono",
+            "react-router",
+            "nitro",
+            "other"
+          ]
+        },
+        "root_directory": {
+          "type": "string",
+          "description": "Application root directory (where package.json is located) relative to public_html"
+        },
+        "output_directory": {
+          "type": "string",
+          "description": "Build output directory relative to the root directory"
+        },
+        "build_script": {
+          "type": "string",
+          "description": "Build script that will be ran to build the application"
+        },
+        "entry_file": {
+          "type": "string",
+          "description": "The main entry point file for the application"
+        },
+        "package_manager": {
+          "type": "string",
+          "description": "Package manager",
+          "enum": [
+            "npm",
+            "yarn",
+            "pnpm"
+          ]
+        },
+        "source_type": {
+          "type": "string",
+          "description": "The source type of the files",
+          "enum": [
+            "archive"
+          ]
+        },
+        "source_options": {
+          "type": "object",
+          "description": "Source-specific options",
+          "properties": {
+            "archive_path": {
+              "type": "string",
+              "description": "The path to the archive file relative to the document root of the vhost (required if source is \"archive\")"
+            }
+          }
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "node_version",
+        "app_type",
+        "root_directory",
+        "output_directory",
+        "build_script",
+        "source_type",
+        "source_options"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_createNodeJSBuildFromArchiveV1",
-    "description": "Upload a project archive, auto-detect build settings, and immediately start a Node.js build.\n\nThis is the recommended single-step approach for deploying a Node.js application.\nThe archive is uploaded to the website's file storage, build settings are auto-detected\nfrom the package.json inside the archive, and the build process starts automatically.\nOptional override fields take precedence over auto-detected values.\nMaximum archive size is 50MB.\n\nBefore archiving, exclude `node_modules/` and any build output directories\n(e.g. `dist/`, `.next/`, `build/`) — they are not needed because the build\nprocess runs the install step automatically, and including them unnecessarily\nincreases the archive size. This also helps keep the archive well under the 50MB limit.\n\nExample (zip):\n```\nzip -r archive.zip . --exclude \"node_modules/*\" --exclude \"dist/*\"\n```\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
+    "description": "Upload a project archive, auto-detect build settings, and immediately start a Node.js build.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nThis is the recommended single-step approach for deploying a Node.js application.\nThe archive is uploaded to the website's file storage, build settings are auto-detected\nfrom the package.json inside the archive, and the build process starts automatically.\nOptional override fields take precedence over auto-detected values.\nMaximum archive size is 50MB.\n\nBefore archiving, exclude `node_modules/` and any build output directories\n(e.g. `dist/`, `.next/`, `build/`) — they are not needed because the build\nprocess runs the install step automatically, and including them unnecessarily\nincreases the archive size. This also helps keep the archive well under the 50MB limit.\n\nExample (zip):\n```\nzip -r archive.zip . --exclude \"node_modules/*\" --exclude \"dist/*\"\n```\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/from-archive",
     "inputSchema": {
@@ -1297,6 +1439,40 @@ const tools: OpenApiTool[] = [
         "username",
         "domain",
         "archive"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_getNode_jsBuildSettingsFromArchiveV1",
+    "description": "Auto-detect Node.js build settings from a package.json inside an archive already on the server.\n\nUse this before calling `Start Node.js Build` to preview what settings will be used,\nor to let the user review and override values (framework, node version, root directory,\noutput directory, build script) before committing to a build.\n\nThe archive must already be present on the website's file storage. Use the\n`Generate Upload URL` endpoint to obtain credentials and upload the archive first.\nTo upload an archive and start a build in one step without inspecting settings first,\nuse the `Create Node.js Build from Archive` endpoint instead.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/from-archive",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "archive_path": {
+          "type": "string",
+          "description": "The path to the archive file relative to the document root of the vhost"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "archive_path"
       ]
     },
     "security": [
@@ -1880,6 +2056,40 @@ const tools: OpenApiTool[] = [
       "required": [
         "domain",
         "order_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_deployStaticSiteArchiveV1",
+    "description": "Deploy a static application from an archive file.\n\nWARNING: this overwrites the website's existing contents and cannot be undone —\nverify this is intended before calling this endpoint.\n\nThis endpoint allows you to deploy a static application from an archive\nfile that has been uploaded to the website's directory.\n\nThis only works for static sites (pre-built HTML/CSS/JS with no build step). For\nNode.js applications, use `Create NodeJS build from archive` instead, or\n`Start Node.js build` if the archive is already uploaded. For WordPress sites,\nuse `Import WordPress website`.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/deploy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "archive_path": {
+          "type": "string",
+          "description": "Relative path to the archive file from website root directory"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "archive_path"
       ]
     },
     "security": [
