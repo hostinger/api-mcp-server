@@ -3513,11 +3513,18 @@ Pass the `from` value exactly as returned by the list redirects endpoint.
   };
 
   /**
-   * Retrieve a paginated list of websites (main and addon types) accessible to the authenticated client.
+   * Retrieve a paginated list of websites (CloudLinux, Builder, and Horizons) accessible to the
+authenticated client.
 
 This endpoint returns websites from your hosting accounts as well as
 websites from other client hosting accounts that have shared access
 with you.
+
+Each website includes a `website_type` field describing the type of
+website detected on the underlying platform (`wordpress`, `builder`,
+`horizons`, `nodejs`, or `other`). Some fields, such as
+`vhost_type`, `username`, and `root_directory`, only apply to
+CloudLinux websites and are null for other platforms.
 
 Use the available query parameters to filter results by username,
 order ID, enabled status, or domain name for more targeted results.
