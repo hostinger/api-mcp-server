@@ -873,6 +873,51 @@ resources are removed in the background.
   };
 
   /**
+   * Retrieve a paginated list of Agency Plan websites (H5G, Builder, and Horizons) accessible to
+the authenticated client.
+
+This endpoint returns websites from your hosting accounts as well as
+websites from other client hosting accounts that have shared access
+with you.
+
+The response shape differs per platform — see the `platform` field on each item.
+
+Use `website_types` to list only websites of a given detected type, e.g. only
+WordPress websites (`website_types=wordpress`) or only Node.js websites
+(`website_types=nodejs`). Combine with `order_ids`, `states`, or `domain` for more
+targeted results.
+   */
+  "agency-hosting_listAgencyPlanWebsitesV1": {
+    params: {
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+      /**
+       * Filter by order IDs. Accepts a comma-separated list.
+       */
+      order_ids?: array;
+      /**
+       * Filter by website state. Accepts a comma-separated list.
+       */
+      states?: array;
+      /**
+       * Filter by detected website type, e.g. wordpress,nodejs. Accepts a comma-separated list.
+       */
+      website_types?: array;
+      /**
+       * Filter by domain name (case-insensitive substring match)
+       */
+      domain?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Lists active and recently completed asynchronous processes for an Agency Plan website.
 
 Each process has a unique ID (for tracking), a type, and a status (running, completed, failed).
@@ -2660,7 +2705,7 @@ Use the domain and is_assigned filters to find databases assigned to a specific 
        */
       per_page?: number;
       /**
-       * Filter by domain name (exact match)
+       * Filter by domain name (case-insensitive substring match)
        */
       domain?: string;
       /**
@@ -3728,8 +3773,11 @@ website detected on the underlying platform (`wordpress`, `builder`,
 `vhost_type`, `username`, and `root_directory`, only apply to
 CloudLinux websites and are null for other platforms.
 
-Use the available query parameters to filter results by username,
-order ID, enabled status, or domain name for more targeted results.
+Use `website_types` to list only websites of a given detected type, e.g. only
+WordPress websites (`website_types=wordpress`) or only Node.js websites
+(`website_types=nodejs`). Combine with the other available query parameters to
+filter by username, order ID, enabled status, or domain name for more targeted
+results.
    */
   "hosting_listWebsitesV1": {
     params: {
@@ -3754,9 +3802,13 @@ order ID, enabled status, or domain name for more targeted results.
        */
       is_enabled?: boolean;
       /**
-       * Filter by domain name (exact match)
+       * Filter by domain name (case-insensitive substring match)
        */
       domain?: string;
+      /**
+       * Filter by detected website type, e.g. wordpress,nodejs. Accepts a comma-separated list.
+       */
+      website_types?: array;
     };
     response: any; // Response structure will depend on the API
   };
@@ -7476,7 +7528,7 @@ Each installation includes a `valid` flag and, when invalid, a
        */
       username?: string;
       /**
-       * Filter by domain name (exact match)
+       * Filter by domain name (case-insensitive substring match)
        */
       domain?: string;
       /**
@@ -7928,7 +7980,7 @@ domain. Optionally filter by domain to scope the check.
   "hosting_checkIfWooCommerceIsInstalledV1": {
     params: {
       /**
-       * Filter by domain name (exact match)
+       * Filter by domain name (case-insensitive substring match)
        */
       domain?: string;
     };

@@ -1382,6 +1382,74 @@ export default [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_listAgencyPlanWebsitesV1",
+    "description": "Retrieve a paginated list of Agency Plan websites (H5G, Builder, and Horizons) accessible to\nthe authenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nThe response shape differs per platform — see the `platform` field on each item.\n\nUse `website_types` to list only websites of a given detected type, e.g. only\nWordPress websites (`website_types=wordpress`) or only Node.js websites\n(`website_types=nodejs`). Combine with `order_ids`, `states`, or `domain` for more\ntargeted results.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        },
+        "order_ids": {
+          "type": "array",
+          "description": "Filter by order IDs. Accepts a comma-separated list.",
+          "items": {
+            "type": "integer",
+            "description": "order_ids parameter"
+          }
+        },
+        "states": {
+          "type": "array",
+          "description": "Filter by website state. Accepts a comma-separated list.",
+          "items": {
+            "type": "string",
+            "description": "states parameter",
+            "enum": [
+              "active",
+              "locked",
+              "suspended",
+              "deleting",
+              "deleted"
+            ]
+          }
+        },
+        "website_types": {
+          "type": "array",
+          "description": "Filter by detected website type, e.g. wordpress,nodejs. Accepts a comma-separated list.",
+          "items": {
+            "type": "string",
+            "description": "website_types parameter",
+            "enum": [
+              "wordpress",
+              "builder",
+              "horizons",
+              "nodejs",
+              "other"
+            ]
+          }
+        },
+        "domain": {
+          "type": "string",
+          "description": "Filter by domain name (case-insensitive substring match)"
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "agency-hosting_listWebsiteProcessesV1",
     "description": "Lists active and recently completed asynchronous processes for an Agency Plan website.\n\nEach process has a unique ID (for tracking), a type, and a status (running, completed, failed).\nPoll this endpoint after initiating async operations (SSL setup, backups, cloning) to track progress.",
     "method": "GET",
@@ -4050,7 +4118,7 @@ export default [
         },
         "domain": {
           "type": "string",
-          "description": "Filter by domain name (exact match)"
+          "description": "Filter by domain name (case-insensitive substring match)"
         },
         "is_assigned": {
           "type": "boolean",
@@ -5498,7 +5566,7 @@ export default [
   },
   {
     "name": "hosting_listWebsitesV1",
-    "description": "Retrieve a paginated list of websites (CloudLinux, Builder, and Horizons) accessible to the\nauthenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nEach website includes a `website_type` field describing the type of\nwebsite detected on the underlying platform (`wordpress`, `builder`,\n`horizons`, `nodejs`, or `other`). Some fields, such as\n`vhost_type`, `username`, and `root_directory`, only apply to\nCloudLinux websites and are null for other platforms.\n\nUse the available query parameters to filter results by username,\norder ID, enabled status, or domain name for more targeted results.",
+    "description": "Retrieve a paginated list of websites (CloudLinux, Builder, and Horizons) accessible to the\nauthenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nEach website includes a `website_type` field describing the type of\nwebsite detected on the underlying platform (`wordpress`, `builder`,\n`horizons`, `nodejs`, or `other`). Some fields, such as\n`vhost_type`, `username`, and `root_directory`, only apply to\nCloudLinux websites and are null for other platforms.\n\nUse `website_types` to list only websites of a given detected type, e.g. only\nWordPress websites (`website_types=wordpress`) or only Node.js websites\n(`website_types=nodejs`). Combine with the other available query parameters to\nfilter by username, order ID, enabled status, or domain name for more targeted\nresults.",
     "method": "GET",
     "path": "/api/hosting/v1/websites",
     "inputSchema": {
@@ -5526,7 +5594,22 @@ export default [
         },
         "domain": {
           "type": "string",
-          "description": "Filter by domain name (exact match)"
+          "description": "Filter by domain name (case-insensitive substring match)"
+        },
+        "website_types": {
+          "type": "array",
+          "description": "Filter by detected website type, e.g. wordpress,nodejs. Accepts a comma-separated list.",
+          "items": {
+            "type": "string",
+            "description": "website_types parameter",
+            "enum": [
+              "wordpress",
+              "builder",
+              "horizons",
+              "nodejs",
+              "other"
+            ]
+          }
         }
       },
       "required": []
@@ -10914,7 +10997,7 @@ export default [
         },
         "domain": {
           "type": "string",
-          "description": "Filter by domain name (exact match)"
+          "description": "Filter by domain name (case-insensitive substring match)"
         },
         "ownership": {
           "type": "string",
@@ -11538,7 +11621,7 @@ export default [
       "properties": {
         "domain": {
           "type": "string",
-          "description": "Filter by domain name (exact match)"
+          "description": "Filter by domain name (case-insensitive substring match)"
         }
       },
       "required": []

@@ -1139,6 +1139,74 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_listAgencyPlanWebsitesV1",
+    "description": "Retrieve a paginated list of Agency Plan websites (H5G, Builder, and Horizons) accessible to\nthe authenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nThe response shape differs per platform — see the `platform` field on each item.\n\nUse `website_types` to list only websites of a given detected type, e.g. only\nWordPress websites (`website_types=wordpress`) or only Node.js websites\n(`website_types=nodejs`). Combine with `order_ids`, `states`, or `domain` for more\ntargeted results.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        },
+        "order_ids": {
+          "type": "array",
+          "description": "Filter by order IDs. Accepts a comma-separated list.",
+          "items": {
+            "type": "integer",
+            "description": "order_ids parameter"
+          }
+        },
+        "states": {
+          "type": "array",
+          "description": "Filter by website state. Accepts a comma-separated list.",
+          "items": {
+            "type": "string",
+            "description": "states parameter",
+            "enum": [
+              "active",
+              "locked",
+              "suspended",
+              "deleting",
+              "deleted"
+            ]
+          }
+        },
+        "website_types": {
+          "type": "array",
+          "description": "Filter by detected website type, e.g. wordpress,nodejs. Accepts a comma-separated list.",
+          "items": {
+            "type": "string",
+            "description": "website_types parameter",
+            "enum": [
+              "wordpress",
+              "builder",
+              "horizons",
+              "nodejs",
+              "other"
+            ]
+          }
+        },
+        "domain": {
+          "type": "string",
+          "description": "Filter by domain name (case-insensitive substring match)"
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "agency-hosting_listWebsiteProcessesV1",
     "description": "Lists active and recently completed asynchronous processes for an Agency Plan website.\n\nEach process has a unique ID (for tracking), a type, and a status (running, completed, failed).\nPoll this endpoint after initiating async operations (SSL setup, backups, cloning) to track progress.",
     "method": "GET",

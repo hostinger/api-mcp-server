@@ -69,8 +69,8 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (350 total)
-- `hostinger-agency-hosting-mcp` — 37 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (351 total)
+- `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
@@ -562,6 +562,25 @@ resources are removed in the background.
 
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}`
+
+#### agency-hosting_listAgencyPlanWebsitesV1
+
+Retrieve a paginated list of Agency Plan websites (H5G, Builder, and Horizons) accessible to
+the authenticated client.
+
+This endpoint returns websites from your hosting accounts as well as
+websites from other client hosting accounts that have shared access
+with you.
+
+The response shape differs per platform — see the `platform` field on each item.
+
+Use `website_types` to list only websites of a given detected type, e.g. only
+WordPress websites (`website_types=wordpress`) or only Node.js websites
+(`website_types=nodejs`). Combine with `order_ids`, `states`, or `domain` for more
+targeted results.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites`
 
 #### agency-hosting_listWebsiteProcessesV1
 
@@ -2044,8 +2063,11 @@ website detected on the underlying platform (`wordpress`, `builder`,
 `vhost_type`, `username`, and `root_directory`, only apply to
 CloudLinux websites and are null for other platforms.
 
-Use the available query parameters to filter results by username,
-order ID, enabled status, or domain name for more targeted results.
+Use `website_types` to list only websites of a given detected type, e.g. only
+WordPress websites (`website_types=wordpress`) or only Node.js websites
+(`website_types=nodejs`). Combine with the other available query parameters to
+filter by username, order ID, enabled status, or domain name for more targeted
+results.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/websites`

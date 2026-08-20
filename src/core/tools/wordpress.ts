@@ -334,7 +334,7 @@ const tools: OpenApiTool[] = [
         },
         "domain": {
           "type": "string",
-          "description": "Filter by domain name (exact match)"
+          "description": "Filter by domain name (case-insensitive substring match)"
         },
         "ownership": {
           "type": "string",
@@ -958,7 +958,7 @@ const tools: OpenApiTool[] = [
       "properties": {
         "domain": {
           "type": "string",
-          "description": "Filter by domain name (exact match)"
+          "description": "Filter by domain name (case-insensitive substring match)"
         }
       },
       "required": []
