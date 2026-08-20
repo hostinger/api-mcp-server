@@ -69,14 +69,14 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (351 total)
+- `hostinger-api-mcp` — unified server with every tool (350 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
 - `hostinger-ecommerce-mcp` — 14 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 57 tools for hosting
+- `hostinger-hosting-mcp` — 56 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 45 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
@@ -1840,35 +1840,6 @@ the `Get Node.js Build Logs` endpoint.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds`
-
-#### hosting_createNodeJSBuildFromArchiveV1
-
-Upload a project archive, auto-detect build settings, and immediately start a Node.js build.
-
-WARNING: on success this overwrites the website's existing contents and cannot be
-undone — verify this is intended before calling this endpoint.
-
-This is the recommended single-step approach for deploying a Node.js application.
-The archive is uploaded to the website's file storage, build settings are auto-detected
-from the package.json inside the archive, and the build process starts automatically.
-Optional override fields take precedence over auto-detected values.
-Maximum archive size is 50MB.
-
-Before archiving, exclude `node_modules/` and any build output directories
-(e.g. `dist/`, `.next/`, `build/`) — they are not needed because the build
-process runs the install step automatically, and including them unnecessarily
-increases the archive size. This also helps keep the archive well under the 50MB limit.
-
-Example (zip):
-```
-zip -r archive.zip . --exclude "node_modules/*" --exclude "dist/*"
-```
-
-The returned build `uuid` can be used to poll progress and retrieve logs via
-the `Get Node.js Build Logs` endpoint.
-
-- **Method**: `POST`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/from-archive`
 
 #### hosting_getNode_jsBuildSettingsFromArchiveV1
 
