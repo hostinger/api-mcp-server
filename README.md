@@ -69,12 +69,12 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (350 total)
+- `hostinger-api-mcp` — unified server with every tool (365 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
-- `hostinger-ecommerce-mcp` — 14 tools for ecommerce
+- `hostinger-ecommerce-mcp` — 29 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 56 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
@@ -1287,6 +1287,24 @@ Use this endpoint to view which domains use specific contact profiles.
 
 ### `hostinger-ecommerce-mcp`
 
+#### ecommerce_listDiscountsV1
+
+List a store's discounts. Filter by free text over code and name, or by disabled state.
+Amounts for fixed discounts are integers in the smallest currency unit; percentage
+discounts carry a whole-number value between 1 and 100.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/discounts`
+
+#### ecommerce_createADiscountV1
+
+Create a discount for a store. Fixed discounts take an amount in the smallest currency
+unit (e.g. $10 is 1000); percentage discounts take a whole-number value between 1 and 100.
+Free-shipping discounts ignore value. Returns the created discount.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/discounts`
+
 #### ecommerce_getCustomStorefrontSetupInstructionsV1
 
 Retrieve step-by-step setup instructions, formatted as Markdown, for connecting a custom sales
@@ -1296,12 +1314,61 @@ the Ecommerce API.
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/miscellaneous/custom-storefront-instructions`
 
+#### ecommerce_cancelAnOrderV1
+
+Cancel the order and optionally email the customer. Returns the updated order summary.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/orders/{order_id}/cancel`
+
+#### ecommerce_fulfilAnOrderV1
+
+Create a fulfilment for the order and attach tracking in one call. Omit items to fulfil
+every remaining unfulfilled item. Returns the updated order summary.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/orders/{order_id}/fulfill`
+
+#### ecommerce_listOrdersV1
+
+List a store's orders newest first as summaries. Filter by status, payment or fulfilment
+status, customer email, order number or a free-text query. Amounts are in the smallest
+currency unit. Retrieve a single order for its line items, addresses and fulfilments.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/orders`
+
+#### ecommerce_retrieveAnOrderV1
+
+Retrieve one order in full: line items (each with the id the fulfil endpoint needs),
+addresses, the totals breakdown and fulfilments with tracking. Amounts are in the
+smallest currency unit.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/orders/{order_id}`
+
 #### ecommerce_enableManualPaymentMethodV1
 
 Enable a manual payment method so the store can accept orders without an online payment provider.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/payment-methods/manual`
+
+#### ecommerce_createAPaymentProviderConnectLinkV1
+
+Create an onboarding link for connecting a payment gateway to the store. Returns the gateway
+onboarding URL for the merchant to open and a deep-link into the store admin.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/payment-providers/{provider_id}/connect-link`
+
+#### ecommerce_listStorePaymentProvidersV1
+
+List a store's payment providers, split into providers already connected to the store and
+gateways available to install. Never exposes gateway credentials, secrets, or configuration.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/payment-providers`
 
 #### ecommerce_createAProductImageUploadURLV1
 
@@ -1311,12 +1378,39 @@ attach-image endpoint with the returned object_name to scan and attach it to the
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images/upload-url`
 
+#### ecommerce_deleteAProductV1
+
+Delete a product and its variants from the store. A subscription product with active
+subscribers is archived instead of deleted so its data stays available.
+
+- **Method**: `DELETE`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}`
+
+#### ecommerce_updateAProductV1
+
+Update a product's name, description or status. Set status to published to make it buyable,
+draft to hide it, or archived to retire it. Variants, prices and inventory are managed
+through the variant endpoints, not here. Returns the updated product summary.
+
+- **Method**: `PATCH`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}`
+
 #### ecommerce_createDigitalProductV1
 
 Create a published digital product with a single variant and an optional external download link.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/digital`
+
+#### ecommerce_listProductsV1
+
+List a store's products newest first as lean summaries (name, status, thumbnail, variant
+count and price range). Prices are integers in the smallest currency unit and live on
+variants. Filter by status, free text or a set of product ids. Use include=variants to
+embed each product's variants with prices and inventory, and include=media to embed its media.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products`
 
 #### ecommerce_createPhysicalProductV1
 
@@ -1341,10 +1435,11 @@ List a store's active sales channels with their full metadata.
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels`
 
-#### ecommerce_createCustomSalesChannelV1
+#### ecommerce_createASalesChannelV1
 
-Create a custom sales channel for a store. Build your own frontend and keep your catalog,
-orders, shipping and payments in sync through the Ecommerce API.
+Create a sales channel for a store. A "custom" channel is headless: build your own frontend and keep
+your catalog, orders, shipping and payments in sync through the Ecommerce API. A "quick-link" channel
+is a hosted one-page store whose handle is auto-generated.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels`
@@ -1396,6 +1491,40 @@ plus its default currency. Useful to verify prerequisites before building a stor
 
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/metadata`
+
+#### ecommerce_updateProductVariantsInBatchV1
+
+Update up to 100 existing variants in place by id — title, inventory, stock tracking and
+prices. Variants omitted from the request are left untouched. Prices replace the variant's
+existing prices in full. Returns the updated variants.
+
+- **Method**: `PATCH`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants/batch`
+
+#### ecommerce_deleteAProductVariantV1
+
+Delete a single variant from the product.
+
+- **Method**: `DELETE`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants/{variant_id}`
+
+#### ecommerce_listProductVariantsV1
+
+List a product's variants, ordered by rank, with their options, prices and inventory.
+Prices are integers in the smallest currency unit and live on variants.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants`
+
+#### ecommerce_createAProductVariantV1
+
+Add a variant to a product along one or more option dimensions (e.g. Size, Color). Options
+missing from the product are created automatically; provide a value for every option the
+product already has. Prices are integers in the smallest currency unit and default to the
+store currency. Returns the created variant.
+
+- **Method**: `POST`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants`
 
 ### `hostinger-horizons-mcp`
 

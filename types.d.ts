@@ -2148,6 +2148,88 @@ Use this endpoint to view which domains use specific contact profiles.
   };
 
   /**
+   * List a store's discounts. Filter by free text over code and name, or by disabled state.
+Amounts for fixed discounts are integers in the smallest currency unit; percentage
+discounts carry a whole-number value between 1 and 100.
+   */
+  "ecommerce_listDiscountsV1": {
+    params: {
+      /**
+       * The ID of the store to list discounts for.
+       */
+      store_id: string;
+      /**
+       * Free-text search over discount code and name.
+       */
+      q?: string;
+      /**
+       * Filter by disabled state.
+       */
+      is_disabled?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a discount for a store. Fixed discounts take an amount in the smallest currency
+unit (e.g. $10 is 1000); percentage discounts take a whole-number value between 1 and 100.
+Free-shipping discounts ignore value. Returns the created discount.
+   */
+  "ecommerce_createADiscountV1": {
+    params: {
+      /**
+       * The ID of the store to create the discount for.
+       */
+      store_id: string;
+      /**
+       * The discount code customers enter at checkout.
+       */
+      code: string;
+      /**
+       * A human-friendly discount name.
+       */
+      name?: string;
+      /**
+       * The discount type.
+       */
+      type: string;
+      /**
+       * For percentage discounts a whole number 1-100; for fixed discounts an amount in the smallest currency unit (e.g. $10 is 1000). Ignored for free_shipping.
+       */
+      value: number;
+      /**
+       * Whether the discount applies to the cart total or to each eligible item.
+       */
+      allocation?: string;
+      /**
+       * When the discount becomes active. A bare date (2026-11-27) anchors to time_zone. Defaults to now when omitted.
+       */
+      starts_at?: string;
+      /**
+       * When the discount expires. A bare date runs to the end of that day in time_zone. Never expires when omitted.
+       */
+      ends_at?: string;
+      /**
+       * Maximum number of times the discount can be redeemed.
+       */
+      usage_limit?: number;
+      /**
+       * Minimum cart value in the smallest currency unit required for the discount to apply.
+       */
+      min_cart_value?: number;
+      /**
+       * IANA time zone used to interpret starts_at and ends_at.
+       */
+      time_zone?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve step-by-step setup instructions, formatted as Markdown, for connecting a custom sales
 channel to your store and keeping your catalog, orders, shipping and payments in sync through
 the Ecommerce API.
@@ -2155,6 +2237,131 @@ the Ecommerce API.
   "ecommerce_getCustomStorefrontSetupInstructionsV1": {
     params: {
 
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Cancel the order and optionally email the customer. Returns the updated order summary.
+   */
+  "ecommerce_cancelAnOrderV1": {
+    params: {
+      /**
+       * The ID of the store that owns the order.
+       */
+      store_id: string;
+      /**
+       * The ID of the order to cancel.
+       */
+      order_id: string;
+      /**
+       * Whether to email the customer about the cancellation. Defaults to true.
+       */
+      notify_customer?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a fulfilment for the order and attach tracking in one call. Omit items to fulfil
+every remaining unfulfilled item. Returns the updated order summary.
+   */
+  "ecommerce_fulfilAnOrderV1": {
+    params: {
+      /**
+       * The ID of the store that owns the order.
+       */
+      store_id: string;
+      /**
+       * The ID of the order to fulfil.
+       */
+      order_id: string;
+      /**
+       * Line items to fulfil. Omit to fulfil every remaining unfulfilled item.
+       */
+      items?: array;
+      /**
+       * Carrier tracking number for the shipment.
+       */
+      tracking_number?: string;
+      /**
+       * Public tracking URL for the shipment. Requires tracking_number.
+       */
+      tracking_url?: string;
+      /**
+       * Whether to email the customer about the fulfilment. Defaults to true.
+       */
+      notify_customer?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List a store's orders newest first as summaries. Filter by status, payment or fulfilment
+status, customer email, order number or a free-text query. Amounts are in the smallest
+currency unit. Retrieve a single order for its line items, addresses and fulfilments.
+   */
+  "ecommerce_listOrdersV1": {
+    params: {
+      /**
+       * The ID of the store to list orders for.
+       */
+      store_id: string;
+      /**
+       * Order statuses to include.
+       */
+      status?: array;
+      /**
+       * Payment statuses to include. A paid order is "captured".
+       */
+      payment_status?: array;
+      /**
+       * Fulfilment statuses to include.
+       */
+      fulfillment_status?: array;
+      /**
+       * Customer email, matched exactly.
+       */
+      email?: string;
+      /**
+       * The order number the merchant and customer see.
+       */
+      display_id?: string;
+      /**
+       * Free-text search over customer name, email, order number and line items.
+       */
+      q?: string;
+      /**
+       * Earliest creation time to include, inclusive. Accepts a date or ISO date-time (UTC).
+       */
+      created_at_from?: string;
+      /**
+       * Latest creation time to include, inclusive. A bare date covers that whole day.
+       */
+      created_at_to?: string;
+      /**
+       * Page number
+       */
+      page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve one order in full: line items (each with the id the fulfil endpoint needs),
+addresses, the totals breakdown and fulfilments with tracking. Amounts are in the
+smallest currency unit.
+   */
+  "ecommerce_retrieveAnOrderV1": {
+    params: {
+      /**
+       * The ID of the store that owns the order.
+       */
+      store_id: string;
+      /**
+       * The ID of the order to retrieve.
+       */
+      order_id: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -2177,6 +2384,42 @@ the Ecommerce API.
   };
 
   /**
+   * Create an onboarding link for connecting a payment gateway to the store. Returns the gateway
+onboarding URL for the merchant to open and a deep-link into the store admin.
+   */
+  "ecommerce_createAPaymentProviderConnectLinkV1": {
+    params: {
+      /**
+       * The ID of the store to connect the payment provider to.
+       */
+      store_id: string;
+      /**
+       * The ID of the payment gateway to connect, e.g. stripe.
+       */
+      provider_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List a store's payment providers, split into providers already connected to the store and
+gateways available to install. Never exposes gateway credentials, secrets, or configuration.
+   */
+  "ecommerce_listStorePaymentProvidersV1": {
+    params: {
+      /**
+       * The ID of the store to list payment providers for.
+       */
+      store_id: string;
+      /**
+       * Include gateways that do not support the store currency in the available list.
+       */
+      include_currency_unsupported?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Returns a signed URL to upload a product image to (multipart/form-data POST). Then call the
 attach-image endpoint with the returned object_name to scan and attach it to the product.
    */
@@ -2190,6 +2433,55 @@ attach-image endpoint with the returned object_name to scan and attach it to the
        * The ID of the product the image will be attached to.
        */
       product_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a product and its variants from the store. A subscription product with active
+subscribers is archived instead of deleted so its data stays available.
+   */
+  "ecommerce_deleteAProductV1": {
+    params: {
+      /**
+       * The ID of the store that owns the product.
+       */
+      store_id: string;
+      /**
+       * The ID of the product to delete.
+       */
+      product_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Update a product's name, description or status. Set status to published to make it buyable,
+draft to hide it, or archived to retire it. Variants, prices and inventory are managed
+through the variant endpoints, not here. Returns the updated product summary.
+   */
+  "ecommerce_updateAProductV1": {
+    params: {
+      /**
+       * The ID of the store that owns the product.
+       */
+      store_id: string;
+      /**
+       * The ID of the product to update.
+       */
+      product_id: string;
+      /**
+       * The product name.
+       */
+      name?: string;
+      /**
+       * The product description.
+       */
+      description?: string;
+      /**
+       * Set "published" to make the product buyable, "draft" to hide it, or "archived" to retire it.
+       */
+      status?: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -2223,6 +2515,42 @@ attach-image endpoint with the returned object_name to scan and attach it to the
        * Optional external download link delivered to the customer after purchase.
        */
       download_url?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List a store's products newest first as lean summaries (name, status, thumbnail, variant
+count and price range). Prices are integers in the smallest currency unit and live on
+variants. Filter by status, free text or a set of product ids. Use include=variants to
+embed each product's variants with prices and inventory, and include=media to embed its media.
+   */
+  "ecommerce_listProductsV1": {
+    params: {
+      /**
+       * The ID of the store to list products for.
+       */
+      store_id: string;
+      /**
+       * Restrict to these product ids. Doubles as a single-product lookup. Up to 200 ids.
+       */
+      product_ids?: array;
+      /**
+       * Product statuses to include.
+       */
+      status?: array;
+      /**
+       * Free-text search over product title and SKU.
+       */
+      q?: string;
+      /**
+       * Opt-in heavy data: "variants" embeds each product's variants; "media" embeds its media.
+       */
+      include?: array;
+      /**
+       * Page number
+       */
+      page?: number;
     };
     response: any; // Response structure will depend on the API
   };
@@ -2304,25 +2632,27 @@ thumbnail only if the product does not have one yet.
   };
 
   /**
-   * Create a custom sales channel for a store. Build your own frontend and keep your catalog,
-orders, shipping and payments in sync through the Ecommerce API.
+   * Create a sales channel for a store. A "custom" channel is headless: build your own frontend and keep
+your catalog, orders, shipping and payments in sync through the Ecommerce API. A "quick-link" channel
+is a hosted one-page store whose handle is auto-generated.
    */
-  "ecommerce_createCustomSalesChannelV1": {
+  "ecommerce_createASalesChannelV1": {
     params: {
       /**
        * The ID of the store to create the sales channel for.
        */
       store_id: string;
       /**
-       * Sales channel type. Only "custom" channels can be created via the API.
+       * Sales channel type. "custom" is a headless channel: it requires a name and takes an optional public url.
+"quick-link" is a one-page store whose handle is auto-generated; it supports neither name nor url.
        */
       type: string;
       /**
-       * Merchant-facing custom name shown in the sales channels list.
+       * Merchant-facing custom name. Required for custom channels; not supported for quick-link.
        */
-      name: string;
+      name?: string;
       /**
-       * Optional public address where the custom sales channel lives.
+       * Optional public url for the channel. Custom channels only; not supported for quick-link.
        */
       url?: string;
     };
@@ -2445,6 +2775,116 @@ plus its default currency. Useful to verify prerequisites before building a stor
        * The ID of the store to read metadata for.
        */
       store_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Update up to 100 existing variants in place by id — title, inventory, stock tracking and
+prices. Variants omitted from the request are left untouched. Prices replace the variant's
+existing prices in full. Returns the updated variants.
+   */
+  "ecommerce_updateProductVariantsInBatchV1": {
+    params: {
+      /**
+       * The ID of the store that owns the product.
+       */
+      store_id: string;
+      /**
+       * The ID of the product whose variants are being updated.
+       */
+      product_id: string;
+      /**
+       * Variants to update in place by id, up to 100. Variants omitted from the list are left untouched.
+       */
+      variants: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a single variant from the product.
+   */
+  "ecommerce_deleteAProductVariantV1": {
+    params: {
+      /**
+       * The ID of the store that owns the product.
+       */
+      store_id: string;
+      /**
+       * The ID of the product that owns the variant.
+       */
+      product_id: string;
+      /**
+       * The ID of the variant to delete.
+       */
+      variant_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List a product's variants, ordered by rank, with their options, prices and inventory.
+Prices are integers in the smallest currency unit and live on variants.
+   */
+  "ecommerce_listProductVariantsV1": {
+    params: {
+      /**
+       * The ID of the store that owns the product.
+       */
+      store_id: string;
+      /**
+       * The ID of the product to list variants for.
+       */
+      product_id: string;
+      /**
+       * Page number
+       */
+      page?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Add a variant to a product along one or more option dimensions (e.g. Size, Color). Options
+missing from the product are created automatically; provide a value for every option the
+product already has. Prices are integers in the smallest currency unit and default to the
+store currency. Returns the created variant.
+   */
+  "ecommerce_createAProductVariantV1": {
+    params: {
+      /**
+       * The ID of the store that owns the product.
+       */
+      store_id: string;
+      /**
+       * The ID of the product to add the variant to.
+       */
+      product_id: string;
+      /**
+       * The variant title. Defaults to the option values joined with ' / ' (e.g. 'Red / L').
+       */
+      title?: string;
+      /**
+       * The variant SKU.
+       */
+      sku?: string;
+      /**
+       * Option name/value pairs that distinguish this variant, e.g. [{name: Size, value: M}]. Options missing from the product are created; provide a value for every option the product already has.
+       */
+      options: array;
+      /**
+       * Prices per currency. Amounts are integers in the smallest currency unit. A free item is amount: 0.
+       */
+      prices?: array;
+      /**
+       * Units in stock. Defaults to 0.
+       */
+      inventory_quantity?: number;
+      /**
+       * Whether stock is tracked for this variant. Defaults to false.
+       */
+      manage_inventory?: boolean;
     };
     response: any; // Response structure will depend on the API
   };
