@@ -500,6 +500,14 @@ const tools: OpenApiTool[] = [
         "note": {
           "type": "string",
           "description": "note parameter"
+        },
+        "tag_uuids": {
+          "type": "array",
+          "description": "Existing tags to attach to the created contact",
+          "items": {
+            "type": "string",
+            "description": "tag_uuids parameter"
+          }
         }
       },
       "required": [
@@ -806,6 +814,14 @@ const tools: OpenApiTool[] = [
         "note": {
           "type": "string",
           "description": "note parameter"
+        },
+        "tag_uuids": {
+          "type": "array",
+          "description": "Existing tags to attach to the created contact",
+          "items": {
+            "type": "string",
+            "description": "tag_uuids parameter"
+          }
         }
       },
       "required": [

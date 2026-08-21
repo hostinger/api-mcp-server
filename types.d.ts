@@ -5571,6 +5571,10 @@ the contact will be created with a pending status and a confirmation email will 
        * note parameter
        */
       note?: string;
+      /**
+       * Existing tags to attach to the created contact
+       */
+      tag_uuids?: array;
     };
     response: any; // Response structure will depend on the API
   };
@@ -5766,6 +5770,10 @@ and a confirmation email will be sent.
        * note parameter
        */
       note?: string;
+      /**
+       * Existing tags to attach to the created contact
+       */
+      tag_uuids?: array;
     };
     response: any; // Response structure will depend on the API
   };
