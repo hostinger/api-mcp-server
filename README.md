@@ -69,7 +69,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (365 total)
+- `hostinger-api-mcp` — unified server with every tool (369 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -78,7 +78,7 @@ This package installs the following MCP server commands:
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 56 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
-- `hostinger-reach-mcp` — 45 tools for reach
+- `hostinger-reach-mcp` — 49 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
 - `hostinger-wordpress-mcp` — 38 tools for wordpress
 
@@ -2872,6 +2872,34 @@ Only the segment definition is removed. The contacts that matched it are left un
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}`
 
+#### reach_listSegmentFilterAttributesV1
+
+List every attribute a segment condition can filter on, with the operators each attribute
+accepts, the value format they expect and, where the value is constrained, the allowed
+values.
+
+The list is profile specific: it includes the profile's custom contact fields, its tags and
+its 20 most recently published campaigns, so the valid attributes cannot be hardcoded. Read
+it before creating or updating a segment to discover the valid `attribute`, `operator` and
+`value` combinations.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/filters/attributes`
+
+#### reach_previewContactsMatchingConditionsV1
+
+Preview the contacts matching a set of conditions without saving a segment.
+
+The body is the same set of conditions accepted when creating or updating a segment, so this
+is how to check who a filter reaches, and how many, before persisting it. Nothing is stored
+and no contact is modified.
+
+Call the segment filter attributes endpoint first to discover the valid `attribute`,
+`operator` and `value` combinations.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/filters/contacts`
+
 #### reach_listProfileSegmentsV1
 
 Get a paginated list of the segments defined in a profile.
@@ -3045,6 +3073,33 @@ actual records found and the suggested records required for correct email delive
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/domains/dns-status`
+
+#### reach_getConnectedSendingDomainV1
+
+Get the sending domain connected to the profile, its verification status and any suspended
+sender addresses.
+
+Campaigns only go out once a domain is connected and active, so this is the cheapest way to
+check that precondition before building one. A profile with no domain connected returns the
+same shape with every field set to `null`. For the individual MX, SPF, DKIM and DMARC records
+behind the status, use the DNS status endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/domains`
+
+#### reach_listPlanFeatureAccessV1
+
+List which plan features the profile can use.
+
+This is the feature lock matrix, not a usage quota. `available` means the feature can be
+used right now and `locked` means it is not part of the base plan, so an upgrade is needed.
+For remaining emails, recipients and AI credits use the limits endpoint instead.
+
+Worth checking before building something that cannot be activated afterwards, such as an
+automation on a plan without automation activation.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/features`
 
 #### reach_getRemainingPlanLimitsV1
 

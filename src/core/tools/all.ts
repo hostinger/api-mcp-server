@@ -8982,6 +8982,150 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
+    "name": "reach_listSegmentFilterAttributesV1",
+    "description": "List every attribute a segment condition can filter on, with the operators each attribute\naccepts, the value format they expect and, where the value is constrained, the allowed\nvalues.\n\nThe list is profile specific: it includes the profile's custom contact fields, its tags and\nits 20 most recently published campaigns, so the valid attributes cannot be hardcoded. Read\nit before creating or updating a segment to discover the valid `attribute`, `operator` and\n`value` combinations.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/filters/attributes",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_previewContactsMatchingConditionsV1",
+    "description": "Preview the contacts matching a set of conditions without saving a segment.\n\nThe body is the same set of conditions accepted when creating or updating a segment, so this\nis how to check who a filter reaches, and how many, before persisting it. Nothing is stored\nand no contact is modified.\n\nCall the segment filter attributes endpoint first to discover the valid `attribute`,\n`operator` and `value` combinations.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/filters/contacts",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "conditions": {
+          "type": "array",
+          "description": "Conditions a contact must satisfy to appear in the preview",
+          "items": {
+            "type": "object",
+            "description": "conditions parameter",
+            "properties": {
+              "attribute": {
+                "type": "string",
+                "description": "A built-in contact attribute, or `cf:{fieldUuid}` to target a custom\ncontact field. Which operators are accepted depends on the attribute,\nso read the segment filter attributes endpoint for the authoritative\nlist."
+              },
+              "operator": {
+                "type": "string",
+                "description": "operator parameter",
+                "enum": [
+                  "equals",
+                  "not_equals",
+                  "contains",
+                  "not_contains",
+                  "gte",
+                  "lte",
+                  "exists",
+                  "within_last_days",
+                  "not_within_last_days",
+                  "older_than_days",
+                  "processed",
+                  "not_processed",
+                  "delivered",
+                  "not_delivered",
+                  "dropped",
+                  "not_dropped",
+                  "bounced",
+                  "not_bounced",
+                  "soft_bounced",
+                  "not_soft_bounced",
+                  "opened",
+                  "not_opened",
+                  "clicked",
+                  "not_clicked",
+                  "unsubscribed",
+                  "not_unsubscribed"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "description": "Always a string, including for numeric and date comparisons"
+              }
+            },
+            "required": [
+              "attribute",
+              "operator",
+              "value"
+            ]
+          }
+        },
+        "logic": {
+          "type": "string",
+          "description": "How to combine multiple conditions",
+          "enum": [
+            "AND",
+            "OR"
+          ]
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number"
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Number of items per page"
+        },
+        "search": {
+          "type": "string",
+          "description": "Narrow the preview to contacts whose email matches"
+        },
+        "sort_by": {
+          "type": "string",
+          "description": "sort_by parameter",
+          "enum": [
+            "email",
+            "name",
+            "surname",
+            "phone",
+            "subscription_status"
+          ]
+        },
+        "sort_direction": {
+          "type": "string",
+          "description": "sort_direction parameter",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        }
+      },
+      "required": [
+        "profileUuid",
+        "conditions",
+        "logic"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_listProfileSegmentsV1",
     "description": "Get a paginated list of the segments defined in a profile.\n\nEach entry carries the number of contacts currently matching it, which is recalculated on\nread rather than stored. Use `count_type` to count either every matching contact or only\nthe subscribed ones.",
     "method": "GET",
@@ -9524,6 +9668,54 @@ const tools: OpenApiTool[] = [
     "description": "Retrieve the DNS configuration status for a profile's domain.\n\nThis endpoint reports the state of MX, SPF, DKIM and DMARC records, including the\nactual records found and the suggested records required for correct email delivery.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/domains/dns-status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_getConnectedSendingDomainV1",
+    "description": "Get the sending domain connected to the profile, its verification status and any suspended\nsender addresses.\n\nCampaigns only go out once a domain is connected and active, so this is the cheapest way to\ncheck that precondition before building one. A profile with no domain connected returns the\nsame shape with every field set to `null`. For the individual MX, SPF, DKIM and DMARC records\nbehind the status, use the DNS status endpoint.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/domains",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_listPlanFeatureAccessV1",
+    "description": "List which plan features the profile can use.\n\nThis is the feature lock matrix, not a usage quota. `available` means the feature can be\nused right now and `locked` means it is not part of the base plan, so an upgrade is needed.\nFor remaining emails, recipients and AI credits use the limits endpoint instead.\n\nWorth checking before building something that cannot be activated afterwards, such as an\nautomation on a plan without automation activation.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/features",
     "inputSchema": {
       "type": "object",
       "properties": {

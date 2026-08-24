@@ -5942,6 +5942,74 @@ Only the segment definition is removed. The contacts that matched it are left un
   };
 
   /**
+   * List every attribute a segment condition can filter on, with the operators each attribute
+accepts, the value format they expect and, where the value is constrained, the allowed
+values.
+
+The list is profile specific: it includes the profile's custom contact fields, its tags and
+its 20 most recently published campaigns, so the valid attributes cannot be hardcoded. Read
+it before creating or updating a segment to discover the valid `attribute`, `operator` and
+`value` combinations.
+   */
+  "reach_listSegmentFilterAttributesV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Preview the contacts matching a set of conditions without saving a segment.
+
+The body is the same set of conditions accepted when creating or updating a segment, so this
+is how to check who a filter reaches, and how many, before persisting it. Nothing is stored
+and no contact is modified.
+
+Call the segment filter attributes endpoint first to discover the valid `attribute`,
+`operator` and `value` combinations.
+   */
+  "reach_previewContactsMatchingConditionsV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Conditions a contact must satisfy to appear in the preview
+       */
+      conditions: array;
+      /**
+       * How to combine multiple conditions
+       */
+      logic: string;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of items per page
+       */
+      per_page?: number;
+      /**
+       * Narrow the preview to contacts whose email matches
+       */
+      search?: string;
+      /**
+       * sort_by parameter
+       */
+      sort_by?: string;
+      /**
+       * sort_direction parameter
+       */
+      sort_direction?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Get a paginated list of the segments defined in a profile.
 
 Each entry carries the number of contacts currently matching it, which is recalculated on
@@ -6298,6 +6366,45 @@ This endpoint reports the state of MX, SPF, DKIM and DMARC records, including th
 actual records found and the suggested records required for correct email delivery.
    */
   "reach_getProfileDomainDNSStatusV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get the sending domain connected to the profile, its verification status and any suspended
+sender addresses.
+
+Campaigns only go out once a domain is connected and active, so this is the cheapest way to
+check that precondition before building one. A profile with no domain connected returns the
+same shape with every field set to `null`. For the individual MX, SPF, DKIM and DMARC records
+behind the status, use the DNS status endpoint.
+   */
+  "reach_getConnectedSendingDomainV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List which plan features the profile can use.
+
+This is the feature lock matrix, not a usage quota. `available` means the feature can be
+used right now and `locked` means it is not part of the base plan, so an upgrade is needed.
+For remaining emails, recipients and AI credits use the limits endpoint instead.
+
+Worth checking before building something that cannot be activated afterwards, such as an
+automation on a plan without automation activation.
+   */
+  "reach_listPlanFeatureAccessV1": {
     params: {
       /**
        * Profile uuid parameter
