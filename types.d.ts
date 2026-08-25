@@ -2301,7 +2301,7 @@ every remaining unfulfilled item. Returns the updated order summary.
 status, customer email, order number or a free-text query. Amounts are in the smallest
 currency unit. Retrieve a single order for its line items, addresses and fulfilments.
    */
-  "ecommerce_listOrdersV1": {
+  "ecommerce_listStoreOrdersV1": {
     params: {
       /**
        * The ID of the store to list orders for.

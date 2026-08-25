@@ -1329,7 +1329,7 @@ every remaining unfulfilled item. Returns the updated order summary.
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/orders/{order_id}/fulfill`
 
-#### ecommerce_listOrdersV1
+#### ecommerce_listStoreOrdersV1
 
 List a store's orders newest first as summaries. Filter by status, payment or fulfilment
 status, customer email, order number or a free-text query. Amounts are in the smallest

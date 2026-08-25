@@ -3561,7 +3561,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listOrdersV1",
+    "name": "ecommerce_listStoreOrdersV1",
     "description": "List a store's orders newest first as summaries. Filter by status, payment or fulfilment\nstatus, customer email, order number or a free-text query. Amounts are in the smallest\ncurrency unit. Retrieve a single order for its line items, addresses and fulfilments.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/orders",
