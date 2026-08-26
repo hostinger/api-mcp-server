@@ -3764,6 +3764,65 @@ The archive must already be present on the website's file storage. Use the
   };
 
   /**
+   * Lists the Node.js environment variables currently set for the website. Values are always
+masked as `********` and cannot be read back through this API. Use this endpoint to see
+which keys are configured or to verify a change, not to read values.
+
+To change variables, use the `Replace Node.js environment variables` endpoint. It replaces
+the whole set, so never copy the masked values from this response into that request; send
+the full desired set with real values taken from the project `.env` file or the user
+prompt instead.
+   */
+  "hosting_listNode_jsEnvironmentVariablesV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Replaces the website's Node.js environment variables with the ones provided. This is a
+full replace: any variable not in the request is deleted, and sending an empty `env_vars`
+array deletes every variable. Saving writes the values and restarts the running Node.js
+process.
+
+A restart is enough for apps that read environment variables at process start, such as
+Express or NestJS. It is not enough for frameworks that bake variables into the build.
+Next.js standalone is one of those: build-time values (including `NEXT_PUBLIC_*`) need a
+fresh build. After this call, use the `Start Node.js build` endpoint so those apps
+pick up the new values.
+
+The `List Node.js environment variables` endpoint returns masked values (`********`), so
+never copy values from it into this request. Always send the full desired set with real
+values taken from the project `.env` file or the user prompt.
+   */
+  "hosting_replaceNode_jsEnvironmentVariablesV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Environment variables to set. This is the full desired set: any variable not in
+this list is deleted, and an empty array deletes every variable.
+       */
+      env_vars: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve logs from a specific Node.js build process.
 
 To stream live output while a build is running, poll this endpoint repeatedly

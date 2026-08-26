@@ -69,14 +69,14 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (369 total)
+- `hostinger-api-mcp` — unified server with every tool (371 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
 - `hostinger-ecommerce-mcp` — 29 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 56 tools for hosting
+- `hostinger-hosting-mcp` — 58 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 49 tools for reach
 - `hostinger-vps-mcp` — 62 tools for vps
@@ -1982,6 +1982,40 @@ The archive must already be present on the website's file storage. Use the
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/from-archive`
+
+#### hosting_listNode_jsEnvironmentVariablesV1
+
+Lists the Node.js environment variables currently set for the website. Values are always
+masked as `********` and cannot be read back through this API. Use this endpoint to see
+which keys are configured or to verify a change, not to read values.
+
+To change variables, use the `Replace Node.js environment variables` endpoint. It replaces
+the whole set, so never copy the masked values from this response into that request; send
+the full desired set with real values taken from the project `.env` file or the user
+prompt instead.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/env`
+
+#### hosting_replaceNode_jsEnvironmentVariablesV1
+
+Replaces the website's Node.js environment variables with the ones provided. This is a
+full replace: any variable not in the request is deleted, and sending an empty `env_vars`
+array deletes every variable. Saving writes the values and restarts the running Node.js
+process.
+
+A restart is enough for apps that read environment variables at process start, such as
+Express or NestJS. It is not enough for frameworks that bake variables into the build.
+Next.js standalone is one of those: build-time values (including `NEXT_PUBLIC_*`) need a
+fresh build. After this call, use the `Start Node.js build` endpoint so those apps
+pick up the new values.
+
+The `List Node.js environment variables` endpoint returns masked values (`********`), so
+never copy values from it into this request. Always send the full desired set with real
+values taken from the project `.env` file or the user prompt.
+
+- **Method**: `PUT`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/env`
 
 #### hosting_getNodeJSBuildLogsV1
 
