@@ -6911,7 +6911,7 @@ Use this endpoint to remove specific firewall rules.
 in a single atomic operation, instead of creating or deleting rules one by one.
 
 Any virtual machine using this firewall group will need to be synchronized after replacing rules;
-pass the "sync" query parameter to trigger synchronization immediately.
+pass the "sync" parameter to trigger synchronization immediately.
    */
   "VPS_replaceAllFirewallRulesInGroupV1": {
     params: {
@@ -6920,13 +6920,13 @@ pass the "sync" query parameter to trigger synchronization immediately.
        */
       firewallId: number;
       /**
-       * Synchronize the firewall group to all its virtual machines after replacing the rules
-       */
-      sync?: boolean;
-      /**
        * The complete set of firewall rules that atomically replaces all existing rules in the group
        */
       rules: array;
+      /**
+       * Synchronize the firewall group to all its virtual machines after replacing the rules
+       */
+      sync?: boolean;
     };
     response: any; // Response structure will depend on the API
   };

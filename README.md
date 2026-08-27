@@ -3380,7 +3380,7 @@ Replaces all firewall rules within a specified firewall group with the provided 
 in a single atomic operation, instead of creating or deleting rules one by one.
 
 Any virtual machine using this firewall group will need to be synchronized after replacing rules;
-pass the "sync" query parameter to trigger synchronization immediately.
+pass the "sync" parameter to trigger synchronization immediately.
 
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules`

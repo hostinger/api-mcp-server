@@ -687,7 +687,7 @@ export default [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Replaces all firewall rules within a specified firewall group with the provided set of rules\nin a single atomic operation, instead of creating or deleting rules one by one.\n\nAny virtual machine using this firewall group will need to be synchronized after replacing rules;\npass the \"sync\" query parameter to trigger synchronization immediately.",
+    "description": "Replaces all firewall rules within a specified firewall group with the provided set of rules\nin a single atomic operation, instead of creating or deleting rules one by one.\n\nAny virtual machine using this firewall group will need to be synchronized after replacing rules;\npass the \"sync\" parameter to trigger synchronization immediately.",
     "method": "PUT",
     "path": "/api/vps/v1/firewall/{firewallId}/rules",
     "inputSchema": {
@@ -697,10 +697,6 @@ export default [
           "type": "integer",
           "description": "Firewall ID"
         },
-        "sync": {
-          "type": "boolean",
-          "description": "Synchronize the firewall group to all its virtual machines after replacing the rules"
-        },
         "rules": {
           "type": "array",
           "description": "The complete set of firewall rules that atomically replaces all existing rules in the group",
@@ -708,6 +704,10 @@ export default [
             "type": "string",
             "description": "rules parameter"
           }
+        },
+        "sync": {
+          "type": "boolean",
+          "description": "Synchronize the firewall group to all its virtual machines after replacing the rules"
         }
       },
       "required": [
