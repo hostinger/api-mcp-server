@@ -2,6 +2,12 @@
 export default [
   {
     "name": "mail_createAliasV1",
+    "title": "Create alias",
+    "annotations": {
+      "title": "Create alias",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create an alias for the given mailbox. The alias address is formed\nfrom the given local part and the domain of the mailbox. Messages\nsent to the alias are delivered to the mailbox.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/aliases",
@@ -31,6 +37,13 @@ export default [
   },
   {
     "name": "mail_deleteAliasV1",
+    "title": "Delete alias",
+    "annotations": {
+      "title": "Delete alias",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete an alias. Messages sent to the alias address are no longer\ndelivered to the mailbox.",
     "method": "DELETE",
     "path": "/api/mail/v1/aliases/{aliasId}",
@@ -55,6 +68,12 @@ export default [
   },
   {
     "name": "mail_listAliasesV1",
+    "title": "List aliases",
+    "annotations": {
+      "title": "List aliases",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of aliases across all mailboxes of a mail\norder.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/aliases",
@@ -87,6 +106,12 @@ export default [
   },
   {
     "name": "mail_createAPITokenV1",
+    "title": "Create API token",
+    "annotations": {
+      "title": "Create API token",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create an API token for the given mail order. The token grants access\nto the [Hostinger Email API](https://api.mail.hostinger.com/), where\nyou can provision and manage the mailboxes it is scoped to.\n\nThe plaintext token is returned only in this response, never again.\nA maximum of 10 tokens can exist per order. Use\n`scope.has_all_mailboxes` to cover all current and future mailboxes,\nor list specific mailboxes in `scope.mailbox_ids`.",
     "method": "POST",
     "path": "/api/mail/v1/orders/{orderId}/api-tokens",
@@ -138,6 +163,13 @@ export default [
   },
   {
     "name": "mail_revokeAPITokenV1",
+    "title": "Revoke API token",
+    "annotations": {
+      "title": "Revoke API token",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Revoke an API token. The token immediately loses access to the\n[Hostinger Email API](https://api.mail.hostinger.com/). This action\ncannot be undone.",
     "method": "DELETE",
     "path": "/api/mail/v1/api-tokens/{tokenId}",
@@ -162,6 +194,12 @@ export default [
   },
   {
     "name": "mail_listAPITokensV1",
+    "title": "List API tokens",
+    "annotations": {
+      "title": "List API tokens",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of\n[Hostinger Email API](https://api.mail.hostinger.com/) tokens across\nall your mail orders, optionally filtered by order. Plaintext tokens\nare never included; they are returned only when a token is created.",
     "method": "GET",
     "path": "/api/mail/v1/api-tokens",
@@ -192,6 +230,12 @@ export default [
   },
   {
     "name": "mail_createAutoreplyV1",
+    "title": "Create autoreply",
+    "annotations": {
+      "title": "Create autoreply",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create an automatic reply for the given mailbox. A mailbox can have\nonly one autoreply. Omit `starts_at` to activate the autoreply\nimmediately and omit `ends_at` to keep it active indefinitely.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/autoreplies",
@@ -238,6 +282,13 @@ export default [
   },
   {
     "name": "mail_updateAutoreplyV1",
+    "title": "Update autoreply",
+    "annotations": {
+      "title": "Update autoreply",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Replace the autoreply with the given content and schedule. Omitted\noptional fields are cleared: omit `starts_at` to activate the\nautoreply immediately and omit `ends_at` to keep it active\nindefinitely.",
     "method": "PUT",
     "path": "/api/mail/v1/autoreplies/{autoreplyId}",
@@ -284,6 +335,13 @@ export default [
   },
   {
     "name": "mail_deleteAutoreplyV1",
+    "title": "Delete autoreply",
+    "annotations": {
+      "title": "Delete autoreply",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete the autoreply of a mailbox. The mailbox stops sending\nautomatic replies immediately.",
     "method": "DELETE",
     "path": "/api/mail/v1/autoreplies/{autoreplyId}",
@@ -308,6 +366,12 @@ export default [
   },
   {
     "name": "mail_listAutorepliesV1",
+    "title": "List autoreplies",
+    "annotations": {
+      "title": "List autoreplies",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of autoreplies across all mailboxes of a\nmail order.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/autoreplies",
@@ -340,6 +404,12 @@ export default [
   },
   {
     "name": "mail_createCatchAllV1",
+    "title": "Create catch all",
+    "annotations": {
+      "title": "Create catch all",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a catch-all that routes all messages sent to unknown addresses\nof the domain to the given mailbox. The mailbox address receives a\nconfirmation email and the catch-all becomes active only after it is\nconfirmed. A domain can have only one catch-all.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/catchalls",
@@ -364,6 +434,13 @@ export default [
   },
   {
     "name": "mail_deleteCatchAllV1",
+    "title": "Delete catch all",
+    "annotations": {
+      "title": "Delete catch all",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a catch-all. Messages sent to unknown addresses of the domain\nare no longer routed to the mailbox.",
     "method": "DELETE",
     "path": "/api/mail/v1/catchalls/{catchallId}",
@@ -388,6 +465,12 @@ export default [
   },
   {
     "name": "mail_listCatchAllsV1",
+    "title": "List catch alls",
+    "annotations": {
+      "title": "List catch alls",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of catch-alls across all mailboxes of a\nmail order.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/catchalls",
@@ -420,6 +503,12 @@ export default [
   },
   {
     "name": "mail_resendCatchAllConfirmationV1",
+    "title": "Resend catch all confirmation",
+    "annotations": {
+      "title": "Resend catch all confirmation",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Resend the confirmation email to the mailbox address of an\nunconfirmed catch-all.",
     "method": "POST",
     "path": "/api/mail/v1/catchalls/{catchallId}/confirmation/resend",
@@ -444,6 +533,12 @@ export default [
   },
   {
     "name": "mail_createForwarderV1",
+    "title": "Create forwarder",
+    "annotations": {
+      "title": "Create forwarder",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a forwarder from the given mailbox to the destination address.\nThe destination receives a confirmation email and forwarding becomes\nactive only after it is confirmed.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/forwarders",
@@ -477,6 +572,13 @@ export default [
   },
   {
     "name": "mail_deleteForwarderV1",
+    "title": "Delete forwarder",
+    "annotations": {
+      "title": "Delete forwarder",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a forwarder. The mailbox stops forwarding messages to the\ndestination address immediately.",
     "method": "DELETE",
     "path": "/api/mail/v1/forwarders/{forwarderId}",
@@ -501,6 +603,12 @@ export default [
   },
   {
     "name": "mail_listForwardersV1",
+    "title": "List forwarders",
+    "annotations": {
+      "title": "List forwarders",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of forwarders across all mailboxes of a\nmail order.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/forwarders",
@@ -533,6 +641,12 @@ export default [
   },
   {
     "name": "mail_resendForwarderConfirmationV1",
+    "title": "Resend forwarder confirmation",
+    "annotations": {
+      "title": "Resend forwarder confirmation",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Resend the confirmation email to the destination address of an\nunconfirmed forwarder.",
     "method": "POST",
     "path": "/api/mail/v1/forwarders/{forwarderId}/confirmation/resend",
@@ -557,6 +671,13 @@ export default [
   },
   {
     "name": "mail_updateForwarderKeepCopySettingV1",
+    "title": "Update forwarder keep copy setting",
+    "annotations": {
+      "title": "Update forwarder keep copy setting",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enable or disable keeping a copy of forwarded messages in the\nmailbox.",
     "method": "PATCH",
     "path": "/api/mail/v1/forwarders/{forwarderId}/keep-copy",
@@ -586,6 +707,12 @@ export default [
   },
   {
     "name": "mail_listAccessLogsV1",
+    "title": "List access logs",
+    "annotations": {
+      "title": "List access logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated access logs for the domain attached to the given\nmail order. Supports filtering by account, date range, protocol,\nstatus, and deletion flag. Results are sorted by timestamp descending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/access",
@@ -655,6 +782,12 @@ export default [
   },
   {
     "name": "mail_listActionLogsV1",
+    "title": "List action logs",
+    "annotations": {
+      "title": "List action logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated account action logs (administrative and user\nactions) for the given mail order. Supports filtering by account,\ndate range, and status. Results are sorted by timestamp descending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/action",
@@ -711,6 +844,12 @@ export default [
   },
   {
     "name": "mail_listInboundLogsV1",
+    "title": "List inbound logs",
+    "annotations": {
+      "title": "List inbound logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated inbound (received mail) delivery logs for the\ndomain attached to the given mail order. Supports filtering by\naccount, date range, status, sender, and recipient. Results are\nsorted by timestamp descending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/inbound",
@@ -775,6 +914,12 @@ export default [
   },
   {
     "name": "mail_listMailboxActionLogsV1",
+    "title": "List mailbox action logs",
+    "annotations": {
+      "title": "List mailbox action logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated mailbox action logs (message and mailbox events)\nfor a mailbox in the given mail order. The mailbox email must belong\nto the order's domain. Supports date range and event type filters.\nResults are sorted by timestamp descending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/mailbox-actions",
@@ -837,6 +982,12 @@ export default [
   },
   {
     "name": "mail_listOutboundLogsV1",
+    "title": "List outbound logs",
+    "annotations": {
+      "title": "List outbound logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated outbound (sent mail) delivery logs for the domain\nattached to the given mail order. Supports filtering by account, date\nrange, status, sender, and recipient. Results are sorted by timestamp\ndescending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/outbound",
@@ -901,6 +1052,12 @@ export default [
   },
   {
     "name": "mail_listMailboxesV1",
+    "title": "List mailboxes",
+    "annotations": {
+      "title": "List mailboxes",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of mailboxes belonging to a mail order.\n\nUse this endpoint to monitor mailboxes of your mail service, including\ntheir status, enabled protocols, attached resource counts, and\nperiodically synced usage numbers (usage may lag behind live values).",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/mailboxes",
@@ -945,6 +1102,12 @@ export default [
   },
   {
     "name": "mail_createMailboxV1",
+    "title": "Create mailbox",
+    "annotations": {
+      "title": "Create mailbox",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a mailbox under the given mail order. The full email address is\ncomposed from the given local part and the domain of the order.",
     "method": "POST",
     "path": "/api/mail/v1/orders/{orderId}/mailboxes",
@@ -979,6 +1142,13 @@ export default [
   },
   {
     "name": "mail_deleteMailboxV1",
+    "title": "Delete mailbox",
+    "annotations": {
+      "title": "Delete mailbox",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a mailbox. The mailbox is soft-deleted and stays restorable\nfor a limited period before it is permanently removed.",
     "method": "DELETE",
     "path": "/api/mail/v1/mailboxes/{mailboxId}",
@@ -1003,6 +1173,13 @@ export default [
   },
   {
     "name": "mail_changeMailboxPasswordV1",
+    "title": "Change mailbox password",
+    "annotations": {
+      "title": "Change mailbox password",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Change the password of a mailbox.",
     "method": "PATCH",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/password",
@@ -1032,6 +1209,12 @@ export default [
   },
   {
     "name": "mail_listOrdersV1",
+    "title": "List orders",
+    "annotations": {
+      "title": "List orders",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of mail orders associated with your account.\n\nUse this endpoint to monitor your mail services, including their status,\nplan, attached domain, and expiration details.",
     "method": "GET",
     "path": "/api/mail/v1/orders",
@@ -1085,6 +1268,12 @@ export default [
   },
   {
     "name": "mail_getOrderPlanV1",
+    "title": "Get order plan",
+    "annotations": {
+      "title": "Get order plan",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the plan the given mail order was purchased with, including\ndomain-level and mailbox-level quotas, limits, and protocol\navailability.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/plan",
@@ -1109,6 +1298,12 @@ export default [
   },
   {
     "name": "mail_createWebhookV1",
+    "title": "Create webhook",
+    "annotations": {
+      "title": "Create webhook",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a webhook for the given mailbox. The generated secret is\nreturned only in this response and is sent as a bearer token with\nevery delivery.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/webhooks",
@@ -1168,6 +1363,12 @@ export default [
   },
   {
     "name": "mail_listWebhookDeliveryLogsV1",
+    "title": "List webhook delivery logs",
+    "annotations": {
+      "title": "List webhook delivery logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of webhook delivery logs for the given mail\norder, including delivery outcome, duration, and retry counts.\nSupports filtering by mailbox.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/webhooks/delivery-logs",
@@ -1204,6 +1405,12 @@ export default [
   },
   {
     "name": "mail_getWebhookV1",
+    "title": "Get webhook",
+    "annotations": {
+      "title": "Get webhook",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the details of a single webhook. The webhook secret is never\nincluded; it is returned only when a webhook is created or its secret\nis regenerated.",
     "method": "GET",
     "path": "/api/mail/v1/webhooks/{webhookId}",
@@ -1228,6 +1435,13 @@ export default [
   },
   {
     "name": "mail_deleteWebhookV1",
+    "title": "Delete webhook",
+    "annotations": {
+      "title": "Delete webhook",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently delete a webhook. This action cannot be undone. After\ndeletion the URL no longer receives event notifications.",
     "method": "DELETE",
     "path": "/api/mail/v1/webhooks/{webhookId}",
@@ -1252,6 +1466,13 @@ export default [
   },
   {
     "name": "mail_updateWebhookV1",
+    "title": "Update webhook",
+    "annotations": {
+      "title": "Update webhook",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Partially update a webhook. Only the fields included in the request\nbody are changed; omitted fields retain their current values. Pass\n`\"description\": null` to clear the description.",
     "method": "PATCH",
     "path": "/api/mail/v1/webhooks/{webhookId}",
@@ -1308,6 +1529,12 @@ export default [
   },
   {
     "name": "mail_listWebhooksV1",
+    "title": "List webhooks",
+    "annotations": {
+      "title": "List webhooks",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of webhooks belonging to the given mail\norder. Supports filtering by mailbox and status. The webhook secret\nis never included; it is returned only when a webhook is created or\nits secret is regenerated.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/webhooks",
@@ -1353,6 +1580,12 @@ export default [
   },
   {
     "name": "mail_regenerateWebhookSecretV1",
+    "title": "Regenerate webhook secret",
+    "annotations": {
+      "title": "Regenerate webhook secret",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Regenerate the secret of a webhook. The previous secret is\nimmediately invalidated. The new secret is returned only in this\nresponse and is sent as a bearer token with every delivery.",
     "method": "POST",
     "path": "/api/mail/v1/webhooks/{webhookId}/regenerate-secret",
@@ -1377,6 +1610,12 @@ export default [
   },
   {
     "name": "mail_testWebhookV1",
+    "title": "Test webhook",
+    "annotations": {
+      "title": "Test webhook",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Send a test delivery to the webhook URL and return the result. Test\nrequests are rate limited upstream.",
     "method": "POST",
     "path": "/api/mail/v1/webhooks/{webhookId}/test",

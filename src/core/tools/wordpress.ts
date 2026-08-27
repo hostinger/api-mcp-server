@@ -16,6 +16,12 @@ export interface OpenApiTool extends Tool {
 const tools: OpenApiTool[] = [
   {
     "name": "hosting_showAIOptionStatusV1",
+    "title": "Show AI option status",
+    "annotations": {
+      "title": "Show AI option status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the current AI option status for the Hostinger Tools plugin on the\nspecified WordPress installation. Filter by `option` to return a single\noption, or omit it to return all options.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status",
@@ -53,6 +59,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_setAIOptionStatusV1",
+    "title": "Set AI option status",
+    "annotations": {
+      "title": "Set AI option status",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enable or disable an AI option for the Hostinger Tools plugin on the specified\nWordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status",
@@ -96,6 +109,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_checkIfWordPressInstallationsAreValidV1",
+    "title": "Check if WordPress installations are valid",
+    "annotations": {
+      "title": "Check if WordPress installations are valid",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Check whether one or more WordPress installations are valid and working\ncorrectly. Detects broken installations caused by missing files, broken\nplugins, themes and similar issues.\n\nProvide the WordPress installation (software) identifiers in the body. They\ncan be obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield).",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/installations/check-is-valid",
@@ -133,6 +152,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deleteWordPressInstallationV1",
+    "title": "Delete WordPress installation",
+    "annotations": {
+      "title": "Delete WordPress installation",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete the specified WordPress installation, with optional file and database\nremoval. This removes all associated components including plugins, themes,\nstaging websites and any other related data.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}",
@@ -162,6 +188,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_detectWordPressInstallationsV1",
+    "title": "Detect WordPress installations",
+    "annotations": {
+      "title": "Detect WordPress installations",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Trigger a background scan to detect WordPress installations for the account.\n\nThis operation is asynchronous: a successful response only means the scan has\nbeen queued. Poll GET /api/hosting/v1/wordpress/installations to fetch the\ndetected installations once the scan completes.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/installations/detect",
@@ -186,6 +218,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_importWordPressWebsiteV1",
+    "title": "Import WordPress website",
+    "annotations": {
+      "title": "Import WordPress website",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Import WordPress website to the specified domain.\n\nWARNING: this overwrites the website's existing contents and cannot be undone —\nverify this is intended before calling this endpoint.\n\nThis endpoint allows you to import a WordPress website from archive and\ndatabase files that have been uploaded to the website's directory.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/import",
@@ -225,6 +263,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_installWordPressV1",
+    "title": "Install WordPress",
+    "annotations": {
+      "title": "Install WordPress",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Install WordPress on an existing website.\n\nThe website must already exist before calling this endpoint. To create a new\nwebsite first, use POST /api/hosting/v1/websites and poll\nGET /api/hosting/v1/websites until it appears.\n\nCall GET /api/hosting/v1/wordpress/installations filtered by username and\ndomain before proceeding to check whether WordPress is already installed on\nthe target domain/path. If WordPress already exists and `overwrite` is false\n(the default), the async job will fail.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that WordPress is ready. Installation typically\ntakes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered\nby username and domain to track progress. When the installation appears in\nthat list, WordPress is ready.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/installations",
@@ -322,6 +366,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listWordPressInstallationsV1",
+    "title": "List WordPress installations",
+    "annotations": {
+      "title": "List WordPress installations",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List WordPress installations accessible to the authenticated client.\n\nUse this endpoint to discover existing WordPress installations and to poll\nfor installation status after calling the install endpoint. When a newly\nrequested installation appears in this list, WordPress is ready. Filter by\nusername and domain to narrow results to a specific website.\n\nEach installation includes a `valid` flag and, when invalid, a\n`validationError` describing why.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/installations",
@@ -357,6 +407,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listAvailableWordPressCoreUpdatesV1",
+    "title": "List available WordPress core updates",
+    "annotations": {
+      "title": "List available WordPress core updates",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List available WordPress core updates for the specified installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/updates",
@@ -386,6 +442,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_getInstallationJWTTokenV1",
+    "title": "Get installation JWT token",
+    "annotations": {
+      "title": "Get installation JWT token",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Return a JWT token used to authenticate requests against the specified\nWordPress installation, including its MCP (Model Context Protocol) endpoint.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/jwt-token",
@@ -415,6 +477,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showWordPressCoreVersionV1",
+    "title": "Show WordPress core version",
+    "annotations": {
+      "title": "Show WordPress core version",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the WordPress core version for the specified installation, along with\nknown vulnerabilities affecting it.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/version",
@@ -444,6 +512,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updateWordPressCoreV1",
+    "title": "Update WordPress core",
+    "annotations": {
+      "title": "Update WordPress core",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Update the WordPress core for the specified installation (minor update or a\nspecific version).\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/update",
@@ -481,6 +555,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_purgeLiteSpeedCacheV1",
+    "title": "Purge LiteSpeed cache",
+    "annotations": {
+      "title": "Purge LiteSpeed cache",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Purge the LiteSpeed Cache for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/purge",
@@ -510,6 +590,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showLiteSpeedCacheStatusV1",
+    "title": "Show LiteSpeed cache status",
+    "annotations": {
+      "title": "Show LiteSpeed cache status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the LiteSpeed Cache status for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/status",
@@ -539,6 +625,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_createLoginLinksV1",
+    "title": "Create login links",
+    "annotations": {
+      "title": "Create login links",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create temporary auto-login links for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/login/links",
@@ -568,6 +660,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showMaintenanceStatusV1",
+    "title": "Show maintenance status",
+    "annotations": {
+      "title": "Show maintenance status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the maintenance mode status for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/status",
@@ -597,6 +695,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_toggleMaintenanceModeV1",
+    "title": "Toggle maintenance mode",
+    "annotations": {
+      "title": "Toggle maintenance mode",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enable or disable maintenance mode for the specified WordPress installation,\nbased on the `enabled` flag.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/toggle",
@@ -631,6 +736,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showMemcachedObjectCacheStatusV1",
+    "title": "Show memcached object cache status",
+    "annotations": {
+      "title": "Show memcached object cache status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the Memcached object cache status for the specified WordPress\ninstallation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/status",
@@ -660,6 +771,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_toggleMemcachedObjectCacheV1",
+    "title": "Toggle memcached object cache",
+    "annotations": {
+      "title": "Toggle memcached object cache",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Activate or deactivate the Memcached object cache for the specified WordPress\ninstallation, based on the `enabled` flag.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/toggle",
@@ -694,6 +812,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_activateWordPressPluginV1",
+    "title": "Activate WordPress plugin",
+    "annotations": {
+      "title": "Activate WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Activate an installed plugin on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the activation\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/activate",
@@ -728,6 +852,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deactivateWordPressPluginV1",
+    "title": "Deactivate WordPress plugin",
+    "annotations": {
+      "title": "Deactivate WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Deactivate an installed plugin on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the\ndeactivation job has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/deactivate",
@@ -762,6 +892,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deployWordPressPluginV1",
+    "title": "Deploy WordPress plugin",
+    "annotations": {
+      "title": "Deploy WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Deploy a WordPress plugin from an already uploaded directory.\n\nThis endpoint allows you to deploy a WordPress plugin that has been uploaded to the website's directory.\nThe plugin will be activated and made available in the WordPress admin panel.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/plugins/deploy",
@@ -801,6 +937,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_installWordPressPluginsV1",
+    "title": "Install WordPress plugins",
+    "annotations": {
+      "title": "Install WordPress plugins",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Install one or more plugins on an existing WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield). Use GET /api/hosting/v1/wordpress/plugins to discover the plugin\nslugs available for installation.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that the plugins are ready.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install",
@@ -839,6 +981,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listAvailableWordPressPluginsV1",
+    "title": "List available WordPress plugins",
+    "annotations": {
+      "title": "List available WordPress plugins",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List plugins recommended for installation on a WordPress installation that are\nnot yet installed.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/available",
@@ -868,6 +1016,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listInstalledWordPressPluginsV1",
+    "title": "List installed WordPress plugins",
+    "annotations": {
+      "title": "List installed WordPress plugins",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List plugins installed on a WordPress installation, including their status,\navailable updates and known vulnerabilities.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins",
@@ -904,6 +1058,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_searchWordPressPluginsV1",
+    "title": "Search WordPress plugins",
+    "annotations": {
+      "title": "Search WordPress plugins",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Search the WordPress.org plugin directory for plugins available to install.\n\nUse the returned `slug` values with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/plugins",
@@ -928,6 +1088,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listSuggestedWordPressPluginsV1",
+    "title": "List suggested WordPress plugins",
+    "annotations": {
+      "title": "List suggested WordPress plugins",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List curated plugin suggestions grouped by website type.\n\nUse the returned `slug` values with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/plugins/suggested",
@@ -950,6 +1116,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_checkIfWooCommerceIsInstalledV1",
+    "title": "Check if WooCommerce is installed",
+    "annotations": {
+      "title": "Check if WooCommerce is installed",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Check whether WooCommerce is installed on any WordPress installation of a\ndomain. Optionally filter by domain to scope the check.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/plugins/is-woocommerce-installed",
@@ -972,6 +1144,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_uninstallWordPressPluginsV1",
+    "title": "Uninstall WordPress plugins",
+    "annotations": {
+      "title": "Uninstall WordPress plugins",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Uninstall one or more plugins from a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the uninstall\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/uninstall",
@@ -1010,6 +1188,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updateHostingerWordPressPluginV1",
+    "title": "Update hostinger WordPress plugin",
+    "annotations": {
+      "title": "Update hostinger WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Update a Hostinger plugin to its latest version on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update job\nhas been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/hostinger/update",
@@ -1051,6 +1235,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updateWordPressPluginsV1",
+    "title": "Update WordPress plugins",
+    "annotations": {
+      "title": "Update WordPress plugins",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Update one or more installed plugins to their latest version on a WordPress\ninstallation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update job\nhas been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/update",
@@ -1089,6 +1279,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_activateWordPressThemeV1",
+    "title": "Activate WordPress theme",
+    "annotations": {
+      "title": "Activate WordPress theme",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Activate an installed theme on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the activation\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/activate",
@@ -1123,6 +1319,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deployWordPressThemeV1",
+    "title": "Deploy WordPress theme",
+    "annotations": {
+      "title": "Deploy WordPress theme",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Deploy a WordPress theme from an already uploaded directory.\n\nThis endpoint allows you to deploy a WordPress theme that has been uploaded to the website's directory.\nThe theme can be optionally activated after deployment.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/themes/deploy",
@@ -1166,6 +1368,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_installWordPressThemeV1",
+    "title": "Install WordPress theme",
+    "annotations": {
+      "title": "Install WordPress theme",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Install a theme on an existing WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield).\n\nWhen the theme is one of the Hostinger themes (hostinger-blog,\nhostinger-affiliate-theme, hostinger-ai-theme), the optional `palette`,\n`layout`, and `font` fields are forwarded to the custom installer (defaults:\npalette1, layout1, default). For any other theme they are ignored.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that the theme is ready.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install",
@@ -1220,6 +1428,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listInstalledWordPressThemesV1",
+    "title": "List installed WordPress themes",
+    "annotations": {
+      "title": "List installed WordPress themes",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List themes installed on a WordPress installation, including their status,\navailable updates and known vulnerabilities.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes",
@@ -1249,6 +1463,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listWordPressThemesV1",
+    "title": "List WordPress themes",
+    "annotations": {
+      "title": "List WordPress themes",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List WordPress themes available to install.\n\nUse the returned `slug` values with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/themes",
@@ -1275,6 +1495,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_uninstallWordPressThemesV1",
+    "title": "Uninstall WordPress themes",
+    "annotations": {
+      "title": "Uninstall WordPress themes",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Uninstall one or more themes from a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the uninstall\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/uninstall",
@@ -1313,6 +1539,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updateWordPressThemesV1",
+    "title": "Update WordPress themes",
+    "annotations": {
+      "title": "Update WordPress themes",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Update one or more installed themes to their latest version on a WordPress\ninstallation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update job\nhas been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/update",

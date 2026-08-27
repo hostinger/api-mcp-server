@@ -16,6 +16,12 @@ export interface OpenApiTool extends Tool {
 const tools: OpenApiTool[] = [
   {
     "name": "agency-hosting_deployNodeStaticWebsite",
+    "title": "Deploy node static website",
+    "annotations": {
+      "title": "Deploy node static website",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "agency-hosting",
     "description": "Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agencyHosting_deployPhpApplication instead. The website UID is automatically resolved from the domain.",
     "method": "",
@@ -50,6 +56,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_deployPhpApplication",
+    "title": "Deploy PHP application",
+    "annotations": {
+      "title": "Deploy PHP application",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "agency-hosting",
     "description": "Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For node-static websites that require a build step, use agencyHosting_deployNodeStaticWebsite instead. The website UID is automatically resolved from the domain.",
     "method": "",
@@ -84,6 +96,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_importWordpressWebsite",
+    "title": "Import WordPress website",
+    "annotations": {
+      "title": "Import WordPress website",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
     "method": "",
@@ -119,6 +137,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deployWordpressPlugin",
+    "title": "Deploy WordPress plugin",
+    "annotations": {
+      "title": "Deploy WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.",
     "method": "",
@@ -154,6 +178,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deployWordpressTheme",
+    "title": "Deploy WordPress theme",
+    "annotations": {
+      "title": "Deploy WordPress theme",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.",
     "method": "",
@@ -193,6 +223,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deployJsApplication",
+    "title": "Deploy js application",
+    "annotations": {
+      "title": "Deploy js application",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.",
     "method": "",
@@ -227,6 +263,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deployStaticWebsite",
+    "title": "Deploy static website",
+    "annotations": {
+      "title": "Deploy static website",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
     "method": "",
@@ -261,6 +303,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listJsDeployments",
+    "title": "List js deployments",
+    "annotations": {
+      "title": "List js deployments",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "topic": "hosting",
     "description": "List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.",
     "method": "",
@@ -307,6 +355,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showJsDeploymentLogs",
+    "title": "Show js deployment logs",
+    "annotations": {
+      "title": "Show js deployment logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "topic": "hosting",
     "description": "Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.",
     "method": "",
@@ -341,6 +395,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listAvailableDatacentersV1",
+    "title": "List available datacenters",
+    "annotations": {
+      "title": "List available datacenters",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists the datacenters available for provisioning a new website on the given Agency Plan\nhosting order.\n\nEach datacenter includes a `pinger_url` you can ping from the client to measure round-trip\nlatency; comparing the results across datacenters lets you pick the nearest one (lowest\nping) before choosing its `code` as the `datacenter_code` when creating a website setup.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/orders/{order_id}/datacenters",
@@ -365,6 +425,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_changeWebsiteDomainV1",
+    "title": "Change website domain",
+    "annotations": {
+      "title": "Change website domain",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Changes the primary domain for an Agency Plan website.\n\nProvide the current domain in the path and the new domain in the request body.\nSet domain to null to revert to the temporary domain.",
     "method": "PUT",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/domains/{from_domain}",
@@ -399,6 +466,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_linkDomainToWebsiteV1",
+    "title": "Link domain to website",
+    "annotations": {
+      "title": "Link domain to website",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Links a domain to the specified Agency Plan website so it can serve traffic for that domain.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/domains",
@@ -428,6 +501,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listDomainsV1",
+    "title": "List domains",
+    "annotations": {
+      "title": "List domains",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a paginated list of domains associated with Agency Plan websites accessible to the authenticated client.\n\nUse the website_uuids filter to narrow results to specific websites.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/domains",
@@ -462,6 +541,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_unlinkDomainFromWebsiteV1",
+    "title": "Unlink domain from website",
+    "annotations": {
+      "title": "Unlink domain from website",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Unlinks a domain from the specified Agency Plan website.\n\nThe website stops serving traffic on this domain immediately.\n\nWebsite files and database are preserved, and any other linked domains remain accessible.\n\nIf this is the only domain on the website, unlinking leaves the website without an accessible domain.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}",
@@ -491,6 +577,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_generateUploadURLV1",
+    "title": "Generate upload URL",
+    "annotations": {
+      "title": "Generate upload URL",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Generate a file browser upload URL with authentication credentials for uploading files\nto an Agency Plan website's file storage.\n\nReturns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the\nwebsite's file storage via the TUS resumable upload protocol (TUS 1.0.0). Send\n`X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request below.\n\n1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers\n   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.\n2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or\n   `PATCH` requests with an `upload-offset` header tracking progress) until complete.\n\n`relative_file_path` is the destination path inside the website's file storage, e.g.\n`app.zip`.\n\nInstead of a TUS client, plain `curl` also works:\n```\nFILE=app.zip\nSIZE=$(stat -f%z \"$FILE\")   # stat -c%s on Linux\n\ncurl -i -X POST \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Upload-Length: ${SIZE}\" \\\n  -H \"Upload-Offset: 0\"\n# -> 201 Created\n\ncurl -i -X PATCH \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Content-Type: application/offset+octet-stream\" \\\n  -H \"Upload-Offset: 0\" \\\n  --data-binary \"@${FILE}\"\n# -> 204 No Content, Upload-Offset response header equals SIZE when done\n```",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/files/upload-urls",
@@ -515,6 +607,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_importWebsiteFromArchiveV1",
+    "title": "Import website from archive",
+    "annotations": {
+      "title": "Import website from archive",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Imports an Agency Plan website from an already-uploaded archive.\n\nUpload the archive to the website's root directory via file browser first, then provide its\nfilename in this request. Website contents are overwritten by the archive contents. Supported\narchive types: .zip, .tar, .tar.gz, .tgz.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/files/import-archive",
@@ -544,6 +642,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listAgencyPlanOrderDiskUsageMetricsV1",
+    "title": "List agency plan order disk usage metrics",
+    "annotations": {
+      "title": "List agency plan order disk usage metrics",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns aggregated disk and inode usage for the Agency Plan order over the\nselected time frame, plus the plan quotas. Figures cover the whole order\naccount. Values may be up to one hour stale. CPU, memory, and process usage\nare on the resource-usage-metrics endpoint.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/orders/{order_id}/disk-usage-metrics",
@@ -578,6 +682,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listOrdersV1",
+    "title": "List orders",
+    "annotations": {
+      "title": "List orders",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a paginated list of Agency Plan orders accessible to the authenticated client.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/orders",
@@ -604,6 +714,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listOrderResourceUsageMetricsV1",
+    "title": "List order resource usage metrics",
+    "annotations": {
+      "title": "List order resource usage metrics",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns aggregated CPU, memory, and process usage for the Agency Plan order\nover the selected time frame, plus the plan quotas and a per-website\nbreakdown. Each website is identified by uid. Suspended and deleted websites\nare excluded from both the order totals and the per-website breakdown.\nValues may be up to one hour stale. Disk and inode usage are on the\ndisk-usage-metrics endpoint.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/orders/{order_id}/resource-usage-metrics",
@@ -639,6 +755,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listPHPExtensionsForAWebsiteV1",
+    "title": "List PHP extensions for a website",
+    "annotations": {
+      "title": "List PHP extensions for a website",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists every PHP extension available to an Agency Plan website and whether it is currently enabled.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/extensions",
@@ -663,6 +785,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_replaceWebsitePHPExtensionsV1",
+    "title": "Replace website PHP extensions",
+    "annotations": {
+      "title": "Replace website PHP extensions",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Replaces the set of PHP extensions enabled on an Agency Plan website with the ones provided. Any toggleable extension not in the request is disabled, so call the extensions endpoint first and send the full desired set. Extensions compiled into PHP, reported with the \"built-in\" state, are always active and are unaffected.",
     "method": "PUT",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/extensions",
@@ -696,6 +825,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listPHPOptionsForAWebsiteV1",
+    "title": "List PHP options for a website",
+    "annotations": {
+      "title": "List PHP options for a website",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists the php.ini directives that can be configured for an Agency Plan website, each with its default, the value currently in effect, and the values it accepts.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/options",
@@ -720,6 +855,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_replaceWebsitePHPOptionsV1",
+    "title": "Replace website PHP options",
+    "annotations": {
+      "title": "Replace website PHP options",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Replaces the custom php.ini values on an Agency Plan website with the ones provided. Any option not in the request is reset to its default, so call the options endpoint first and send the full desired set. Sending an empty array resets every option to its default.",
     "method": "PUT",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/options",
@@ -767,6 +909,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listAvailablePHPVersionsForAnOrderV1",
+    "title": "List available PHP versions for an order",
+    "annotations": {
+      "title": "List available PHP versions for an order",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists the PHP versions available to websites created under an Agency Plan order, determined by the server the order is hosted on. Use this before creating a website; for a website that already exists, call the website-scoped versions endpoint instead.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/orders/{order_id}/websites/php-settings/versions",
@@ -791,6 +939,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listAvailablePHPVersionsForAWebsiteV1",
+    "title": "List available PHP versions for a website",
+    "annotations": {
+      "title": "List available PHP versions for a website",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists the PHP versions an Agency Plan website can be switched to. The version the website is currently running is returned as settings.php.version by the website details endpoint.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/versions",
@@ -815,6 +969,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_updateWebsitePHPVersionV1",
+    "title": "Update website PHP version",
+    "annotations": {
+      "title": "Update website PHP version",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Switches an Agency Plan website to a different PHP version. Call the available versions endpoint first to see which versions can be selected. The website restarts on the new version, so requests served during the switch may fail and code that is incompatible with the target version will break.",
     "method": "PATCH",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/php-settings/version",
@@ -844,6 +1005,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_createANewWebsiteV1",
+    "title": "Create a new website",
+    "annotations": {
+      "title": "Create a new website",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Provisions a new website on one of your Agency Plan hosting orders.\n\nChoose the datacenter, stack (`flavor`), and PHP version for the site. Optionally attach\nyour own `domain` — omit it, set it to `null`, or leave it unavailable and a free\n`*.hostingersite.com` subdomain is generated instead — and/or install WordPress by\nsupplying the `wordpress` details (admin account, site title, and language).\n\nCommon setups:\n- **Plain PHP site**: `flavor` set to `php-fpm`, with `settings.php.version`; omit\n  `wordpress` and `type`.\n- **WordPress site**: `flavor` set to the desired WordPress version (e.g. `wp-7.0`), plus\n  the `wordpress` block (admin account, title, language).\n- **Static/Node.js frontend app**: `flavor` set to `php-fpm` and `type` set to\n  `node-static`.\n\nProvisioning runs in the background, so the response returns immediately with a setup UUID\nthat identifies the job. The new website becomes reachable once provisioning finishes.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/orders/{order_id}/websites/setups",
@@ -995,6 +1162,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_getWebsiteSetupStatusV1",
+    "title": "Get website setup status",
+    "annotations": {
+      "title": "Get website setup status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the current status of an Agency Plan website setup started via the setups\nendpoint.\n\nPoll this endpoint using the `setup_uuid` returned from the provisioning request until\n`status` becomes `completed`, at which point `website_uid` identifies the new website.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/orders/{order_id}/websites/setups/{setup_uuid}",
@@ -1024,6 +1197,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_buildWebsiteNodeJSAssetsV1",
+    "title": "Build website Node.js assets",
+    "annotations": {
+      "title": "Build website Node.js assets",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Builds and deploys a Node.js application for an Agency Plan website from an already-uploaded archive.\n\nUpload the archive to file browser first, then provide its relative path from document root in this request.\nWebsite contents are overwritten by the build result, which is deployed to public_html.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/build-assets",
@@ -1053,6 +1232,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_clearWebsiteCacheV1",
+    "title": "Clear website cache",
+    "annotations": {
+      "title": "Clear website cache",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Clears cache for all domains associated with an Agency Plan website, including its preview domain.\n\nThis operation clears all cache types for the website.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/cache",
@@ -1077,6 +1263,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listWebsiteCronJobsV1",
+    "title": "List website cron jobs",
+    "annotations": {
+      "title": "List website cron jobs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a paginated list of cron jobs configured for an Agency Plan website.\n\nEach entry includes the schedule expression and the command executed on that schedule.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/cron-jobs",
@@ -1109,6 +1301,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_createWebsiteCronJobV1",
+    "title": "Create website cron job",
+    "annotations": {
+      "title": "Create website cron job",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Creates a cron job for an Agency Plan website from a schedule expression and a command.\n\nReturns the created cron job, including its uuid, which is required to delete the cron job.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/cron-jobs",
@@ -1143,6 +1341,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_deleteWebsiteCronJobV1",
+    "title": "Delete website cron job",
+    "annotations": {
+      "title": "Delete website cron job",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes the cron job identified by its uuid from an Agency Plan website.\n\nThe operation is idempotent: deleting a cron job that does not exist succeeds without error.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/cron-jobs/{uuid}",
@@ -1172,6 +1377,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listWebsiteDatabasesV1",
+    "title": "List website databases",
+    "annotations": {
+      "title": "List website databases",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a paginated list of MySQL databases created for an Agency Plan website.\n\nEach entry includes the database's non-system users.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases",
@@ -1204,6 +1415,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_createWebsiteDatabaseV1",
+    "title": "Create website database",
+    "annotations": {
+      "title": "Create website database",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Creates a MySQL database with a dedicated user for an Agency Plan website.\n\nThe database name, username, and password must all be provided by the caller.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases",
@@ -1243,6 +1460,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_deleteWebsiteDatabaseV1",
+    "title": "Delete website database",
+    "annotations": {
+      "title": "Delete website database",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes a MySQL database and all its data from an Agency Plan website, including its users.\n\nThe operation is idempotent: deleting a database that does not exist succeeds without error.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}",
@@ -1272,6 +1496,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_createWebsiteDatabaseUserV1",
+    "title": "Create website database user",
+    "annotations": {
+      "title": "Create website database user",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Creates a user for an existing database on an Agency Plan website.\n\nEach database supports a single non-system user; creating a user for a database that already has one fails.",
     "method": "POST",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users",
@@ -1315,6 +1545,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_deleteWebsiteDatabaseUserV1",
+    "title": "Delete website database user",
+    "annotations": {
+      "title": "Delete website database user",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes a database user from an Agency Plan website database, revoking all access it had.\n\nThe operation is idempotent: deleting a user that does not exist succeeds without error.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users/{database_user_name}",
@@ -1349,6 +1586,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_getWebsiteDetailsV1",
+    "title": "Get website details",
+    "annotations": {
+      "title": "Get website details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieves detailed information about a specific Agency Plan website, including configuration,\nstatus, metadata, hosting plan details, and resource quotas.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}",
@@ -1373,6 +1616,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_deleteWebsiteV1",
+    "title": "Delete website",
+    "annotations": {
+      "title": "Delete website",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes an Agency Plan website. Deletion is processed asynchronously: the\nwebsite is immediately transitioned to a deleting state and the underlying server\nresources are removed in the background.",
     "method": "DELETE",
     "path": "/api/agency-hosting/v1/websites/{website_uid}",
@@ -1397,6 +1647,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listAgencyPlanWebsitesV1",
+    "title": "List agency plan websites",
+    "annotations": {
+      "title": "List agency plan websites",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of Agency Plan websites (H5G, Builder, and Horizons) accessible to\nthe authenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nThe response shape differs per platform — see the `platform` field on each item.\n\nUse `website_types` to list only websites of a given detected type, e.g. only\nWordPress websites (`website_types=wordpress`) or only Node.js websites\n(`website_types=nodejs`). Combine with `order_ids`, `states`, or `domain` for more\ntargeted results.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites",
@@ -1465,6 +1721,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listWebsiteProcessesV1",
+    "title": "List website processes",
+    "annotations": {
+      "title": "List website processes",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists active and recently completed asynchronous processes for an Agency Plan website.\n\nEach process has a unique ID (for tracking), a type, and a status (running, completed, failed).\nPoll this endpoint after initiating async operations (SSL setup, backups, cloning) to track progress.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/processes",
@@ -1489,6 +1751,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_changeWordPressVersionV1",
+    "title": "Change WordPress version",
+    "annotations": {
+      "title": "Change WordPress version",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Changes the installed WordPress core version on an Agency Plan website to one of the versions available for installation.",
     "method": "PATCH",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/version",
@@ -1518,6 +1787,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_getWordPressSettingsV1",
+    "title": "Get WordPress settings",
+    "annotations": {
+      "title": "Get WordPress settings",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the current WordPress settings for an Agency Plan website: installed core version,\nLiteSpeed Cache plugin status, object cache status, and maintenance mode status.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings",
@@ -1542,6 +1817,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "agency-hosting_listAvailableWordPressVersionsV1",
+    "title": "List available WordPress versions",
+    "annotations": {
+      "title": "List available WordPress versions",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists the WordPress core versions available for installation on an Agency Plan website.",
     "method": "GET",
     "path": "/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/versions",
@@ -1566,6 +1847,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "billing_getCatalogItemListV1",
+    "title": "Get catalog item list",
+    "annotations": {
+      "title": "Get catalog item list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve catalog items available for order.\n\nPrices in catalog items is displayed as cents (without floating point),\ne.g: float `17.99` is displayed as integer `1799`.\n\nUse this endpoint to view available services and pricing before placing orders.",
     "method": "GET",
     "path": "/api/billing/v1/catalog",
@@ -1597,6 +1884,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "billing_createPurchaseOrderV1",
+    "title": "Create purchase order",
+    "annotations": {
+      "title": "Create purchase order",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a purchase order for any Hostinger product.\n\nThis unified endpoint places an order for one or more catalog items and\nworks across all Hostinger products, leveraging the existing billing\ninfrastructure. Use the [catalog endpoint](#tag/billing-catalog) to look\nup the `item_id` values available for purchase.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nThis endpoint only places the order. Product-specific provisioning\n(e.g. VPS setup or domain registration) is not performed here — once the\norder completes, use the relevant product endpoints or\n[hPanel](https://hpanel.hostinger.com/) to finalize setup.\n\nUse this endpoint to purchase any product available in the catalog.",
     "method": "POST",
     "path": "/api/billing/v1/orders",
@@ -1650,6 +1943,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "billing_setDefaultPaymentMethodV1",
+    "title": "Set default payment method",
+    "annotations": {
+      "title": "Set default payment method",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Set the default payment method for your account.\n\nUse this endpoint to configure the primary payment method for future orders.",
     "method": "POST",
     "path": "/api/billing/v1/payment-methods/{paymentMethodId}",
@@ -1674,6 +1973,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "billing_deletePaymentMethodV1",
+    "title": "Delete payment method",
+    "annotations": {
+      "title": "Delete payment method",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a payment method from your account.\n\nUse this endpoint to remove unused payment methods from user accounts.",
     "method": "DELETE",
     "path": "/api/billing/v1/payment-methods/{paymentMethodId}",
@@ -1698,6 +2004,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "billing_getPaymentMethodListV1",
+    "title": "Get payment method list",
+    "annotations": {
+      "title": "Get payment method list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve available payment methods that can be used for placing new orders.\n\nIf you want to add new payment method,\nplease use [hPanel](https://hpanel.hostinger.com/billing/payment-methods).\n\nUse this endpoint to view available payment options before creating orders.",
     "method": "GET",
     "path": "/api/billing/v1/payment-methods",
@@ -1715,6 +2027,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "billing_getSubscriptionListV1",
+    "title": "Get subscription list",
+    "annotations": {
+      "title": "Get subscription list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a list of all subscriptions associated with your account.\n\nUse this endpoint to monitor active services and billing status.",
     "method": "GET",
     "path": "/api/billing/v1/subscriptions",
@@ -1732,6 +2050,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "billing_disableAutoRenewalV1",
+    "title": "Disable auto renewal",
+    "annotations": {
+      "title": "Disable auto renewal",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Disable auto-renewal for a subscription.\n\nUse this endpoint when disable auto-renewal for a subscription.",
     "method": "DELETE",
     "path": "/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/disable",
@@ -1756,6 +2081,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "billing_enableAutoRenewalV1",
+    "title": "Enable auto renewal",
+    "annotations": {
+      "title": "Enable auto renewal",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enable auto-renewal for a subscription.\n\nUse this endpoint when enable auto-renewal for a subscription.",
     "method": "PATCH",
     "path": "/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/enable",
@@ -1780,6 +2112,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "billing_renewSubscriptionV1",
+    "title": "Renew subscription",
+    "annotations": {
+      "title": "Renew subscription",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a renewal order for an existing Hostinger subscription.\n\nThis endpoint places a renewal order for a single subscription, leveraging\nthe existing billing infrastructure. Use the\n[subscriptions endpoint](#tag/billing-subscriptions) to look up the\n`subscriptionId` values available for renewal.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nUse this endpoint to renew any subscription available in your account.",
     "method": "POST",
     "path": "/api/billing/v1/subscriptions/{subscriptionId}/renew",
@@ -1816,6 +2154,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "DNS_getDNSSnapshotV1",
+    "title": "Get DNS snapshot",
+    "annotations": {
+      "title": "Get DNS snapshot",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve particular DNS snapshot with contents of DNS zone records.\n\nUse this endpoint to view historical DNS configurations for domains.",
     "method": "GET",
     "path": "/api/dns/v1/snapshots/{domain}/{snapshotId}",
@@ -1845,6 +2189,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "DNS_getDNSSnapshotListV1",
+    "title": "Get DNS snapshot list",
+    "annotations": {
+      "title": "Get DNS snapshot list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve DNS snapshots for a domain.\n\nUse this endpoint to view available DNS backup points for restoration.",
     "method": "GET",
     "path": "/api/dns/v1/snapshots/{domain}",
@@ -1869,6 +2219,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "DNS_restoreDNSSnapshotV1",
+    "title": "Restore DNS snapshot",
+    "annotations": {
+      "title": "Restore DNS snapshot",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Restore DNS zone to the selected snapshot.\n\nUse this endpoint to revert domain DNS to a previous configuration.",
     "method": "POST",
     "path": "/api/dns/v1/snapshots/{domain}/{snapshotId}/restore",
@@ -1898,6 +2254,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "DNS_getDNSRecordsV1",
+    "title": "Get DNS records",
+    "annotations": {
+      "title": "Get DNS records",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve DNS zone records for a specific domain.\n\nUse this endpoint to view current DNS configuration for domain management.",
     "method": "GET",
     "path": "/api/dns/v1/zones/{domain}",
@@ -1922,6 +2284,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "DNS_updateDNSRecordsV1",
+    "title": "Update DNS records",
+    "annotations": {
+      "title": "Update DNS records",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update DNS records for the selected domain.\n\nUsing `overwrite = true` will replace existing records with the provided ones. \nOtherwise existing records will be updated and new records will be added.\n\nUse this endpoint to modify domain DNS configuration.",
     "method": "PUT",
     "path": "/api/dns/v1/zones/{domain}",
@@ -2007,6 +2376,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "DNS_deleteDNSRecordsV1",
+    "title": "Delete DNS records",
+    "annotations": {
+      "title": "Delete DNS records",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete DNS records for the selected domain.\n\nTo filter which records to delete, add the `name` of the record and `type` to the filter. \nMultiple filters can be provided with single request.\n\nIf you have multiple records with the same name and type, and you want to delete only part of them,\nrefer to the `Update zone records` endpoint.\n\nUse this endpoint to remove specific DNS records from domains.",
     "method": "DELETE",
     "path": "/api/dns/v1/zones/{domain}",
@@ -2031,6 +2407,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "DNS_resetDNSRecordsV1",
+    "title": "Reset DNS records",
+    "annotations": {
+      "title": "Reset DNS records",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Reset DNS zone to the default records.\n\nUse this endpoint to restore domain DNS to original configuration.",
     "method": "POST",
     "path": "/api/dns/v1/zones/{domain}/reset",
@@ -2071,6 +2453,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "DNS_validateDNSRecordsV1",
+    "title": "Validate DNS records",
+    "annotations": {
+      "title": "Validate DNS records",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Validate DNS records prior to update for the selected domain.\n\nIf the validation is successful, the response will contain `200 Success` code.\nIf there is validation error, the response will fail with `422 Validation error` code.\n\nUse this endpoint to verify DNS record validity before applying changes.",
     "method": "POST",
     "path": "/api/dns/v1/zones/{domain}/validate",
@@ -2156,6 +2544,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "v2_getDomainVerificationsDIRECT",
+    "title": "Get domain verifications",
+    "annotations": {
+      "title": "Get domain verifications",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a list of pending and completed domain verifications.",
     "method": "GET",
     "path": "/api/v2/direct/verifications/active",
@@ -2173,6 +2567,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_suggestDomainNamesFromADescriptionV1",
+    "title": "Suggest domain names from a description",
+    "annotations": {
+      "title": "Suggest domain names from a description",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Suggest available domain names based on a free-text description of your project.\n\nSuggestions are generated by an AI model, so they differ between calls.\n\nEndpoint has rate limit of 90 requests per minute.\n\nUse this endpoint to find a domain name when you only know what the website is about.",
     "method": "POST",
     "path": "/api/domains/v1/availability/alternatives-from-description",
@@ -2202,6 +2602,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_suggestDomainNamesFromADomainV1",
+    "title": "Suggest domain names from a domain",
+    "annotations": {
+      "title": "Suggest domain names from a domain",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Suggest available domain names based on a domain name you already have in mind.\n\nSuggestions are generated by an AI model, so they differ between calls.\n\nEndpoint has rate limit of 90 requests per minute.\n\nUse this endpoint when the domain you wanted is taken and you need close alternatives.",
     "method": "POST",
     "path": "/api/domains/v1/availability/alternatives-from-domain",
@@ -2231,6 +2637,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_checkDomainAvailabilityV1",
+    "title": "Check domain availability",
+    "annotations": {
+      "title": "Check domain availability",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Check availability of domain names across multiple TLDs.\n\nMultiple TLDs can be checked at once.\nIf you want alternative domains with response, provide only one TLD and set `with_alternatives` to `true`.\nTLDs should be provided without leading dot (e.g. `com`, `net`, `org`).\n\nEndpoint has rate limit of 90 requests per minute.\n\nUse this endpoint to verify domain availability before purchase.",
     "method": "POST",
     "path": "/api/domains/v1/availability",
@@ -2268,6 +2680,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getDomainForwardingV1",
+    "title": "Get domain forwarding",
+    "annotations": {
+      "title": "Get domain forwarding",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve domain forwarding data.\n\nUse this endpoint to view current redirect configuration for domains.",
     "method": "GET",
     "path": "/api/domains/v1/forwarding/{domain}",
@@ -2292,6 +2710,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_updateDomainForwardingV1",
+    "title": "Update domain forwarding",
+    "annotations": {
+      "title": "Update domain forwarding",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update domain forwarding configuration.\n\nUse this endpoint to modify existing redirect configuration for domains.",
     "method": "PUT",
     "path": "/api/domains/v1/forwarding/{domain}",
@@ -2330,6 +2755,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_deleteDomainForwardingV1",
+    "title": "Delete domain forwarding",
+    "annotations": {
+      "title": "Delete domain forwarding",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete domain forwarding data.\n\nUse this endpoint to remove redirect configuration from domains.",
     "method": "DELETE",
     "path": "/api/domains/v1/forwarding/{domain}",
@@ -2354,6 +2786,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_createDomainForwardingV1",
+    "title": "Create domain forwarding",
+    "annotations": {
+      "title": "Create domain forwarding",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create domain forwarding configuration.\n\nUse this endpoint to set up domain redirects to other URLs.",
     "method": "POST",
     "path": "/api/domains/v1/forwarding",
@@ -2392,6 +2830,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getPendingIRTPVerificationV1",
+    "title": "Get pending IRTP verification",
+    "annotations": {
+      "title": "Get pending IRTP verification",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a pending IRTP verification for a domain.\n\nBoth the old and new registrant must confirm it before the WHOIS change takes effect.\n\nUse this endpoint to check the status of a WHOIS change awaiting registrant confirmation.",
     "method": "GET",
     "path": "/api/domains/v1/irtp/{domain}",
@@ -2416,6 +2860,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_cancelPendingIRTPVerificationV1",
+    "title": "Cancel pending IRTP verification",
+    "annotations": {
+      "title": "Cancel pending IRTP verification",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Cancel a pending IRTP verification.\n\nUse this endpoint to back out of a WHOIS change that is stuck waiting on registrant confirmation,\nfor example when the confirmation email cannot be received, without waiting out the 5-day expiry.",
     "method": "DELETE",
     "path": "/api/domains/v1/irtp/{domain}",
@@ -2440,6 +2891,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getIncomingDomainMoveV1",
+    "title": "Get incoming domain move",
+    "annotations": {
+      "title": "Get incoming domain move",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the incoming move for a specified domain.\n\nReturns 404 when no account is moving this domain to you.\n\nUse this endpoint to check whether a domain addressed to you is still waiting to be accepted.",
     "method": "GET",
     "path": "/api/domains/v1/move/incoming/{domain}",
@@ -2468,6 +2925,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_acceptIncomingDomainMoveV1",
+    "title": "Accept incoming domain move",
+    "annotations": {
+      "title": "Accept incoming domain move",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Accept an incoming move for a specified domain.\n\nThe provided WHOIS profiles become the contacts of the domain, so they must belong\nto your account and satisfy the requirements of the TLD. Only the contact types the\ndomain actually uses are applied, but all four profile IDs have to be provided.\n\nThe move has to still be waiting for your decision, already accepted moves\ncannot be accepted again.\n\nAccepting does not complete the move. A confirmation email is sent to the email address of\nthe new owner contact, and the domain changes hands only after the change is confirmed from it.\nUntil then the move stays in the `activating` status, which can be followed with the\n[incoming move endpoint](#tag/domains-move).\n\nUse this endpoint to take ownership of a domain offered to you.",
     "method": "PUT",
     "path": "/api/domains/v1/move/incoming/{domain}",
@@ -2521,6 +2985,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_rejectIncomingDomainMoveV1",
+    "title": "Reject incoming domain move",
+    "annotations": {
+      "title": "Reject incoming domain move",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Reject an incoming move for a specified domain.\n\nThe domain stays in the account which initiated the move.\nMoves you have already accepted cannot be rejected anymore.\n\nUse this endpoint to decline a domain you do not want to take over.",
     "method": "DELETE",
     "path": "/api/domains/v1/move/incoming/{domain}",
@@ -2545,6 +3016,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getIncomingDomainMoveListV1",
+    "title": "Get incoming domain move list",
+    "annotations": {
+      "title": "Get incoming domain move list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all domains other Hostinger accounts are moving to your account.\n\nMoves of every status are returned, including the ones which already completed.\n\nUse this endpoint to find domains waiting for you to accept them.",
     "method": "GET",
     "path": "/api/domains/v1/move/incoming",
@@ -2562,6 +3039,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getOutgoingDomainMoveV1",
+    "title": "Get outgoing domain move",
+    "annotations": {
+      "title": "Get outgoing domain move",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the outgoing move for a specified domain.\n\nReturns 404 when the domain has no move in progress.\n\nUse this endpoint to track the status of a move you have initiated for a single domain.",
     "method": "GET",
     "path": "/api/domains/v1/move/outgoing/{domain}",
@@ -2586,6 +3069,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_startOutgoingDomainMoveV1",
+    "title": "Start outgoing domain move",
+    "annotations": {
+      "title": "Start outgoing domain move",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Initiate a move of a specified domain to another Hostinger account.\n\nThe receiving account has to already exist and accept the move before the domain changes hands.\n\nThe domain must be active. The subscription it belongs to is resolved automatically,\nand the request is rejected with a 404 status code when the domain has no domain\nsubscription of its own.\n\nDomains protected by premium protection require an additional verification step,\nsuch requests are rejected with a 428 status code.\n\nUse this endpoint to hand a domain over to another Hostinger user.",
     "method": "POST",
     "path": "/api/domains/v1/move/outgoing/{domain}",
@@ -2615,6 +3104,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_cancelOutgoingDomainMoveV1",
+    "title": "Cancel outgoing domain move",
+    "annotations": {
+      "title": "Cancel outgoing domain move",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Cancel an outgoing move for a specified domain.\n\nThe move can only be cancelled while the receiving account has not accepted it yet.\nThe domain stays in your account.\n\nUse this endpoint to withdraw a move you no longer want to complete.",
     "method": "DELETE",
     "path": "/api/domains/v1/move/outgoing/{domain}",
@@ -2639,6 +3135,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getOutgoingDomainMoveListV1",
+    "title": "Get outgoing domain move list",
+    "annotations": {
+      "title": "Get outgoing domain move list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all domains you are moving to other Hostinger accounts.\n\nOnly moves which have not completed yet are returned.\n\nUse this endpoint to track moves you have initiated and the accounts they are addressed to.",
     "method": "GET",
     "path": "/api/domains/v1/move/outgoing",
@@ -2656,6 +3158,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getDomainAuthorizationCodeV1",
+    "title": "Get domain authorization code",
+    "annotations": {
+      "title": "Get domain authorization code",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the authorization (EPP) code for a specified domain so it can be transferred\naway from Hostinger to another registrar.\n\nRequesting a new code invalidates any code retrieved previously.\n\nUse this endpoint to obtain the code required to transfer a domain to another registrar.",
     "method": "GET",
     "path": "/api/domains/v1/portfolio/{domain}/auth-code",
@@ -2680,6 +3188,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_claimFreeDomainV1",
+    "title": "Claim free domain",
+    "annotations": {
+      "title": "Claim free domain",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Claim a free domain available on your account and register it.\n\nUnlike purchasing a domain, this consumes a free domain you already have,\nso no payment method is required.\n\nA successful response means the domain is registered. If registration fails, login to\n[hPanel](https://hpanel.hostinger.com/) and check domain registration status.\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nSome TLDs require `additional_details` to be provided and these will be validated before claiming.\n\nRequests which cannot be fulfilled are rejected with an error code in the response body,\nfor example `2037` when no free domain is available.\n\nUse this endpoint to register a domain using a free domain from your account.",
     "method": "POST",
     "path": "/api/domains/v1/portfolio/claim",
@@ -2731,6 +3245,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_enableDomainLockV1",
+    "title": "Enable domain lock",
+    "annotations": {
+      "title": "Enable domain lock",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enable domain lock for the domain.\n\nWhen domain lock is enabled,\nthe domain cannot be transferred to another registrar without first disabling the lock.\n\nUse this endpoint to secure domains against unauthorized transfers.",
     "method": "PUT",
     "path": "/api/domains/v1/portfolio/{domain}/domain-lock",
@@ -2755,6 +3276,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_disableDomainLockV1",
+    "title": "Disable domain lock",
+    "annotations": {
+      "title": "Disable domain lock",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Disable domain lock for the domain.\n\nDomain lock needs to be disabled before transferring the domain to another registrar.\n\nUse this endpoint to prepare domains for transfer to other registrars.",
     "method": "DELETE",
     "path": "/api/domains/v1/portfolio/{domain}/domain-lock",
@@ -2779,6 +3307,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getDomainDetailsV1",
+    "title": "Get domain details",
+    "annotations": {
+      "title": "Get domain details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve detailed information for specified domain.\n\nUse this endpoint to view comprehensive domain configuration and status.",
     "method": "GET",
     "path": "/api/domains/v1/portfolio/{domain}",
@@ -2803,6 +3337,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getDomainListV1",
+    "title": "Get domain list",
+    "annotations": {
+      "title": "Get domain list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all domains associated with your account.\n\nUse this endpoint to view user's domain portfolio.",
     "method": "GET",
     "path": "/api/domains/v1/portfolio",
@@ -2820,6 +3360,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_purchaseNewDomainV1",
+    "title": "Purchase new domain",
+    "annotations": {
+      "title": "Purchase new domain",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Purchase and register a new domain name.\n\nIf registration fails, login to [hPanel](https://hpanel.hostinger.com/) and check domain registration status.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nSome TLDs require `additional_details` to be provided and these will be validated before completing purchase.\n\nUse this endpoint to register new domains for users.",
     "method": "POST",
     "path": "/api/domains/v1/portfolio",
@@ -2888,6 +3434,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_enablePrivacyProtectionV1",
+    "title": "Enable privacy protection",
+    "annotations": {
+      "title": "Enable privacy protection",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enable privacy protection for the domain.\n\nWhen privacy protection is enabled, domain owner's personal information is hidden from public WHOIS database.\n\nUse this endpoint to protect domain owner's personal information from public view.",
     "method": "PUT",
     "path": "/api/domains/v1/portfolio/{domain}/privacy-protection",
@@ -2912,6 +3465,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_disablePrivacyProtectionV1",
+    "title": "Disable privacy protection",
+    "annotations": {
+      "title": "Disable privacy protection",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Disable privacy protection for the domain.\n\nWhen privacy protection is disabled, domain owner's personal information is visible in public WHOIS database.\n\nUse this endpoint to make domain owner's information publicly visible.",
     "method": "DELETE",
     "path": "/api/domains/v1/portfolio/{domain}/privacy-protection",
@@ -2936,6 +3496,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getDomainRenewalInformationV1",
+    "title": "Get domain renewal information",
+    "annotations": {
+      "title": "Get domain renewal information",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve renewal information for a specified domain, including its status and current\nexpiration date.\n\nUse this endpoint to build renewal automation and expiry monitoring for a single domain.",
     "method": "GET",
     "path": "/api/domains/v1/portfolio/{domain}/renewal",
@@ -2960,6 +3526,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_updateDomainNameserversV1",
+    "title": "Update domain nameservers",
+    "annotations": {
+      "title": "Update domain nameservers",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Set nameservers for a specified domain.\n\nBe aware, that improper nameserver configuration can lead to the domain being unresolvable or unavailable.\n\nUse this endpoint to configure custom DNS hosting for domains.",
     "method": "PUT",
     "path": "/api/domains/v1/portfolio/{domain}/nameservers",
@@ -3002,6 +3575,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_claimFreeDomainTransferV1",
+    "title": "Claim free domain transfer",
+    "annotations": {
+      "title": "Claim free domain transfer",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Claim a free domain transfer available on your account and start the transfer.\n\nUnlike purchasing a transfer, this consumes a free domain transfer you already have,\nso no payment method is required.\n\nBefore making request, unlock the domain at the current registrar and get its authorization\ncode. The transfer is validated first, so domains which cannot be transferred are rejected\nbefore the free domain transfer is consumed.\n\nA successful response means the transfer has been started. Completion depends on the current\nregistrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nRequests which cannot be fulfilled are rejected with an error code in the response body.\n\nUse this endpoint to transfer a domain using a free domain transfer from your account.",
     "method": "POST",
     "path": "/api/domains/v1/transfers/claim",
@@ -3057,6 +3636,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getTransferV1",
+    "title": "Get transfer",
+    "annotations": {
+      "title": "Get transfer",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the transfer for a specified domain.\n\nUse this endpoint to track an incoming or outgoing registrar transfer and its status.",
     "method": "GET",
     "path": "/api/domains/v1/transfers/{domain}",
@@ -3081,6 +3666,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getTransferListV1",
+    "title": "Get transfer list",
+    "annotations": {
+      "title": "Get transfer list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all domain transfers in your portfolio.\n\nUse this endpoint to monitor incoming and outgoing registrar transfers across your domains.",
     "method": "GET",
     "path": "/api/domains/v1/transfers",
@@ -3098,6 +3689,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_changeWHOISProfileForDomainV1",
+    "title": "Change WHOIS profile for domain",
+    "annotations": {
+      "title": "Change WHOIS profile for domain",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Change WHOIS contact profile for a domain.\n\nRepoints the given contact roles to a new WHOIS profile and submits the change to the registry.\nThe profile currently assigned to those roles is resolved automatically;\nthe request fails if the given roles are not all on the same profile today.\n\nChanging transfer sensitive fields on the owner contact starts an IRTP verification.\n\nThe change is processed asynchronously.\n\nUse this endpoint to move a registered domain onto different contact information.",
     "method": "PUT",
     "path": "/api/domains/v1/whois/change",
@@ -3142,6 +3740,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_setWHOISProfileAsDefaultV1",
+    "title": "Set WHOIS profile as default",
+    "annotations": {
+      "title": "Set WHOIS profile as default",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Set WHOIS contact profile as default.\n\nThe default profile is pre-selected for the TLD it belongs to when registering new domains.\n\nUse this endpoint to avoid picking contact information for every registration.",
     "method": "PUT",
     "path": "/api/domains/v1/whois/default/{whoisId}",
@@ -3166,6 +3771,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_unsetDefaultWHOISProfileV1",
+    "title": "Unset default WHOIS profile",
+    "annotations": {
+      "title": "Unset default WHOIS profile",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Unset WHOIS contact profile as default.\n\nThe profile itself is kept, it is only no longer pre-selected for its TLD.\n\nUse this endpoint to stop reusing contact information for new registrations.",
     "method": "DELETE",
     "path": "/api/domains/v1/whois/default/{whoisId}",
@@ -3190,6 +3802,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getWHOISProfileV1",
+    "title": "Get WHOIS profile",
+    "annotations": {
+      "title": "Get WHOIS profile",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a WHOIS contact profile.\n\nUse this endpoint to view domain registration contact information.",
     "method": "GET",
     "path": "/api/domains/v1/whois/{whoisId}",
@@ -3214,6 +3832,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_deleteWHOISProfileV1",
+    "title": "Delete WHOIS profile",
+    "annotations": {
+      "title": "Delete WHOIS profile",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete WHOIS contact profile.\n\nUse this endpoint to remove unused contact profiles from account.",
     "method": "DELETE",
     "path": "/api/domains/v1/whois/{whoisId}",
@@ -3238,6 +3863,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getWHOISProfileListV1",
+    "title": "Get WHOIS profile list",
+    "annotations": {
+      "title": "Get WHOIS profile list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve WHOIS contact profiles.\n\nUse this endpoint to view available contact profiles for domain registration.",
     "method": "GET",
     "path": "/api/domains/v1/whois",
@@ -3260,6 +3891,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_createWHOISProfileV1",
+    "title": "Create WHOIS profile",
+    "annotations": {
+      "title": "Create WHOIS profile",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create WHOIS contact profile.\n\nUse this endpoint to add new contact information for domain registration.",
     "method": "POST",
     "path": "/api/domains/v1/whois",
@@ -3309,6 +3946,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "domains_getWHOISProfileUsageV1",
+    "title": "Get WHOIS profile usage",
+    "annotations": {
+      "title": "Get WHOIS profile usage",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve domain list where provided WHOIS contact profile is used.\n\nUse this endpoint to view which domains use specific contact profiles.",
     "method": "GET",
     "path": "/api/domains/v1/whois/{whoisId}/usage",
@@ -3333,6 +3976,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listDiscountsV1",
+    "title": "List discounts",
+    "annotations": {
+      "title": "List discounts",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's discounts. Filter by free text over code and name, or by disabled state.\nAmounts for fixed discounts are integers in the smallest currency unit; percentage\ndiscounts carry a whole-number value between 1 and 100.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/discounts",
@@ -3373,6 +4022,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createADiscountV1",
+    "title": "Create a discount",
+    "annotations": {
+      "title": "Create a discount",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a discount for a store. Fixed discounts take an amount in the smallest currency\nunit (e.g. $10 is 1000); percentage discounts take a whole-number value between 1 and 100.\nFree-shipping discounts ignore value. Returns the created discount.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/discounts",
@@ -3449,6 +4104,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_getCustomStorefrontSetupInstructionsV1",
+    "title": "Get custom storefront setup instructions",
+    "annotations": {
+      "title": "Get custom storefront setup instructions",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve step-by-step setup instructions, formatted as Markdown, for connecting a custom sales\nchannel to your store and keeping your catalog, orders, shipping and payments in sync through\nthe Ecommerce API.",
     "method": "GET",
     "path": "/api/ecommerce/v1/miscellaneous/custom-storefront-instructions",
@@ -3466,6 +4127,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_cancelAnOrderV1",
+    "title": "Cancel an order",
+    "annotations": {
+      "title": "Cancel an order",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Cancel the order and optionally email the customer. Returns the updated order summary.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/orders/{order_id}/cancel",
@@ -3499,6 +4166,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_fulfilAnOrderV1",
+    "title": "Fulfil an order",
+    "annotations": {
+      "title": "Fulfil an order",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a fulfilment for the order and attach tracking in one call. Omit items to fulfil\nevery remaining unfulfilled item. Returns the updated order summary.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/orders/{order_id}/fulfill",
@@ -3562,6 +4235,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listStoreOrdersV1",
+    "title": "List store orders",
+    "annotations": {
+      "title": "List store orders",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's orders newest first as summaries. Filter by status, payment or fulfilment\nstatus, customer email, order number or a free-text query. Amounts are in the smallest\ncurrency unit. Retrieve a single order for its line items, addresses and fulfilments.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/orders",
@@ -3662,6 +4341,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_retrieveAnOrderV1",
+    "title": "Retrieve an order",
+    "annotations": {
+      "title": "Retrieve an order",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve one order in full: line items (each with the id the fulfil endpoint needs),\naddresses, the totals breakdown and fulfilments with tracking. Amounts are in the\nsmallest currency unit.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/orders/{order_id}",
@@ -3691,6 +4376,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_enableManualPaymentMethodV1",
+    "title": "Enable manual payment method",
+    "annotations": {
+      "title": "Enable manual payment method",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Enable a manual payment method so the store can accept orders without an online payment provider.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/payment-methods/manual",
@@ -3719,6 +4410,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createAPaymentProviderConnectLinkV1",
+    "title": "Create a payment provider connect link",
+    "annotations": {
+      "title": "Create a payment provider connect link",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create an onboarding link for connecting a payment gateway to the store. Returns the gateway\nonboarding URL for the merchant to open and a deep-link into the store admin.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/payment-providers/{provider_id}/connect-link",
@@ -3748,6 +4445,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listStorePaymentProvidersV1",
+    "title": "List store payment providers",
+    "annotations": {
+      "title": "List store payment providers",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's payment providers, split into providers already connected to the store and\ngateways available to install. Never exposes gateway credentials, secrets, or configuration.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/payment-providers",
@@ -3776,6 +4479,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createAProductImageUploadURLV1",
+    "title": "Create a product image upload URL",
+    "annotations": {
+      "title": "Create a product image upload URL",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Returns a signed URL to upload a product image to (multipart/form-data POST). Then call the\nattach-image endpoint with the returned object_name to scan and attach it to the product.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images/upload-url",
@@ -3805,6 +4514,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_deleteAProductV1",
+    "title": "Delete a product",
+    "annotations": {
+      "title": "Delete a product",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a product and its variants from the store. A subscription product with active\nsubscribers is archived instead of deleted so its data stays available.",
     "method": "DELETE",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}",
@@ -3834,6 +4550,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_updateAProductV1",
+    "title": "Update a product",
+    "annotations": {
+      "title": "Update a product",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update a product's name, description or status. Set status to published to make it buyable,\ndraft to hide it, or archived to retire it. Variants, prices and inventory are managed\nthrough the variant endpoints, not here. Returns the updated product summary.",
     "method": "PATCH",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}",
@@ -3880,6 +4603,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createDigitalProductV1",
+    "title": "Create digital product",
+    "annotations": {
+      "title": "Create digital product",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a published digital product with a single variant and an optional external download link.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/digital",
@@ -3926,6 +4655,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listProductsV1",
+    "title": "List products",
+    "annotations": {
+      "title": "List products",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's products newest first as lean summaries (name, status, thumbnail, variant\ncount and price range). Prices are integers in the smallest currency unit and live on\nvariants. Filter by status, free text or a set of product ids. Use include=variants to\nembed each product's variants with prices and inventory, and include=media to embed its media.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/products",
@@ -3993,6 +4728,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createPhysicalProductV1",
+    "title": "Create physical product",
+    "annotations": {
+      "title": "Create physical product",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a published physical product with a single variant priced in the store currency.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/physical",
@@ -4035,6 +4776,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_uploadAndAttachAProductImageV1",
+    "title": "Upload and attach a product image",
+    "annotations": {
+      "title": "Upload and attach a product image",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Fetch a raster image (JPEG, PNG, GIF or WebP, max 15MB) from a URL and attach it to a product in a\nsingle call. The image is virus-scanned and validated by content, then stored on the CDN. Set\nis_thumbnail to make it the product's primary image.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images",
@@ -4076,6 +4823,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listSalesChannelsV1",
+    "title": "List sales channels",
+    "annotations": {
+      "title": "List sales channels",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's active sales channels with their full metadata.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels",
@@ -4100,6 +4853,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createASalesChannelV1",
+    "title": "Create a sales channel",
+    "annotations": {
+      "title": "Create a sales channel",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a sales channel for a store. A \"custom\" channel is headless: build your own frontend and keep\nyour catalog, orders, shipping and payments in sync through the Ecommerce API. A \"quick-link\" channel\nis a hosted one-page store whose handle is auto-generated.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels",
@@ -4141,6 +4900,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_updateSalesChannelV1",
+    "title": "Update sales channel",
+    "annotations": {
+      "title": "Update sales channel",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update a custom sales channel. The merchant-facing `name` and the public `url`\n(returned as the channel `domain`) can be changed. Pass `null` to clear a value.",
     "method": "PATCH",
     "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels/{sales_channel_id}",
@@ -4178,6 +4944,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_setStoreShippingV1",
+    "title": "Set store shipping",
+    "annotations": {
+      "title": "Set store shipping",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Set the flat-rate shipping price for a store, creating the shipping zone if it does not exist yet.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/shipping",
@@ -4207,6 +4979,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_deleteStoreV1",
+    "title": "Delete store",
+    "annotations": {
+      "title": "Delete store",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Soft-delete a store owned by your account.\n\nThe underlying store data is preserved; only the store is marked as deleted.",
     "method": "DELETE",
     "path": "/api/ecommerce/v1/stores/{store_id}",
@@ -4231,6 +5010,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_getStoresV1",
+    "title": "Get stores",
+    "annotations": {
+      "title": "Get stores",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the stores associated with your account.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores",
@@ -4253,6 +5038,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createStoreV1",
+    "title": "Create store",
+    "annotations": {
+      "title": "Create store",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new store for your account.\n\nA primary sales channel is created alongside the store.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores",
@@ -4308,6 +5099,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_getStoreMetadataV1",
+    "title": "Get store metadata",
+    "annotations": {
+      "title": "Get store metadata",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a store's readiness metadata: whether payment methods and shipping are configured,\nplus its default currency. Useful to verify prerequisites before building a storefront.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/metadata",
@@ -4332,6 +5129,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_updateProductVariantsInBatchV1",
+    "title": "Update product variants in batch",
+    "annotations": {
+      "title": "Update product variants in batch",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update up to 100 existing variants in place by id — title, inventory, stock tracking and\nprices. Variants omitted from the request are left untouched. Prices replace the variant's\nexisting prices in full. Returns the updated variants.",
     "method": "PATCH",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants/batch",
@@ -4416,6 +5220,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_deleteAProductVariantV1",
+    "title": "Delete a product variant",
+    "annotations": {
+      "title": "Delete a product variant",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a single variant from the product.",
     "method": "DELETE",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants/{variant_id}",
@@ -4450,6 +5261,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listProductVariantsV1",
+    "title": "List product variants",
+    "annotations": {
+      "title": "List product variants",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a product's variants, ordered by rank, with their options, prices and inventory.\nPrices are integers in the smallest currency unit and live on variants.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants",
@@ -4483,6 +5300,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createAProductVariantV1",
+    "title": "Create a product variant",
+    "annotations": {
+      "title": "Create a product variant",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Add a variant to a product along one or more option dimensions (e.g. Size, Color). Options\nmissing from the product are created automatically; provide a value for every option the\nproduct already has. Prices are integers in the smallest currency unit and default to the\nstore currency. Returns the created variant.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants",
@@ -4576,6 +5399,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "horizons_createWebsiteV1",
+    "title": "Create website",
+    "annotations": {
+      "title": "Create website",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create new Hostinger Horizons website from the given message.\\n\nUse this tool when user asks you to create a website, landing page, blog\nor any other type of application.\\n\nThis tool initiates the website creation process and returns a website URL and ID.\nThe generation happens asynchronously.\\n\nAfter invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing\nthat Hostinger Horizons is now creating their website and it will be ready in a few minutes\nand you should provide the website URL to the user immediately\nDo not write code.\\n\\nTo edit afterwards, users must go to Hostinger Horizons interface\nin the provided website URL.\nIf the tool call fails with an error, you should provide a clear explanation of the error\nand do not generate code yourself in the chat.\n\\n\nTECHNOLOGY STACK CONSTRAINTS (STRICTLY ENFORCED):\\n\nThe environment is limited to the following technologies.\nYou MUST NOT use, suggest, or implement any technology outside this list:\\n\n\\n\n- Language: JavaScript ONLY.\n- Languages like TypeScript, Rust, Python, Java, PHP, etc., are STRICTLY PROHIBITED.\\n\n- Framework: React.\\n\n- Navigation: React Router.\\n\n- Styling: TailwindCSS.\\n\n- Components: shadcn/ui (built with @radix-ui primitives).\\n\n- Icons: Lucide React.\\n\n- Animations: Framer Motion.\\n\n\\n\nBACKEND & DATA STORAGE:\\n\n- Horizons integrated backend is the EXCLUSIVE solution for persistent data storage,\nauthentication, and database needs.\\n\n- Local databases (SQLite, MySQL, etc.) are STRICTLY PROHIBITED.\\n\n- Third-party services (Firebase, AWS Amplify) are allowed ONLY if explicitly requested by the user.\\n\n\\n\nMAPS:\\n\n- OpenStreetMap is the default provider.\\n\n- Alternative providers (Google Maps, Mapbox) are allowed ONLY if explicitly requested by the user.\\n",
     "method": "POST",
     "path": "/api/horizons/v1/websites",
@@ -4621,6 +5450,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "horizons_getWebsiteV1",
+    "title": "Get website",
+    "annotations": {
+      "title": "Get website",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a link for the user to edit their website in Hostinger Horizons interface.\\n\nUse this tool when user wants to modify, edit or add new features to an existing website.\\n\nWebsites can only be edited in Hostinger Horizons interface in the provided website URL.",
     "method": "GET",
     "path": "/api/horizons/v1/websites/{websiteId}",
@@ -4645,6 +5480,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_clearWebsiteCacheV1",
+    "title": "Clear website cache",
+    "annotations": {
+      "title": "Clear website cache",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently clears all server-side cache for the website at once. Use it when content was\nupdated and needs to be visible immediately, or after making major changes.\n\nAlso purges the Hostinger CDN cache when CDN is enabled on the website. For a WordPress\ninstallation living in a subdirectory, pass the directory query parameter to clear its cache.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/clear",
@@ -4678,6 +5520,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_toggleCachelessModeV1",
+    "title": "Toggle cacheless mode",
+    "annotations": {
+      "title": "Toggle cacheless mode",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing\nis cached, effectively turning off all caching for the website; use it while actively developing,\ntesting changes, debugging issues, or when real-time updates must be visible. Disable it after\nfinishing development work to restore the performance benefits of caching.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/toggle",
@@ -4712,6 +5561,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_toggleWebsiteCacheV1",
+    "title": "Toggle website cache",
+    "annotations": {
+      "title": "Toggle website cache",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Turns server-side caching for the website on or off, based on the enabled flag. Enable it for\nfaster page loads, reduced server load, and improved user experience; recommended for production\nwebsites. Disabling may impact performance; to temporarily bypass caching while developing or\ndebugging, prefer toggling cacheless mode instead.\n\nDoes nothing if caching is already in the requested state.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/toggle",
@@ -4746,6 +5602,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listAccountCronJobsV1",
+    "title": "List account cron jobs",
+    "annotations": {
+      "title": "List account cron jobs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the list of cron jobs configured for the specified account, including their schedule and command.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/cron-jobs",
@@ -4770,6 +5632,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_createAccountCronJobV1",
+    "title": "Create account cron job",
+    "annotations": {
+      "title": "Create account cron job",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Creates a cron job for the specified account from a schedule expression and a command.\n\nReturns the created cron job, including its uid, which is required to delete the cron job or fetch its output.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/cron-jobs",
@@ -4804,6 +5672,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deleteAccountCronJobV1",
+    "title": "Delete account cron job",
+    "annotations": {
+      "title": "Delete account cron job",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes the cron job identified by its uid.\n\nThe uid is returned by the list cron jobs endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/cron-jobs/{uid}",
@@ -4833,6 +5708,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_getCronJobOutputV1",
+    "title": "Get cron job output",
+    "annotations": {
+      "title": "Get cron job output",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the output captured from the last execution of the cron job identified by its uid.\n\nThe uid is returned by the list cron jobs endpoint.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/cron-jobs/{uid}/output",
@@ -4862,6 +5743,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_changeDatabasePasswordV1",
+    "title": "Change database password",
+    "annotations": {
+      "title": "Change database password",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Changes the password for the specified database user.\n\nThe database name must be the full name returned by the list databases endpoint.\nThe password must also be updated in any website configuration that uses this database.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/change-password",
@@ -4896,6 +5784,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listAccountDatabasesV1",
+    "title": "List account databases",
+    "annotations": {
+      "title": "List account databases",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a paginated list of databases for the specified account.\n\nUse the domain and is_assigned filters to find databases assigned to a specific domain.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/databases",
@@ -4940,6 +5834,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_createAccountDatabaseV1",
+    "title": "Create account database",
+    "annotations": {
+      "title": "Create account database",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Creates a database with a database user and password for the specified account.\n\nThe database name and user are automatically prefixed with the account username when needed.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/databases",
@@ -4984,6 +5884,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deleteAccountDatabaseV1",
+    "title": "Delete account database",
+    "annotations": {
+      "title": "Delete account database",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes a database and its remote connections.\n\nThe database name must be the full name returned by the list databases endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}",
@@ -5013,6 +5920,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_createDatabaseRemoteConnectionV1",
+    "title": "Create database remote connection",
+    "annotations": {
+      "title": "Create database remote connection",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Allows a remote host to connect to the specified database.\n\nProvide an IPv4/IPv6 address, or \"%\" to allow any host. The database name must be\nthe full name returned by the list databases endpoint.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections",
@@ -5047,6 +5960,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deleteDatabaseRemoteConnectionV1",
+    "title": "Delete database remote connection",
+    "annotations": {
+      "title": "Delete database remote connection",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently removes a remote-access rule, revoking the given host's remote access to the database.\n\nIdentify the rule with the required ip query parameter (the IPv4/IPv6 address, or \"%\",\nexactly as returned by the list remote connections endpoint). The database name must be\nthe full name returned by the list databases endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections",
@@ -5081,6 +6001,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listDatabaseRemoteConnectionsV1",
+    "title": "List database remote connections",
+    "annotations": {
+      "title": "List database remote connections",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the remote-access rules for the specified account: the remote hosts\n(IPv4/IPv6 addresses, or \"%\" for any host) allowed to connect to the account databases.\n\nUse the domain filter to only return rules for databases assigned to a specific domain.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/databases/remote-connections",
@@ -5109,6 +6035,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_repairDatabaseV1",
+    "title": "Repair database",
+    "annotations": {
+      "title": "Repair database",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Repairs corrupted database tables asynchronously.\n\nUse when database errors, crashes, or corruption are reported.\nThe database name must be the full name returned by the list databases endpoint.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/repair",
@@ -5138,6 +6071,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_getPhpMyAdminLinkV1",
+    "title": "Get phpMyAdmin link",
+    "annotations": {
+      "title": "Get phpMyAdmin link",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a direct sign-on link to phpMyAdmin for the specified database.\n\nUse this when a visual database interface is needed for SQL queries, imports, exports, or table management.\nThe database name must be the full name returned by the list databases endpoint.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/phpmyadmin-link",
@@ -5167,6 +6106,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listAvailableDatacentersV1",
+    "title": "List available datacenters",
+    "annotations": {
+      "title": "List available datacenters",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a list of datacenters available for setting up hosting plans\nbased on available datacenter capacity and hosting plan of your order.\nThe first item in the list is the best match for your specific order\nrequirements.",
     "method": "GET",
     "path": "/api/hosting/v1/datacenters",
@@ -5191,6 +6136,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_generateAFreeSubdomainV1",
+    "title": "Generate a free subdomain",
+    "annotations": {
+      "title": "Generate a free subdomain",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.\nFree subdomains allow you to start using hosting services immediately\nand you can always connect a custom domain to your site later.",
     "method": "POST",
     "path": "/api/hosting/v1/domains/free-subdomains",
@@ -5208,6 +6159,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listWebsiteParkedDomainsV1",
+    "title": "List website parked domains",
+    "annotations": {
+      "title": "List website parked domains",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all parked or alias domains created under the selected website.\n\nUse this endpoint to inspect parked domain configuration for a specific website,\nincluding the parent domain and root directory assigned to each parked domain.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains",
@@ -5237,6 +6194,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_createWebsiteParkedDomainV1",
+    "title": "Create website parked domain",
+    "annotations": {
+      "title": "Create website parked domain",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a parked or alias domain for the selected website.\n\nProvide a domain name or IP address to park on the website so it serves the same content\nas the parent domain.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains",
@@ -5271,6 +6234,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deleteWebsiteParkedDomainV1",
+    "title": "Delete website parked domain",
+    "annotations": {
+      "title": "Delete website parked domain",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete an existing parked or alias domain from the selected website.\n\nUse this endpoint to remove parked domains that are no longer needed.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains/{parkedDomain}",
@@ -5305,6 +6275,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listWebsiteSubdomainsV1",
+    "title": "List website subdomains",
+    "annotations": {
+      "title": "List website subdomains",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all subdomains created under the selected website.\n\nUse this endpoint to inspect subdomain configuration for a specific website,\nincluding the parent domain and root directory assigned to each subdomain.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains",
@@ -5334,6 +6310,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_createWebsiteSubdomainV1",
+    "title": "Create website subdomain",
+    "annotations": {
+      "title": "Create website subdomain",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new subdomain for the selected website.\n\nProvide a subdomain prefix and, optionally, a custom directory or the\nwebsite public directory to use as the subdomain root.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains",
@@ -5376,6 +6358,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deleteWebsiteSubdomainV1",
+    "title": "Delete website subdomain",
+    "annotations": {
+      "title": "Delete website subdomain",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete an existing subdomain from the selected website.\n\nUse this endpoint to remove subdomains that are no longer needed.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains/{subdomain}",
@@ -5410,6 +6399,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_verifyDomainOwnershipV1",
+    "title": "Verify domain ownership",
+    "annotations": {
+      "title": "Verify domain ownership",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Verify ownership of a single domain and return the verification status.\n\nUse this endpoint to check if a domain is accessible for you before using it for new websites.\nIf the domain is accessible, the response will have `is_accessible: true`.\nIf not, add the given TXT record to your domain's DNS records and try verifying again.\nKeep in mind that it may take up to 10 minutes for new TXT DNS records to propagate.\n\nSkip this verification when using Hostinger's free subdomains (*.hostingersite.com).",
     "method": "POST",
     "path": "/api/hosting/v1/domains/verify-ownership",
@@ -5434,6 +6429,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_generateUploadURLV1",
+    "title": "Generate upload URL",
+    "annotations": {
+      "title": "Generate upload URL",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Generate a file browser upload URL with authentication credentials\nfor uploading files directly to a website's file storage.\n\nReturns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the\nwebsite's `public_html` directory via the TUS resumable upload protocol (TUS 1.0.0).\nSend `X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request\nbelow.\n\n1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers\n   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.\n2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or\n   `PATCH` requests with an `upload-offset` header tracking progress) until complete.\n\n`relative_file_path` is the destination path inside `public_html`, e.g. `app.zip`.\n\nInstead of a TUS client, plain `curl` also works:\n```\nFILE=app.zip\nSIZE=$(stat -f%z \"$FILE\")   # stat -c%s on Linux\n\ncurl -i -X POST \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Upload-Length: ${SIZE}\" \\\n  -H \"Upload-Offset: 0\"\n# -> 201 Created\n\ncurl -i -X PATCH \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Content-Type: application/offset+octet-stream\" \\\n  -H \"Upload-Offset: 0\" \\\n  --data-binary \"@${FILE}\"\n# -> 204 No Content, Upload-Offset response header equals SIZE when done\n```",
     "method": "POST",
     "path": "/api/hosting/v1/files/upload-urls",
@@ -5463,6 +6464,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listWebsiteFilesAndDirectoriesV1",
+    "title": "List website files and directories",
+    "annotations": {
+      "title": "List website files and directories",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List files and directories under a website's document root.\n\nUse `directory` to browse a subdirectory relative to the document root. Symlinked entries\nare listed but never traversed into or resolved.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/domains/{domain}/files",
@@ -5522,6 +6529,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_getWebsiteFileContentV1",
+    "title": "Get website file content",
+    "annotations": {
+      "title": "Get website file content",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a single file's content, relative to a website's document root.\n\nRead-only; refuses symlinks, oversized files, non-text file types, and files identified as\ncontaining secrets (e.g. credential files) — none of these are returned by this endpoint.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/domains/{domain}/files/content",
@@ -5564,6 +6577,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listNodeJSBuildsV1",
+    "title": "List Node.js builds",
+    "annotations": {
+      "title": "List Node.js builds",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of Node.js build processes for a specific website.\n\nEach build represents a single run of the Node.js build pipeline. Use the `states`\nquery parameter to filter results by build state (pending, running, completed, failed).\nUse the `uuid` from a build to poll its output via the `Get Node.js Build Logs` endpoint.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds",
@@ -5615,6 +6634,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_startNode_jsBuildV1",
+    "title": "Start Node.js build",
+    "annotations": {
+      "title": "Start Node.js build",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Start a Node.js build process using files already present on the website's file storage.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nThe `source_type` must be `archive` and `source_options.archive_path` must point to an\nexisting archive file on the server (relative to the website document root).\nUse the `Generate Upload URL` endpoint to obtain credentials and upload the archive first.\n\nTo auto-detect build settings from an archive before starting, first call the\n`Get Node.js Build Settings from Archive` endpoint.\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds",
@@ -5728,6 +6753,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_getNode_jsBuildSettingsFromArchiveV1",
+    "title": "Get Node.js build settings from archive",
+    "annotations": {
+      "title": "Get Node.js build settings from archive",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Auto-detect Node.js build settings from a package.json inside an archive already on the server.\n\nUse this before calling `Start Node.js Build` to preview what settings will be used,\nor to let the user review and override values (framework, node version, root directory,\noutput directory, build script) before committing to a build.\n\nThe archive must already be present on the website's file storage. Use the\n`Generate Upload URL` endpoint to obtain credentials and upload the archive first.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/from-archive",
@@ -5762,6 +6793,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listNode_jsEnvironmentVariablesV1",
+    "title": "List Node.js environment variables",
+    "annotations": {
+      "title": "List Node.js environment variables",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists the Node.js environment variables currently set for the website. Values are always\nmasked as `********` and cannot be read back through this API. Use this endpoint to see\nwhich keys are configured or to verify a change, not to read values.\n\nTo change variables, use the `Replace Node.js environment variables` endpoint. It replaces\nthe whole set, so never copy the masked values from this response into that request; send\nthe full desired set with real values taken from the project `.env` file or the user\nprompt instead.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/env",
@@ -5791,6 +6828,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_replaceNode_jsEnvironmentVariablesV1",
+    "title": "Replace Node.js environment variables",
+    "annotations": {
+      "title": "Replace Node.js environment variables",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Replaces the website's Node.js environment variables with the ones provided. This is a\nfull replace: any variable not in the request is deleted, and sending an empty `env_vars`\narray deletes every variable. Saving writes the values and restarts the running Node.js\nprocess.\n\nA restart is enough for apps that read environment variables at process start, such as\nExpress or NestJS. It is not enough for frameworks that bake variables into the build.\nNext.js standalone is one of those: build-time values (including `NEXT_PUBLIC_*`) need a\nfresh build. After this call, use the `Start Node.js build` endpoint so those apps\npick up the new values.\n\nThe `List Node.js environment variables` endpoint returns masked values (`********`), so\nnever copy values from it into this request. Always send the full desired set with real\nvalues taken from the project `.env` file or the user prompt.",
     "method": "PUT",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/env",
@@ -5843,6 +6887,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_getNodeJSBuildLogsV1",
+    "title": "Get Node.js build logs",
+    "annotations": {
+      "title": "Get Node.js build logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve logs from a specific Node.js build process.\n\nTo stream live output while a build is running, poll this endpoint repeatedly\nwhile the build state is `running`, passing the previously returned `lines` count\nas `from_line` to fetch only new output since the last call.\nLog content may contain ANSI escape sequences (color codes).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/logs",
@@ -5881,6 +6931,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_restartNode_jsApplicationV1",
+    "title": "Restart Node.js application",
+    "annotations": {
+      "title": "Restart Node.js application",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Restarts the Node.js server process for the website. Does not rebuild or redeploy the\napplication. Use it to apply environment or configuration changes, or to recover a hung\napplication.\n\nOnly applicable to server-side applications (Express, Next.js, NestJS, etc.). Static\nfront-end apps (React, Vue, Vite) have no persistent server process, so restarting them\nhas no effect. Returns success even when the website has no server process to restart.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/server/restart",
@@ -5910,6 +6966,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listNode_jsVulnerabilitiesV1",
+    "title": "List Node.js vulnerabilities",
+    "annotations": {
+      "title": "List Node.js vulnerabilities",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists known npm package vulnerabilities detected on a Node.js website, enriched with\nadvisory metadata (severity, CVSS score, CVE, advisory URL). Results are sorted from\nthe most severe to the least severe, then by publish date (newest first). Use the\n`severities` query parameter to filter.\n\nVulnerabilities with `is_patchable` set to `true` can be auto-fixed via the\n`Patch Node.js Vulnerabilities` endpoint, which opens a GitHub pull request with\nupdated package versions. Auto-fix is only available for websites deployed from a\nconnected GitHub repository. Vulnerabilities with `is_patching_in_progress` set to\n`true` are already included in an open patch pull request; while any patch pull\nrequest is open, new patch requests for this website are rejected until it is merged\nor closed.\n\nData comes from periodic dependency scans, so it may lag behind the latest deployment.\nAn empty list means the most recent scan found no vulnerabilities; it does not\nguarantee the current deployment is vulnerability-free. Available on Business and\nCloud Hosting plans.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/vulnerabilities",
@@ -5954,6 +7016,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_patchNode_jsVulnerabilitiesV1",
+    "title": "Patch Node.js vulnerabilities",
+    "annotations": {
+      "title": "Patch Node.js vulnerabilities",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Patches the selected Node.js vulnerabilities by updating the affected package versions\nin `package.json` and opening a GitHub pull request in the connected repository. The\ncustomer reviews and merges the pull request; merging triggers the automatic deployment.\n\nAuto-fix is only available for websites deployed from a connected GitHub repository.\nWebsites deployed from an archive have no auto-fix path and return a 404. The Hostinger\nGitHub App needs write access to the repository; without it the request fails with a\n403 explaining the missing permission.\n\nOnly vulnerabilities with `is_patchable` set to `true` can be patched. Non-patchable\nIDs in the selection are skipped; the pull request covers the patchable subset, listed\nin `patched_vulnerability_ids`. Selections without any patchable vulnerability are\nrejected with a 422. Only one patch pull request can be open at a time per website;\nclose or merge it before patching again. Available on Business and Cloud Hosting plans.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/vulnerabilities/patch",
@@ -5992,6 +7060,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listOrdersV1",
+    "title": "List orders",
+    "annotations": {
+      "title": "List orders",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of orders accessible to the authenticated client.\n\nThis endpoint returns orders of your hosting accounts as well as orders\nof other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by order statuses\nor specific order IDs for more targeted results.",
     "method": "GET",
     "path": "/api/hosting/v1/orders",
@@ -6040,6 +7114,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_resetPHPExtensionsV1",
+    "title": "Reset PHP extensions",
+    "annotations": {
+      "title": "Reset PHP extensions",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Resets all PHP extensions of the website to their default state.\n\nUse it to recover from extension conflicts or restore the original configuration.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions/reset",
@@ -6069,6 +7150,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_getPHPDetailsV1",
+    "title": "Get PHP details",
+    "annotations": {
+      "title": "Get PHP details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the full PHP configuration for the website: current version, available versions\n(supported and unsupported), enabled/disabled extensions, options with their current value,\ndefault, type and the plan limit (`max`), and conflicting extension groups.\n\nUse it to check the current PHP setup before updating the version, extensions or options.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/details",
@@ -6098,6 +7185,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_getPHPInfoV1",
+    "title": "Get PHP info",
+    "annotations": {
+      "title": "Get PHP info",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the full phpinfo page (HTML) for the website.\n\nUse it to debug PHP issues or inspect the complete PHP environment of the website.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/php-info",
@@ -6127,6 +7220,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updatePHPExtensionsV1",
+    "title": "Update PHP extensions",
+    "annotations": {
+      "title": "Update PHP extensions",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enables or disables PHP extensions (modules) for the website.\n\nUse the Get PHP details endpoint to check the current extension states before changing them.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions",
@@ -6172,6 +7272,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updatePHPOptionsV1",
+    "title": "Update PHP options",
+    "annotations": {
+      "title": "Update PHP options",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Updates PHP options for the website (e.g. `memory_limit`, `max_execution_time`, `upload_max_filesize`).\nOnly provide the options you want to change, inside the `options` object.\n\nValues above the account plan limit are silently capped to that limit, so the request can succeed\nwith a smaller applied value. Call the Get PHP details endpoint afterwards to read the applied value.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/options",
@@ -6207,6 +7314,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updatePHPVersionV1",
+    "title": "Update PHP version",
+    "annotations": {
+      "title": "Update PHP version",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Changes the PHP version of the website.\n\nUse the Get PHP details endpoint to see the versions available for the website.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/version",
@@ -6241,6 +7355,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listWebsiteRedirectsV1",
+    "title": "List website redirects",
+    "annotations": {
+      "title": "List website redirects",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a paginated list of redirects configured for the selected website.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/redirects",
@@ -6278,6 +7398,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_createWebsiteRedirectV1",
+    "title": "Create website redirect",
+    "annotations": {
+      "title": "Create website redirect",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Creates a redirect from a URL on the selected website to another URL or IP address.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/redirects",
@@ -6317,6 +7443,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deleteWebsiteRedirectV1",
+    "title": "Delete website redirect",
+    "annotations": {
+      "title": "Delete website redirect",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes the redirect identified by its source URL.\n\nPass the `from` value exactly as returned by the list redirects endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/redirects",
@@ -6351,6 +7484,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listWebsitesV1",
+    "title": "List websites",
+    "annotations": {
+      "title": "List websites",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of websites (CloudLinux, Builder, and Horizons) accessible to the\nauthenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nEach website includes a `website_type` field describing the type of\nwebsite detected on the underlying platform (`wordpress`, `builder`,\n`horizons`, `nodejs`, or `other`). Some fields, such as\n`vhost_type`, `username`, and `root_directory`, only apply to\nCloudLinux websites and are null for other platforms.\n\nUse `website_types` to list only websites of a given detected type, e.g. only\nWordPress websites (`website_types=wordpress`) or only Node.js websites\n(`website_types=nodejs`). Combine with the other available query parameters to\nfilter by username, order ID, enabled status, or domain name for more targeted\nresults.",
     "method": "GET",
     "path": "/api/hosting/v1/websites",
@@ -6408,6 +7547,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_createWebsiteV1",
+    "title": "Create website",
+    "annotations": {
+      "title": "Create website",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new website for the authenticated client.\n\nProvide the domain name and associated order ID to create a new website.\nThe datacenter_code parameter is required when creating the first website\non a new hosting plan - this will set up and configure new hosting account\nin the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation takes up to a few minutes to complete. Check the\nwebsites list endpoint to see when your new website becomes available.",
     "method": "POST",
     "path": "/api/hosting/v1/websites",
@@ -6441,6 +7586,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deployStaticSiteArchiveV1",
+    "title": "Deploy static site archive",
+    "annotations": {
+      "title": "Deploy static site archive",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Deploy a static application from an archive file.\n\nWARNING: this overwrites the website's existing contents and cannot be undone —\nverify this is intended before calling this endpoint.\n\nThis endpoint allows you to deploy a static application from an archive\nfile that has been uploaded to the website's directory.\n\nThis only works for static sites (pre-built HTML/CSS/JS with no build step). For\nNode.js applications, use `Create NodeJS build from archive` instead, or\n`Start Node.js build` if the archive is already uploaded. For WordPress sites,\nuse `Import WordPress website`.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/deploy",
@@ -6475,6 +7626,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deleteWebsiteV1",
+    "title": "Delete website",
+    "annotations": {
+      "title": "Delete website",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "This endpoint permanently removes a website and all of its data. This action\ncannot be undone. Before calling it, make sure the user understands the\nconsequences and explicitly confirms that they want to proceed.\n\nAll website files, databases and related configuration will be removed.\nThe hosting plan itself is kept, so a new website can be created on it afterwards.\n\nSupported websites: main and addon domain websites on web hosting plans, and\nWebsite Builder websites. Parked domains and subdomains cannot be deleted with\nthis endpoint. The domain must be the exact website domain, not a preview\ndomain or an alias.\n\nReturns 404 when the domain does not exist or does not belong to the\nauthenticated client.\n\nWebsite removal is processed asynchronously and can take a few minutes to\ncomplete. The response returns before the removal finishes.",
     "method": "DELETE",
     "path": "/api/hosting/v1/websites/{domain}",
@@ -6499,6 +7657,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_createAliasV1",
+    "title": "Create alias",
+    "annotations": {
+      "title": "Create alias",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create an alias for the given mailbox. The alias address is formed\nfrom the given local part and the domain of the mailbox. Messages\nsent to the alias are delivered to the mailbox.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/aliases",
@@ -6528,6 +7692,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_deleteAliasV1",
+    "title": "Delete alias",
+    "annotations": {
+      "title": "Delete alias",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete an alias. Messages sent to the alias address are no longer\ndelivered to the mailbox.",
     "method": "DELETE",
     "path": "/api/mail/v1/aliases/{aliasId}",
@@ -6552,6 +7723,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listAliasesV1",
+    "title": "List aliases",
+    "annotations": {
+      "title": "List aliases",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of aliases across all mailboxes of a mail\norder.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/aliases",
@@ -6584,6 +7761,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_createAPITokenV1",
+    "title": "Create API token",
+    "annotations": {
+      "title": "Create API token",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create an API token for the given mail order. The token grants access\nto the [Hostinger Email API](https://api.mail.hostinger.com/), where\nyou can provision and manage the mailboxes it is scoped to.\n\nThe plaintext token is returned only in this response, never again.\nA maximum of 10 tokens can exist per order. Use\n`scope.has_all_mailboxes` to cover all current and future mailboxes,\nor list specific mailboxes in `scope.mailbox_ids`.",
     "method": "POST",
     "path": "/api/mail/v1/orders/{orderId}/api-tokens",
@@ -6635,6 +7818,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_revokeAPITokenV1",
+    "title": "Revoke API token",
+    "annotations": {
+      "title": "Revoke API token",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Revoke an API token. The token immediately loses access to the\n[Hostinger Email API](https://api.mail.hostinger.com/). This action\ncannot be undone.",
     "method": "DELETE",
     "path": "/api/mail/v1/api-tokens/{tokenId}",
@@ -6659,6 +7849,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listAPITokensV1",
+    "title": "List API tokens",
+    "annotations": {
+      "title": "List API tokens",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of\n[Hostinger Email API](https://api.mail.hostinger.com/) tokens across\nall your mail orders, optionally filtered by order. Plaintext tokens\nare never included; they are returned only when a token is created.",
     "method": "GET",
     "path": "/api/mail/v1/api-tokens",
@@ -6689,6 +7885,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_createAutoreplyV1",
+    "title": "Create autoreply",
+    "annotations": {
+      "title": "Create autoreply",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create an automatic reply for the given mailbox. A mailbox can have\nonly one autoreply. Omit `starts_at` to activate the autoreply\nimmediately and omit `ends_at` to keep it active indefinitely.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/autoreplies",
@@ -6735,6 +7937,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_updateAutoreplyV1",
+    "title": "Update autoreply",
+    "annotations": {
+      "title": "Update autoreply",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Replace the autoreply with the given content and schedule. Omitted\noptional fields are cleared: omit `starts_at` to activate the\nautoreply immediately and omit `ends_at` to keep it active\nindefinitely.",
     "method": "PUT",
     "path": "/api/mail/v1/autoreplies/{autoreplyId}",
@@ -6781,6 +7990,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_deleteAutoreplyV1",
+    "title": "Delete autoreply",
+    "annotations": {
+      "title": "Delete autoreply",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete the autoreply of a mailbox. The mailbox stops sending\nautomatic replies immediately.",
     "method": "DELETE",
     "path": "/api/mail/v1/autoreplies/{autoreplyId}",
@@ -6805,6 +8021,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listAutorepliesV1",
+    "title": "List autoreplies",
+    "annotations": {
+      "title": "List autoreplies",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of autoreplies across all mailboxes of a\nmail order.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/autoreplies",
@@ -6837,6 +8059,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_createCatchAllV1",
+    "title": "Create catch all",
+    "annotations": {
+      "title": "Create catch all",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a catch-all that routes all messages sent to unknown addresses\nof the domain to the given mailbox. The mailbox address receives a\nconfirmation email and the catch-all becomes active only after it is\nconfirmed. A domain can have only one catch-all.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/catchalls",
@@ -6861,6 +8089,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_deleteCatchAllV1",
+    "title": "Delete catch all",
+    "annotations": {
+      "title": "Delete catch all",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a catch-all. Messages sent to unknown addresses of the domain\nare no longer routed to the mailbox.",
     "method": "DELETE",
     "path": "/api/mail/v1/catchalls/{catchallId}",
@@ -6885,6 +8120,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listCatchAllsV1",
+    "title": "List catch alls",
+    "annotations": {
+      "title": "List catch alls",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of catch-alls across all mailboxes of a\nmail order.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/catchalls",
@@ -6917,6 +8158,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_resendCatchAllConfirmationV1",
+    "title": "Resend catch all confirmation",
+    "annotations": {
+      "title": "Resend catch all confirmation",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Resend the confirmation email to the mailbox address of an\nunconfirmed catch-all.",
     "method": "POST",
     "path": "/api/mail/v1/catchalls/{catchallId}/confirmation/resend",
@@ -6941,6 +8188,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_createForwarderV1",
+    "title": "Create forwarder",
+    "annotations": {
+      "title": "Create forwarder",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a forwarder from the given mailbox to the destination address.\nThe destination receives a confirmation email and forwarding becomes\nactive only after it is confirmed.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/forwarders",
@@ -6974,6 +8227,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_deleteForwarderV1",
+    "title": "Delete forwarder",
+    "annotations": {
+      "title": "Delete forwarder",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a forwarder. The mailbox stops forwarding messages to the\ndestination address immediately.",
     "method": "DELETE",
     "path": "/api/mail/v1/forwarders/{forwarderId}",
@@ -6998,6 +8258,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listForwardersV1",
+    "title": "List forwarders",
+    "annotations": {
+      "title": "List forwarders",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of forwarders across all mailboxes of a\nmail order.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/forwarders",
@@ -7030,6 +8296,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_resendForwarderConfirmationV1",
+    "title": "Resend forwarder confirmation",
+    "annotations": {
+      "title": "Resend forwarder confirmation",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Resend the confirmation email to the destination address of an\nunconfirmed forwarder.",
     "method": "POST",
     "path": "/api/mail/v1/forwarders/{forwarderId}/confirmation/resend",
@@ -7054,6 +8326,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_updateForwarderKeepCopySettingV1",
+    "title": "Update forwarder keep copy setting",
+    "annotations": {
+      "title": "Update forwarder keep copy setting",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enable or disable keeping a copy of forwarded messages in the\nmailbox.",
     "method": "PATCH",
     "path": "/api/mail/v1/forwarders/{forwarderId}/keep-copy",
@@ -7083,6 +8362,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listAccessLogsV1",
+    "title": "List access logs",
+    "annotations": {
+      "title": "List access logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated access logs for the domain attached to the given\nmail order. Supports filtering by account, date range, protocol,\nstatus, and deletion flag. Results are sorted by timestamp descending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/access",
@@ -7152,6 +8437,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listActionLogsV1",
+    "title": "List action logs",
+    "annotations": {
+      "title": "List action logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated account action logs (administrative and user\nactions) for the given mail order. Supports filtering by account,\ndate range, and status. Results are sorted by timestamp descending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/action",
@@ -7208,6 +8499,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listInboundLogsV1",
+    "title": "List inbound logs",
+    "annotations": {
+      "title": "List inbound logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated inbound (received mail) delivery logs for the\ndomain attached to the given mail order. Supports filtering by\naccount, date range, status, sender, and recipient. Results are\nsorted by timestamp descending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/inbound",
@@ -7272,6 +8569,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listMailboxActionLogsV1",
+    "title": "List mailbox action logs",
+    "annotations": {
+      "title": "List mailbox action logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated mailbox action logs (message and mailbox events)\nfor a mailbox in the given mail order. The mailbox email must belong\nto the order's domain. Supports date range and event type filters.\nResults are sorted by timestamp descending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/mailbox-actions",
@@ -7334,6 +8637,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listOutboundLogsV1",
+    "title": "List outbound logs",
+    "annotations": {
+      "title": "List outbound logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve paginated outbound (sent mail) delivery logs for the domain\nattached to the given mail order. Supports filtering by account, date\nrange, status, sender, and recipient. Results are sorted by timestamp\ndescending.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/logs/outbound",
@@ -7398,6 +8707,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listMailboxesV1",
+    "title": "List mailboxes",
+    "annotations": {
+      "title": "List mailboxes",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of mailboxes belonging to a mail order.\n\nUse this endpoint to monitor mailboxes of your mail service, including\ntheir status, enabled protocols, attached resource counts, and\nperiodically synced usage numbers (usage may lag behind live values).",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/mailboxes",
@@ -7442,6 +8757,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_createMailboxV1",
+    "title": "Create mailbox",
+    "annotations": {
+      "title": "Create mailbox",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a mailbox under the given mail order. The full email address is\ncomposed from the given local part and the domain of the order.",
     "method": "POST",
     "path": "/api/mail/v1/orders/{orderId}/mailboxes",
@@ -7476,6 +8797,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_deleteMailboxV1",
+    "title": "Delete mailbox",
+    "annotations": {
+      "title": "Delete mailbox",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a mailbox. The mailbox is soft-deleted and stays restorable\nfor a limited period before it is permanently removed.",
     "method": "DELETE",
     "path": "/api/mail/v1/mailboxes/{mailboxId}",
@@ -7500,6 +8828,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_changeMailboxPasswordV1",
+    "title": "Change mailbox password",
+    "annotations": {
+      "title": "Change mailbox password",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Change the password of a mailbox.",
     "method": "PATCH",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/password",
@@ -7529,6 +8864,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listOrdersV1",
+    "title": "List orders",
+    "annotations": {
+      "title": "List orders",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of mail orders associated with your account.\n\nUse this endpoint to monitor your mail services, including their status,\nplan, attached domain, and expiration details.",
     "method": "GET",
     "path": "/api/mail/v1/orders",
@@ -7582,6 +8923,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_getOrderPlanV1",
+    "title": "Get order plan",
+    "annotations": {
+      "title": "Get order plan",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the plan the given mail order was purchased with, including\ndomain-level and mailbox-level quotas, limits, and protocol\navailability.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/plan",
@@ -7606,6 +8953,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_createWebhookV1",
+    "title": "Create webhook",
+    "annotations": {
+      "title": "Create webhook",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a webhook for the given mailbox. The generated secret is\nreturned only in this response and is sent as a bearer token with\nevery delivery.",
     "method": "POST",
     "path": "/api/mail/v1/mailboxes/{mailboxId}/webhooks",
@@ -7665,6 +9018,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listWebhookDeliveryLogsV1",
+    "title": "List webhook delivery logs",
+    "annotations": {
+      "title": "List webhook delivery logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of webhook delivery logs for the given mail\norder, including delivery outcome, duration, and retry counts.\nSupports filtering by mailbox.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/webhooks/delivery-logs",
@@ -7701,6 +9060,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_getWebhookV1",
+    "title": "Get webhook",
+    "annotations": {
+      "title": "Get webhook",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the details of a single webhook. The webhook secret is never\nincluded; it is returned only when a webhook is created or its secret\nis regenerated.",
     "method": "GET",
     "path": "/api/mail/v1/webhooks/{webhookId}",
@@ -7725,6 +9090,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_deleteWebhookV1",
+    "title": "Delete webhook",
+    "annotations": {
+      "title": "Delete webhook",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently delete a webhook. This action cannot be undone. After\ndeletion the URL no longer receives event notifications.",
     "method": "DELETE",
     "path": "/api/mail/v1/webhooks/{webhookId}",
@@ -7749,6 +9121,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_updateWebhookV1",
+    "title": "Update webhook",
+    "annotations": {
+      "title": "Update webhook",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Partially update a webhook. Only the fields included in the request\nbody are changed; omitted fields retain their current values. Pass\n`\"description\": null` to clear the description.",
     "method": "PATCH",
     "path": "/api/mail/v1/webhooks/{webhookId}",
@@ -7805,6 +9184,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_listWebhooksV1",
+    "title": "List webhooks",
+    "annotations": {
+      "title": "List webhooks",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of webhooks belonging to the given mail\norder. Supports filtering by mailbox and status. The webhook secret\nis never included; it is returned only when a webhook is created or\nits secret is regenerated.",
     "method": "GET",
     "path": "/api/mail/v1/orders/{orderId}/webhooks",
@@ -7850,6 +9235,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_regenerateWebhookSecretV1",
+    "title": "Regenerate webhook secret",
+    "annotations": {
+      "title": "Regenerate webhook secret",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Regenerate the secret of a webhook. The previous secret is\nimmediately invalidated. The new secret is returned only in this\nresponse and is sent as a bearer token with every delivery.",
     "method": "POST",
     "path": "/api/mail/v1/webhooks/{webhookId}/regenerate-secret",
@@ -7874,6 +9265,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "mail_testWebhookV1",
+    "title": "Test webhook",
+    "annotations": {
+      "title": "Test webhook",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Send a test delivery to the webhook URL and return the result. Test\nrequests are rate limited upstream.",
     "method": "POST",
     "path": "/api/mail/v1/webhooks/{webhookId}/test",
@@ -7898,6 +9295,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getAutomationDetailsV1",
+    "title": "Get automation details",
+    "annotations": {
+      "title": "Get automation details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a single automation with the counts of contacts that entered it, are moving through it,\nfinished it or failed on the way.\n\nThis describes the automation itself. To see the workflow it runs, use the steps endpoint.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/automations/{automationUuid}",
@@ -7927,6 +9330,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listAutomationsV1",
+    "title": "List automations",
+    "annotations": {
+      "title": "List automations",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a paginated list of the automations in a profile.\n\nEvery automation comes with the counts of contacts that entered it, are moving through it,\nfinished it or failed on the way. Those counts describe the contact journey and are not\nemail engagement metrics - for opens, clicks and unsubscribes use the campaign statistics\nendpoint instead.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/automations",
@@ -7976,6 +9385,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listAutomationStepsV1",
+    "title": "List automation steps",
+    "annotations": {
+      "title": "List automation steps",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get the workflow of an automation as a flat list of steps.\n\nThe steps form a tree rather than a straight line: follow `parent_uuid` to reconstruct the\nbranches, and use `step_order` to order the steps that share a parent. An automation with no\nsteps yet returns an empty list.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/automations/{automationUuid}/steps",
@@ -8005,6 +9420,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getCampaignDetailsV1",
+    "title": "Get campaign details",
+    "annotations": {
+      "title": "Get campaign details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a single campaign with its sender, subject, template reference, targeting and delivery\nprogress.\n\nThis describes how the campaign was set up and how far it has got. For opens, clicks and\nunsubscribes use the campaign statistics endpoint.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}",
@@ -8034,6 +9455,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listCampaignsV1",
+    "title": "List campaigns",
+    "annotations": {
+      "title": "List campaigns",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a paginated list of the campaigns in a profile.\n\nEach campaign carries its headline engagement rates. Filter by status to find drafts,\nscheduled, sending or sent campaigns, keeping in mind that a fully sent campaign has the\nstatus `publish`. By default only regular campaigns are returned - pass `type` to get the\nemails sent by automations or the double opt-in confirmations instead.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/campaigns",
@@ -8094,6 +9521,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getCampaignPerformanceV1",
+    "title": "Get campaign performance",
+    "annotations": {
+      "title": "Get campaign performance",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get the performance of a campaign: delivery, opens, clicks and unsubscribes, with the\nmatching rates.\n\nEvery count is unique contacts rather than raw events, so a contact who opens the same email\nfive times is counted once.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}/statistics",
@@ -8123,6 +9556,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_deleteAContactV1",
+    "title": "Delete a contact",
+    "annotations": {
+      "title": "Delete a contact",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a contact with the specified UUID.\n\nThis endpoint permanently removes a contact from the email marketing system.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to the\nclient's default profile and cannot delete contacts of any other profile. Use\n`DELETE /api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}` instead.",
     "method": "DELETE",
     "path": "/api/reach/v1/contacts/{uuid}",
@@ -8147,6 +9587,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_deleteAContactFieldV1",
+    "title": "Delete a contact field",
+    "annotations": {
+      "title": "Delete a contact field",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a custom contact field.\n\nEvery value contacts hold for the field is deleted with it, and for the choice types so\nare its options. The contacts themselves are not affected.",
     "method": "DELETE",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts/fields/{fieldUuid}",
@@ -8176,6 +9623,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_updateAContactFieldV1",
+    "title": "Update a contact field",
+    "annotations": {
+      "title": "Update a contact field",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Rename a custom contact field and, for the choice types, replace its option set.\n\nOptions carrying a uuid are kept and relabelled, options without one are created, and any\nexisting option left out of the list is deleted along with the values contacts hold for\nit. The field type and slug cannot be changed.",
     "method": "PATCH",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts/fields/{fieldUuid}",
@@ -8231,6 +9685,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listContactFieldsV1",
+    "title": "List contact fields",
+    "annotations": {
+      "title": "List contact fields",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get the custom contact fields defined in a profile.\n\nCustom fields let you store your own attributes on contacts. The returned uuids are what\nyou pass to the contact update endpoint to set values, and choice fields also list the\noptions available to pick from.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts/fields",
@@ -8255,6 +9715,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_createAContactFieldV1",
+    "title": "Create a contact field",
+    "annotations": {
+      "title": "Create a contact field",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Define a new custom contact field in a profile.\n\nThe `slug` is derived from the label and, like the field type, cannot be changed later.\nUse the returned uuid to set values on contacts.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts/fields",
@@ -8304,6 +9770,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listContactGroupsV1",
+    "title": "List contact groups",
+    "annotations": {
+      "title": "List contact groups",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a list of all contact groups.\n\nThis endpoint returns a list of contact groups that can be used to organize contacts.",
     "method": "GET",
     "path": "/api/reach/v1/contacts/groups",
@@ -8321,6 +9793,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listContactsV1",
+    "title": "List contacts",
+    "annotations": {
+      "title": "List contacts",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a list of contacts, optionally filtered by group and subscription status.\n\nThis endpoint returns a paginated list of contacts with their basic information.\nYou can filter contacts by group UUID and subscription status.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to the\nclient's default profile and cannot list contacts of any other profile. Use\n`GET /api/reach/v1/profiles/{profileUuid}/contacts` instead, which also replaces the\ngroup filter with a tag filter.",
     "method": "GET",
     "path": "/api/reach/v1/contacts",
@@ -8357,6 +9835,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_createANewContactV1",
+    "title": "Create a new contact",
+    "annotations": {
+      "title": "Create a new contact",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\n\nIf double opt-in is enabled,\nthe contact will be created with a pending status and a confirmation email will be sent.",
     "method": "POST",
     "path": "/api/reach/v1/contacts",
@@ -8405,6 +9889,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getContactDetailsV1",
+    "title": "Get contact details",
+    "annotations": {
+      "title": "Get contact details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get the full details of a single contact.\n\nAlongside the contact's own attributes this returns the tags assigned to it and the\nvalues it holds for the profile's custom contact fields.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}",
@@ -8434,6 +9924,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_deleteAProfileContactV1",
+    "title": "Delete a profile contact",
+    "annotations": {
+      "title": "Delete a profile contact",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently delete a contact from a profile.\n\nThe contact is removed together with its custom field values and tag assignments.",
     "method": "DELETE",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}",
@@ -8463,6 +9960,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_updateAContactV1",
+    "title": "Update a contact",
+    "annotations": {
+      "title": "Update a contact",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update a contact's attributes and custom field values.\n\nOnly the properties present in the request body are changed, so a partial body is enough\nto change a single attribute. Sending a property as `null` clears it.\n\nThe response carries the contact's core attributes. Read back its tags, custom field\nvalues, source and note with `GET /api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}`.",
     "method": "PATCH",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}",
@@ -8551,6 +10055,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_createContactsInBulkV1",
+    "title": "Create contacts in bulk",
+    "annotations": {
+      "title": "Create contacts in bulk",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create many contacts in a profile in a single call.\n\nThe contacts are imported in the background, so a success response means the import was\naccepted rather than finished. Contacts whose email already exists in the profile are\nleft as they are. If double opt-in is enabled, new contacts start off pending and are\nsent a confirmation email.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts/bulk",
@@ -8617,6 +10127,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listProfileContactsV1",
+    "title": "List profile contacts",
+    "annotations": {
+      "title": "List profile contacts",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a paginated list of contacts belonging to a profile.\n\nContacts can be filtered by subscription status, by tag, and by an email search term.\nThe `meta.total` field of the response is the number of contacts matching the filters,\nso calling this endpoint without filters gives the profile's total contact count.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts",
@@ -8667,6 +10183,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_createNewContactsV1",
+    "title": "Create new contacts",
+    "annotations": {
+      "title": "Create new contacts",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new contact in the email marketing system.\n\nThis endpoint allows you to create a new contact with basic information like name, email, and surname.\n\nIf double opt-in is enabled, the contact will be created with a pending status\nand a confirmation email will be sent.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts",
@@ -8720,6 +10242,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listSegmentsV1",
+    "title": "List segments",
+    "annotations": {
+      "title": "List segments",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a list of all contact segments.\n\nThis endpoint returns a list of contact segments that can be used to organize contacts.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to\nthe client's default profile and cannot list the segments of any other profile. Use\n`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.",
     "method": "GET",
     "path": "/api/reach/v1/segmentation/segments",
@@ -8737,6 +10265,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_createANewContactSegmentV1",
+    "title": "Create a new contact segment",
+    "annotations": {
+      "title": "Create a new contact segment",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new contact segment.\n\nThis endpoint allows creating a new contact segment that can be used to organize contacts.\nThe segment can be configured with specific criteria like email, name, subscription status, etc.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to\nthe client's default profile and cannot create segments in any other profile. Use\n`POST /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.",
     "method": "POST",
     "path": "/api/reach/v1/segmentation/segments",
@@ -8843,6 +10377,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_countProfileSegmentContactsV1",
+    "title": "Count profile segment contacts",
+    "annotations": {
+      "title": "Count profile segment contacts",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Count the contacts currently matching a segment without listing them.\n\nCheaper than paging through the segment contacts endpoint when only the size is needed.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/count",
@@ -8872,6 +10412,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listProfileSegmentContactsV1",
+    "title": "List profile segment contacts",
+    "annotations": {
+      "title": "List profile segment contacts",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve contacts associated with a specific segment for a given profile.\n\nThis endpoint allows you to fetch and filter contacts that belong to a particular segment,\nidentified by its UUID, scoped to a specific profile.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts",
@@ -8909,6 +10455,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getProfileSegmentDetailsV1",
+    "title": "Get profile segment details",
+    "annotations": {
+      "title": "Get profile segment details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a single segment of a profile, including the conditions that define it.\n\nTo retrieve the contacts currently matching those conditions, use the segment contacts\nendpoint instead.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}",
@@ -8938,6 +10490,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_updateAProfileSegmentV1",
+    "title": "Update a profile segment",
+    "annotations": {
+      "title": "Update a profile segment",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Rename a segment and/or replace the conditions that define it.\n\n`name` is always required. Omit `conditions` to rename without touching the conditions;\nsupply them and they replace the existing set entirely rather than being merged into it.\nContacts are never modified, but which of them match the segment can change immediately.",
     "method": "PUT",
     "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}",
@@ -9035,6 +10594,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_deleteAProfileSegmentV1",
+    "title": "Delete a profile segment",
+    "annotations": {
+      "title": "Delete a profile segment",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a segment.\n\nOnly the segment definition is removed. The contacts that matched it are left untouched.",
     "method": "DELETE",
     "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}",
@@ -9064,6 +10630,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listSegmentFilterAttributesV1",
+    "title": "List segment filter attributes",
+    "annotations": {
+      "title": "List segment filter attributes",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List every attribute a segment condition can filter on, with the operators each attribute\naccepts, the value format they expect and, where the value is constrained, the allowed\nvalues.\n\nThe list is profile specific: it includes the profile's custom contact fields, its tags and\nits 20 most recently published campaigns, so the valid attributes cannot be hardcoded. Read\nit before creating or updating a segment to discover the valid `attribute`, `operator` and\n`value` combinations.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/filters/attributes",
@@ -9088,6 +10660,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_previewContactsMatchingConditionsV1",
+    "title": "Preview contacts matching conditions",
+    "annotations": {
+      "title": "Preview contacts matching conditions",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Preview the contacts matching a set of conditions without saving a segment.\n\nThe body is the same set of conditions accepted when creating or updating a segment, so this\nis how to check who a filter reaches, and how many, before persisting it. Nothing is stored\nand no contact is modified.\n\nCall the segment filter attributes endpoint first to discover the valid `attribute`,\n`operator` and `value` combinations.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/filters/contacts",
@@ -9208,6 +10786,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listProfileSegmentsV1",
+    "title": "List profile segments",
+    "annotations": {
+      "title": "List profile segments",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a paginated list of the segments defined in a profile.\n\nEach entry carries the number of contacts currently matching it, which is recalculated on\nread rather than stored. Use `count_type` to count either every matching contact or only\nthe subscribed ones.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments",
@@ -9248,6 +10832,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_createAProfileSegmentV1",
+    "title": "Create a profile segment",
+    "annotations": {
+      "title": "Create a profile segment",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a segment in a profile.\n\nA segment is a saved set of conditions rather than a fixed list, so its membership changes\nas contacts change. Creating one does not modify any contact.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/segmentation/segments",
@@ -9342,6 +10932,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listSegmentContactsV1",
+    "title": "List segment contacts",
+    "annotations": {
+      "title": "List segment contacts",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve contacts associated with a specific segment.\n\nThis endpoint allows you to fetch and filter contacts that belong to a particular segment,\nidentified by its UUID.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to\nthe client's default profile and cannot read segments of any other profile. Use\n`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts` instead.",
     "method": "GET",
     "path": "/api/reach/v1/segmentation/segments/{segmentUuid}/contacts",
@@ -9374,6 +10970,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getSegmentDetailsV1",
+    "title": "Get segment details",
+    "annotations": {
+      "title": "Get segment details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get details of a specific segment.\n\nThis endpoint retrieves information about a single segment identified by UUID.\nSegments are used to organize and group contacts based on specific criteria.\n\n**Deprecated.** This endpoint cannot target a profile, so it always falls back to\nthe client's default profile and cannot read segments of any other profile. Use\n`GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}` instead.",
     "method": "GET",
     "path": "/api/reach/v1/segmentation/segments/{segmentUuid}",
@@ -9398,6 +11000,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_assignAContactToATagV1",
+    "title": "Assign a contact to a tag",
+    "annotations": {
+      "title": "Assign a contact to a tag",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Assign a tag to a single contact.\n\nUnlike the bulk endpoint this is applied immediately rather than queued. Assigning a tag\nthe contact already carries succeeds without duplicating it.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts/{contactUuid}",
@@ -9432,6 +11040,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_removeAContactFromATagV1",
+    "title": "Remove a contact from a tag",
+    "annotations": {
+      "title": "Remove a contact from a tag",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Remove a tag from a single contact.\n\nUnlike the bulk endpoint this is applied immediately rather than queued. Neither the tag\nnor the contact is deleted.",
     "method": "DELETE",
     "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts/{contactUuid}",
@@ -9466,6 +11081,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_assignContactsToATagV1",
+    "title": "Assign contacts to a tag",
+    "annotations": {
+      "title": "Assign contacts to a tag",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Assign a tag to many contacts at once.\n\nPass `contact_uuids` to target specific contacts, or `all_contacts` to target every contact\nin the profile. The work is queued, so a success response means it was accepted rather than\nfinished. Contacts that already carry the tag are left alone.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts",
@@ -9507,6 +11128,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_removeContactsFromATagV1",
+    "title": "Remove contacts from a tag",
+    "annotations": {
+      "title": "Remove contacts from a tag",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Remove a tag from many contacts at once.\n\nPass `contact_uuids` to target specific contacts, or `all_contacts` to target every contact\nin the profile. The work is queued, so a success response means it was accepted rather than\nfinished. The tag itself and the contacts are not deleted.",
     "method": "DELETE",
     "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts",
@@ -9536,6 +11164,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_deleteATagV1",
+    "title": "Delete a tag",
+    "annotations": {
+      "title": "Delete a tag",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a tag and remove it from every contact carrying it.\n\nThe contacts themselves are not deleted. This is idempotent: deleting a tag that does not\nexist in the profile still succeeds.",
     "method": "DELETE",
     "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}",
@@ -9565,6 +11200,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_renameATagV1",
+    "title": "Rename a tag",
+    "annotations": {
+      "title": "Rename a tag",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Rename a tag.\n\nThe contacts assigned to the tag are unaffected. Names are unique within a profile, so\nrenaming a tag to a name that is already taken is rejected.",
     "method": "PATCH",
     "path": "/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}",
@@ -9599,6 +11241,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listProfileTagsV1",
+    "title": "List profile tags",
+    "annotations": {
+      "title": "List profile tags",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get all tags defined in a profile.\n\nTags are the way contacts are grouped in Reach, and can be used to filter the contact\nlist or to build segments.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/tags",
@@ -9623,6 +11271,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_createOrFindTagsV1",
+    "title": "Create or find tags",
+    "annotations": {
+      "title": "Create or find tags",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create tags in a profile.\n\nNames that already exist in the profile are not duplicated: the existing tag is returned\ninstead, so the call is safe to repeat. Every tag in the request is returned, whether it\nwas created now or already existed.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/tags",
@@ -9656,6 +11310,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getFormDetailsV1",
+    "title": "Get form details",
+    "annotations": {
+      "title": "Get form details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a single form with the URL of its hosted template and the tags it applies to the contacts\nit captures.\n\nThere is no ready-made embed snippet in the response - either serve the template HTML yourself\nor build your own embed around the form uuid.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}",
@@ -9685,6 +11345,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_deleteFormV1",
+    "title": "Delete form",
+    "annotations": {
+      "title": "Delete form",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently delete a form together with its template.\n\nA form that has already captured submissions cannot be deleted, so that the contacts it collected\nare never silently discarded - pause the form instead to stop it collecting new ones. Views alone\ndo not block deletion.",
     "method": "DELETE",
     "path": "/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}",
@@ -9714,6 +11381,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listFormsV1",
+    "title": "List forms",
+    "annotations": {
+      "title": "List forms",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a paginated list of the signup forms in a profile.\n\nEach form carries a reference to the template that renders it. Get the form details for a\ndirectly usable template URL and for the tags the form puts on the contacts it captures.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/forms",
@@ -9746,6 +11419,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getProfileDomainDNSStatusV1",
+    "title": "Get profile domain DNS status",
+    "annotations": {
+      "title": "Get profile domain DNS status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the DNS configuration status for a profile's domain.\n\nThis endpoint reports the state of MX, SPF, DKIM and DMARC records, including the\nactual records found and the suggested records required for correct email delivery.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/domains/dns-status",
@@ -9770,6 +11449,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getConnectedSendingDomainV1",
+    "title": "Get connected sending domain",
+    "annotations": {
+      "title": "Get connected sending domain",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get the sending domain connected to the profile, its verification status and any suspended\nsender addresses.\n\nCampaigns only go out once a domain is connected and active, so this is the cheapest way to\ncheck that precondition before building one. A profile with no domain connected returns the\nsame shape with every field set to `null`. For the individual MX, SPF, DKIM and DMARC records\nbehind the status, use the DNS status endpoint.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/domains",
@@ -9794,6 +11479,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listPlanFeatureAccessV1",
+    "title": "List plan feature access",
+    "annotations": {
+      "title": "List plan feature access",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List which plan features the profile can use.\n\nThis is the feature lock matrix, not a usage quota. `available` means the feature can be\nused right now and `locked` means it is not part of the base plan, so an upgrade is needed.\nFor remaining emails, recipients and AI credits use the limits endpoint instead.\n\nWorth checking before building something that cannot be activated afterwards, such as an\nautomation on a plan without automation activation.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/features",
@@ -9818,6 +11509,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_getRemainingPlanLimitsV1",
+    "title": "Get remaining plan limits",
+    "annotations": {
+      "title": "Get remaining plan limits",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get how much of the plan is left for the current period.\n\nTwo things to keep in mind before you build alerting on this. The period is a calendar month\nrather than a billing anniversary, so the counters reset on the 1st no matter when the\nsubscription started. And usage is tracked per order, so every profile on the same order shares\none pool and reports the same numbers here. Only the current period is available, past usage is\nnot kept.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/limits",
@@ -9842,6 +11539,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "reach_listProfilesV1",
+    "title": "List profiles",
+    "annotations": {
+      "title": "List profiles",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "This endpoint returns all profiles available to the client, including their basic information.",
     "method": "GET",
     "path": "/api/reach/v1/profiles",
@@ -9859,6 +11562,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getDataCenterListV1",
+    "title": "Get data center list",
+    "annotations": {
+      "title": "Get data center list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all available data centers.\n\nUse this endpoint to view location options before deploying VPS instances.",
     "method": "GET",
     "path": "/api/vps/v1/data-centers",
@@ -9876,6 +11585,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getProjectContainersV1",
+    "title": "Get project containers",
+    "annotations": {
+      "title": "Get project containers",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieves a list of all containers belonging to a specific Docker Compose project on the virtual machine. \n\nThis endpoint returns detailed information about each container including\ntheir current status, port mappings, and runtime configuration.\n\nUse this to monitor the health and state of all services within your Docker Compose project.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/containers",
@@ -9905,6 +11620,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getProjectContentsV1",
+    "title": "Get project contents",
+    "annotations": {
+      "title": "Get project contents",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieves the complete project information including the docker-compose.yml\nfile contents, project metadata, and current deployment status.\n\nThis endpoint provides the full configuration and state details of a specific Docker Compose project. \n\nUse this to inspect project settings, review the compose file, or check the overall project health.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}",
@@ -9934,6 +11655,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_deleteProjectV1",
+    "title": "Delete project",
+    "annotations": {
+      "title": "Delete project",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Completely removes a Docker Compose project from the virtual machine, stopping all containers and cleaning up \nassociated resources including networks, volumes, and images. \n\nThis operation is irreversible and will delete all project data. \n\nUse this when you want to permanently remove a project and free up system resources.",
     "method": "DELETE",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/down",
@@ -9963,6 +11691,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getProjectListV1",
+    "title": "Get project list",
+    "annotations": {
+      "title": "Get project list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. \n\nThis endpoint returns basic information about each project including name,\nstatus, file path and list of containers with details about their names,\nimage, status, health and ports. Container stats are omitted in this\nendpoint. If you need to get detailed information about container with\nstats included, use the `Get project containers` endpoint.\n\nUse this to get an overview of all Docker projects on your VPS instance.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker",
@@ -9987,6 +11721,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_createNewProjectV1",
+    "title": "Create new project",
+    "annotations": {
+      "title": "Create new project",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Deploy new project from docker-compose.yaml contents or download contents from URL. \n\nURL can be Github repository url in format https://github.com/[user]/[repo]\nand it will be automatically resolved to docker-compose.yaml file in\nmaster branch. Any other URL provided must return docker-compose.yaml\nfile contents.\n\nIf project with the same name already exists, existing project will be replaced.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker",
@@ -10025,6 +11765,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getProjectLogsV1",
+    "title": "Get project logs",
+    "annotations": {
+      "title": "Get project logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieves aggregated log entries from all services within a Docker Compose project. \n\nThis endpoint returns recent log output from each container, organized by service name with timestamps. \nThe response contains the last 300 log entries across all services. \n\nUse this for debugging, monitoring application behavior, and\ntroubleshooting issues across your entire project stack.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/logs",
@@ -10054,6 +11800,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_restartProjectV1",
+    "title": "Restart project",
+    "annotations": {
+      "title": "Restart project",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Restarts all services in a Docker Compose project by stopping and starting\ncontainers in the correct dependency order.\n\nThis operation preserves data volumes and network configurations while refreshing the running containers. \n\nUse this to apply configuration changes or recover from service failures.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/restart",
@@ -10083,6 +11835,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_startProjectV1",
+    "title": "Start project",
+    "annotations": {
+      "title": "Start project",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Starts all services in a Docker Compose project that are currently stopped. \n\nThis operation brings up containers in the correct dependency order as defined in the compose file. \n\nUse this to resume a project that was previously stopped or to start services after a system reboot.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/start",
@@ -10112,6 +11870,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_stopProjectV1",
+    "title": "Stop project",
+    "annotations": {
+      "title": "Stop project",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Stops all running services in a Docker Compose project while preserving\ncontainer configurations and data volumes.\n\nThis operation gracefully shuts down containers in reverse dependency order. \n\nUse this to temporarily halt a project without removing data or configurations.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/stop",
@@ -10141,6 +11905,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_updateProjectV1",
+    "title": "Update project",
+    "annotations": {
+      "title": "Update project",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Updates a Docker Compose project by pulling the latest image versions and\nrecreating containers with new configurations.\n\nThis operation preserves data volumes while applying changes from the compose file. \n\nUse this to deploy application updates, apply configuration changes, or\nrefresh container images to their latest versions.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/update",
@@ -10170,6 +11940,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_activateFirewallV1",
+    "title": "Activate firewall",
+    "annotations": {
+      "title": "Activate firewall",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Activate a firewall for a specified virtual machine.\n\nOnly one firewall can be active for a virtual machine at a time.\n\nUse this endpoint to apply firewall rules to VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/firewall/{firewallId}/activate/{virtualMachineId}",
@@ -10199,6 +11975,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_deactivateFirewallV1",
+    "title": "Deactivate firewall",
+    "annotations": {
+      "title": "Deactivate firewall",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Deactivate a firewall for a specified virtual machine.\n\nUse this endpoint to remove firewall protection from VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/firewall/{firewallId}/deactivate/{virtualMachineId}",
@@ -10228,6 +12010,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getFirewallDetailsV1",
+    "title": "Get firewall details",
+    "annotations": {
+      "title": "Get firewall details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve firewall by its ID and rules associated with it.\n\nUse this endpoint to view specific firewall configuration and rules.",
     "method": "GET",
     "path": "/api/vps/v1/firewall/{firewallId}",
@@ -10252,6 +12040,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_deleteFirewallV1",
+    "title": "Delete firewall",
+    "annotations": {
+      "title": "Delete firewall",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a specified firewall.\n\nAny virtual machine that has this firewall activated will automatically have it deactivated.\n\nUse this endpoint to remove unused firewall configurations.",
     "method": "DELETE",
     "path": "/api/vps/v1/firewall/{firewallId}",
@@ -10276,6 +12071,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getFirewallListV1",
+    "title": "Get firewall list",
+    "annotations": {
+      "title": "Get firewall list",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all available firewalls.\n\nUse this endpoint to view existing firewall configurations.",
     "method": "GET",
     "path": "/api/vps/v1/firewall",
@@ -10298,6 +12099,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_createNewFirewallV1",
+    "title": "Create new firewall",
+    "annotations": {
+      "title": "Create new firewall",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new firewall.\n\nUse this endpoint to set up new firewall configurations for VPS security.",
     "method": "POST",
     "path": "/api/vps/v1/firewall",
@@ -10322,6 +12129,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_updateFirewallRuleV1",
+    "title": "Update firewall rule",
+    "annotations": {
+      "title": "Update firewall rule",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update a specific firewall rule from a specified firewall.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall\nand will have to be synced again manually.\n\nUse this endpoint to modify existing firewall rules.",
     "method": "PUT",
     "path": "/api/vps/v1/firewall/{firewallId}/rules/{ruleId}",
@@ -10390,6 +12204,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_deleteFirewallRuleV1",
+    "title": "Delete firewall rule",
+    "annotations": {
+      "title": "Delete firewall rule",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a specific firewall rule from a specified firewall.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall\nand will have to be synced again manually.\n\nUse this endpoint to remove specific firewall rules.",
     "method": "DELETE",
     "path": "/api/vps/v1/firewall/{firewallId}/rules/{ruleId}",
@@ -10419,6 +12240,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_createFirewallRuleV1",
+    "title": "Create firewall rule",
+    "annotations": {
+      "title": "Create firewall rule",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create new firewall rule for a specified firewall.\n\nBy default, the firewall drops all incoming traffic,\nwhich means you must add accept rules for all ports you want to use.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall\nand will have to be synced again manually.\n\nUse this endpoint to add new security rules to firewalls.",
     "method": "POST",
     "path": "/api/vps/v1/firewall/{firewallId}/rules",
@@ -10482,6 +12309,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_syncFirewallV1",
+    "title": "Sync firewall",
+    "annotations": {
+      "title": "Sync firewall",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Sync a firewall for a specified virtual machine.\n\nFirewall can lose sync with virtual machine if the firewall has new rules added, removed or updated.\n\nUse this endpoint to apply updated firewall rules to VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/firewall/{firewallId}/sync/{virtualMachineId}",
@@ -10511,6 +12344,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getPostInstallScriptV1",
+    "title": "Get post install script",
+    "annotations": {
+      "title": "Get post install script",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve post-install script by its ID.\n\nUse this endpoint to view specific automation script details.",
     "method": "GET",
     "path": "/api/vps/v1/post-install-scripts/{postInstallScriptId}",
@@ -10535,6 +12374,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_updatePostInstallScriptV1",
+    "title": "Update post install script",
+    "annotations": {
+      "title": "Update post install script",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update a specific post-install script.\n\nUse this endpoint to modify existing automation scripts.",
     "method": "PUT",
     "path": "/api/vps/v1/post-install-scripts/{postInstallScriptId}",
@@ -10569,6 +12415,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_deletePostInstallScriptV1",
+    "title": "Delete post install script",
+    "annotations": {
+      "title": "Delete post install script",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a post-install script from your account.\n       \nUse this endpoint to remove unused automation scripts.",
     "method": "DELETE",
     "path": "/api/vps/v1/post-install-scripts/{postInstallScriptId}",
@@ -10593,6 +12446,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getPostInstallScriptsV1",
+    "title": "Get post install scripts",
+    "annotations": {
+      "title": "Get post install scripts",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve post-install scripts associated with your account.\n\nUse this endpoint to view available automation scripts for VPS deployment.",
     "method": "GET",
     "path": "/api/vps/v1/post-install-scripts",
@@ -10615,6 +12474,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_createPostInstallScriptV1",
+    "title": "Create post install script",
+    "annotations": {
+      "title": "Create post install script",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Add a new post-install script to your account, which can then be used after virtual machine installation.\n\nThe script contents will be saved to the file `/post_install` with executable attribute set\nand will be executed once virtual machine is installed.\nThe output of the script will be redirected to `/post_install.log`. Maximum script size is 48KB.\n\nUse this endpoint to create automation scripts for VPS setup tasks.",
     "method": "POST",
     "path": "/api/vps/v1/post-install-scripts",
@@ -10644,6 +12509,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_attachPublicKeyV1",
+    "title": "Attach public key",
+    "annotations": {
+      "title": "Attach public key",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Attach existing public keys from your account to a specified virtual machine.\n\nMultiple keys can be attached to a single virtual machine.\n\nUse this endpoint to enable SSH key authentication for VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/public-keys/attach/{virtualMachineId}",
@@ -10677,6 +12548,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_deletePublicKeyV1",
+    "title": "Delete public key",
+    "annotations": {
+      "title": "Delete public key",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a public key from your account. \n\n**Deleting public key from account does not remove it from virtual machine** \n       \nUse this endpoint to remove unused SSH keys from account.",
     "method": "DELETE",
     "path": "/api/vps/v1/public-keys/{publicKeyId}",
@@ -10701,6 +12579,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getPublicKeysV1",
+    "title": "Get public keys",
+    "annotations": {
+      "title": "Get public keys",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve public keys associated with your account.\n\nUse this endpoint to view available SSH keys for VPS authentication.",
     "method": "GET",
     "path": "/api/vps/v1/public-keys",
@@ -10723,6 +12607,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_createPublicKeyV1",
+    "title": "Create public key",
+    "annotations": {
+      "title": "Create public key",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Add a new public key to your account.\n\nUse this endpoint to register SSH keys for VPS authentication.",
     "method": "POST",
     "path": "/api/vps/v1/public-keys",
@@ -10752,6 +12642,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getTemplateDetailsV1",
+    "title": "Get template details",
+    "annotations": {
+      "title": "Get template details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve detailed information about a specific OS template for virtual machines.\n\nUse this endpoint to view specific template specifications before deployment.",
     "method": "GET",
     "path": "/api/vps/v1/templates/{templateId}",
@@ -10776,6 +12672,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getTemplatesV1",
+    "title": "Get templates",
+    "annotations": {
+      "title": "Get templates",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve available OS templates for virtual machines.\n\nUse this endpoint to view operating system options before creating or recreating VPS instances.",
     "method": "GET",
     "path": "/api/vps/v1/templates",
@@ -10793,6 +12695,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getActionDetailsV1",
+    "title": "Get action details",
+    "annotations": {
+      "title": "Get action details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve detailed information about a specific action performed on a specified virtual machine.\n\nUse this endpoint to monitor specific VPS operation status and details.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/actions/{actionId}",
@@ -10822,6 +12730,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getActionsV1",
+    "title": "Get actions",
+    "annotations": {
+      "title": "Get actions",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve actions performed on a specified virtual machine.\n\nActions are operations or events that have been executed on the virtual\nmachine, such as starting, stopping, or modifying the machine. This endpoint\nallows you to view the history of these actions, providing details about\neach action, such as the action name, timestamp, and status.\n\nUse this endpoint to view VPS operation history and troubleshoot issues.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/actions",
@@ -10850,6 +12764,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getAttachedPublicKeysV1",
+    "title": "Get attached public keys",
+    "annotations": {
+      "title": "Get attached public keys",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve public keys attached to a specified virtual machine.\n\nUse this endpoint to view SSH keys configured for specific VPS instances.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/public-keys",
@@ -10878,6 +12798,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getBackupsV1",
+    "title": "Get backups",
+    "annotations": {
+      "title": "Get backups",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve backups for a specified virtual machine.\n\nUse this endpoint to view available backup points for VPS data recovery.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/backups",
@@ -10906,6 +12832,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_restoreBackupV1",
+    "title": "Restore backup",
+    "annotations": {
+      "title": "Restore backup",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Restore a backup for a specified virtual machine.\n\nThe system will then initiate the restore process, which may take some time depending on the size of the backup.\n\n**All data on the virtual machine will be overwritten with the data from the backup.**\n\nUse this endpoint to recover VPS data from backup points.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/backups/{backupId}/restore",
@@ -10935,6 +12867,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_setHostnameV1",
+    "title": "Set hostname",
+    "annotations": {
+      "title": "Set hostname",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Set hostname for a specified virtual machine.\n\nChanging hostname does not update PTR record automatically.\nIf you want your virtual machine to be reachable by a hostname, \nyou need to point your domain A/AAAA records to virtual machine IP as well.\n\nUse this endpoint to configure custom hostnames for VPS instances.",
     "method": "PUT",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/hostname",
@@ -10964,6 +12903,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_resetHostnameV1",
+    "title": "Reset hostname",
+    "annotations": {
+      "title": "Reset hostname",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Reset hostname and PTR record of a specified virtual machine to default value.\n\nUse this endpoint to restore default hostname configuration for VPS instances.",
     "method": "DELETE",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/hostname",
@@ -10988,6 +12934,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getVirtualMachineDetailsV1",
+    "title": "Get virtual machine details",
+    "annotations": {
+      "title": "Get virtual machine details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve detailed information about a specified virtual machine.\n\nUse this endpoint to view comprehensive VPS configuration and status.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}",
@@ -11012,6 +12964,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getVirtualMachinesV1",
+    "title": "Get virtual machines",
+    "annotations": {
+      "title": "Get virtual machines",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all available virtual machines.\n\nUse this endpoint to view available VPS instances.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines",
@@ -11029,6 +12987,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_purchaseNewVirtualMachineV1",
+    "title": "Purchase new virtual machine",
+    "annotations": {
+      "title": "Purchase new virtual machine",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Purchase and setup a new virtual machine.\n\nIf virtual machine setup fails for any reason, login to\n[hPanel](https://hpanel.hostinger.com/) and complete the setup manually.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nUse this endpoint to create new VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines",
@@ -11070,6 +13034,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getScanMetricsV1",
+    "title": "Get scan metrics",
+    "annotations": {
+      "title": "Get scan metrics",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve scan metrics for the [Monarx](https://www.monarx.com/) malware scanner\ninstalled on a specified virtual machine.\n\nThe scan metrics provide detailed information about malware scans performed\nby Monarx, including number of scans, detected threats, and other relevant\nstatistics. This information is useful for monitoring security status of the\nvirtual machine and assessing effectiveness of the malware scanner.\n\nUse this endpoint to monitor VPS security scan results and threat detection.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/monarx",
@@ -11094,6 +13064,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_installMonarxV1",
+    "title": "Install monarx",
+    "annotations": {
+      "title": "Install monarx",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Install the Monarx malware scanner on a specified virtual machine.\n\n[Monarx](https://www.monarx.com/) is a security tool designed to detect and\nprevent malware infections on virtual machines. By installing Monarx, users\ncan enhance the security of their virtual machines, ensuring that they are\nprotected against malicious software.\n\nUse this endpoint to enable malware protection on VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/monarx",
@@ -11118,6 +13094,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_uninstallMonarxV1",
+    "title": "Uninstall monarx",
+    "annotations": {
+      "title": "Uninstall monarx",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Uninstall the Monarx malware scanner on a specified virtual machine.\n\nIf Monarx is not installed, the request will still be processed without any effect.\n\nUse this endpoint to remove malware scanner from VPS instances.",
     "method": "DELETE",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/monarx",
@@ -11142,6 +13125,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getMetricsV1",
+    "title": "Get metrics",
+    "annotations": {
+      "title": "Get metrics",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve historical metrics for a specified virtual machine.\n\nIt includes the following metrics: \n- CPU usage\n- Memory usage\n- Disk usage\n- Network usage\n- Uptime\n\nUse this endpoint to monitor VPS performance and resource utilization over time.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/metrics",
@@ -11176,6 +13165,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_setNameserversV1",
+    "title": "Set nameservers",
+    "annotations": {
+      "title": "Set nameservers",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Set nameservers for a specified virtual machine.\n\nBe aware, that improper nameserver configuration can lead to the virtual\nmachine being unable to resolve domain names.\n\nUse this endpoint to configure custom DNS resolvers for VPS instances.",
     "method": "PUT",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/nameservers",
@@ -11213,6 +13209,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_createPTRRecordV1",
+    "title": "Create PTR record",
+    "annotations": {
+      "title": "Create PTR record",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create or update a PTR (Pointer) record for a specified virtual machine.\n\nUse this endpoint to configure reverse DNS lookup for VPS IP addresses.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}",
@@ -11247,6 +13249,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_deletePTRRecordV1",
+    "title": "Delete PTR record",
+    "annotations": {
+      "title": "Delete PTR record",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a PTR (Pointer) record for a specified virtual machine.\n\nOnce deleted, reverse DNS lookups to the virtual machine's IP address will\nno longer return the previously configured hostname.\n\nUse this endpoint to remove reverse DNS configuration from VPS instances.",
     "method": "DELETE",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}",
@@ -11276,6 +13285,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_setPanelPasswordV1",
+    "title": "Set panel password",
+    "annotations": {
+      "title": "Set panel password",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Set panel password for a specified virtual machine.\n\nIf virtual machine does not use panel OS, the request will still be processed without any effect.\nRequirements for password are same as in the [recreate virtual machine\nendpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).\n\nUse this endpoint to configure control panel access credentials for VPS instances.",
     "method": "PUT",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/panel-password",
@@ -11305,6 +13321,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_startRecoveryModeV1",
+    "title": "Start recovery mode",
+    "annotations": {
+      "title": "Start recovery mode",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Initiate recovery mode for a specified virtual machine.\n\nRecovery mode is a special state that allows users to perform system rescue operations, \nsuch as repairing file systems, recovering data, or troubleshooting issues that prevent the virtual machine \nfrom booting normally. \n\nVirtual machine will boot recovery disk image and original disk image will be mounted in `/mnt` directory.\n\nUse this endpoint to enable system rescue operations on VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/recovery",
@@ -11334,6 +13356,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_stopRecoveryModeV1",
+    "title": "Stop recovery mode",
+    "annotations": {
+      "title": "Stop recovery mode",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Stop recovery mode for a specified virtual machine.\n\nIf virtual machine is not in recovery mode, this operation will fail.\n\nUse this endpoint to exit system rescue mode and return VPS to normal operation.",
     "method": "DELETE",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/recovery",
@@ -11358,6 +13387,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_recreateVirtualMachineV1",
+    "title": "Recreate virtual machine",
+    "annotations": {
+      "title": "Recreate virtual machine",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Recreate a virtual machine from scratch.\n\nThe recreation process involves reinstalling the operating system and\nresetting the virtual machine to its initial state.\nSnapshots, if there are any, will be deleted.\n\n## Password Requirements\nPassword will be checked against leaked password databases. \nRequirements for the password are:\n- At least 12 characters long\n- At least one uppercase letter\n- At least one lowercase letter\n- At least one number\n- Is not leaked publicly\n\n**This operation is irreversible and will result in the loss of all data stored on the virtual machine!**\n\nUse this endpoint to completely rebuild VPS instances with fresh OS installation.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/recreate",
@@ -11399,6 +13434,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_restartVirtualMachineV1",
+    "title": "Restart virtual machine",
+    "annotations": {
+      "title": "Restart virtual machine",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Restart a specified virtual machine by fully stopping and starting it.\n\nIf the virtual machine was stopped, it will be started.\n\nUse this endpoint to reboot VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/restart",
@@ -11423,6 +13464,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_setRootPasswordV1",
+    "title": "Set root password",
+    "annotations": {
+      "title": "Set root password",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Set root password for a specified virtual machine.\n\nRequirements for password are same as in the [recreate virtual machine\nendpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMachineId}/recreate).\n\nUse this endpoint to update administrator credentials for VPS instances.",
     "method": "PUT",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/root-password",
@@ -11452,6 +13500,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_setupPurchasedVirtualMachineV1",
+    "title": "Setup purchased virtual machine",
+    "annotations": {
+      "title": "Setup purchased virtual machine",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Setup newly purchased virtual machine with `initial` state.\n\nUse this endpoint to configure and initialize purchased VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/setup",
@@ -11528,6 +13582,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_getSnapshotV1",
+    "title": "Get snapshot",
+    "annotations": {
+      "title": "Get snapshot",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve snapshot for a specified virtual machine.\n\nUse this endpoint to view current VPS snapshot information.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot",
@@ -11552,6 +13612,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_createSnapshotV1",
+    "title": "Create snapshot",
+    "annotations": {
+      "title": "Create snapshot",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a snapshot of a specified virtual machine.\n\nA snapshot captures the state and data of the virtual machine at a specific point in time, \nallowing users to restore the virtual machine to that state if needed. \nThis operation is useful for backup purposes, system recovery, \nand testing changes without affecting the current state of the virtual machine.\n\n**Creating new snapshot will overwrite the existing snapshot!**\n\nUse this endpoint to capture VPS state for backup and recovery purposes.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot",
@@ -11576,6 +13642,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_deleteSnapshotV1",
+    "title": "Delete snapshot",
+    "annotations": {
+      "title": "Delete snapshot",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a snapshot of a specified virtual machine.\n\nUse this endpoint to remove VPS snapshots.",
     "method": "DELETE",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot",
@@ -11600,6 +13673,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_restoreSnapshotV1",
+    "title": "Restore snapshot",
+    "annotations": {
+      "title": "Restore snapshot",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Restore a specified virtual machine to a previous state using a snapshot.\n\nRestoring from a snapshot allows users to revert the virtual machine to that state,\nwhich is useful for system recovery, undoing changes, or testing.\n\nUse this endpoint to revert VPS instances to previous saved states.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot/restore",
@@ -11624,6 +13703,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_startVirtualMachineV1",
+    "title": "Start virtual machine",
+    "annotations": {
+      "title": "Start virtual machine",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Start a specified virtual machine.\n\nIf the virtual machine is already running, the request will still be processed without any effect.\n\nUse this endpoint to power on stopped VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/start",
@@ -11648,6 +13733,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "VPS_stopVirtualMachineV1",
+    "title": "Stop virtual machine",
+    "annotations": {
+      "title": "Stop virtual machine",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Stop a specified virtual machine.\n\nIf the virtual machine is already stopped, the request will still be processed without any effect.\n\nThis is a compute-only power state change and does not affect billing. To stop future charges,\ndisable auto-renewal on the owning subscription.\n\nUse this endpoint to power off running VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/stop",
@@ -11672,6 +13763,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showAIOptionStatusV1",
+    "title": "Show AI option status",
+    "annotations": {
+      "title": "Show AI option status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the current AI option status for the Hostinger Tools plugin on the\nspecified WordPress installation. Filter by `option` to return a single\noption, or omit it to return all options.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status",
@@ -11709,6 +13806,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_setAIOptionStatusV1",
+    "title": "Set AI option status",
+    "annotations": {
+      "title": "Set AI option status",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enable or disable an AI option for the Hostinger Tools plugin on the specified\nWordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status",
@@ -11752,6 +13856,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_checkIfWordPressInstallationsAreValidV1",
+    "title": "Check if WordPress installations are valid",
+    "annotations": {
+      "title": "Check if WordPress installations are valid",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Check whether one or more WordPress installations are valid and working\ncorrectly. Detects broken installations caused by missing files, broken\nplugins, themes and similar issues.\n\nProvide the WordPress installation (software) identifiers in the body. They\ncan be obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield).",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/installations/check-is-valid",
@@ -11789,6 +13899,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deleteWordPressInstallationV1",
+    "title": "Delete WordPress installation",
+    "annotations": {
+      "title": "Delete WordPress installation",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete the specified WordPress installation, with optional file and database\nremoval. This removes all associated components including plugins, themes,\nstaging websites and any other related data.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}",
@@ -11818,6 +13935,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_detectWordPressInstallationsV1",
+    "title": "Detect WordPress installations",
+    "annotations": {
+      "title": "Detect WordPress installations",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Trigger a background scan to detect WordPress installations for the account.\n\nThis operation is asynchronous: a successful response only means the scan has\nbeen queued. Poll GET /api/hosting/v1/wordpress/installations to fetch the\ndetected installations once the scan completes.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/installations/detect",
@@ -11842,6 +13965,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_importWordPressWebsiteV1",
+    "title": "Import WordPress website",
+    "annotations": {
+      "title": "Import WordPress website",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Import WordPress website to the specified domain.\n\nWARNING: this overwrites the website's existing contents and cannot be undone —\nverify this is intended before calling this endpoint.\n\nThis endpoint allows you to import a WordPress website from archive and\ndatabase files that have been uploaded to the website's directory.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/import",
@@ -11881,6 +14010,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_installWordPressV1",
+    "title": "Install WordPress",
+    "annotations": {
+      "title": "Install WordPress",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Install WordPress on an existing website.\n\nThe website must already exist before calling this endpoint. To create a new\nwebsite first, use POST /api/hosting/v1/websites and poll\nGET /api/hosting/v1/websites until it appears.\n\nCall GET /api/hosting/v1/wordpress/installations filtered by username and\ndomain before proceeding to check whether WordPress is already installed on\nthe target domain/path. If WordPress already exists and `overwrite` is false\n(the default), the async job will fail.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that WordPress is ready. Installation typically\ntakes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered\nby username and domain to track progress. When the installation appears in\nthat list, WordPress is ready.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/installations",
@@ -11978,6 +14113,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listWordPressInstallationsV1",
+    "title": "List WordPress installations",
+    "annotations": {
+      "title": "List WordPress installations",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List WordPress installations accessible to the authenticated client.\n\nUse this endpoint to discover existing WordPress installations and to poll\nfor installation status after calling the install endpoint. When a newly\nrequested installation appears in this list, WordPress is ready. Filter by\nusername and domain to narrow results to a specific website.\n\nEach installation includes a `valid` flag and, when invalid, a\n`validationError` describing why.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/installations",
@@ -12013,6 +14154,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listAvailableWordPressCoreUpdatesV1",
+    "title": "List available WordPress core updates",
+    "annotations": {
+      "title": "List available WordPress core updates",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List available WordPress core updates for the specified installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/updates",
@@ -12042,6 +14189,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_getInstallationJWTTokenV1",
+    "title": "Get installation JWT token",
+    "annotations": {
+      "title": "Get installation JWT token",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Return a JWT token used to authenticate requests against the specified\nWordPress installation, including its MCP (Model Context Protocol) endpoint.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/jwt-token",
@@ -12071,6 +14224,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showWordPressCoreVersionV1",
+    "title": "Show WordPress core version",
+    "annotations": {
+      "title": "Show WordPress core version",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the WordPress core version for the specified installation, along with\nknown vulnerabilities affecting it.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/version",
@@ -12100,6 +14259,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updateWordPressCoreV1",
+    "title": "Update WordPress core",
+    "annotations": {
+      "title": "Update WordPress core",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Update the WordPress core for the specified installation (minor update or a\nspecific version).\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/update",
@@ -12137,6 +14302,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_purgeLiteSpeedCacheV1",
+    "title": "Purge LiteSpeed cache",
+    "annotations": {
+      "title": "Purge LiteSpeed cache",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Purge the LiteSpeed Cache for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/purge",
@@ -12166,6 +14337,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showLiteSpeedCacheStatusV1",
+    "title": "Show LiteSpeed cache status",
+    "annotations": {
+      "title": "Show LiteSpeed cache status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the LiteSpeed Cache status for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/status",
@@ -12195,6 +14372,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_createLoginLinksV1",
+    "title": "Create login links",
+    "annotations": {
+      "title": "Create login links",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create temporary auto-login links for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/login/links",
@@ -12224,6 +14407,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showMaintenanceStatusV1",
+    "title": "Show maintenance status",
+    "annotations": {
+      "title": "Show maintenance status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the maintenance mode status for the specified WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/status",
@@ -12253,6 +14442,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_toggleMaintenanceModeV1",
+    "title": "Toggle maintenance mode",
+    "annotations": {
+      "title": "Toggle maintenance mode",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enable or disable maintenance mode for the specified WordPress installation,\nbased on the `enabled` flag.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/toggle",
@@ -12287,6 +14483,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_showMemcachedObjectCacheStatusV1",
+    "title": "Show memcached object cache status",
+    "annotations": {
+      "title": "Show memcached object cache status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Show the Memcached object cache status for the specified WordPress\ninstallation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/status",
@@ -12316,6 +14518,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_toggleMemcachedObjectCacheV1",
+    "title": "Toggle memcached object cache",
+    "annotations": {
+      "title": "Toggle memcached object cache",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Activate or deactivate the Memcached object cache for the specified WordPress\ninstallation, based on the `enabled` flag.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/toggle",
@@ -12350,6 +14559,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_activateWordPressPluginV1",
+    "title": "Activate WordPress plugin",
+    "annotations": {
+      "title": "Activate WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Activate an installed plugin on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the activation\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/activate",
@@ -12384,6 +14599,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deactivateWordPressPluginV1",
+    "title": "Deactivate WordPress plugin",
+    "annotations": {
+      "title": "Deactivate WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Deactivate an installed plugin on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the\ndeactivation job has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/deactivate",
@@ -12418,6 +14639,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deployWordPressPluginV1",
+    "title": "Deploy WordPress plugin",
+    "annotations": {
+      "title": "Deploy WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Deploy a WordPress plugin from an already uploaded directory.\n\nThis endpoint allows you to deploy a WordPress plugin that has been uploaded to the website's directory.\nThe plugin will be activated and made available in the WordPress admin panel.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/plugins/deploy",
@@ -12457,6 +14684,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_installWordPressPluginsV1",
+    "title": "Install WordPress plugins",
+    "annotations": {
+      "title": "Install WordPress plugins",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Install one or more plugins on an existing WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield). Use GET /api/hosting/v1/wordpress/plugins to discover the plugin\nslugs available for installation.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that the plugins are ready.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install",
@@ -12495,6 +14728,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listAvailableWordPressPluginsV1",
+    "title": "List available WordPress plugins",
+    "annotations": {
+      "title": "List available WordPress plugins",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List plugins recommended for installation on a WordPress installation that are\nnot yet installed.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/available",
@@ -12524,6 +14763,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listInstalledWordPressPluginsV1",
+    "title": "List installed WordPress plugins",
+    "annotations": {
+      "title": "List installed WordPress plugins",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List plugins installed on a WordPress installation, including their status,\navailable updates and known vulnerabilities.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins",
@@ -12560,6 +14805,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_searchWordPressPluginsV1",
+    "title": "Search WordPress plugins",
+    "annotations": {
+      "title": "Search WordPress plugins",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Search the WordPress.org plugin directory for plugins available to install.\n\nUse the returned `slug` values with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/plugins",
@@ -12584,6 +14835,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listSuggestedWordPressPluginsV1",
+    "title": "List suggested WordPress plugins",
+    "annotations": {
+      "title": "List suggested WordPress plugins",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List curated plugin suggestions grouped by website type.\n\nUse the returned `slug` values with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/plugins/suggested",
@@ -12606,6 +14863,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_checkIfWooCommerceIsInstalledV1",
+    "title": "Check if WooCommerce is installed",
+    "annotations": {
+      "title": "Check if WooCommerce is installed",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Check whether WooCommerce is installed on any WordPress installation of a\ndomain. Optionally filter by domain to scope the check.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/plugins/is-woocommerce-installed",
@@ -12628,6 +14891,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_uninstallWordPressPluginsV1",
+    "title": "Uninstall WordPress plugins",
+    "annotations": {
+      "title": "Uninstall WordPress plugins",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Uninstall one or more plugins from a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the uninstall\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/uninstall",
@@ -12666,6 +14935,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updateHostingerWordPressPluginV1",
+    "title": "Update hostinger WordPress plugin",
+    "annotations": {
+      "title": "Update hostinger WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Update a Hostinger plugin to its latest version on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update job\nhas been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/hostinger/update",
@@ -12707,6 +14982,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updateWordPressPluginsV1",
+    "title": "Update WordPress plugins",
+    "annotations": {
+      "title": "Update WordPress plugins",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Update one or more installed plugins to their latest version on a WordPress\ninstallation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update job\nhas been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/update",
@@ -12745,6 +15026,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_activateWordPressThemeV1",
+    "title": "Activate WordPress theme",
+    "annotations": {
+      "title": "Activate WordPress theme",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Activate an installed theme on a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the activation\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/activate",
@@ -12779,6 +15066,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_deployWordPressThemeV1",
+    "title": "Deploy WordPress theme",
+    "annotations": {
+      "title": "Deploy WordPress theme",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Deploy a WordPress theme from an already uploaded directory.\n\nThis endpoint allows you to deploy a WordPress theme that has been uploaded to the website's directory.\nThe theme can be optionally activated after deployment.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/themes/deploy",
@@ -12822,6 +15115,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_installWordPressThemeV1",
+    "title": "Install WordPress theme",
+    "annotations": {
+      "title": "Install WordPress theme",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Install a theme on an existing WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id`\nfield).\n\nWhen the theme is one of the Hostinger themes (hostinger-blog,\nhostinger-affiliate-theme, hostinger-ai-theme), the optional `palette`,\n`layout`, and `font` fields are forwarded to the custom installer (defaults:\npalette1, layout1, default). For any other theme they are ignored.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that the theme is ready.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install",
@@ -12876,6 +15175,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listInstalledWordPressThemesV1",
+    "title": "List installed WordPress themes",
+    "annotations": {
+      "title": "List installed WordPress themes",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List themes installed on a WordPress installation, including their status,\navailable updates and known vulnerabilities.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes",
@@ -12905,6 +15210,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_listWordPressThemesV1",
+    "title": "List WordPress themes",
+    "annotations": {
+      "title": "List WordPress themes",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List WordPress themes available to install.\n\nUse the returned `slug` values with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install.",
     "method": "GET",
     "path": "/api/hosting/v1/wordpress/themes",
@@ -12931,6 +15242,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_uninstallWordPressThemesV1",
+    "title": "Uninstall WordPress themes",
+    "annotations": {
+      "title": "Uninstall WordPress themes",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Uninstall one or more themes from a WordPress installation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the uninstall\njob has been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/uninstall",
@@ -12969,6 +15286,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "hosting_updateWordPressThemesV1",
+    "title": "Update WordPress themes",
+    "annotations": {
+      "title": "Update WordPress themes",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Update one or more installed themes to their latest version on a WordPress\ninstallation.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).\n\nThis operation is asynchronous: a successful response only means the update job\nhas been queued.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/update",
