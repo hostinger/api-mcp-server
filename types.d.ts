@@ -6907,6 +6907,31 @@ Use this endpoint to remove specific firewall rules.
   };
 
   /**
+   * Replaces all firewall rules within a specified firewall group with the provided set of rules
+in a single atomic operation, instead of creating or deleting rules one by one.
+
+Any virtual machine using this firewall group will need to be synchronized after replacing rules;
+pass the "sync" query parameter to trigger synchronization immediately.
+   */
+  "VPS_replaceAllFirewallRulesInGroupV1": {
+    params: {
+      /**
+       * Firewall ID
+       */
+      firewallId: number;
+      /**
+       * Synchronize the firewall group to all its virtual machines after replacing the rules
+       */
+      sync?: boolean;
+      /**
+       * The complete set of firewall rules that atomically replaces all existing rules in the group
+       */
+      rules: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Create new firewall rule for a specified firewall.
 
 By default, the firewall drops all incoming traffic,

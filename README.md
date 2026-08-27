@@ -69,7 +69,7 @@ pnpm update -g hostinger-api-mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (371 total)
+- `hostinger-api-mcp` — unified server with every tool (372 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -79,7 +79,7 @@ This package installs the following MCP server commands:
 - `hostinger-hosting-mcp` — 58 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 49 tools for reach
-- `hostinger-vps-mcp` — 62 tools for vps
+- `hostinger-vps-mcp` — 63 tools for vps
 - `hostinger-wordpress-mcp` — 38 tools for wordpress
 
 Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
@@ -3373,6 +3373,17 @@ Use this endpoint to remove specific firewall rules.
 
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules/{ruleId}`
+
+#### VPS_replaceAllFirewallRulesInGroupV1
+
+Replaces all firewall rules within a specified firewall group with the provided set of rules
+in a single atomic operation, instead of creating or deleting rules one by one.
+
+Any virtual machine using this firewall group will need to be synchronized after replacing rules;
+pass the "sync" query parameter to trigger synchronization immediately.
+
+- **Method**: `PUT`
+- **Path**: `/api/vps/v1/firewall/{firewallId}/rules`
 
 #### VPS_createFirewallRuleV1
 

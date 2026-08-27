@@ -575,6 +575,43 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
+    "name": "VPS_replaceAllFirewallRulesInGroupV1",
+    "description": "Replaces all firewall rules within a specified firewall group with the provided set of rules\nin a single atomic operation, instead of creating or deleting rules one by one.\n\nAny virtual machine using this firewall group will need to be synchronized after replacing rules;\npass the \"sync\" query parameter to trigger synchronization immediately.",
+    "method": "PUT",
+    "path": "/api/vps/v1/firewall/{firewallId}/rules",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "firewallId": {
+          "type": "integer",
+          "description": "Firewall ID"
+        },
+        "sync": {
+          "type": "boolean",
+          "description": "Synchronize the firewall group to all its virtual machines after replacing the rules"
+        },
+        "rules": {
+          "type": "array",
+          "description": "The complete set of firewall rules that atomically replaces all existing rules in the group",
+          "items": {
+            "type": "string",
+            "description": "rules parameter"
+          }
+        }
+      },
+      "required": [
+        "firewallId",
+        "rules"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "vps"
+  },
+  {
     "name": "VPS_createFirewallRuleV1",
     "description": "Create new firewall rule for a specified firewall.\n\nBy default, the firewall drops all incoming traffic,\nwhich means you must add accept rules for all ports you want to use.\n\nAny virtual machine that has this firewall activated will lose sync with the firewall\nand will have to be synced again manually.\n\nUse this endpoint to add new security rules to firewalls.",
     "method": "POST",
