@@ -2,6 +2,12 @@
 export default [
   {
     "name": "hosting_importWordpressWebsite",
+    "title": "Import WordPress website",
+    "annotations": {
+      "title": "Import WordPress website",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
     "method": "",
@@ -37,6 +43,12 @@ export default [
   },
   {
     "name": "hosting_deployWordpressPlugin",
+    "title": "Deploy WordPress plugin",
+    "annotations": {
+      "title": "Deploy WordPress plugin",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.",
     "method": "",
@@ -72,6 +84,12 @@ export default [
   },
   {
     "name": "hosting_deployWordpressTheme",
+    "title": "Deploy WordPress theme",
+    "annotations": {
+      "title": "Deploy WordPress theme",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.",
     "method": "",
@@ -111,6 +129,12 @@ export default [
   },
   {
     "name": "hosting_deployJsApplication",
+    "title": "Deploy JavaScript application",
+    "annotations": {
+      "title": "Deploy JavaScript application",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.",
     "method": "",
@@ -145,6 +169,12 @@ export default [
   },
   {
     "name": "hosting_deployStaticWebsite",
+    "title": "Deploy static website",
+    "annotations": {
+      "title": "Deploy static website",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "topic": "hosting",
     "description": "Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
     "method": "",
@@ -179,6 +209,12 @@ export default [
   },
   {
     "name": "hosting_listJsDeployments",
+    "title": "List JavaScript deployments",
+    "annotations": {
+      "title": "List JavaScript deployments",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "topic": "hosting",
     "description": "List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.",
     "method": "",
@@ -225,6 +261,12 @@ export default [
   },
   {
     "name": "hosting_showJsDeploymentLogs",
+    "title": "Show JavaScript deployment logs",
+    "annotations": {
+      "title": "Show JavaScript deployment logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "topic": "hosting",
     "description": "Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.",
     "method": "",
@@ -259,6 +301,13 @@ export default [
   },
   {
     "name": "hosting_clearWebsiteCacheV1",
+    "title": "Clear website cache",
+    "annotations": {
+      "title": "Clear website cache",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently clears all server-side cache for the website at once. Use it when content was\nupdated and needs to be visible immediately, or after making major changes.\n\nAlso purges the Hostinger CDN cache when CDN is enabled on the website. For a WordPress\ninstallation living in a subdirectory, pass the directory query parameter to clear its cache.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/clear",
@@ -292,6 +341,13 @@ export default [
   },
   {
     "name": "hosting_toggleCachelessModeV1",
+    "title": "Toggle cacheless mode",
+    "annotations": {
+      "title": "Toggle cacheless mode",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing\nis cached, effectively turning off all caching for the website; use it while actively developing,\ntesting changes, debugging issues, or when real-time updates must be visible. Disable it after\nfinishing development work to restore the performance benefits of caching.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/toggle",
@@ -326,6 +382,13 @@ export default [
   },
   {
     "name": "hosting_toggleWebsiteCacheV1",
+    "title": "Toggle website cache",
+    "annotations": {
+      "title": "Toggle website cache",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Turns server-side caching for the website on or off, based on the enabled flag. Enable it for\nfaster page loads, reduced server load, and improved user experience; recommended for production\nwebsites. Disabling may impact performance; to temporarily bypass caching while developing or\ndebugging, prefer toggling cacheless mode instead.\n\nDoes nothing if caching is already in the requested state.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/toggle",
@@ -360,6 +423,12 @@ export default [
   },
   {
     "name": "hosting_listAccountCronJobsV1",
+    "title": "List account cron jobs",
+    "annotations": {
+      "title": "List account cron jobs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the list of cron jobs configured for the specified account, including their schedule and command.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/cron-jobs",
@@ -384,6 +453,12 @@ export default [
   },
   {
     "name": "hosting_createAccountCronJobV1",
+    "title": "Create account cron job",
+    "annotations": {
+      "title": "Create account cron job",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Creates a cron job for the specified account from a schedule expression and a command.\n\nReturns the created cron job, including its uid, which is required to delete the cron job or fetch its output.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/cron-jobs",
@@ -418,6 +493,13 @@ export default [
   },
   {
     "name": "hosting_deleteAccountCronJobV1",
+    "title": "Delete account cron job",
+    "annotations": {
+      "title": "Delete account cron job",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes the cron job identified by its uid.\n\nThe uid is returned by the list cron jobs endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/cron-jobs/{uid}",
@@ -447,6 +529,12 @@ export default [
   },
   {
     "name": "hosting_getCronJobOutputV1",
+    "title": "Get cron job output",
+    "annotations": {
+      "title": "Get cron job output",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the output captured from the last execution of the cron job identified by its uid.\n\nThe uid is returned by the list cron jobs endpoint.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/cron-jobs/{uid}/output",
@@ -476,6 +564,13 @@ export default [
   },
   {
     "name": "hosting_changeDatabasePasswordV1",
+    "title": "Change database password",
+    "annotations": {
+      "title": "Change database password",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Changes the password for the specified database user.\n\nThe database name must be the full name returned by the list databases endpoint.\nThe password must also be updated in any website configuration that uses this database.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/change-password",
@@ -510,6 +605,12 @@ export default [
   },
   {
     "name": "hosting_listAccountDatabasesV1",
+    "title": "List account databases",
+    "annotations": {
+      "title": "List account databases",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a paginated list of databases for the specified account.\n\nUse the domain and is_assigned filters to find databases assigned to a specific domain.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/databases",
@@ -554,6 +655,12 @@ export default [
   },
   {
     "name": "hosting_createAccountDatabaseV1",
+    "title": "Create account database",
+    "annotations": {
+      "title": "Create account database",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Creates a database with a database user and password for the specified account.\n\nThe database name and user are automatically prefixed with the account username when needed.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/databases",
@@ -598,6 +705,13 @@ export default [
   },
   {
     "name": "hosting_deleteAccountDatabaseV1",
+    "title": "Delete account database",
+    "annotations": {
+      "title": "Delete account database",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes a database and its remote connections.\n\nThe database name must be the full name returned by the list databases endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}",
@@ -627,6 +741,12 @@ export default [
   },
   {
     "name": "hosting_createDatabaseRemoteConnectionV1",
+    "title": "Create database remote connection",
+    "annotations": {
+      "title": "Create database remote connection",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Allows a remote host to connect to the specified database.\n\nProvide an IPv4/IPv6 address, or \"%\" to allow any host. The database name must be\nthe full name returned by the list databases endpoint.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections",
@@ -661,6 +781,13 @@ export default [
   },
   {
     "name": "hosting_deleteDatabaseRemoteConnectionV1",
+    "title": "Delete database remote connection",
+    "annotations": {
+      "title": "Delete database remote connection",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently removes a remote-access rule, revoking the given host's remote access to the database.\n\nIdentify the rule with the required ip query parameter (the IPv4/IPv6 address, or \"%\",\nexactly as returned by the list remote connections endpoint). The database name must be\nthe full name returned by the list databases endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections",
@@ -695,6 +822,12 @@ export default [
   },
   {
     "name": "hosting_listDatabaseRemoteConnectionsV1",
+    "title": "List database remote connections",
+    "annotations": {
+      "title": "List database remote connections",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the remote-access rules for the specified account: the remote hosts\n(IPv4/IPv6 addresses, or \"%\" for any host) allowed to connect to the account databases.\n\nUse the domain filter to only return rules for databases assigned to a specific domain.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/databases/remote-connections",
@@ -723,6 +856,13 @@ export default [
   },
   {
     "name": "hosting_repairDatabaseV1",
+    "title": "Repair database",
+    "annotations": {
+      "title": "Repair database",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Repairs corrupted database tables asynchronously.\n\nUse when database errors, crashes, or corruption are reported.\nThe database name must be the full name returned by the list databases endpoint.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/repair",
@@ -752,6 +892,12 @@ export default [
   },
   {
     "name": "hosting_getPhpMyAdminLinkV1",
+    "title": "Get phpMyAdmin link",
+    "annotations": {
+      "title": "Get phpMyAdmin link",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a direct sign-on link to phpMyAdmin for the specified database.\n\nUse this when a visual database interface is needed for SQL queries, imports, exports, or table management.\nThe database name must be the full name returned by the list databases endpoint.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/phpmyadmin-link",
@@ -781,6 +927,12 @@ export default [
   },
   {
     "name": "hosting_listAvailableDatacentersV1",
+    "title": "List available datacenters",
+    "annotations": {
+      "title": "List available datacenters",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a list of datacenters available for setting up hosting plans\nbased on available datacenter capacity and hosting plan of your order.\nThe first item in the list is the best match for your specific order\nrequirements.",
     "method": "GET",
     "path": "/api/hosting/v1/datacenters",
@@ -805,6 +957,12 @@ export default [
   },
   {
     "name": "hosting_generateAFreeSubdomainV1",
+    "title": "Generate a free subdomain",
+    "annotations": {
+      "title": "Generate a free subdomain",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.\nFree subdomains allow you to start using hosting services immediately\nand you can always connect a custom domain to your site later.",
     "method": "POST",
     "path": "/api/hosting/v1/domains/free-subdomains",
@@ -822,6 +980,12 @@ export default [
   },
   {
     "name": "hosting_listWebsiteParkedDomainsV1",
+    "title": "List website parked domains",
+    "annotations": {
+      "title": "List website parked domains",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all parked or alias domains created under the selected website.\n\nUse this endpoint to inspect parked domain configuration for a specific website,\nincluding the parent domain and root directory assigned to each parked domain.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains",
@@ -851,6 +1015,12 @@ export default [
   },
   {
     "name": "hosting_createWebsiteParkedDomainV1",
+    "title": "Create website parked domain",
+    "annotations": {
+      "title": "Create website parked domain",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a parked or alias domain for the selected website.\n\nProvide a domain name or IP address to park on the website so it serves the same content\nas the parent domain.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains",
@@ -885,6 +1055,13 @@ export default [
   },
   {
     "name": "hosting_deleteWebsiteParkedDomainV1",
+    "title": "Delete website parked domain",
+    "annotations": {
+      "title": "Delete website parked domain",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete an existing parked or alias domain from the selected website.\n\nUse this endpoint to remove parked domains that are no longer needed.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains/{parkedDomain}",
@@ -919,6 +1096,12 @@ export default [
   },
   {
     "name": "hosting_listWebsiteSubdomainsV1",
+    "title": "List website subdomains",
+    "annotations": {
+      "title": "List website subdomains",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve all subdomains created under the selected website.\n\nUse this endpoint to inspect subdomain configuration for a specific website,\nincluding the parent domain and root directory assigned to each subdomain.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains",
@@ -948,6 +1131,12 @@ export default [
   },
   {
     "name": "hosting_createWebsiteSubdomainV1",
+    "title": "Create website subdomain",
+    "annotations": {
+      "title": "Create website subdomain",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new subdomain for the selected website.\n\nProvide a subdomain prefix and, optionally, a custom directory or the\nwebsite public directory to use as the subdomain root.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains",
@@ -990,6 +1179,13 @@ export default [
   },
   {
     "name": "hosting_deleteWebsiteSubdomainV1",
+    "title": "Delete website subdomain",
+    "annotations": {
+      "title": "Delete website subdomain",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete an existing subdomain from the selected website.\n\nUse this endpoint to remove subdomains that are no longer needed.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains/{subdomain}",
@@ -1024,6 +1220,12 @@ export default [
   },
   {
     "name": "hosting_verifyDomainOwnershipV1",
+    "title": "Verify domain ownership",
+    "annotations": {
+      "title": "Verify domain ownership",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Verify ownership of a single domain and return the verification status.\n\nUse this endpoint to check if a domain is accessible for you before using it for new websites.\nIf the domain is accessible, the response will have `is_accessible: true`.\nIf not, add the given TXT record to your domain's DNS records and try verifying again.\nKeep in mind that it may take up to 10 minutes for new TXT DNS records to propagate.\n\nSkip this verification when using Hostinger's free subdomains (*.hostingersite.com).",
     "method": "POST",
     "path": "/api/hosting/v1/domains/verify-ownership",
@@ -1048,6 +1250,12 @@ export default [
   },
   {
     "name": "hosting_generateUploadURLV1",
+    "title": "Generate upload URL",
+    "annotations": {
+      "title": "Generate upload URL",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Generate a file browser upload URL with authentication credentials\nfor uploading files directly to a website's file storage.\n\nReturns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the\nwebsite's `public_html` directory via the TUS resumable upload protocol (TUS 1.0.0).\nSend `X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request\nbelow.\n\n1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers\n   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.\n2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or\n   `PATCH` requests with an `upload-offset` header tracking progress) until complete.\n\n`relative_file_path` is the destination path inside `public_html`, e.g. `app.zip`.\n\nInstead of a TUS client, plain `curl` also works:\n```\nFILE=app.zip\nSIZE=$(stat -f%z \"$FILE\")   # stat -c%s on Linux\n\ncurl -i -X POST \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Upload-Length: ${SIZE}\" \\\n  -H \"Upload-Offset: 0\"\n# -> 201 Created\n\ncurl -i -X PATCH \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Content-Type: application/offset+octet-stream\" \\\n  -H \"Upload-Offset: 0\" \\\n  --data-binary \"@${FILE}\"\n# -> 204 No Content, Upload-Offset response header equals SIZE when done\n```",
     "method": "POST",
     "path": "/api/hosting/v1/files/upload-urls",
@@ -1077,6 +1285,12 @@ export default [
   },
   {
     "name": "hosting_listWebsiteFilesAndDirectoriesV1",
+    "title": "List website files and directories",
+    "annotations": {
+      "title": "List website files and directories",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List files and directories under a website's document root.\n\nUse `directory` to browse a subdirectory relative to the document root. Symlinked entries\nare listed but never traversed into or resolved.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/domains/{domain}/files",
@@ -1136,6 +1350,12 @@ export default [
   },
   {
     "name": "hosting_getWebsiteFileContentV1",
+    "title": "Get website file content",
+    "annotations": {
+      "title": "Get website file content",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a single file's content, relative to a website's document root.\n\nRead-only; refuses symlinks, oversized files, non-text file types, and files identified as\ncontaining secrets (e.g. credential files) — none of these are returned by this endpoint.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/domains/{domain}/files/content",
@@ -1178,6 +1398,12 @@ export default [
   },
   {
     "name": "hosting_listNodeJSBuildsV1",
+    "title": "List NodeJS builds",
+    "annotations": {
+      "title": "List NodeJS builds",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of Node.js build processes for a specific website.\n\nEach build represents a single run of the Node.js build pipeline. Use the `states`\nquery parameter to filter results by build state (pending, running, completed, failed).\nUse the `uuid` from a build to poll its output via the `Get Node.js Build Logs` endpoint.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds",
@@ -1229,6 +1455,12 @@ export default [
   },
   {
     "name": "hosting_startNode_jsBuildV1",
+    "title": "Start Node.js build",
+    "annotations": {
+      "title": "Start Node.js build",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Start a Node.js build process using files already present on the website's file storage.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nThe `source_type` must be `archive` and `source_options.archive_path` must point to an\nexisting archive file on the server (relative to the website document root).\nUse the `Generate Upload URL` endpoint to obtain credentials and upload the archive first.\n\nTo auto-detect build settings from an archive before starting, first call the\n`Get Node.js Build Settings from Archive` endpoint.\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds",
@@ -1342,6 +1574,12 @@ export default [
   },
   {
     "name": "hosting_getNode_jsBuildSettingsFromArchiveV1",
+    "title": "Get Node.js build settings from archive",
+    "annotations": {
+      "title": "Get Node.js build settings from archive",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Auto-detect Node.js build settings from a package.json inside an archive already on the server.\n\nUse this before calling `Start Node.js Build` to preview what settings will be used,\nor to let the user review and override values (framework, node version, root directory,\noutput directory, build script) before committing to a build.\n\nThe archive must already be present on the website's file storage. Use the\n`Generate Upload URL` endpoint to obtain credentials and upload the archive first.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/from-archive",
@@ -1376,6 +1614,12 @@ export default [
   },
   {
     "name": "hosting_listNode_jsEnvironmentVariablesV1",
+    "title": "List Node.js environment variables",
+    "annotations": {
+      "title": "List Node.js environment variables",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists the Node.js environment variables currently set for the website. Values are always\nmasked as `********` and cannot be read back through this API. Use this endpoint to see\nwhich keys are configured or to verify a change, not to read values.\n\nTo change variables, use the `Replace Node.js environment variables` endpoint. It replaces\nthe whole set, so never copy the masked values from this response into that request; send\nthe full desired set with real values taken from the project `.env` file or the user\nprompt instead.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/env",
@@ -1405,6 +1649,13 @@ export default [
   },
   {
     "name": "hosting_replaceNode_jsEnvironmentVariablesV1",
+    "title": "Replace Node.js environment variables",
+    "annotations": {
+      "title": "Replace Node.js environment variables",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Replaces the website's Node.js environment variables with the ones provided. This is a\nfull replace: any variable not in the request is deleted, and sending an empty `env_vars`\narray deletes every variable. Saving writes the values and restarts the running Node.js\nprocess.\n\nA restart is enough for apps that read environment variables at process start, such as\nExpress or NestJS. It is not enough for frameworks that bake variables into the build.\nNext.js standalone is one of those: build-time values (including `NEXT_PUBLIC_*`) need a\nfresh build. After this call, use the `Start Node.js build` endpoint so those apps\npick up the new values.\n\nThe `List Node.js environment variables` endpoint returns masked values (`********`), so\nnever copy values from it into this request. Always send the full desired set with real\nvalues taken from the project `.env` file or the user prompt.",
     "method": "PUT",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/env",
@@ -1457,6 +1708,12 @@ export default [
   },
   {
     "name": "hosting_getNodeJSBuildLogsV1",
+    "title": "Get NodeJS build logs",
+    "annotations": {
+      "title": "Get NodeJS build logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve logs from a specific Node.js build process.\n\nTo stream live output while a build is running, poll this endpoint repeatedly\nwhile the build state is `running`, passing the previously returned `lines` count\nas `from_line` to fetch only new output since the last call.\nLog content may contain ANSI escape sequences (color codes).",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/logs",
@@ -1495,6 +1752,12 @@ export default [
   },
   {
     "name": "hosting_restartNode_jsApplicationV1",
+    "title": "Restart Node.js application",
+    "annotations": {
+      "title": "Restart Node.js application",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Restarts the Node.js server process for the website. Does not rebuild or redeploy the\napplication. Use it to apply environment or configuration changes, or to recover a hung\napplication.\n\nOnly applicable to server-side applications (Express, Next.js, NestJS, etc.). Static\nfront-end apps (React, Vue, Vite) have no persistent server process, so restarting them\nhas no effect. Returns success even when the website has no server process to restart.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/server/restart",
@@ -1524,6 +1787,12 @@ export default [
   },
   {
     "name": "hosting_listNode_jsVulnerabilitiesV1",
+    "title": "List Node.js vulnerabilities",
+    "annotations": {
+      "title": "List Node.js vulnerabilities",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Lists known npm package vulnerabilities detected on a Node.js website, enriched with\nadvisory metadata (severity, CVSS score, CVE, advisory URL). Results are sorted from\nthe most severe to the least severe, then by publish date (newest first). Use the\n`severities` query parameter to filter.\n\nVulnerabilities with `is_patchable` set to `true` can be auto-fixed via the\n`Patch Node.js Vulnerabilities` endpoint, which opens a GitHub pull request with\nupdated package versions. Auto-fix is only available for websites deployed from a\nconnected GitHub repository. Vulnerabilities with `is_patching_in_progress` set to\n`true` are already included in an open patch pull request; while any patch pull\nrequest is open, new patch requests for this website are rejected until it is merged\nor closed.\n\nData comes from periodic dependency scans, so it may lag behind the latest deployment.\nAn empty list means the most recent scan found no vulnerabilities; it does not\nguarantee the current deployment is vulnerability-free. Available on Business and\nCloud Hosting plans.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/vulnerabilities",
@@ -1568,6 +1837,12 @@ export default [
   },
   {
     "name": "hosting_patchNode_jsVulnerabilitiesV1",
+    "title": "Patch Node.js vulnerabilities",
+    "annotations": {
+      "title": "Patch Node.js vulnerabilities",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Patches the selected Node.js vulnerabilities by updating the affected package versions\nin `package.json` and opening a GitHub pull request in the connected repository. The\ncustomer reviews and merges the pull request; merging triggers the automatic deployment.\n\nAuto-fix is only available for websites deployed from a connected GitHub repository.\nWebsites deployed from an archive have no auto-fix path and return a 404. The Hostinger\nGitHub App needs write access to the repository; without it the request fails with a\n403 explaining the missing permission.\n\nOnly vulnerabilities with `is_patchable` set to `true` can be patched. Non-patchable\nIDs in the selection are skipped; the pull request covers the patchable subset, listed\nin `patched_vulnerability_ids`. Selections without any patchable vulnerability are\nrejected with a 422. Only one patch pull request can be open at a time per website;\nclose or merge it before patching again. Available on Business and Cloud Hosting plans.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/vulnerabilities/patch",
@@ -1606,6 +1881,12 @@ export default [
   },
   {
     "name": "hosting_listOrdersV1",
+    "title": "List orders",
+    "annotations": {
+      "title": "List orders",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of orders accessible to the authenticated client.\n\nThis endpoint returns orders of your hosting accounts as well as orders\nof other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by order statuses\nor specific order IDs for more targeted results.",
     "method": "GET",
     "path": "/api/hosting/v1/orders",
@@ -1654,6 +1935,13 @@ export default [
   },
   {
     "name": "hosting_resetPHPExtensionsV1",
+    "title": "Reset PHP extensions",
+    "annotations": {
+      "title": "Reset PHP extensions",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Resets all PHP extensions of the website to their default state.\n\nUse it to recover from extension conflicts or restore the original configuration.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions/reset",
@@ -1683,6 +1971,12 @@ export default [
   },
   {
     "name": "hosting_getPHPDetailsV1",
+    "title": "Get PHP details",
+    "annotations": {
+      "title": "Get PHP details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the full PHP configuration for the website: current version, available versions\n(supported and unsupported), enabled/disabled extensions, options with their current value,\ndefault, type and the plan limit (`max`), and conflicting extension groups.\n\nUse it to check the current PHP setup before updating the version, extensions or options.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/details",
@@ -1712,6 +2006,12 @@ export default [
   },
   {
     "name": "hosting_getPHPInfoV1",
+    "title": "Get PHP info",
+    "annotations": {
+      "title": "Get PHP info",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns the full phpinfo page (HTML) for the website.\n\nUse it to debug PHP issues or inspect the complete PHP environment of the website.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/php-info",
@@ -1741,6 +2041,13 @@ export default [
   },
   {
     "name": "hosting_updatePHPExtensionsV1",
+    "title": "Update PHP extensions",
+    "annotations": {
+      "title": "Update PHP extensions",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Enables or disables PHP extensions (modules) for the website.\n\nUse the Get PHP details endpoint to check the current extension states before changing them.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions",
@@ -1786,6 +2093,13 @@ export default [
   },
   {
     "name": "hosting_updatePHPOptionsV1",
+    "title": "Update PHP options",
+    "annotations": {
+      "title": "Update PHP options",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Updates PHP options for the website (e.g. `memory_limit`, `max_execution_time`, `upload_max_filesize`).\nOnly provide the options you want to change, inside the `options` object.\n\nValues above the account plan limit are silently capped to that limit, so the request can succeed\nwith a smaller applied value. Call the Get PHP details endpoint afterwards to read the applied value.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/options",
@@ -1821,6 +2135,13 @@ export default [
   },
   {
     "name": "hosting_updatePHPVersionV1",
+    "title": "Update PHP version",
+    "annotations": {
+      "title": "Update PHP version",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Changes the PHP version of the website.\n\nUse the Get PHP details endpoint to see the versions available for the website.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/php/version",
@@ -1855,6 +2176,12 @@ export default [
   },
   {
     "name": "hosting_listWebsiteRedirectsV1",
+    "title": "List website redirects",
+    "annotations": {
+      "title": "List website redirects",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Returns a paginated list of redirects configured for the selected website.",
     "method": "GET",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/redirects",
@@ -1892,6 +2219,12 @@ export default [
   },
   {
     "name": "hosting_createWebsiteRedirectV1",
+    "title": "Create website redirect",
+    "annotations": {
+      "title": "Create website redirect",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Creates a redirect from a URL on the selected website to another URL or IP address.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/redirects",
@@ -1931,6 +2264,13 @@ export default [
   },
   {
     "name": "hosting_deleteWebsiteRedirectV1",
+    "title": "Delete website redirect",
+    "annotations": {
+      "title": "Delete website redirect",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Permanently deletes the redirect identified by its source URL.\n\nPass the `from` value exactly as returned by the list redirects endpoint.",
     "method": "DELETE",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/redirects",
@@ -1965,6 +2305,12 @@ export default [
   },
   {
     "name": "hosting_listWebsitesV1",
+    "title": "List websites",
+    "annotations": {
+      "title": "List websites",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve a paginated list of websites (CloudLinux, Builder, and Horizons) accessible to the\nauthenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nEach website includes a `website_type` field describing the type of\nwebsite detected on the underlying platform (`wordpress`, `builder`,\n`horizons`, `nodejs`, or `other`). Some fields, such as\n`vhost_type`, `username`, and `root_directory`, only apply to\nCloudLinux websites and are null for other platforms.\n\nUse `website_types` to list only websites of a given detected type, e.g. only\nWordPress websites (`website_types=wordpress`) or only Node.js websites\n(`website_types=nodejs`). Combine with the other available query parameters to\nfilter by username, order ID, enabled status, or domain name for more targeted\nresults.",
     "method": "GET",
     "path": "/api/hosting/v1/websites",
@@ -2022,6 +2368,12 @@ export default [
   },
   {
     "name": "hosting_createWebsiteV1",
+    "title": "Create website",
+    "annotations": {
+      "title": "Create website",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new website for the authenticated client.\n\nProvide the domain name and associated order ID to create a new website.\nThe datacenter_code parameter is required when creating the first website\non a new hosting plan - this will set up and configure new hosting account\nin the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation takes up to a few minutes to complete. Check the\nwebsites list endpoint to see when your new website becomes available.",
     "method": "POST",
     "path": "/api/hosting/v1/websites",
@@ -2055,6 +2407,12 @@ export default [
   },
   {
     "name": "hosting_deployStaticSiteArchiveV1",
+    "title": "Deploy static site archive",
+    "annotations": {
+      "title": "Deploy static site archive",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Deploy a static application from an archive file.\n\nWARNING: this overwrites the website's existing contents and cannot be undone —\nverify this is intended before calling this endpoint.\n\nThis endpoint allows you to deploy a static application from an archive\nfile that has been uploaded to the website's directory.\n\nThis only works for static sites (pre-built HTML/CSS/JS with no build step). For\nNode.js applications, use `Create NodeJS build from archive` instead, or\n`Start Node.js build` if the archive is already uploaded. For WordPress sites,\nuse `Import WordPress website`.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/deploy",
@@ -2089,6 +2447,13 @@ export default [
   },
   {
     "name": "hosting_deleteWebsiteV1",
+    "title": "Delete website",
+    "annotations": {
+      "title": "Delete website",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "This endpoint permanently removes a website and all of its data. This action\ncannot be undone. Before calling it, make sure the user understands the\nconsequences and explicitly confirms that they want to proceed.\n\nAll website files, databases and related configuration will be removed.\nThe hosting plan itself is kept, so a new website can be created on it afterwards.\n\nSupported websites: main and addon domain websites on web hosting plans, and\nWebsite Builder websites. Parked domains and subdomains cannot be deleted with\nthis endpoint. The domain must be the exact website domain, not a preview\ndomain or an alias.\n\nReturns 404 when the domain does not exist or does not belong to the\nauthenticated client.\n\nWebsite removal is processed asynchronously and can take a few minutes to\ncomplete. The response returns before the removal finishes.",
     "method": "DELETE",
     "path": "/api/hosting/v1/websites/{domain}",

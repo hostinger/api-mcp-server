@@ -133,8 +133,10 @@ class MCPServer {
     for (const tool of this.toolList) {
       this.tools.set(tool.name, {
         name: tool.name,
+        title: tool.title,
         description: tool.description,
         inputSchema: tool.inputSchema,
+        annotations: tool.annotations,
         // Don't include security at the tool level
       });
     }

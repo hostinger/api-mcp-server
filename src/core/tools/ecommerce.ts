@@ -16,6 +16,12 @@ export interface OpenApiTool extends Tool {
 const tools: OpenApiTool[] = [
   {
     "name": "ecommerce_listDiscountsV1",
+    "title": "List discounts",
+    "annotations": {
+      "title": "List discounts",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's discounts. Filter by free text over code and name, or by disabled state.\nAmounts for fixed discounts are integers in the smallest currency unit; percentage\ndiscounts carry a whole-number value between 1 and 100.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/discounts",
@@ -56,6 +62,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createADiscountV1",
+    "title": "Create a discount",
+    "annotations": {
+      "title": "Create a discount",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a discount for a store. Fixed discounts take an amount in the smallest currency\nunit (e.g. $10 is 1000); percentage discounts take a whole-number value between 1 and 100.\nFree-shipping discounts ignore value. Returns the created discount.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/discounts",
@@ -132,6 +144,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_getCustomStorefrontSetupInstructionsV1",
+    "title": "Get custom storefront setup instructions",
+    "annotations": {
+      "title": "Get custom storefront setup instructions",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve step-by-step setup instructions, formatted as Markdown, for connecting a custom sales\nchannel to your store and keeping your catalog, orders, shipping and payments in sync through\nthe Ecommerce API.",
     "method": "GET",
     "path": "/api/ecommerce/v1/miscellaneous/custom-storefront-instructions",
@@ -149,6 +167,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_cancelAnOrderV1",
+    "title": "Cancel an order",
+    "annotations": {
+      "title": "Cancel an order",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Cancel the order and optionally email the customer. Returns the updated order summary.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/orders/{order_id}/cancel",
@@ -182,6 +206,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_fulfilAnOrderV1",
+    "title": "Fulfil an order",
+    "annotations": {
+      "title": "Fulfil an order",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a fulfilment for the order and attach tracking in one call. Omit items to fulfil\nevery remaining unfulfilled item. Returns the updated order summary.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/orders/{order_id}/fulfill",
@@ -245,6 +275,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listStoreOrdersV1",
+    "title": "List store orders",
+    "annotations": {
+      "title": "List store orders",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's orders newest first as summaries. Filter by status, payment or fulfilment\nstatus, customer email, order number or a free-text query. Amounts are in the smallest\ncurrency unit. Retrieve a single order for its line items, addresses and fulfilments.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/orders",
@@ -345,6 +381,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_retrieveAnOrderV1",
+    "title": "Retrieve an order",
+    "annotations": {
+      "title": "Retrieve an order",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve one order in full: line items (each with the id the fulfil endpoint needs),\naddresses, the totals breakdown and fulfilments with tracking. Amounts are in the\nsmallest currency unit.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/orders/{order_id}",
@@ -374,6 +416,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_enableManualPaymentMethodV1",
+    "title": "Enable manual payment method",
+    "annotations": {
+      "title": "Enable manual payment method",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Enable a manual payment method so the store can accept orders without an online payment provider.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/payment-methods/manual",
@@ -402,6 +450,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createAPaymentProviderConnectLinkV1",
+    "title": "Create a payment provider connect link",
+    "annotations": {
+      "title": "Create a payment provider connect link",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create an onboarding link for connecting a payment gateway to the store. Returns the gateway\nonboarding URL for the merchant to open and a deep-link into the store admin.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/payment-providers/{provider_id}/connect-link",
@@ -431,6 +485,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listStorePaymentProvidersV1",
+    "title": "List store payment providers",
+    "annotations": {
+      "title": "List store payment providers",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's payment providers, split into providers already connected to the store and\ngateways available to install. Never exposes gateway credentials, secrets, or configuration.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/payment-providers",
@@ -459,6 +519,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createAProductImageUploadURLV1",
+    "title": "Create a product image upload URL",
+    "annotations": {
+      "title": "Create a product image upload URL",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Returns a signed URL to upload a product image to (multipart/form-data POST). Then call the\nattach-image endpoint with the returned object_name to scan and attach it to the product.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images/upload-url",
@@ -488,6 +554,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_deleteAProductV1",
+    "title": "Delete a product",
+    "annotations": {
+      "title": "Delete a product",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a product and its variants from the store. A subscription product with active\nsubscribers is archived instead of deleted so its data stays available.",
     "method": "DELETE",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}",
@@ -517,6 +590,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_updateAProductV1",
+    "title": "Update a product",
+    "annotations": {
+      "title": "Update a product",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update a product's name, description or status. Set status to published to make it buyable,\ndraft to hide it, or archived to retire it. Variants, prices and inventory are managed\nthrough the variant endpoints, not here. Returns the updated product summary.",
     "method": "PATCH",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}",
@@ -563,6 +643,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createDigitalProductV1",
+    "title": "Create digital product",
+    "annotations": {
+      "title": "Create digital product",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a published digital product with a single variant and an optional external download link.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/digital",
@@ -609,6 +695,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listProductsV1",
+    "title": "List products",
+    "annotations": {
+      "title": "List products",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's products newest first as lean summaries (name, status, thumbnail, variant\ncount and price range). Prices are integers in the smallest currency unit and live on\nvariants. Filter by status, free text or a set of product ids. Use include=variants to\nembed each product's variants with prices and inventory, and include=media to embed its media.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/products",
@@ -676,6 +768,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createPhysicalProductV1",
+    "title": "Create physical product",
+    "annotations": {
+      "title": "Create physical product",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a published physical product with a single variant priced in the store currency.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/physical",
@@ -718,6 +816,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_uploadAndAttachAProductImageV1",
+    "title": "Upload and attach a product image",
+    "annotations": {
+      "title": "Upload and attach a product image",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Fetch a raster image (JPEG, PNG, GIF or WebP, max 15MB) from a URL and attach it to a product in a\nsingle call. The image is virus-scanned and validated by content, then stored on the CDN. Set\nis_thumbnail to make it the product's primary image.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images",
@@ -759,6 +863,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listSalesChannelsV1",
+    "title": "List sales channels",
+    "annotations": {
+      "title": "List sales channels",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a store's active sales channels with their full metadata.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels",
@@ -783,6 +893,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createASalesChannelV1",
+    "title": "Create a sales channel",
+    "annotations": {
+      "title": "Create a sales channel",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a sales channel for a store. A \"custom\" channel is headless: build your own frontend and keep\nyour catalog, orders, shipping and payments in sync through the Ecommerce API. A \"quick-link\" channel\nis a hosted one-page store whose handle is auto-generated.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels",
@@ -824,6 +940,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_updateSalesChannelV1",
+    "title": "Update sales channel",
+    "annotations": {
+      "title": "Update sales channel",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update a custom sales channel. The merchant-facing `name` and the public `url`\n(returned as the channel `domain`) can be changed. Pass `null` to clear a value.",
     "method": "PATCH",
     "path": "/api/ecommerce/v1/stores/{store_id}/sales-channels/{sales_channel_id}",
@@ -861,6 +984,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_setStoreShippingV1",
+    "title": "Set store shipping",
+    "annotations": {
+      "title": "Set store shipping",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Set the flat-rate shipping price for a store, creating the shipping zone if it does not exist yet.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/shipping",
@@ -890,6 +1019,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_deleteStoreV1",
+    "title": "Delete store",
+    "annotations": {
+      "title": "Delete store",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Soft-delete a store owned by your account.\n\nThe underlying store data is preserved; only the store is marked as deleted.",
     "method": "DELETE",
     "path": "/api/ecommerce/v1/stores/{store_id}",
@@ -914,6 +1050,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_getStoresV1",
+    "title": "Get stores",
+    "annotations": {
+      "title": "Get stores",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Retrieve the stores associated with your account.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores",
@@ -936,6 +1078,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createStoreV1",
+    "title": "Create store",
+    "annotations": {
+      "title": "Create store",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Create a new store for your account.\n\nA primary sales channel is created alongside the store.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores",
@@ -991,6 +1139,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_getStoreMetadataV1",
+    "title": "Get store metadata",
+    "annotations": {
+      "title": "Get store metadata",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get a store's readiness metadata: whether payment methods and shipping are configured,\nplus its default currency. Useful to verify prerequisites before building a storefront.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/metadata",
@@ -1015,6 +1169,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_updateProductVariantsInBatchV1",
+    "title": "Update product variants in batch",
+    "annotations": {
+      "title": "Update product variants in batch",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Update up to 100 existing variants in place by id — title, inventory, stock tracking and\nprices. Variants omitted from the request are left untouched. Prices replace the variant's\nexisting prices in full. Returns the updated variants.",
     "method": "PATCH",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants/batch",
@@ -1099,6 +1260,13 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_deleteAProductVariantV1",
+    "title": "Delete a product variant",
+    "annotations": {
+      "title": "Delete a product variant",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
     "description": "Delete a single variant from the product.",
     "method": "DELETE",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants/{variant_id}",
@@ -1133,6 +1301,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_listProductVariantsV1",
+    "title": "List product variants",
+    "annotations": {
+      "title": "List product variants",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List a product's variants, ordered by rank, with their options, prices and inventory.\nPrices are integers in the smallest currency unit and live on variants.",
     "method": "GET",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants",
@@ -1166,6 +1340,12 @@ const tools: OpenApiTool[] = [
   },
   {
     "name": "ecommerce_createAProductVariantV1",
+    "title": "Create a product variant",
+    "annotations": {
+      "title": "Create a product variant",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
     "description": "Add a variant to a product along one or more option dimensions (e.g. Size, Color). Options\nmissing from the product are created automatically; provide a value for every option the\nproduct already has. Prices are integers in the smallest currency unit and default to the\nstore currency. Returns the created variant.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants",
