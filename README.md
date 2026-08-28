@@ -41,13 +41,13 @@ To install the MCP server, run one of the following command, depending on your p
 
 ```bash
 # Install globally from npm
-npm install -g hostinger-api-mcp
+npm install -g @hostinger/mcp
 
 # Or with yarn
-yarn global add hostinger-api-mcp
+yarn global add @hostinger/mcp
 
 # Or with pnpm
-pnpm add -g hostinger-api-mcp
+pnpm add -g @hostinger/mcp
 ```
 
 ## Update
@@ -56,13 +56,13 @@ To update the MCP server to the latest version, use one of the following command
 
 ```bash
 # Update globally from npm
-npm update -g hostinger-api-mcp
+npm update -g @hostinger/mcp
 
 # Or with yarn
-yarn global upgrade hostinger-api-mcp
+yarn global upgrade @hostinger/mcp
 
 # Or with pnpm
-pnpm update -g hostinger-api-mcp
+pnpm update -g @hostinger/mcp
 ```
 
 ## Binaries

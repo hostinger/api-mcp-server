@@ -64,6 +64,22 @@ jobs:
       - name: Publish package
         run: npm publish --provenance --access public
 
+      # The package was published unscoped before moving to @hostinger. Republish
+      # each release under the old name so existing installs keep updating.
+      # Both names point their npm trusted publisher at this workflow file, which
+      # is what the config keys on — the job/step it runs in is not part of it.
+      # The name below is substituted by the generator, and is left empty for an
+      # API that never had an unscoped package.
+      - name: Publish legacy unscoped alias
+        run: |
+          LEGACY='hostinger-api-mcp'
+          if [ -z "$LEGACY" ]; then
+            echo "No legacy npm name configured — nothing to alias."
+            exit 0
+          fi
+          jq --arg n "$LEGACY" '.name = $n' package.json > pkg.tmp && mv pkg.tmp package.json
+          npm publish --provenance --access public
+
   release-github:
     runs-on: ubuntu-latest
     needs: [release]

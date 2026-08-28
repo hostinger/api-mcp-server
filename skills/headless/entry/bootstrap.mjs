@@ -21,7 +21,7 @@ const fail = (event, extra = {}) => {
 const isWin = process.platform === 'win32';
 const bin = (name) => (isWin ? `${name}.cmd` : name);
 // Run the MCP via npx — no global install, always the latest published version.
-const MCP = [bin('npx'), '-y', 'hostinger-api-mcp@latest'];
+const MCP = [bin('npx'), '-y', '@hostinger/mcp@latest'];
 
 function capture(cmd, args) {
   const r = spawnSync(cmd, args, { encoding: 'utf8', shell: false });
