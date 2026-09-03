@@ -227,6 +227,72 @@ export default [
     "group": "reach"
   },
   {
+    "name": "reach_createADraftCampaignV1",
+    "title": "Create a draft campaign",
+    "annotations": {
+      "title": "Create a draft campaign",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Create a campaign in a profile.\n\nThe campaign is created as a draft, so nothing is sent and no contact is touched. It has no\naudience yet either - targeting and scheduling are not part of this request, the draft is\nfinished and sent from the Reach interface.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/campaigns",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "sender_name": {
+          "type": "string",
+          "description": "From name shown to the recipients."
+        },
+        "sender_email": {
+          "type": "string",
+          "description": "From address of the campaign. Its domain has to be verified on the profile before\nthe campaign can be sent."
+        },
+        "title": {
+          "type": "string",
+          "description": "Name the campaign is listed under. Not shown to the recipients."
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject line of the email."
+        },
+        "template_uuid": {
+          "type": "string",
+          "description": "Template to send, as returned by the template endpoints. Can be left out and\nattached later, but the campaign cannot be sent without one."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Extra campaign fields. Any key outside the listed ones is rejected.",
+          "properties": {
+            "preheader": {
+              "type": "string",
+              "description": "Preview text shown after the subject line in the inbox."
+            },
+            "source": {
+              "type": "string",
+              "description": "Where the campaign was created from."
+            }
+          }
+        }
+      },
+      "required": [
+        "profileUuid",
+        "sender_name",
+        "sender_email"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_getCampaignPerformanceV1",
     "title": "Get campaign performance",
     "annotations": {
@@ -2259,6 +2325,75 @@ export default [
       "type": "object",
       "properties": {},
       "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_listEmailTemplatesV1",
+    "title": "List email templates",
+    "annotations": {
+      "title": "List email templates",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Get a list of the email templates in a profile, most recently updated first.\n\nTemplates are the reusable email bodies a campaign is built from. The list is not paginated\nand only the metadata is returned - the template content itself is not exposed. Use the\n`uuid` of a template as the `template_uuid` when creating a campaign.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/templates",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_createAnEmailTemplateV1",
+    "title": "Create an email template",
+    "annotations": {
+      "title": "Create an email template",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Create an email template in a profile.\n\nThe template holds the HTML body a campaign reuses, so it can be created before any\ncampaign exists. Only the template metadata comes back - keep the returned `uuid` to\nreference it as the `template_uuid` of a campaign.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/templates",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "template_content": {
+          "type": "string",
+          "description": "The email body as HTML. It is sanitised before it is stored, so the saved template\ncan differ from what was sent - inline any styles the email clients need and keep\nthe markup self-contained."
+        },
+        "title": {
+          "type": "string",
+          "description": "Name the template is listed under. Not shown to the recipients."
+        }
+      },
+      "required": [
+        "profileUuid",
+        "template_content"
+      ]
     },
     "security": [
       {

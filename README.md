@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (372 total)
+- `hostinger-api-mcp` — unified server with every tool (375 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -78,7 +78,7 @@ This package installs the following MCP server commands:
 - `hostinger-horizons-mcp` — 2 tools for horizons
 - `hostinger-hosting-mcp` — 58 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
-- `hostinger-reach-mcp` — 49 tools for reach
+- `hostinger-reach-mcp` — 52 tools for reach
 - `hostinger-vps-mcp` — 63 tools for vps
 - `hostinger-wordpress-mcp` — 38 tools for wordpress
 
@@ -2661,6 +2661,17 @@ emails sent by automations or the double opt-in confirmations instead.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns`
 
+#### reach_createADraftCampaignV1
+
+Create a campaign in a profile.
+
+The campaign is created as a draft, so nothing is sent and no contact is touched. It has no
+audience yet either - targeting and scheduling are not part of this request, the draft is
+finished and sent from the Reach interface.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns`
+
 #### reach_getCampaignPerformanceV1
 
 Get the performance of a campaign: delivery, opens, clicks and unsubscribes, with the
@@ -3154,6 +3165,28 @@ This endpoint returns all profiles available to the client, including their basi
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles`
+
+#### reach_listEmailTemplatesV1
+
+Get a list of the email templates in a profile, most recently updated first.
+
+Templates are the reusable email bodies a campaign is built from. The list is not paginated
+and only the metadata is returned - the template content itself is not exposed. Use the
+`uuid` of a template as the `template_uuid` when creating a campaign.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/templates`
+
+#### reach_createAnEmailTemplateV1
+
+Create an email template in a profile.
+
+The template holds the HTML body a campaign reuses, so it can be created before any
+campaign exists. Only the template metadata comes back - keep the returned `uuid` to
+reference it as the `template_uuid` of a campaign.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/templates`
 
 ### `hostinger-vps-mcp`
 

@@ -5426,6 +5426,49 @@ opt-in confirmations.
   };
 
   /**
+   * Create a campaign in a profile.
+
+The campaign is created as a draft, so nothing is sent and no contact is touched. It has no
+audience yet either - targeting and scheduling are not part of this request, the draft is
+finished and sent from the Reach interface.
+   */
+  "reach_createADraftCampaignV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * From name shown to the recipients.
+       */
+      sender_name: string;
+      /**
+       * From address of the campaign. Its domain has to be verified on the profile before
+the campaign can be sent.
+       */
+      sender_email: string;
+      /**
+       * Name the campaign is listed under. Not shown to the recipients.
+       */
+      title?: string;
+      /**
+       * Subject line of the email.
+       */
+      subject?: string;
+      /**
+       * Template to send, as returned by the template endpoints. Can be left out and
+attached later, but the campaign cannot be sent without one.
+       */
+      template_uuid?: string;
+      /**
+       * Extra campaign fields. Any key outside the listed ones is rejected.
+       */
+      metadata?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Get the performance of a campaign: delivery, opens, clicks and unsubscribes, with the
 matching rates.
 
@@ -6498,6 +6541,50 @@ not kept.
   "reach_listProfilesV1": {
     params: {
 
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get a list of the email templates in a profile, most recently updated first.
+
+Templates are the reusable email bodies a campaign is built from. The list is not paginated
+and only the metadata is returned - the template content itself is not exposed. Use the
+`uuid` of a template as the `template_uuid` when creating a campaign.
+   */
+  "reach_listEmailTemplatesV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create an email template in a profile.
+
+The template holds the HTML body a campaign reuses, so it can be created before any
+campaign exists. Only the template metadata comes back - keep the returned `uuid` to
+reference it as the `template_uuid` of a campaign.
+   */
+  "reach_createAnEmailTemplateV1": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * The email body as HTML. It is sanitised before it is stored, so the saved template
+can differ from what was sent - inline any styles the email clients need and keep
+the markup self-contained.
+       */
+      template_content: string;
+      /**
+       * Name the template is listed under. Not shown to the recipients.
+       */
+      title?: string;
     };
     response: any; // Response structure will depend on the API
   };
