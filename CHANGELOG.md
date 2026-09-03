@@ -4,6 +4,21 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.53.1 — 2026-09-03
+
+### Tools
+
+- Added `reach_createADraftCampaignV1` — Create a draft campaign
+- Added `reach_listEmailTemplatesV1` — List email templates
+- Added `reach_createAnEmailTemplateV1` — Create an email template
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.53.0 — 2026-09-02
 
 ### Also in this release
