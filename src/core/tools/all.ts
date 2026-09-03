@@ -1059,7 +1059,6 @@ const tools: OpenApiTool[] = [
           "type": "string",
           "description": "Website type",
           "enum": [
-            "horizons",
             "node-static"
           ]
         },
@@ -1103,46 +1102,6 @@ const tools: OpenApiTool[] = [
             "language",
             "title",
             "admin"
-          ]
-        },
-        "clone": {
-          "type": "object",
-          "description": "Clone the new website from an existing website",
-          "properties": {
-            "website_uid": {
-              "type": "string",
-              "description": "website_uid parameter"
-            }
-          },
-          "required": [
-            "website_uid"
-          ]
-        },
-        "derive_domain": {
-          "type": "object",
-          "description": "Derive the domain from an existing vhost",
-          "properties": {
-            "from_vhost": {
-              "type": "object",
-              "description": "from_vhost parameter",
-              "properties": {
-                "username": {
-                  "type": "string",
-                  "description": "username parameter"
-                },
-                "vhost": {
-                  "type": "string",
-                  "description": "vhost parameter"
-                }
-              },
-              "required": [
-                "username",
-                "vhost"
-              ]
-            }
-          },
-          "required": [
-            "from_vhost"
           ]
         }
       },

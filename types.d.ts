@@ -587,14 +587,6 @@ that identifies the job. The new website becomes reachable once provisioning fin
        * WordPress installation options
        */
       wordpress?: object;
-      /**
-       * Clone the new website from an existing website
-       */
-      clone?: object;
-      /**
-       * Derive the domain from an existing vhost
-       */
-      derive_domain?: object;
     };
     response: any; // Response structure will depend on the API
   };
