@@ -33,11 +33,33 @@ jobs:
             echo "released=true" >> "$GITHUB_OUTPUT"
           fi
 
+      # The generator writes a CHANGELOG.md section per version. Lift this
+      # version's section out so the release body says what changed instead of
+      # only linking a compare view. Missing or empty sections are not fatal:
+      # the release still gets the auto-generated notes below.
+      - name: Extract release notes for this version
+        if: steps.version.outputs.released == 'true'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [ -f CHANGELOG.md ]; then
+            awk -v want="## v$VERSION " '
+              index($0, want) == 1 { found = 1; next }
+              found && /^## v/     { exit }
+              found                { print }
+            ' CHANGELOG.md > RELEASE_NOTES.md
+          fi
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "No CHANGELOG.md section for v$VERSION."
+            : > RELEASE_NOTES.md
+          fi
+          cat RELEASE_NOTES.md
+
       - name: Create release
         if: steps.version.outputs.released == 'true'
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ steps.version.outputs.version }}
+          bodyFile: RELEASE_NOTES.md
           generateReleaseNotes: true
 
   publish-npmjs:

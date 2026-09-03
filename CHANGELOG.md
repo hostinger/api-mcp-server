@@ -4,6 +4,12 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.55.0 — 2026-09-03
+
+### Also in this release
+
+- Release automation: `.github/workflows/build-release.yaml`
+
 ## v1.54.0 — 2026-09-03
 
 ### Tools
