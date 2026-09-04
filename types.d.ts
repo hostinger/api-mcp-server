@@ -7048,7 +7048,27 @@ Use this endpoint to add new security rules to firewalls.
   };
 
   /**
-   * Sync a firewall for a specified virtual machine.
+   * Sync a firewall's rules to every virtual machine it's assigned to.
+
+Firewall can lose sync with a virtual machine if the firewall has new rules added, removed or updated.
+
+Use this endpoint to apply updated firewall rules to all VPS instances assigned to the firewall.
+   */
+  "VPS_syncFirewallToAllAssignedVMsV1": {
+    params: {
+      /**
+       * Firewall ID
+       */
+      firewallId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Deprecated: use `POST /api/vps/v1/firewall/{firewallId}/sync` instead, which syncs the firewall
+to all virtual machines assigned to it.
+
+Sync a firewall for a specified virtual machine.
 
 Firewall can lose sync with virtual machine if the firewall has new rules added, removed or updated.
 

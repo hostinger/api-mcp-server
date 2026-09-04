@@ -4,6 +4,19 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.56.0 — 2026-09-04
+
+### Tools
+
+- Added `VPS_syncFirewallToAllAssignedVMsV1` — Sync firewall to all assigned VMs
+- Changed the description of `VPS_syncFirewallV1`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.55.1 — 2026-09-03
 
 ### Also in this release

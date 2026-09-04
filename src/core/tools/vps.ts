@@ -806,6 +806,36 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
+    "name": "VPS_syncFirewallToAllAssignedVMsV1",
+    "title": "Sync firewall to all assigned VMs",
+    "annotations": {
+      "title": "Sync firewall to all assigned VMs",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Sync a firewall's rules to every virtual machine it's assigned to.\n\nFirewall can lose sync with a virtual machine if the firewall has new rules added, removed or updated.\n\nUse this endpoint to apply updated firewall rules to all VPS instances assigned to the firewall.",
+    "method": "POST",
+    "path": "/api/vps/v1/firewall/{firewallId}/sync",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "firewallId": {
+          "type": "integer",
+          "description": "Firewall ID"
+        }
+      },
+      "required": [
+        "firewallId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "vps"
+  },
+  {
     "name": "VPS_syncFirewallV1",
     "title": "Sync firewall",
     "annotations": {
@@ -813,7 +843,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Sync a firewall for a specified virtual machine.\n\nFirewall can lose sync with virtual machine if the firewall has new rules added, removed or updated.\n\nUse this endpoint to apply updated firewall rules to VPS instances.",
+    "description": "Deprecated: use `POST /api/vps/v1/firewall/{firewallId}/sync` instead, which syncs the firewall\nto all virtual machines assigned to it.\n\nSync a firewall for a specified virtual machine.\n\nFirewall can lose sync with virtual machine if the firewall has new rules added, removed or updated.\n\nUse this endpoint to apply updated firewall rules to VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/firewall/{firewallId}/sync/{virtualMachineId}",
     "inputSchema": {

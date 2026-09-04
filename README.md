@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (375 total)
+- `hostinger-api-mcp` — unified server with every tool (376 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
@@ -79,7 +79,7 @@ This package installs the following MCP server commands:
 - `hostinger-hosting-mcp` — 58 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 52 tools for reach
-- `hostinger-vps-mcp` — 63 tools for vps
+- `hostinger-vps-mcp` — 64 tools for vps
 - `hostinger-wordpress-mcp` — 38 tools for wordpress
 
 Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
@@ -3433,7 +3433,21 @@ Use this endpoint to add new security rules to firewalls.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules`
 
+#### VPS_syncFirewallToAllAssignedVMsV1
+
+Sync a firewall's rules to every virtual machine it's assigned to.
+
+Firewall can lose sync with a virtual machine if the firewall has new rules added, removed or updated.
+
+Use this endpoint to apply updated firewall rules to all VPS instances assigned to the firewall.
+
+- **Method**: `POST`
+- **Path**: `/api/vps/v1/firewall/{firewallId}/sync`
+
 #### VPS_syncFirewallV1
+
+Deprecated: use `POST /api/vps/v1/firewall/{firewallId}/sync` instead, which syncs the firewall
+to all virtual machines assigned to it.
 
 Sync a firewall for a specified virtual machine.
 
