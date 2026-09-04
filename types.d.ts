@@ -3728,6 +3728,85 @@ the `Get Node.js Build Logs` endpoint.
   };
 
   /**
+   * Returns the build settings stored for the website: framework (`app_type`), Node.js version,
+root and output directory, build script, entry file and package manager. Stored settings
+drive Git auto-deployment builds. A build started through the API uses the values sent in
+that request and saves them here only when no settings exist yet.
+
+Returns 404 until the first build or the first settings update stores them. Use this after
+a failed build to check whether the framework or the entry file were detected wrong, then
+fix them with the `Update Node.js build settings` endpoint.
+   */
+  "hosting_getNode_jsBuildSettingsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Replaces the build settings stored for the website. Send the full set: `node_version` is
+required and every nullable field you omit is stored as null. Creates the settings when
+none exist yet.
+
+This does not start a build. Stored settings drive Git auto-deployment builds; a build
+started through the API uses the values sent in that request, so to rebuild with corrected
+settings call `Start Node.js build` with the same values. Typical fixes: a wrong `app_type`
+after auto-detection, or a missing `entry_file` for express, fastify, nest, nuxt and hono
+apps.
+   */
+  "hosting_updateNode_jsBuildSettingsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Node.js major version
+       */
+      node_version: number;
+      /**
+       * Node.js application framework. Set it explicitly when auto-detection picked the wrong one.
+       */
+      app_type?: string;
+      /**
+       * Application root directory (where package.json is located) relative to public_html.
+Omit it, or send ".", for public_html itself.
+       */
+      root_directory?: string;
+      /**
+       * Build output directory relative to the root directory
+       */
+      output_directory?: string;
+      /**
+       * The package.json script that builds the application
+       */
+      build_script?: string;
+      /**
+       * The main entry point file for the application
+(required for express, fastify, nest, nuxt and hono app types)
+       */
+      entry_file?: string;
+      /**
+       * Package manager used to install dependencies
+       */
+      package_manager?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Auto-detect Node.js build settings from a package.json inside an archive already on the server.
 
 Use this before calling `Start Node.js Build` to preview what settings will be used,
@@ -3815,6 +3894,57 @@ this list is deleted, and an empty array deletes every variable.
   };
 
   /**
+   * Returns an AI analysis of why a build failed and how to fix it, based on the build logs,
+the project file list and package.json. Only builds in the `failed` state can be analysed;
+any other state returns 422. When no analysis could be produced both `analysis` and
+`solution` are null, in which case read `Get NodeJS build logs` instead.
+
+Each call runs the analysis again, so call it once per failed build and keep the result.
+Limited to 5 calls per minute per API client (429 above that).
+   */
+  "hosting_analyseFailedNode_jsBuildV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Build UUID
+       */
+      uuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns one build by UUID: its state (`pending`, `running`, `completed`, `failed`), the
+options it ran with and timestamps. Poll this while a build is pending or running. When it
+is failed, read `Get NodeJS build logs` and `Analyse failed Node.js build` for the cause.
+Returns 404 when the UUID does not belong to a build of this website.
+   */
+  "hosting_getNode_jsBuildDetailsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Build UUID
+       */
+      uuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve logs from a specific Node.js build process.
 
 To stream live output while a build is running, poll this endpoint repeatedly
@@ -3840,6 +3970,74 @@ Log content may contain ANSI escape sequences (color codes).
        * Line from which to start retrieving logs
        */
       from_line?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns the Node.js application's runtime console log entries, oldest first, each with
+timestamp, level and message. On the first call send `period` (`1h`, `1d`, `1w` or `1m`)
+and optionally `levels` and `limit` (1-5000, default 1000); when more entries match than
+`limit`, the newest are kept.
+
+To poll for new entries send `total_lines + 1` from the previous response as `from_line`
+and omit `period`; `period` and `from_line` cannot be combined. Lines that are not JSON
+with a timestamp, level and message are skipped, so `logs` may hold fewer than `limit`
+entries while `total_lines` counts every raw line. Entries with a timestamp before
+`last_deployed_at` belong to the previous deployment. Returns an empty `logs` list when
+the application has not written a log file yet.
+   */
+  "hosting_getNode_jsRuntimeLogsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Time window for the first fetch. Required when `from_line` is not sent.
+       */
+      period?: string;
+      /**
+       * 1-based line of the log file to start from. For polling send `total_lines + 1` from the
+previous response. Cannot be combined with `period`.
+       */
+      from_line?: number;
+      /**
+       * Maximum number of log entries to return. When more entries match, the newest are kept.
+       */
+      limit?: number;
+      /**
+       * Return only entries with these log levels, sent as a comma-separated list, e.g. ERROR,WARN.
+Matching runs on the raw log line, so entries written with numeric levels (for example by
+pino) are excluded while this filter is set.
+       */
+      levels?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Empties the Node.js application's runtime log file. This cannot be undone, so confirm with
+the user before calling it. Returns success even when no log file exists yet.
+
+Use it before reproducing a problem so the next `Get Node.js runtime logs` call returns
+only fresh entries; start that call with `period` again instead of reusing a `from_line`
+from before the clear.
+   */
+  "hosting_clearNode_jsRuntimeLogsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
     };
     response: any; // Response structure will depend on the API
   };

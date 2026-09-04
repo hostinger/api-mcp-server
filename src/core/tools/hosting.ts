@@ -1587,6 +1587,138 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_getNode_jsBuildSettingsV1",
+    "title": "Get Node.js build settings",
+    "annotations": {
+      "title": "Get Node.js build settings",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns the build settings stored for the website: framework (`app_type`), Node.js version,\nroot and output directory, build script, entry file and package manager. Stored settings\ndrive Git auto-deployment builds. A build started through the API uses the values sent in\nthat request and saves them here only when no settings exist yet.\n\nReturns 404 until the first build or the first settings update stores them. Use this after\na failed build to check whether the framework or the entry file were detected wrong, then\nfix them with the `Update Node.js build settings` endpoint.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_updateNode_jsBuildSettingsV1",
+    "title": "Update Node.js build settings",
+    "annotations": {
+      "title": "Update Node.js build settings",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Replaces the build settings stored for the website. Send the full set: `node_version` is\nrequired and every nullable field you omit is stored as null. Creates the settings when\nnone exist yet.\n\nThis does not start a build. Stored settings drive Git auto-deployment builds; a build\nstarted through the API uses the values sent in that request, so to rebuild with corrected\nsettings call `Start Node.js build` with the same values. Typical fixes: a wrong `app_type`\nafter auto-detection, or a missing `entry_file` for express, fastify, nest, nuxt and hono\napps.",
+    "method": "PUT",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "node_version": {
+          "type": "integer",
+          "description": "Node.js major version",
+          "enum": [
+            18,
+            20,
+            22,
+            24
+          ]
+        },
+        "app_type": {
+          "type": "string",
+          "description": "Node.js application framework. Set it explicitly when auto-detection picked the wrong one.",
+          "enum": [
+            "create-react-app",
+            "gatsby",
+            "vite",
+            "angular",
+            "react",
+            "vue",
+            "parcel",
+            "next",
+            "nuxt",
+            "nest",
+            "express",
+            "fastify",
+            "astro",
+            "svelte",
+            "svelte-kit",
+            "hono",
+            "react-router",
+            "nitro",
+            "other"
+          ]
+        },
+        "root_directory": {
+          "type": "string",
+          "description": "Application root directory (where package.json is located) relative to public_html.\nOmit it, or send \".\", for public_html itself."
+        },
+        "output_directory": {
+          "type": "string",
+          "description": "Build output directory relative to the root directory"
+        },
+        "build_script": {
+          "type": "string",
+          "description": "The package.json script that builds the application"
+        },
+        "entry_file": {
+          "type": "string",
+          "description": "The main entry point file for the application\n(required for express, fastify, nest, nuxt and hono app types)"
+        },
+        "package_manager": {
+          "type": "string",
+          "description": "Package manager used to install dependencies",
+          "enum": [
+            "npm",
+            "yarn",
+            "pnpm"
+          ]
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "node_version"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_getNode_jsBuildSettingsFromArchiveV1",
     "title": "Get Node.js build settings from archive",
     "annotations": {
@@ -1721,6 +1853,86 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_analyseFailedNode_jsBuildV1",
+    "title": "Analyse failed Node.js build",
+    "annotations": {
+      "title": "Analyse failed Node.js build",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns an AI analysis of why a build failed and how to fix it, based on the build logs,\nthe project file list and package.json. Only builds in the `failed` state can be analysed;\nany other state returns 422. When no analysis could be produced both `analysis` and\n`solution` are null, in which case read `Get NodeJS build logs` instead.\n\nEach call runs the analysis again, so call it once per failed build and keep the result.\nLimited to 5 calls per minute per API client (429 above that).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/analysis",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "Build UUID"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "uuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_getNode_jsBuildDetailsV1",
+    "title": "Get Node.js build details",
+    "annotations": {
+      "title": "Get Node.js build details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns one build by UUID: its state (`pending`, `running`, `completed`, `failed`), the\noptions it ran with and timestamps. Poll this while a build is pending or running. When it\nis failed, read `Get NodeJS build logs` and `Analyse failed Node.js build` for the cause.\nReturns 404 when the UUID does not belong to a build of this website.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "uuid": {
+          "type": "string",
+          "description": "Build UUID"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "uuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_getNodeJSBuildLogsV1",
     "title": "Get NodeJS build logs",
     "annotations": {
@@ -1755,6 +1967,111 @@ const tools: OpenApiTool[] = [
         "username",
         "domain",
         "uuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_getNode_jsRuntimeLogsV1",
+    "title": "Get Node.js runtime logs",
+    "annotations": {
+      "title": "Get Node.js runtime logs",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns the Node.js application's runtime console log entries, oldest first, each with\ntimestamp, level and message. On the first call send `period` (`1h`, `1d`, `1w` or `1m`)\nand optionally `levels` and `limit` (1-5000, default 1000); when more entries match than\n`limit`, the newest are kept.\n\nTo poll for new entries send `total_lines + 1` from the previous response as `from_line`\nand omit `period`; `period` and `from_line` cannot be combined. Lines that are not JSON\nwith a timestamp, level and message are skipped, so `logs` may hold fewer than `limit`\nentries while `total_lines` counts every raw line. Entries with a timestamp before\n`last_deployed_at` belong to the previous deployment. Returns an empty `logs` list when\nthe application has not written a log file yet.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/runtime-logs",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "period": {
+          "type": "string",
+          "description": "Time window for the first fetch. Required when `from_line` is not sent.",
+          "enum": [
+            "1h",
+            "1d",
+            "1w",
+            "1m"
+          ]
+        },
+        "from_line": {
+          "type": "integer",
+          "description": "1-based line of the log file to start from. For polling send `total_lines + 1` from the\nprevious response. Cannot be combined with `period`."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of log entries to return. When more entries match, the newest are kept."
+        },
+        "levels": {
+          "type": "array",
+          "description": "Return only entries with these log levels, sent as a comma-separated list, e.g. ERROR,WARN.\nMatching runs on the raw log line, so entries written with numeric levels (for example by\npino) are excluded while this filter is set.",
+          "items": {
+            "type": "string",
+            "description": "levels parameter",
+            "enum": [
+              "LOG",
+              "ERROR",
+              "WARN",
+              "INFO",
+              "DEBUG",
+              "TRACE"
+            ]
+          }
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_clearNode_jsRuntimeLogsV1",
+    "title": "Clear Node.js runtime logs",
+    "annotations": {
+      "title": "Clear Node.js runtime logs",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Empties the Node.js application's runtime log file. This cannot be undone, so confirm with\nthe user before calling it. Returns success even when no log file exists yet.\n\nUse it before reproducing a problem so the next `Get Node.js runtime logs` call returns\nonly fresh entries; start that call with `period` again instead of reusing a `from_line`\nfrom before the clear.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/runtime-logs",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
       ]
     },
     "security": [

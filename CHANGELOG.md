@@ -4,6 +4,24 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.57.0 — 2026-09-04
+
+### Tools
+
+- Added `hosting_getNode_jsBuildSettingsV1` — Get Node.js build settings
+- Added `hosting_updateNode_jsBuildSettingsV1` — Update Node.js build settings
+- Added `hosting_analyseFailedNode_jsBuildV1` — Analyse failed Node.js build
+- Added `hosting_getNode_jsBuildDetailsV1` — Get Node.js build details
+- Added `hosting_getNode_jsRuntimeLogsV1` — Get Node.js runtime logs
+- Added `hosting_clearNode_jsRuntimeLogsV1` — Clear Node.js runtime logs
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.56.0 — 2026-09-04
 
 ### Tools

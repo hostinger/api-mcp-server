@@ -69,14 +69,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (376 total)
+- `hostinger-api-mcp` — unified server with every tool (382 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
 - `hostinger-ecommerce-mcp` — 29 tools for ecommerce
 - `hostinger-horizons-mcp` — 2 tools for horizons
-- `hostinger-hosting-mcp` — 58 tools for hosting
+- `hostinger-hosting-mcp` — 64 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 52 tools for reach
 - `hostinger-vps-mcp` — 64 tools for vps
@@ -1969,6 +1969,35 @@ the `Get Node.js Build Logs` endpoint.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds`
 
+#### hosting_getNode_jsBuildSettingsV1
+
+Returns the build settings stored for the website: framework (`app_type`), Node.js version,
+root and output directory, build script, entry file and package manager. Stored settings
+drive Git auto-deployment builds. A build started through the API uses the values sent in
+that request and saves them here only when no settings exist yet.
+
+Returns 404 until the first build or the first settings update stores them. Use this after
+a failed build to check whether the framework or the entry file were detected wrong, then
+fix them with the `Update Node.js build settings` endpoint.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings`
+
+#### hosting_updateNode_jsBuildSettingsV1
+
+Replaces the build settings stored for the website. Send the full set: `node_version` is
+required and every nullable field you omit is stored as null. Creates the settings when
+none exist yet.
+
+This does not start a build. Stored settings drive Git auto-deployment builds; a build
+started through the API uses the values sent in that request, so to rebuild with corrected
+settings call `Start Node.js build` with the same values. Typical fixes: a wrong `app_type`
+after auto-detection, or a missing `entry_file` for express, fastify, nest, nuxt and hono
+apps.
+
+- **Method**: `PUT`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings`
+
 #### hosting_getNode_jsBuildSettingsFromArchiveV1
 
 Auto-detect Node.js build settings from a package.json inside an archive already on the server.
@@ -2017,6 +2046,29 @@ values taken from the project `.env` file or the user prompt.
 - **Method**: `PUT`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/env`
 
+#### hosting_analyseFailedNode_jsBuildV1
+
+Returns an AI analysis of why a build failed and how to fix it, based on the build logs,
+the project file list and package.json. Only builds in the `failed` state can be analysed;
+any other state returns 422. When no analysis could be produced both `analysis` and
+`solution` are null, in which case read `Get NodeJS build logs` instead.
+
+Each call runs the analysis again, so call it once per failed build and keep the result.
+Limited to 5 calls per minute per API client (429 above that).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/analysis`
+
+#### hosting_getNode_jsBuildDetailsV1
+
+Returns one build by UUID: its state (`pending`, `running`, `completed`, `failed`), the
+options it ran with and timestamps. Poll this while a build is pending or running. When it
+is failed, read `Get NodeJS build logs` and `Analyse failed Node.js build` for the cause.
+Returns 404 when the UUID does not belong to a build of this website.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}`
+
 #### hosting_getNodeJSBuildLogsV1
 
 Retrieve logs from a specific Node.js build process.
@@ -2028,6 +2080,35 @@ Log content may contain ANSI escape sequences (color codes).
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/logs`
+
+#### hosting_getNode_jsRuntimeLogsV1
+
+Returns the Node.js application's runtime console log entries, oldest first, each with
+timestamp, level and message. On the first call send `period` (`1h`, `1d`, `1w` or `1m`)
+and optionally `levels` and `limit` (1-5000, default 1000); when more entries match than
+`limit`, the newest are kept.
+
+To poll for new entries send `total_lines + 1` from the previous response as `from_line`
+and omit `period`; `period` and `from_line` cannot be combined. Lines that are not JSON
+with a timestamp, level and message are skipped, so `logs` may hold fewer than `limit`
+entries while `total_lines` counts every raw line. Entries with a timestamp before
+`last_deployed_at` belong to the previous deployment. Returns an empty `logs` list when
+the application has not written a log file yet.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/runtime-logs`
+
+#### hosting_clearNode_jsRuntimeLogsV1
+
+Empties the Node.js application's runtime log file. This cannot be undone, so confirm with
+the user before calling it. Returns success even when no log file exists yet.
+
+Use it before reproducing a problem so the next `Get Node.js runtime logs` call returns
+only fresh entries; start that call with `period` again instead of reusing a `from_line`
+from before the clear.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/runtime-logs`
 
 #### hosting_restartNode_jsApplicationV1
 
