@@ -4,6 +4,24 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.57.3 — 2026-09-09
+
+### Tools
+
+- Added `horizons_cloneWebsiteV1` — Clone website
+- Added `horizons_getWebsiteListV1` — Get website list
+- Added `horizons_editWebsiteV1` — Edit website
+- Added `horizons_publishWebsiteV1` — Publish website
+- Changed the description of `horizons_createWebsiteV1`
+- Changed the description of `horizons_getWebsiteV1`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.57.2 — 2026-09-07
 
 ### Also in this release

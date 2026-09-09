@@ -69,13 +69,13 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (382 total)
+- `hostinger-api-mcp` — unified server with every tool (386 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 40 tools for domains
 - `hostinger-ecommerce-mcp` — 29 tools for ecommerce
-- `hostinger-horizons-mcp` — 2 tools for horizons
+- `hostinger-horizons-mcp` — 6 tools for horizons
 - `hostinger-hosting-mcp` — 64 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 52 tools for reach
@@ -1528,6 +1528,31 @@ store currency. Returns the created variant.
 
 ### `hostinger-horizons-mcp`
 
+#### horizons_cloneWebsiteV1
+
+Clone a Hostinger Horizons website into a new website.\n
+Use this tool when the user wants a copy of an existing website, for example to try out
+changes without touching the original.\n
+This tool returns the ID and URL of the newly created copy.
+The original website is left untouched.\n
+To edit the copy, use the `Edit website` tool with the returned website ID, or the user can
+open the provided website URL in Hostinger Horizons interface.
+
+- **Method**: `POST`
+- **Path**: `/api/horizons/v1/websites/{websiteId}/clone`
+
+#### horizons_getWebsiteListV1
+
+List the Hostinger Horizons websites the user owns.\n
+Use this tool when the user asks which websites they have, or when you need a website ID
+before editing, publishing or cloning a website.\n
+Each website is returned with its ID, status, domain and the URL to open it
+in Hostinger Horizons interface.\n
+The complete list of websites is returned in a single response - it is not paginated.
+
+- **Method**: `GET`
+- **Path**: `/api/horizons/v1/websites`
+
 #### horizons_createWebsiteV1
 
 Create new Hostinger Horizons website from the given message.\n
@@ -1538,8 +1563,8 @@ The generation happens asynchronously.\n
 After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
 that Hostinger Horizons is now creating their website and it will be ready in a few minutes
 and you should provide the website URL to the user immediately
-Do not write code.\n\nTo edit afterwards, users must go to Hostinger Horizons interface
-in the provided website URL.
+Do not write code.\n\nTo edit afterwards, use the `Edit website` tool with the returned
+website ID, or the user can go to Hostinger Horizons interface in the provided website URL.
 If the tool call fails with an error, you should provide a clear explanation of the error
 and do not generate code yourself in the chat.
 \n
@@ -1569,11 +1594,41 @@ MAPS:\n
 - **Method**: `POST`
 - **Path**: `/api/horizons/v1/websites`
 
+#### horizons_editWebsiteV1
+
+Edit an existing Hostinger Horizons website with a follow-up message.\n
+Use this tool when the user wants to change, extend or fix a website that already exists.\n
+This tool queues the requested changes and returns the website URL and ID.
+The changes are applied asynchronously.\n
+After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
+that Hostinger Horizons is now applying the requested changes and they will be ready
+in a few minutes, and you should provide the website URL to the user immediately.
+Do not write code.\n
+If the tool call fails with an error, you should provide a clear explanation of the error
+and do not generate code yourself in the chat.
+
+- **Method**: `POST`
+- **Path**: `/api/horizons/v1/websites/{websiteId}/messages`
+
+#### horizons_publishWebsiteV1
+
+Publish a Hostinger Horizons website so its latest changes go live.\n
+Use this tool when the user asks to publish, deploy or make their website live.\n
+This tool starts the publish process and returns the URL the website will be live on.
+Publishing happens asynchronously and takes a few minutes.\n
+After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
+that the website is being published and you should provide the published URL to the user immediately.
+
+- **Method**: `POST`
+- **Path**: `/api/horizons/v1/websites/{websiteId}/publish`
+
 #### horizons_getWebsiteV1
 
-Get a link for the user to edit their website in Hostinger Horizons interface.\n
-Use this tool when user wants to modify, edit or add new features to an existing website.\n
-Websites can only be edited in Hostinger Horizons interface in the provided website URL.
+Get the link for the user to open their website in Hostinger Horizons interface.\n
+Use this tool when the user wants the link to an existing website, or when you need its
+website URL before or after editing it.\n
+Websites can be edited with the `Edit website` tool, or by the user in Hostinger Horizons
+interface in the provided website URL.
 
 - **Method**: `GET`
 - **Path**: `/api/horizons/v1/websites/{websiteId}`

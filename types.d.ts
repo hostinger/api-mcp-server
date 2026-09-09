@@ -2882,6 +2882,40 @@ store currency. Returns the created variant.
   };
 
   /**
+   * Clone a Hostinger Horizons website into a new website.\n
+Use this tool when the user wants a copy of an existing website, for example to try out
+changes without touching the original.\n
+This tool returns the ID and URL of the newly created copy.
+The original website is left untouched.\n
+To edit the copy, use the `Edit website` tool with the returned website ID, or the user can
+open the provided website URL in Hostinger Horizons interface.
+   */
+  "horizons_cloneWebsiteV1": {
+    params: {
+      /**
+       * The website ID
+       */
+      websiteId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List the Hostinger Horizons websites the user owns.\n
+Use this tool when the user asks which websites they have, or when you need a website ID
+before editing, publishing or cloning a website.\n
+Each website is returned with its ID, status, domain and the URL to open it
+in Hostinger Horizons interface.\n
+The complete list of websites is returned in a single response - it is not paginated.
+   */
+  "horizons_getWebsiteListV1": {
+    params: {
+
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Create new Hostinger Horizons website from the given message.\n
 Use this tool when user asks you to create a website, landing page, blog
 or any other type of application.\n
@@ -2890,8 +2924,8 @@ The generation happens asynchronously.\n
 After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
 that Hostinger Horizons is now creating their website and it will be ready in a few minutes
 and you should provide the website URL to the user immediately
-Do not write code.\n\nTo edit afterwards, users must go to Hostinger Horizons interface
-in the provided website URL.
+Do not write code.\n\nTo edit afterwards, use the `Edit website` tool with the returned
+website ID, or the user can go to Hostinger Horizons interface in the provided website URL.
 If the tool call fails with an error, you should provide a clear explanation of the error
 and do not generate code yourself in the chat.
 \n
@@ -2929,9 +2963,55 @@ MAPS:\n
   };
 
   /**
-   * Get a link for the user to edit their website in Hostinger Horizons interface.\n
-Use this tool when user wants to modify, edit or add new features to an existing website.\n
-Websites can only be edited in Hostinger Horizons interface in the provided website URL.
+   * Edit an existing Hostinger Horizons website with a follow-up message.\n
+Use this tool when the user wants to change, extend or fix a website that already exists.\n
+This tool queues the requested changes and returns the website URL and ID.
+The changes are applied asynchronously.\n
+After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
+that Hostinger Horizons is now applying the requested changes and they will be ready
+in a few minutes, and you should provide the website URL to the user immediately.
+Do not write code.\n
+If the tool call fails with an error, you should provide a clear explanation of the error
+and do not generate code yourself in the chat.
+   */
+  "horizons_editWebsiteV1": {
+    params: {
+      /**
+       * The website ID
+       */
+      websiteId: string;
+      /**
+       * message parameter
+       */
+      message: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Publish a Hostinger Horizons website so its latest changes go live.\n
+Use this tool when the user asks to publish, deploy or make their website live.\n
+This tool starts the publish process and returns the URL the website will be live on.
+Publishing happens asynchronously and takes a few minutes.\n
+After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
+that the website is being published and you should provide the published URL to the user immediately.
+   */
+  "horizons_publishWebsiteV1": {
+    params: {
+      /**
+       * The website ID
+       */
+      websiteId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get the link for the user to open their website in Hostinger Horizons interface.\n
+Use this tool when the user wants the link to an existing website, or when you need its
+website URL before or after editing it.\n
+Websites can be edited with the `Edit website` tool, or by the user in Hostinger Horizons
+interface in the provided website URL.
    */
   "horizons_getWebsiteV1": {
     params: {
