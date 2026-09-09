@@ -1835,7 +1835,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create a purchase order for any Hostinger product.\n\nThis unified endpoint places an order for one or more catalog items and\nworks across all Hostinger products, leveraging the existing billing\ninfrastructure. Use the [catalog endpoint](#tag/billing-catalog) to look\nup the `item_id` values available for purchase.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nThis endpoint only places the order. Product-specific provisioning\n(e.g. VPS setup or domain registration) is not performed here — once the\norder completes, use the relevant product endpoints or\n[hPanel](https://hpanel.hostinger.com/) to finalize setup.\n\nUse this endpoint to purchase any product available in the catalog.",
+    "description": "Create a purchase order for any Hostinger product.\n\nThis unified endpoint places an order for one or more catalog items and\nworks across all Hostinger products, leveraging the existing billing\ninfrastructure. Use the [catalog endpoint](#tag/billing-catalog) to look\nup the `item_id` values available for purchase.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nIf the response is `202 Accepted`, the payment is still being processed and the order will\ncomplete asynchronously once the payment is confirmed.\n\nThis endpoint only places the order. Product-specific provisioning\n(e.g. VPS setup or domain registration) is not performed here — once the\norder completes, use the relevant product endpoints or\n[hPanel](https://hpanel.hostinger.com/) to finalize setup.\n\nUse this endpoint to purchase any product available in the catalog.",
     "method": "POST",
     "path": "/api/billing/v1/orders",
     "inputSchema": {
@@ -2063,7 +2063,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create a renewal order for an existing Hostinger subscription.\n\nThis endpoint places a renewal order for a single subscription, leveraging\nthe existing billing infrastructure. Use the\n[subscriptions endpoint](#tag/billing-subscriptions) to look up the\n`subscriptionId` values available for renewal.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nUse this endpoint to renew any subscription available in your account.",
+    "description": "Create a renewal order for an existing Hostinger subscription.\n\nThis endpoint places a renewal order for a single subscription, leveraging\nthe existing billing infrastructure. Use the\n[subscriptions endpoint](#tag/billing-subscriptions) to look up the\n`subscriptionId` values available for renewal.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nIf the response is `202 Accepted`, the payment is still being processed and the renewal will\ncomplete asynchronously once the payment is confirmed.\n\nUse this endpoint to renew any subscription available in your account.",
     "method": "POST",
     "path": "/api/billing/v1/subscriptions/{subscriptionId}/renew",
     "inputSchema": {
@@ -3311,7 +3311,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Purchase and register a new domain name.\n\nIf registration fails, login to [hPanel](https://hpanel.hostinger.com/) and check domain registration status.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nSome TLDs require `additional_details` to be provided and these will be validated before completing purchase.\n\nUse this endpoint to register new domains for users.",
+    "description": "Purchase and register a new domain name.\n\nIf registration fails, login to [hPanel](https://hpanel.hostinger.com/) and check domain registration status.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nIf the response is `202 Accepted`, the payment is still being processed and the domain was\n**not** registered. Once the order completes, register the domain from\n[hPanel](https://hpanel.hostinger.com/).\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nSome TLDs require `additional_details` to be provided and these will be validated before completing purchase.\n\nUse this endpoint to register new domains for users.",
     "method": "POST",
     "path": "/api/domains/v1/portfolio",
     "inputSchema": {
@@ -13603,7 +13603,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Purchase and setup a new virtual machine.\n\nIf virtual machine setup fails for any reason, login to\n[hPanel](https://hpanel.hostinger.com/) and complete the setup manually.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nUse this endpoint to create new VPS instances.",
+    "description": "Purchase and setup a new virtual machine.\n\nIf virtual machine setup fails for any reason, login to\n[hPanel](https://hpanel.hostinger.com/) and complete the setup manually.\n\nIf no payment method is provided, your default payment method will be used automatically.\n\nIf the response is `202 Accepted`, the payment is still being processed and the virtual machine\nwas not set up. Login to\n[hPanel](https://hpanel.hostinger.com/) and complete the setup manually.\n\nUse this endpoint to create new VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/virtual-machines",
     "inputSchema": {

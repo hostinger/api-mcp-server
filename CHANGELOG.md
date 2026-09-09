@@ -4,6 +4,21 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.58.0 — 2026-09-09
+
+### Tools
+
+- Changed the description of `billing_createPurchaseOrderV1`
+- Changed the description of `billing_renewSubscriptionV1`
+- Changed the description of `domains_purchaseNewDomainV1`
+- Changed the description of `VPS_purchaseNewVirtualMachineV1`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.57.4 — 2026-09-09
 
 ### Tools

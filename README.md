@@ -639,6 +639,9 @@ up the `item_id` values available for purchase.
 
 If no payment method is provided, your default payment method will be used automatically.
 
+If the response is `202 Accepted`, the payment is still being processed and the order will
+complete asynchronously once the payment is confirmed.
+
 This endpoint only places the order. Product-specific provisioning
 (e.g. VPS setup or domain registration) is not performed here — once the
 order completes, use the relevant product endpoints or
@@ -716,6 +719,9 @@ the existing billing infrastructure. Use the
 `subscriptionId` values available for renewal.
 
 If no payment method is provided, your default payment method will be used automatically.
+
+If the response is `202 Accepted`, the payment is still being processed and the renewal will
+complete asynchronously once the payment is confirmed.
 
 Use this endpoint to renew any subscription available in your account.
 
@@ -1105,6 +1111,10 @@ Purchase and register a new domain name.
 If registration fails, login to [hPanel](https://hpanel.hostinger.com/) and check domain registration status.
 
 If no payment method is provided, your default payment method will be used automatically.
+
+If the response is `202 Accepted`, the payment is still being processed and the domain was
+**not** registered. Once the order completes, register the domain from
+[hPanel](https://hpanel.hostinger.com/).
 
 If no WHOIS information is provided, default contact information for that TLD will be used.
 Before making request, ensure WHOIS information for desired TLD exists in your account.
@@ -3805,6 +3815,10 @@ If virtual machine setup fails for any reason, login to
 [hPanel](https://hpanel.hostinger.com/) and complete the setup manually.
 
 If no payment method is provided, your default payment method will be used automatically.
+
+If the response is `202 Accepted`, the payment is still being processed and the virtual machine
+was not set up. Login to
+[hPanel](https://hpanel.hostinger.com/) and complete the setup manually.
 
 Use this endpoint to create new VPS instances.
 
