@@ -2578,8 +2578,10 @@ embed each product's variants with prices and inventory, and include=media to em
 
   /**
    * Fetch a raster image (JPEG, PNG, GIF or WebP, max 15MB) from a URL and attach it to a product in a
-single call. The image is virus-scanned and validated by content, then stored on the CDN. Set
-is_thumbnail to make it the product's primary image.
+single call. Image downloads require HTTPS on port 443 without embedded credentials. At most one redirect
+is allowed, and its destination must meet the same requirements. Private or reserved network
+destinations, unsupported URLs and longer redirect chains are rejected. The image is virus-scanned
+and validated by content, then stored on the CDN. Set is_thumbnail to make it the product's primary image.
    */
   "ecommerce_uploadAndAttachAProductImageV1": {
     params: {
@@ -2592,9 +2594,12 @@ is_thumbnail to make it the product's primary image.
        */
       product_id: string;
       /**
-       * Publicly reachable URL of the raster image (JPEG, PNG, GIF or WebP), maximum 15MB. The image is
-fetched, virus-scanned and validated by content, then stored on the CDN. SVG is not accepted.
-Provide either this or object_name.
+       * Publicly reachable URL of a raster image (JPEG, PNG, GIF or WebP), maximum 15MB. Fetching
+the image requires HTTPS on port 443 without embedded credentials. At most one redirect
+is allowed; its destination must meet the same URL requirements. Private or reserved
+network destinations, unsupported URLs and longer redirect chains are rejected. The image
+is fetched, virus-scanned and validated by content, then stored on the CDN. SVG is not
+accepted. Provide either this or object_name.
        */
       image_url?: string;
       /**

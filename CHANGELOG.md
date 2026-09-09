@@ -4,6 +4,18 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.57.4 — 2026-09-09
+
+### Tools
+
+- Changed the description and input schema of `ecommerce_uploadAndAttachAProductImageV1`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.57.3 — 2026-09-09
 
 ### Tools

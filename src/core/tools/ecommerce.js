@@ -808,7 +808,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Fetch a raster image (JPEG, PNG, GIF or WebP, max 15MB) from a URL and attach it to a product in a\nsingle call. The image is virus-scanned and validated by content, then stored on the CDN. Set\nis_thumbnail to make it the product's primary image.",
+    "description": "Fetch a raster image (JPEG, PNG, GIF or WebP, max 15MB) from a URL and attach it to a product in a\nsingle call. Image downloads require HTTPS on port 443 without embedded credentials. At most one redirect\nis allowed, and its destination must meet the same requirements. Private or reserved network\ndestinations, unsupported URLs and longer redirect chains are rejected. The image is virus-scanned\nand validated by content, then stored on the CDN. Set is_thumbnail to make it the product's primary image.",
     "method": "POST",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images",
     "inputSchema": {
@@ -824,7 +824,7 @@ export default [
         },
         "image_url": {
           "type": "string",
-          "description": "Publicly reachable URL of the raster image (JPEG, PNG, GIF or WebP), maximum 15MB. The image is\nfetched, virus-scanned and validated by content, then stored on the CDN. SVG is not accepted.\nProvide either this or object_name."
+          "description": "Publicly reachable URL of a raster image (JPEG, PNG, GIF or WebP), maximum 15MB. Fetching\nthe image requires HTTPS on port 443 without embedded credentials. At most one redirect\nis allowed; its destination must meet the same URL requirements. Private or reserved\nnetwork destinations, unsupported URLs and longer redirect chains are rejected. The image\nis fetched, virus-scanned and validated by content, then stored on the CDN. SVG is not\naccepted. Provide either this or object_name."
         },
         "object_name": {
           "type": "string",
