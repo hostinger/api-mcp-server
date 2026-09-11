@@ -3470,6 +3470,63 @@ export default [
     "group": "domains"
   },
   {
+    "name": "domains_completeDomainSetupV1",
+    "title": "Complete domain setup",
+    "annotations": {
+      "title": "Complete domain setup",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Register a domain you have already paid for but which has not been set up yet.\n\nUse this endpoint when an order completed without registering the domain, for example when\n`Purchase new domain` returned `202 Accepted` and the domain was added to your account without\nbeing registered, or when an earlier setup attempt failed. No new order is placed and no payment\nis taken: the subscription you already own is used, for the period you already paid for.\n\nA domain is left awaiting setup when the details needed to register it were missing or invalid\nas the order completed. Domains ordered elsewhere can be awaiting setup for the same reason.\nComplete the missing information, then call this endpoint. If the order itself has not completed\nyet, the domain is not on your account, wait until it appears in `Get domain list`.\n\nIf `domain_contacts` is omitted, the default WHOIS profile of that TLD is used for all four\nroles. The profile must exist and be complete for the TLD, an incomplete profile is the most\ncommon reason a domain is left awaiting setup. Create one with `Create WHOIS profile`.\n\nSome TLDs require `additional_details`. These are validated before setup, so a missing or\ninvalid value is rejected without any registration being attempted.\n\nThe domain is set up with the default nameservers and without privacy protection. Use\n`Update domain nameservers` and `Enable privacy protection` afterwards to change either.\n\nA successful response means the setup request was accepted, not that the domain is already\nregistered. Poll `Get domain list` for the outcome, the domain appears in `Get domain details`\nonly once it is registered.\n\nUse this endpoint to finish registering a domain that is awaiting setup on your account.",
+    "method": "POST",
+    "path": "/api/domains/v1/portfolio/{domain}/setup",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "domain_contacts": {
+          "type": "object",
+          "description": "Domain contact information",
+          "properties": {
+            "owner_id": {
+              "type": "integer",
+              "description": "Owner contact WHOIS record ID"
+            },
+            "admin_id": {
+              "type": "integer",
+              "description": "Administrative contact WHOIS record ID"
+            },
+            "billing_id": {
+              "type": "integer",
+              "description": "Billing contact WHOIS record ID"
+            },
+            "tech_id": {
+              "type": "integer",
+              "description": "Technical contact WHOIS record ID"
+            }
+          }
+        },
+        "additional_details": {
+          "type": "object",
+          "description": "Additional registration data, possible values depends on TLD",
+          "properties": {}
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_updateDomainNameserversV1",
     "title": "Update domain nameservers",
     "annotations": {

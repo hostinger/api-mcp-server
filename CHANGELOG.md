@@ -4,6 +4,18 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.59.0 — 2026-09-11
+
+### Tools
+
+- Added `domains_completeDomainSetupV1` — Complete domain setup
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.58.1 — 2026-09-11
 
 ### Also in this release
