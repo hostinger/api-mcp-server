@@ -69,14 +69,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (387 total)
+- `hostinger-api-mcp` — unified server with every tool (389 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 41 tools for domains
 - `hostinger-ecommerce-mcp` — 29 tools for ecommerce
 - `hostinger-horizons-mcp` — 6 tools for horizons
-- `hostinger-hosting-mcp` — 64 tools for hosting
+- `hostinger-hosting-mcp` — 66 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 52 tools for reach
 - `hostinger-vps-mcp` — 64 tools for vps
@@ -2037,6 +2037,36 @@ containing secrets (e.g. credential files) — none of these are returned by thi
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/domains/{domain}/files/content`
+
+#### hosting_listGitInstallationsV1
+
+Lists the Git provider accounts the customer has connected. Only installations with status
+`active` are returned unless the `status` filter says otherwise.
+
+An empty list means the customer has no active installation. Check `status=suspended` and
+`status=pending` as well. If there is none at all, GitHub has to be connected once in hPanel
+(Websites, Manage, Advanced, Git, Connect GitHub; or Add Website, Node.js Web App, Import Git
+Repository, Continue with GitHub); this endpoint then lists the new installation.
+
+Use `uuid` as the path parameter of `List Git installation repositories`.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/git/installations`
+
+#### hosting_listGitInstallationRepositoriesV1
+
+Lists the repositories the Git installation can access, read live from the provider. Works
+for github and gitlab installations. Use an active installation: a suspended or pending one
+is still queried and the call fails with whatever the provider answers. The list is cut at
+the first 500 repositories in the order the provider returns them; when the account has
+more, name the repository directly instead of searching this list.
+
+`owner`, `name` and `default_branch` identify a repository and a branch to deploy. Returns
+404 when the installation does not belong to the customer. Limited to 10 calls per minute
+per API client (429 above that).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/git/installations/{uuid}/repositories`
 
 #### hosting_listNodeJSBuildsV1
 

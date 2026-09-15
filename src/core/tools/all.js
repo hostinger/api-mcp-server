@@ -6717,6 +6717,78 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "hosting_listGitInstallationsV1",
+    "title": "List Git installations",
+    "annotations": {
+      "title": "List Git installations",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Lists the Git provider accounts the customer has connected. Only installations with status\n`active` are returned unless the `status` filter says otherwise.\n\nAn empty list means the customer has no active installation. Check `status=suspended` and\n`status=pending` as well. If there is none at all, GitHub has to be connected once in hPanel\n(Websites, Manage, Advanced, Git, Connect GitHub; or Add Website, Node.js Web App, Import Git\nRepository, Continue with GitHub); this endpoint then lists the new installation.\n\nUse `uuid` as the path parameter of `List Git installation repositories`.",
+    "method": "GET",
+    "path": "/api/hosting/v1/git/installations",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Filter by Git provider",
+          "enum": [
+            "github",
+            "gitlab",
+            "bitbucket"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "description": "Filter by installation status",
+          "enum": [
+            "pending",
+            "active",
+            "suspended"
+          ]
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_listGitInstallationRepositoriesV1",
+    "title": "List Git installation repositories",
+    "annotations": {
+      "title": "List Git installation repositories",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Lists the repositories the Git installation can access, read live from the provider. Works\nfor github and gitlab installations. Use an active installation: a suspended or pending one\nis still queried and the call fails with whatever the provider answers. The list is cut at\nthe first 500 repositories in the order the provider returns them; when the account has\nmore, name the repository directly instead of searching this list.\n\n`owner`, `name` and `default_branch` identify a repository and a branch to deploy. Returns\n404 when the installation does not belong to the customer. Limited to 10 calls per minute\nper API client (429 above that).",
+    "method": "GET",
+    "path": "/api/hosting/v1/git/installations/{uuid}/repositories",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "Git installation UUID from the List Git installations endpoint"
+        }
+      },
+      "required": [
+        "uuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_listNodeJSBuildsV1",
     "title": "List NodeJS builds",
     "annotations": {
