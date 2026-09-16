@@ -4,6 +4,21 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.61.0 — 2026-09-16
+
+### Tools
+
+- Added `hosting_installSSLV1` — Install SSL
+- Added `hosting_getSSLStatusV1` — Get SSL status
+- Added `hosting_toggleHTTPSRedirectV1` — Toggle HTTPS redirect
+- Added `hosting_uninstallSSLV1` — Uninstall SSL
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.60.2 — 2026-09-16
 
 ### Tools

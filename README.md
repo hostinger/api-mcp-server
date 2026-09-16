@@ -69,14 +69,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (392 total)
+- `hostinger-api-mcp` — unified server with every tool (396 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 41 tools for domains
 - `hostinger-ecommerce-mcp` — 29 tools for ecommerce
 - `hostinger-horizons-mcp` — 6 tools for horizons
-- `hostinger-hosting-mcp` — 69 tools for hosting
+- `hostinger-hosting-mcp` — 73 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 52 tools for reach
 - `hostinger-vps-mcp` — 64 tools for vps
@@ -2434,6 +2434,60 @@ Pass the `from` value exactly as returned by the list redirects endpoint.
 
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/redirects`
+
+#### hosting_installSSLV1
+
+Requests a lifetime SSL certificate for the website. The installation runs in the background;
+`Get SSL status` reports `active` or `failed` when it ends. An `active` lifetime certificate
+does not block the request: a new installation is requested, which is how a certificate is
+reinstalled.
+
+Returns 422 for free subdomains (their certificate is managed by the platform), while an
+installation is `installing` or `waiting_for_retry`, when the website's certificate was
+revoked (it cannot be reissued), and when an uploaded custom certificate is installed; that
+one has to be uninstalled first.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/setup`
+
+#### hosting_getSSLStatusV1
+
+Returns the SSL state of the website: the certificate `status` and `provider`, whether the
+certificate is a lifetime one managed by the platform, whether HTTP requests are redirected to
+HTTPS, when the certificate stops being valid and the last installation error.
+
+`installing` and `waiting_for_retry` mean an installation is in progress. `failed` means the
+last installation gave up, or the website was not updated for 60 minutes while `installing`;
+`last_error` holds the reason when it is a known message, otherwise it is null. `expired`
+means the assigned certificate's validity has ended. `not_installed` means no certificate is
+assigned. Free subdomains use a platform-managed certificate: with no installation recorded
+they report `active` with `provider` and `expires_at` null.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/status`
+
+#### hosting_toggleHTTPSRedirectV1
+
+Turns the HTTP to HTTPS redirect of the website on or off, based on `is_enabled`. Does
+nothing when the redirect is already in the requested state. Turning it on requires an
+installed certificate (`status` `active` or `expired` on `Get SSL status`) and returns 422
+when there is none; turning it off is always accepted.
+
+- **Method**: `PATCH`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/https-redirect/toggle`
+
+#### hosting_uninstallSSLV1
+
+Removes the SSL certificate assigned to the website, turns the HTTPS redirect off and cancels
+a pending installation retry. The website serves plain HTTP until a new installation
+completes. `Get SSL status` reports `not_installed` as soon as the call returns; the call also
+succeeds when no certificate is assigned, so repeating it is safe.
+
+Returns 422 for free subdomains (their certificate is managed by the platform) and while an
+installation is `installing`.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl`
 
 #### hosting_listWebsitesV1
 

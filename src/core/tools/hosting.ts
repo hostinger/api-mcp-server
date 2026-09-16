@@ -2859,6 +2859,153 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_installSSLV1",
+    "title": "Install SSL",
+    "annotations": {
+      "title": "Install SSL",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Requests a lifetime SSL certificate for the website. The installation runs in the background;\n`Get SSL status` reports `active` or `failed` when it ends. An `active` lifetime certificate\ndoes not block the request: a new installation is requested, which is how a certificate is\nreinstalled.\n\nReturns 422 for free subdomains (their certificate is managed by the platform), while an\ninstallation is `installing` or `waiting_for_retry`, when the website's certificate was\nrevoked (it cannot be reissued), and when an uploaded custom certificate is installed; that\none has to be uninstalled first.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/setup",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_getSSLStatusV1",
+    "title": "Get SSL status",
+    "annotations": {
+      "title": "Get SSL status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns the SSL state of the website: the certificate `status` and `provider`, whether the\ncertificate is a lifetime one managed by the platform, whether HTTP requests are redirected to\nHTTPS, when the certificate stops being valid and the last installation error.\n\n`installing` and `waiting_for_retry` mean an installation is in progress. `failed` means the\nlast installation gave up, or the website was not updated for 60 minutes while `installing`;\n`last_error` holds the reason when it is a known message, otherwise it is null. `expired`\nmeans the assigned certificate's validity has ended. `not_installed` means no certificate is\nassigned. Free subdomains use a platform-managed certificate: with no installation recorded\nthey report `active` with `provider` and `expires_at` null.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_toggleHTTPSRedirectV1",
+    "title": "Toggle HTTPS redirect",
+    "annotations": {
+      "title": "Toggle HTTPS redirect",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Turns the HTTP to HTTPS redirect of the website on or off, based on `is_enabled`. Does\nnothing when the redirect is already in the requested state. Turning it on requires an\ninstalled certificate (`status` `active` or `expired` on `Get SSL status`) and returns 422\nwhen there is none; turning it off is always accepted.",
+    "method": "PATCH",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/https-redirect/toggle",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "is_enabled": {
+          "type": "boolean",
+          "description": "Turn the HTTP to HTTPS redirect on (true) or off (false) for the website."
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "is_enabled"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_uninstallSSLV1",
+    "title": "Uninstall SSL",
+    "annotations": {
+      "title": "Uninstall SSL",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Removes the SSL certificate assigned to the website, turns the HTTPS redirect off and cancels\na pending installation retry. The website serves plain HTTP until a new installation\ncompletes. `Get SSL status` reports `not_installed` as soon as the call returns; the call also\nsucceeds when no certificate is assigned, so repeating it is safe.\n\nReturns 422 for free subdomains (their certificate is managed by the platform) and while an\ninstallation is `installing`.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/ssl",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_listWebsitesV1",
     "title": "List websites",
     "annotations": {

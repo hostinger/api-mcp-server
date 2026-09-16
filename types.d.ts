@@ -4667,6 +4667,104 @@ Pass the `from` value exactly as returned by the list redirects endpoint.
   };
 
   /**
+   * Requests a lifetime SSL certificate for the website. The installation runs in the background;
+`Get SSL status` reports `active` or `failed` when it ends. An `active` lifetime certificate
+does not block the request: a new installation is requested, which is how a certificate is
+reinstalled.
+
+Returns 422 for free subdomains (their certificate is managed by the platform), while an
+installation is `installing` or `waiting_for_retry`, when the website's certificate was
+revoked (it cannot be reissued), and when an uploaded custom certificate is installed; that
+one has to be uninstalled first.
+   */
+  "hosting_installSSLV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns the SSL state of the website: the certificate `status` and `provider`, whether the
+certificate is a lifetime one managed by the platform, whether HTTP requests are redirected to
+HTTPS, when the certificate stops being valid and the last installation error.
+
+`installing` and `waiting_for_retry` mean an installation is in progress. `failed` means the
+last installation gave up, or the website was not updated for 60 minutes while `installing`;
+`last_error` holds the reason when it is a known message, otherwise it is null. `expired`
+means the assigned certificate's validity has ended. `not_installed` means no certificate is
+assigned. Free subdomains use a platform-managed certificate: with no installation recorded
+they report `active` with `provider` and `expires_at` null.
+   */
+  "hosting_getSSLStatusV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Turns the HTTP to HTTPS redirect of the website on or off, based on `is_enabled`. Does
+nothing when the redirect is already in the requested state. Turning it on requires an
+installed certificate (`status` `active` or `expired` on `Get SSL status`) and returns 422
+when there is none; turning it off is always accepted.
+   */
+  "hosting_toggleHTTPSRedirectV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Turn the HTTP to HTTPS redirect on (true) or off (false) for the website.
+       */
+      is_enabled: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Removes the SSL certificate assigned to the website, turns the HTTPS redirect off and cancels
+a pending installation retry. The website serves plain HTTP until a new installation
+completes. `Get SSL status` reports `not_installed` as soon as the call returns; the call also
+succeeds when no certificate is assigned, so repeating it is safe.
+
+Returns 422 for free subdomains (their certificate is managed by the platform) and while an
+installation is `installing`.
+   */
+  "hosting_uninstallSSLV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of websites (CloudLinux, Builder, and Horizons) accessible to the
 authenticated client.
 
