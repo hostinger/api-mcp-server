@@ -4,6 +4,24 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.60.2 — 2026-09-16
+
+### Tools
+
+- Added `hosting_getGitAutoDeploymentSettingsV1` — Get Git auto-deployment settings
+- Added `hosting_updateGitAutoDeploymentSettingsV1` — Update Git auto-deployment settings
+- Added `hosting_deleteGitAutoDeploymentSettingsV1` — Delete Git auto-deployment settings
+- Changed the description of `hosting_listGitInstallationsV1`
+- Changed the description of `hosting_listGitInstallationRepositoriesV1`
+- Changed the description and input schema of `hosting_startNode_jsBuildV1`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.60.1 — 2026-09-15
 
 ### Tools

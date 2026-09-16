@@ -69,14 +69,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (389 total)
+- `hostinger-api-mcp` — unified server with every tool (392 total)
 - `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 41 tools for domains
 - `hostinger-ecommerce-mcp` — 29 tools for ecommerce
 - `hostinger-horizons-mcp` — 6 tools for horizons
-- `hostinger-hosting-mcp` — 66 tools for hosting
+- `hostinger-hosting-mcp` — 69 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 52 tools for reach
 - `hostinger-vps-mcp` — 64 tools for vps
@@ -2038,17 +2038,57 @@ containing secrets (e.g. credential files) — none of these are returned by thi
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/domains/{domain}/files/content`
 
+#### hosting_getGitAutoDeploymentSettingsV1
+
+Returns the Git auto-deployment settings of the website: which repository and branch deploy
+into which directory, and whether pushes trigger a deployment. `is_enabled` false keeps the
+repository link but ignores pushes.
+
+When the website has no auto-deployment configured every field is null. Save settings with
+`Update Git auto-deployment settings`.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/git/auto-deployments/settings`
+
+#### hosting_updateGitAutoDeploymentSettingsV1
+
+Creates or replaces the Git auto-deployment settings of the website: repository, branch, the
+directory under the document root to deploy into, and `is_enabled`. Send the full set;
+`is_enabled` defaults to true and `directory` to the document root. `installation_uuid` must
+be an installation from `List Git installations` that belongs to the same customer as the
+website.
+
+For PHP and static websites, saving with `is_enabled` true deploys the branch right away and
+every later push to that branch deploys again. For Node.js and Website Builder websites saving
+does not clone anything. On a Node.js website start the first deploy with
+`Start Node.js build` using `source_type` `git`; pushes then trigger new builds with the build
+settings stored for the website.
+
+- **Method**: `PUT`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/git/auto-deployments/settings`
+
+#### hosting_deleteGitAutoDeploymentSettingsV1
+
+Removes the Git auto-deployment settings of the website. Files already deployed stay on the
+website; pushes stop deploying until settings are saved again. Succeeds also when nothing is
+configured.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/git/auto-deployments/settings`
+
 #### hosting_listGitInstallationsV1
 
 Lists the Git provider accounts the customer has connected. Only installations with status
 `active` are returned unless the `status` filter says otherwise.
 
 An empty list means the customer has no active installation. Check `status=suspended` and
-`status=pending` as well. If there is none at all, GitHub has to be connected once in hPanel
-(Websites, Manage, Advanced, Git, Connect GitHub; or Add Website, Node.js Web App, Import Git
-Repository, Continue with GitHub); this endpoint then lists the new installation.
+`status=pending` as well. If there is none at all, a Git provider (GitHub or GitLab) has to be
+connected once in hPanel (Websites, Manage, Advanced, Git; or Add Website, Node.js Web App,
+Import Git Repository); this endpoint then lists the new installation.
 
-Use `uuid` as the path parameter of `List Git installation repositories`.
+Use `uuid` as the path parameter of `List Git installation repositories`, and as
+`installation_uuid` in `Start Node.js build` with `source_type` `git` and in
+`Update Git auto-deployment settings`.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/git/installations`
@@ -2061,9 +2101,10 @@ is still queried and the call fails with whatever the provider answers. The list
 the first 500 repositories in the order the provider returns them; when the account has
 more, name the repository directly instead of searching this list.
 
-`owner`, `name` and `default_branch` identify a repository and a branch to deploy. Returns
-404 when the installation does not belong to the customer. Limited to 10 calls per minute
-per API client (429 above that).
+`owner`, `name` and a branch (`default_branch` or another one) go into `source_options` of
+`Start Node.js build` or into `Update Git auto-deployment settings`. Returns 404 when the
+installation does not belong to the customer. Limited to 10 calls per minute per API client
+(429 above that).
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/git/installations/{uuid}/repositories`
@@ -2086,12 +2127,16 @@ Start a Node.js build process using files already present on the website's file 
 WARNING: on success this overwrites the website's existing contents and cannot be
 undone — verify this is intended before calling this endpoint.
 
-The `source_type` must be `archive` and `source_options.archive_path` must point to an
-existing archive file on the server (relative to the website document root).
-Use the `Generate Upload URL` endpoint to obtain credentials and upload the archive first.
-
-To auto-detect build settings from an archive before starting, first call the
+With `source_type` `archive`, `source_options.archive_path` must point to an existing
+archive file on the server (relative to the website document root). Use the
+`Generate Upload URL` endpoint to obtain credentials and upload the archive first. To
+auto-detect build settings from an archive before starting, first call the
 `Get Node.js Build Settings from Archive` endpoint.
+
+With `source_type` `git`, `source_options` carries `owner`, `repository`, `branch` and
+`installation_uuid`. Take the installation from `List Git installations` and the owner and
+repository from `List Git installation repositories`; the branch is cloned at its current
+head. The installation must belong to the same customer as the website.
 
 The returned build `uuid` can be used to poll progress and retrieve logs via
 the `Get Node.js Build Logs` endpoint.

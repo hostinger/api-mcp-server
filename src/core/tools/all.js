@@ -6717,6 +6717,141 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "hosting_getGitAutoDeploymentSettingsV1",
+    "title": "Get Git auto-deployment settings",
+    "annotations": {
+      "title": "Get Git auto-deployment settings",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns the Git auto-deployment settings of the website: which repository and branch deploy\ninto which directory, and whether pushes trigger a deployment. `is_enabled` false keeps the\nrepository link but ignores pushes.\n\nWhen the website has no auto-deployment configured every field is null. Save settings with\n`Update Git auto-deployment settings`.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/git/auto-deployments/settings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_updateGitAutoDeploymentSettingsV1",
+    "title": "Update Git auto-deployment settings",
+    "annotations": {
+      "title": "Update Git auto-deployment settings",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Creates or replaces the Git auto-deployment settings of the website: repository, branch, the\ndirectory under the document root to deploy into, and `is_enabled`. Send the full set;\n`is_enabled` defaults to true and `directory` to the document root. `installation_uuid` must\nbe an installation from `List Git installations` that belongs to the same customer as the\nwebsite.\n\nFor PHP and static websites, saving with `is_enabled` true deploys the branch right away and\nevery later push to that branch deploys again. For Node.js and Website Builder websites saving\ndoes not clone anything. On a Node.js website start the first deploy with\n`Start Node.js build` using `source_type` `git`; pushes then trigger new builds with the build\nsettings stored for the website.",
+    "method": "PUT",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/git/auto-deployments/settings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "installation_uuid": {
+          "type": "string",
+          "description": "Active Git installation from `List Git installations`"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Repository owner login, as returned by `List Git installation repositories`. GitLab group\npaths use slashes."
+        },
+        "repository": {
+          "type": "string",
+          "description": "Repository name without the .git suffix"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Branch to deploy"
+        },
+        "directory": {
+          "type": "string",
+          "description": "Subdirectory under the website document root to deploy into. Empty, null or omitted means\nthe document root."
+        },
+        "is_enabled": {
+          "type": "boolean",
+          "description": "Whether pushes to the branch deploy automatically"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "installation_uuid",
+        "owner",
+        "repository",
+        "branch"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_deleteGitAutoDeploymentSettingsV1",
+    "title": "Delete Git auto-deployment settings",
+    "annotations": {
+      "title": "Delete Git auto-deployment settings",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Removes the Git auto-deployment settings of the website. Files already deployed stay on the\nwebsite; pushes stop deploying until settings are saved again. Succeeds also when nothing is\nconfigured.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/git/auto-deployments/settings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_listGitInstallationsV1",
     "title": "List Git installations",
     "annotations": {
@@ -6724,7 +6859,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Lists the Git provider accounts the customer has connected. Only installations with status\n`active` are returned unless the `status` filter says otherwise.\n\nAn empty list means the customer has no active installation. Check `status=suspended` and\n`status=pending` as well. If there is none at all, GitHub has to be connected once in hPanel\n(Websites, Manage, Advanced, Git, Connect GitHub; or Add Website, Node.js Web App, Import Git\nRepository, Continue with GitHub); this endpoint then lists the new installation.\n\nUse `uuid` as the path parameter of `List Git installation repositories`.",
+    "description": "Lists the Git provider accounts the customer has connected. Only installations with status\n`active` are returned unless the `status` filter says otherwise.\n\nAn empty list means the customer has no active installation. Check `status=suspended` and\n`status=pending` as well. If there is none at all, a Git provider (GitHub or GitLab) has to be\nconnected once in hPanel (Websites, Manage, Advanced, Git; or Add Website, Node.js Web App,\nImport Git Repository); this endpoint then lists the new installation.\n\nUse `uuid` as the path parameter of `List Git installation repositories`, and as\n`installation_uuid` in `Start Node.js build` with `source_type` `git` and in\n`Update Git auto-deployment settings`.",
     "method": "GET",
     "path": "/api/hosting/v1/git/installations",
     "inputSchema": {
@@ -6766,7 +6901,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Lists the repositories the Git installation can access, read live from the provider. Works\nfor github and gitlab installations. Use an active installation: a suspended or pending one\nis still queried and the call fails with whatever the provider answers. The list is cut at\nthe first 500 repositories in the order the provider returns them; when the account has\nmore, name the repository directly instead of searching this list.\n\n`owner`, `name` and `default_branch` identify a repository and a branch to deploy. Returns\n404 when the installation does not belong to the customer. Limited to 10 calls per minute\nper API client (429 above that).",
+    "description": "Lists the repositories the Git installation can access, read live from the provider. Works\nfor github and gitlab installations. Use an active installation: a suspended or pending one\nis still queried and the call fails with whatever the provider answers. The list is cut at\nthe first 500 repositories in the order the provider returns them; when the account has\nmore, name the repository directly instead of searching this list.\n\n`owner`, `name` and a branch (`default_branch` or another one) go into `source_options` of\n`Start Node.js build` or into `Update Git auto-deployment settings`. Returns 404 when the\ninstallation does not belong to the customer. Limited to 10 calls per minute per API client\n(429 above that).",
     "method": "GET",
     "path": "/api/hosting/v1/git/installations/{uuid}/repositories",
     "inputSchema": {
@@ -6853,7 +6988,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Start a Node.js build process using files already present on the website's file storage.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nThe `source_type` must be `archive` and `source_options.archive_path` must point to an\nexisting archive file on the server (relative to the website document root).\nUse the `Generate Upload URL` endpoint to obtain credentials and upload the archive first.\n\nTo auto-detect build settings from an archive before starting, first call the\n`Get Node.js Build Settings from Archive` endpoint.\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
+    "description": "Start a Node.js build process using files already present on the website's file storage.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nWith `source_type` `archive`, `source_options.archive_path` must point to an existing\narchive file on the server (relative to the website document root). Use the\n`Generate Upload URL` endpoint to obtain credentials and upload the archive first. To\nauto-detect build settings from an archive before starting, first call the\n`Get Node.js Build Settings from Archive` endpoint.\n\nWith `source_type` `git`, `source_options` carries `owner`, `repository`, `branch` and\n`installation_uuid`. Take the installation from `List Git installations` and the owner and\nrepository from `List Git installation repositories`; the branch is cloned at its current\nhead. The installation must belong to the same customer as the website.\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds",
     "inputSchema": {
@@ -6929,18 +7064,35 @@ export default [
         },
         "source_type": {
           "type": "string",
-          "description": "The source type of the files",
+          "description": "Where the files come from: `archive` (an uploaded archive on the website) or `git`\n(a branch of a repository reachable through a Git installation).",
           "enum": [
-            "archive"
+            "archive",
+            "git"
           ]
         },
         "source_options": {
           "type": "object",
-          "description": "Source-specific options",
+          "description": "Source-specific options. For `archive` send `archive_path`. For `git` send `owner`,\n`repository`, `branch` and `installation_uuid`, taken from `List Git installations`\nand `List Git installation repositories`.",
           "properties": {
             "archive_path": {
               "type": "string",
               "description": "The path to the archive file relative to the document root of the vhost (required if source is \"archive\")"
+            },
+            "owner": {
+              "type": "string",
+              "description": "Repository owner login (required if source is \"git\"). GitLab group paths use\nslashes."
+            },
+            "repository": {
+              "type": "string",
+              "description": "Repository name without the .git suffix (required if source is \"git\")"
+            },
+            "branch": {
+              "type": "string",
+              "description": "Branch to build (required if source is \"git\")"
+            },
+            "installation_uuid": {
+              "type": "string",
+              "description": "Git installation used to access the repository (required if source is \"git\")"
             }
           }
         }

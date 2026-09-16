@@ -3771,15 +3771,111 @@ containing secrets (e.g. credential files) — none of these are returned by thi
   };
 
   /**
+   * Returns the Git auto-deployment settings of the website: which repository and branch deploy
+into which directory, and whether pushes trigger a deployment. `is_enabled` false keeps the
+repository link but ignores pushes.
+
+When the website has no auto-deployment configured every field is null. Save settings with
+`Update Git auto-deployment settings`.
+   */
+  "hosting_getGitAutoDeploymentSettingsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Creates or replaces the Git auto-deployment settings of the website: repository, branch, the
+directory under the document root to deploy into, and `is_enabled`. Send the full set;
+`is_enabled` defaults to true and `directory` to the document root. `installation_uuid` must
+be an installation from `List Git installations` that belongs to the same customer as the
+website.
+
+For PHP and static websites, saving with `is_enabled` true deploys the branch right away and
+every later push to that branch deploys again. For Node.js and Website Builder websites saving
+does not clone anything. On a Node.js website start the first deploy with
+`Start Node.js build` using `source_type` `git`; pushes then trigger new builds with the build
+settings stored for the website.
+   */
+  "hosting_updateGitAutoDeploymentSettingsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Active Git installation from `List Git installations`
+       */
+      installation_uuid: string;
+      /**
+       * Repository owner login, as returned by `List Git installation repositories`. GitLab group
+paths use slashes.
+       */
+      owner: string;
+      /**
+       * Repository name without the .git suffix
+       */
+      repository: string;
+      /**
+       * Branch to deploy
+       */
+      branch: string;
+      /**
+       * Subdirectory under the website document root to deploy into. Empty, null or omitted means
+the document root.
+       */
+      directory?: string;
+      /**
+       * Whether pushes to the branch deploy automatically
+       */
+      is_enabled?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Removes the Git auto-deployment settings of the website. Files already deployed stay on the
+website; pushes stop deploying until settings are saved again. Succeeds also when nothing is
+configured.
+   */
+  "hosting_deleteGitAutoDeploymentSettingsV1": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Lists the Git provider accounts the customer has connected. Only installations with status
 `active` are returned unless the `status` filter says otherwise.
 
 An empty list means the customer has no active installation. Check `status=suspended` and
-`status=pending` as well. If there is none at all, GitHub has to be connected once in hPanel
-(Websites, Manage, Advanced, Git, Connect GitHub; or Add Website, Node.js Web App, Import Git
-Repository, Continue with GitHub); this endpoint then lists the new installation.
+`status=pending` as well. If there is none at all, a Git provider (GitHub or GitLab) has to be
+connected once in hPanel (Websites, Manage, Advanced, Git; or Add Website, Node.js Web App,
+Import Git Repository); this endpoint then lists the new installation.
 
-Use `uuid` as the path parameter of `List Git installation repositories`.
+Use `uuid` as the path parameter of `List Git installation repositories`, and as
+`installation_uuid` in `Start Node.js build` with `source_type` `git` and in
+`Update Git auto-deployment settings`.
    */
   "hosting_listGitInstallationsV1": {
     params: {
@@ -3802,9 +3898,10 @@ is still queried and the call fails with whatever the provider answers. The list
 the first 500 repositories in the order the provider returns them; when the account has
 more, name the repository directly instead of searching this list.
 
-`owner`, `name` and `default_branch` identify a repository and a branch to deploy. Returns
-404 when the installation does not belong to the customer. Limited to 10 calls per minute
-per API client (429 above that).
+`owner`, `name` and a branch (`default_branch` or another one) go into `source_options` of
+`Start Node.js build` or into `Update Git auto-deployment settings`. Returns 404 when the
+installation does not belong to the customer. Limited to 10 calls per minute per API client
+(429 above that).
    */
   "hosting_listGitInstallationRepositoriesV1": {
     params: {
@@ -3855,12 +3952,16 @@ Use the `uuid` from a build to poll its output via the `Get Node.js Build Logs` 
 WARNING: on success this overwrites the website's existing contents and cannot be
 undone — verify this is intended before calling this endpoint.
 
-The `source_type` must be `archive` and `source_options.archive_path` must point to an
-existing archive file on the server (relative to the website document root).
-Use the `Generate Upload URL` endpoint to obtain credentials and upload the archive first.
-
-To auto-detect build settings from an archive before starting, first call the
+With `source_type` `archive`, `source_options.archive_path` must point to an existing
+archive file on the server (relative to the website document root). Use the
+`Generate Upload URL` endpoint to obtain credentials and upload the archive first. To
+auto-detect build settings from an archive before starting, first call the
 `Get Node.js Build Settings from Archive` endpoint.
+
+With `source_type` `git`, `source_options` carries `owner`, `repository`, `branch` and
+`installation_uuid`. Take the installation from `List Git installations` and the owner and
+repository from `List Git installation repositories`; the branch is cloned at its current
+head. The installation must belong to the same customer as the website.
 
 The returned build `uuid` can be used to poll progress and retrieve logs via
 the `Get Node.js Build Logs` endpoint.
@@ -3904,11 +4005,14 @@ the `Get Node.js Build Logs` endpoint.
        */
       package_manager?: string;
       /**
-       * The source type of the files
+       * Where the files come from: `archive` (an uploaded archive on the website) or `git`
+(a branch of a repository reachable through a Git installation).
        */
       source_type: string;
       /**
-       * Source-specific options
+       * Source-specific options. For `archive` send `archive_path`. For `git` send `owner`,
+`repository`, `branch` and `installation_uuid`, taken from `List Git installations`
+and `List Git installation repositories`.
        */
       source_options: object;
     };
