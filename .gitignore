@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+package-lock.json.bak
+
+# Build artifacts
+dist/
+*.tsbuildinfo
+
+# Environment variables & secrets (keep .env.example)
+.env
+.env.local
+.env.*.local
+!.env.example
+credentials.json
+*.pem
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Temporary / release files
+coverage/
+.nyc_output/
+RELEASE_NOTES.md
+*.tgz

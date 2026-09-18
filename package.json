@@ -34,6 +34,7 @@
   },
   "scripts": {
     "start": "node src/servers/all.js",
+    "test": "node --test test/**/*.test.js test/**/*.test.ts",
     "build": "node build.js",
     "start:ts": "npx tsc && node dist/src/servers/all.js"
   },

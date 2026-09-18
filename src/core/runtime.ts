@@ -42,6 +42,18 @@ interface SecurityScheme {
   scheme?: string;
 }
 
+export class ApiExecutionError extends Error {
+  public readonly status: number;
+  public readonly responseData: any;
+
+  constructor(status: number, data: any, message?: string) {
+    super(message || `API request failed with status ${status}`);
+    this.name = 'ApiExecutionError';
+    this.status = status;
+    this.responseData = data;
+  }
+}
+
 const SECURITY_SCHEMES: Record<string, SecurityScheme> = {
   "apiToken": {
     "type": "http",
@@ -213,7 +225,7 @@ class MCPServer {
           content: [
             {
               type: "text",
-              text: JSON.stringify(result)
+              text: typeof result === "string" ? result : JSON.stringify(result, null, 2)
             }
           ]
         };
@@ -221,8 +233,25 @@ class MCPServer {
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         this.log('error', `Error executing tool ${toolName}: ${errorMessage}`);
-        
-        throw error;
+
+        let errorContent: string;
+        if (error instanceof ApiExecutionError) {
+          errorContent = typeof error.responseData === "object"
+            ? JSON.stringify(error.responseData, null, 2)
+            : String(error.responseData || errorMessage);
+        } else {
+          errorContent = errorMessage;
+        }
+
+        return {
+          isError: true,
+          content: [
+            {
+              type: "text",
+              text: errorContent
+            }
+          ]
+        };
       }
     });
   }
@@ -2524,6 +2553,10 @@ class MCPServer {
         this.log('debug', `Retry response status: ${response.status}`);
       }
 
+      if (response.status >= 400) {
+        throw new ApiExecutionError(response.status, response.data);
+      }
+
       return response.data;
 
     } catch (error) {
@@ -2540,10 +2573,13 @@ class MCPServer {
           data: typeof responseData === 'object' ? JSON.stringify(responseData) : String(responseData)
         });
 
-        // Rethrow with more context for better error handling
-        const detailedError = new Error(`API request failed with status ${responseStatus}: ${errorMessage}`);
-        (detailedError as any).response = axiosError.response;
-        throw detailedError;
+        // Rethrow as a structured error so the CallTool handler can build a
+        // proper MCP error result (isError: true) with the API payload.
+        throw new ApiExecutionError(
+          responseStatus ?? 0,
+          responseData,
+          `API request failed with status ${responseStatus}: ${errorMessage}`
+        );
       }
 
       throw error;

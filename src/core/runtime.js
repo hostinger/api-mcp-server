@@ -19,6 +19,15 @@ import path from "path";
 // Load environment variables
 dotenvConfig({ quiet: true });
 
+class ApiExecutionError extends Error {
+  constructor(status, data, message) {
+    super(message || `API request failed with status ${status}`);
+    this.name = 'ApiExecutionError';
+    this.status = status;
+    this.responseData = data;
+  }
+}
+
 const SECURITY_SCHEMES = {
   "apiToken": {
     "type": "http",
@@ -182,17 +191,33 @@ class MCPServer {
           content: [
             {
               type: "text",
-              text: JSON.stringify(result)
+              text: typeof result === "string" ? result : JSON.stringify(result, null, 2)
             }
           ]
         };
 
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        const response = error.response;
         this.log('error', `Error executing tool ${name}: ${errorMessage}`);
 
-        throw error;
+        let errorContent;
+        if (error instanceof ApiExecutionError) {
+          errorContent = typeof error.responseData === "object"
+            ? JSON.stringify(error.responseData, null, 2)
+            : String(error.responseData || errorMessage);
+        } else {
+          errorContent = errorMessage;
+        }
+
+        return {
+          isError: true,
+          content: [
+            {
+              type: "text",
+              text: errorContent
+            }
+          ]
+        };
       }
     });
   }
@@ -2474,6 +2499,10 @@ class MCPServer {
         this.log('debug', `Retry response status: ${response.status}`);
       }
 
+      if (response.status >= 400) {
+        throw new ApiExecutionError(response.status, response.data);
+      }
+
       return response.data;
 
     } catch (error) {
@@ -2489,10 +2518,13 @@ class MCPServer {
           data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
         });
 
-        // Rethrow with more context for better error handling
-        const detailedError = new Error(`API request failed with status ${responseStatus}: ${errorMessage}`);
-        detailedError.response = error.response;
-        throw detailedError;
+        // Rethrow as a structured error so the CallTool handler can build a
+        // proper MCP error result (isError: true) with the API payload.
+        throw new ApiExecutionError(
+          responseStatus ?? 0,
+          responseData,
+          `API request failed with status ${responseStatus}: ${errorMessage}`
+        );
       }
 
       throw error;
