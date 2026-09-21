@@ -153,8 +153,28 @@ jobs:
       - name: Login to MCP Registry using GitHub OIDC
         run: ./mcp-publisher login github-oidc
 
+      # The registry validates that the npm version in server.json actually
+      # exists, and npm says a fresh publish "may take a few minutes to become
+      # available" — so this job reliably loses the race with the publish-npmjs
+      # job it depends on and 400s with "version was not found (status: 404)".
+      # Retry until npm catches up. The backoff totals ~7.5 minutes, well past
+      # the propagation delays seen in practice (~3 minutes); if it is still
+      # failing by then it is not a propagation problem and notify-failure
+      # should page.
       - name: Publish to MCP Registry
-        run: ./mcp-publisher publish
+        run: |
+          for delay in 30 60 120 240 0; do
+            if ./mcp-publisher publish; then
+              exit 0
+            fi
+            if [ "$delay" -eq 0 ]; then
+              break
+            fi
+            echo "Publish failed — npm may not have propagated yet. Retrying in ${delay}s."
+            sleep "$delay"
+          done
+          echo "MCP registry publish still failing after all retries."
+          exit 1
 
   notify-failure:
     needs: [release, publish-npmjs, release-github, publish-mcp]
