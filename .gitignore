@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Local secrets. .env.example ships with the package and is not matched by `.env`.
+.env
+.env.local
+
+# Built from CHANGELOG.md by the release job; never committed.
+RELEASE_NOTES.md
+
+*.log
+.DS_Store

@@ -10,6 +10,8 @@ import { config as dotenvConfig } from "dotenv";
 import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
+  ErrorCode,
+  McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import { OAuthProvider, getEnvToken } from "./oauth.js";
 import * as tus from "tus-js-client";
@@ -18,6 +20,19 @@ import path from "path";
 
 // Load environment variables
 dotenvConfig({ quiet: true });
+
+/**
+ * An upstream API call that came back as a failure. Carries the status and the
+ * API's own response body so the CallTool handler can hand both to the model.
+ */
+class ApiExecutionError extends Error {
+  constructor(status, data, message) {
+    super(message || `API request failed with status ${status}`);
+    this.name = 'ApiExecutionError';
+    this.status = status;
+    this.responseData = data;
+  }
+}
 
 const SECURITY_SCHEMES = {
   "apiToken": {
@@ -157,13 +172,17 @@ class MCPServer {
         }
       }
 
+      // An unknown tool is a protocol error, not a tool execution error: the
+      // model cannot self-correct its way out of a name the server does not
+      // have. -32602 is what the spec's example and the SDK's own McpServer
+      // use; a plain Error would go out as -32603 instead.
       if (!toolName) {
-        throw new Error(`Tool not found: ${name}`);
+        throw new McpError(ErrorCode.InvalidParams, `Tool not found: ${name}`);
       }
 
       toolDetails = this.toolList.find(t => t.name === toolName);
       if (!toolDetails) {
-        throw new Error(`Tool details not found for ID: ${toolName}`);
+        throw new McpError(ErrorCode.InternalError, `Tool details not found for ID: ${toolName}`);
       }
 
       try {
@@ -189,10 +208,32 @@ class MCPServer {
 
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        const response = error.response;
         this.log('error', `Error executing tool ${name}: ${errorMessage}`);
 
-        throw error;
+        // MCP reports tool execution failures (API errors, bad input, business
+        // logic) inside the result with isError: true. Throwing here would turn
+        // them into JSON-RPC protocol errors instead, which the spec reserves
+        // for unknown tools and malformed requests — those are still thrown,
+        // above, before this try. The status stays in the text so the model can
+        // tell a retryable 429/503 from a 403 it should not retry.
+        let errorText = errorMessage;
+        if (error instanceof ApiExecutionError) {
+          const payload = error.responseData;
+          const body = payload === null || payload === undefined || payload === ''
+            ? errorMessage
+            : typeof payload === 'object' ? JSON.stringify(payload) : String(payload);
+          errorText = error.status ? `HTTP ${error.status}: ${body}` : body;
+        }
+
+        return {
+          isError: true,
+          content: [
+            {
+              type: "text",
+              text: errorText
+            }
+          ]
+        };
       }
     });
   }
@@ -2474,6 +2515,13 @@ class MCPServer {
         this.log('debug', `Retry response status: ${response.status}`);
       }
 
+      // validateStatus resolves everything under 500, so a 4xx arrives here as
+      // an ordinary response. Without this it would be returned to the model as
+      // a successful tool result whose body happens to be the API's error.
+      if (response.status >= 400) {
+        throw new ApiExecutionError(response.status, response.data);
+      }
+
       return response.data;
 
     } catch (error) {
@@ -2489,10 +2537,14 @@ class MCPServer {
           data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
         });
 
-        // Rethrow with more context for better error handling
-        const detailedError = new Error(`API request failed with status ${responseStatus}: ${errorMessage}`);
-        detailedError.response = error.response;
-        throw detailedError;
+        // Structured so the CallTool handler can report this as an MCP tool
+        // execution error carrying the API's own payload. Status is 0 for a
+        // transport failure (DNS, ECONNREFUSED, timeout) — there is no response.
+        throw new ApiExecutionError(
+          responseStatus ?? 0,
+          responseData,
+          `API request failed with status ${responseStatus}: ${errorMessage}`
+        );
       }
 
       throw error;
