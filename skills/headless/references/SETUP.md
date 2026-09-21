@@ -30,5 +30,5 @@ If the domain already has a website (an `iterate` run, or the user pointed at an
 
 ## 4. Optional extras (only when the run needs them)
 
-- **Database:** `hosting_createAccountDatabaseV1` for Node.js apps that need MySQL; pass the credentials to the app via its environment/config, never hard-coded into client-side code.
+- **Database:** when the app needs MySQL, follow `DATABASE.md` — creating it, which host each runtime connects to (Node.js must use `127.0.0.1`), and handing the credentials to the app without hard-coding them.
 - **DNS records:** the DNS tools (`DNS_updateDNSRecordsV1` etc.) for custom-domain records; take a snapshot (`DNS_getDNSSnapshotListV1` context) before destructive changes.

@@ -4,6 +4,15 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.62.0 — 2026-09-21
+
+### Also in this release
+
+- Bundled agent skills: `skills/headless/SKILL.md`, `skills/headless/references/SETUP.md`, `skills/headless/references/DATABASE.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Server entry points: 6 files
+- Server instructions: `src/core/instructions.js`, `src/core/instructions.ts`
+
 ## v1.61.2 — 2026-09-21
 
 ### Also in this release

@@ -47,11 +47,12 @@ const SECURITY_SCHEMES = {
  * Generated from OpenAPI spec version 1.53.1
  */
 class MCPServer {
-  constructor({ name, version, tools }) {
+  constructor({ name, version, tools, instructions }) {
     // Initialize class properties
     this.name = name;
     this.version = version;
     this.toolList = tools;
+    this.instructions = instructions;
     this.server = null;
     this.tools = new Map();
     this.debug = process.env.DEBUG === "true";
@@ -72,6 +73,7 @@ class MCPServer {
         capabilities: {
           tools: {}, // Enable tools capability
         },
+        instructions: this.instructions,
       }
     );
 
@@ -2658,7 +2660,7 @@ class MCPServer {
   }
 }
 
-export async function startServer({ name, version, tools }) {
+export async function startServer({ name, version, tools, instructions }) {
   const argv = minimist(process.argv.slice(2), {
     string: ['host'],
     boolean: ['stdio', 'http', 'help', 'version', 'login', 'logout'],
@@ -2716,7 +2718,7 @@ export async function startServer({ name, version, tools }) {
     }
   }
 
-  const server = new MCPServer({ name, version, tools });
+  const server = new MCPServer({ name, version, tools, instructions });
   if (argv.http) {
     await server.startHttp(argv.host, argv.port);
   } else {

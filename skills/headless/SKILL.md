@@ -31,7 +31,7 @@ If signals conflict, ask the user — don't guess.
 2. **Setup** (`references/SETUP.md`) — plan check, then provision the website on a free subdomain (or the user's own domain) and wait until it's ready.
 3. **Store** (`references/STORE.md`, only when commerce is needed) — resolve or create the store and its `custom` sales channel, seed products/shipping/payment, and note the `sales_channel_id` for the frontend.
 4. **Content backend** (`references/WORDPRESS.md`, only when owner-managed content is needed) — install WordPress on a dedicated subdomain, wait until it's ready, and hand the owner a wp-admin login link. The frontend reads it through the public WP REST API.
-5. **Build** — create or wire the frontend. For store runs, follow the frontend contract in `references/STORE.md` (catalog fetched at runtime from the public Storefront API, cart in `localStorage`, client-side checkout — never embed an API token in the site). For content runs, follow the frontend contract in `references/WORDPRESS.md` (posts fetched at runtime from the WP REST API, rendered HTML bodies, graceful empty states).
+5. **Build** — create or wire the frontend. For store runs, follow the frontend contract in `references/STORE.md` (catalog fetched at runtime from the public Storefront API, cart in `localStorage`, client-side checkout — never embed an API token in the site). For content runs, follow the frontend contract in `references/WORDPRESS.md` (posts fetched at runtime from the WP REST API, rendered HTML bodies, graceful empty states). When the app needs MySQL, follow `references/DATABASE.md` (which host each runtime connects to, credentials via env vars or a server-side config file, never in the frontend).
 6. **Deploy** (`references/DEPLOYMENT.md`) — archive and deploy via the matching hosting tool, polling build logs for Node.js runs.
 7. **Verify** — curl the live URL for a 200 and a piece of real page copy; for store runs, confirm a checkout POST returns a redirect URL; for content runs, confirm the WP REST API returns 200 and the frontend renders posts. Show the user the live URL and where to manage things (hPanel: https://hpanel.hostinger.com, the store dashboard for commerce, wp-admin for content).
 8. **Record** — write `.hostinger/site.json` into the project: `{ "domain", "username", "type": "static"|"nodejs", "sales_channel_id"?, "store_id"?, "cms_domain"? }`. This is what makes future runs resolve as `iterate`.
@@ -46,6 +46,7 @@ Run non-interactively wherever possible. The exceptions that must involve the us
 | Store: seed the backend + the frontend API contract | `references/STORE.md` |
 | WordPress: headless CMS/blog backend + the frontend read contract | `references/WORDPRESS.md` |
 | Deploy: static vs Node.js, archive rules, logs, verify | `references/DEPLOYMENT.md` |
+| Database + runtime: MySQL host per runtime, env vars, what to poll, runtime logs | `references/DATABASE.md` |
 
 ## Where the how comes from
 

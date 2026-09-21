@@ -78,16 +78,18 @@ class MCPServer {
   private readonly toolList: OpenApiTool[];
   private server: Server;
   private tools: Map<string, Tool> = new Map();
+  private instructions?: string;
   private debug: boolean;
   private baseUrl: string;
   private headers: Record<string, string>;
   private oauth: OAuthProvider;
 
-  constructor({ name, version, tools }: { name: string; version: string; tools: OpenApiTool[] }) {
+  constructor({ name, version, tools, instructions }: { name: string; version: string; tools: OpenApiTool[]; instructions?: string }) {
     // Initialize class properties
     this.name = name;
     this.version = version;
     this.toolList = tools;
+    this.instructions = instructions;
     this.debug = process.env.DEBUG === "true";
     this.baseUrl = process.env.API_BASE_URL || "https://developers.hostinger.com";
     this.headers = this.parseHeaders(process.env.API_HEADERS || "");
@@ -106,6 +108,7 @@ class MCPServer {
         capabilities: {
           tools: {}, // Enable tools capability
         },
+        instructions: this.instructions,
       }
     );
 
@@ -2713,7 +2716,7 @@ class MCPServer {
   }
 }
 
-export async function startServer({ name, version, tools }: { name: string; version: string; tools: OpenApiTool[] }): Promise<void> {
+export async function startServer({ name, version, tools, instructions }: { name: string; version: string; tools: OpenApiTool[]; instructions?: string }): Promise<void> {
   const argv = minimist(process.argv.slice(2), {
     string: ['host'],
     boolean: ['stdio', 'http', 'help', 'version', 'login', 'logout'],
@@ -2771,7 +2774,7 @@ export async function startServer({ name, version, tools }: { name: string; vers
     }
   }
 
-  const server = new MCPServer({ name, version, tools });
+  const server = new MCPServer({ name, version, tools, instructions });
   if (argv.http) {
     await server.startHttp(argv.host, argv.port);
   } else {
