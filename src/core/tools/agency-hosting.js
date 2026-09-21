@@ -842,6 +842,147 @@ export default [
     "group": "agency-hosting"
   },
   {
+    "name": "agency-hosting_reinstallWebsiteSSLV1",
+    "title": "Reinstall website SSL",
+    "annotations": {
+      "title": "Reinstall website SSL",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Replaces the Let's Encrypt certificate of the domain: the current platform certificate, when\none is recorded, is revoked and removed, then a new setup starts in the background. Returns at\nonce; `Get website SSL status` reports `installing` while it runs, then `active` or `failed`.\n\nReturns 422 for free subdomains, when a certificate process is recorded for the domain (a\nfailed setup counts until it is cleaned up), or when the domain hit its limit of three setups\nper seven days. Returns 429 when the same domain was requested less than a minute ago, and 403\nwhen the website is suspended or locked, and 404 when the website or the domain does not exist.",
+    "method": "POST",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl/reinstall",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "website_uid",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_installWebsiteSSLV1",
+    "title": "Install website SSL",
+    "annotations": {
+      "title": "Install website SSL",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Starts a Let's Encrypt certificate setup for the domain and returns at once; the setup runs in\nthe background. `Get website SSL status` reports `installing` while it runs, then `active` or\n`failed`; the `ssl_setup` entry of `List website processes` shows the same progress.\n\nReturns 422 when the domain already has a platform certificate that is not expired, when a\ncertificate process is recorded for the domain (a failed setup counts until it is cleaned up),\nor when the domain hit its limit of three setups per seven days. Returns 429 when the same\ndomain was requested less than a minute ago, 403 when the website is suspended or locked, and\n404 when the website or the domain does not exist.",
+    "method": "POST",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl/setup",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "website_uid",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_getWebsiteSSLStatusV1",
+    "title": "Get website SSL status",
+    "annotations": {
+      "title": "Get website SSL status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns the SSL state of one domain of an Agency Plan website: the certificate `status`,\nwhether the certificate was uploaded by the customer, and when it stops being valid.\n\n`installing` means a certificate setup is running or retrying; the `ssl_setup` entry of\n`List website processes` shows the same progress. `active` means a valid certificate is in\nplace: uploaded by the customer, issued by the platform, or a lifetime certificate bought for\nthe domain. `failed` means the last setup gave up and no valid certificate is in place.\n`expired` means the certificate has run out. `not_installed` means the domain has no\ncertificate and no setup process. Returns 404 when the website or the domain does not exist.",
+    "method": "GET",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl/status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "website_uid",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
+    "name": "agency-hosting_uninstallWebsiteSSLV1",
+    "title": "Uninstall website SSL",
+    "annotations": {
+      "title": "Uninstall website SSL",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Removes the platform-issued Let's Encrypt certificate of the domain: the certificate is revoked\nand deleted before the response, so the domain is no longer served with a platform certificate\nuntil a new setup completes. Also succeeds when the domain has no platform certificate to\nremove. Uploaded (custom) certificates are not affected.\n\nReturns 422 when a certificate process is recorded for the domain (a failed setup counts until\nit is cleaned up), 429 when the same domain was requested less than a minute ago, and 403 when\nthe website is suspended or locked, and 404 when the website or the domain does not exist.",
+    "method": "DELETE",
+    "path": "/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "website_uid": {
+          "type": "string",
+          "description": "Agency Plan website UID"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "website_uid",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "agency-hosting"
+  },
+  {
     "name": "agency-hosting_buildWebsiteNodeJSAssetsV1",
     "title": "Build website NodeJS assets",
     "annotations": {

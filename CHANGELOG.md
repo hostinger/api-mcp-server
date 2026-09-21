@@ -4,6 +4,21 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v1.63.0 — 2026-09-21
+
+### Tools
+
+- Added `agency-hosting_reinstallWebsiteSSLV1` — Reinstall website SSL
+- Added `agency-hosting_installWebsiteSSLV1` — Install website SSL
+- Added `agency-hosting_getWebsiteSSLStatusV1` — Get website SSL status
+- Added `agency-hosting_uninstallWebsiteSSLV1` — Uninstall website SSL
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v1.62.0 — 2026-09-21
 
 ### Also in this release

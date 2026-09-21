@@ -69,8 +69,8 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (396 total)
-- `hostinger-agency-hosting-mcp` — 38 tools for agency-hosting
+- `hostinger-api-mcp` — unified server with every tool (400 total)
+- `hostinger-agency-hosting-mcp` — 42 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 41 tools for domains
@@ -454,6 +454,64 @@ Poll this endpoint using the `setup_uuid` returned from the provisioning request
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/websites/setups/{setup_uuid}`
+
+#### agency-hosting_reinstallWebsiteSSLV1
+
+Replaces the Let's Encrypt certificate of the domain: the current platform certificate, when
+one is recorded, is revoked and removed, then a new setup starts in the background. Returns at
+once; `Get website SSL status` reports `installing` while it runs, then `active` or `failed`.
+
+Returns 422 for free subdomains, when a certificate process is recorded for the domain (a
+failed setup counts until it is cleaned up), or when the domain hit its limit of three setups
+per seven days. Returns 429 when the same domain was requested less than a minute ago, and 403
+when the website is suspended or locked, and 404 when the website or the domain does not exist.
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl/reinstall`
+
+#### agency-hosting_installWebsiteSSLV1
+
+Starts a Let's Encrypt certificate setup for the domain and returns at once; the setup runs in
+the background. `Get website SSL status` reports `installing` while it runs, then `active` or
+`failed`; the `ssl_setup` entry of `List website processes` shows the same progress.
+
+Returns 422 when the domain already has a platform certificate that is not expired, when a
+certificate process is recorded for the domain (a failed setup counts until it is cleaned up),
+or when the domain hit its limit of three setups per seven days. Returns 429 when the same
+domain was requested less than a minute ago, 403 when the website is suspended or locked, and
+404 when the website or the domain does not exist.
+
+- **Method**: `POST`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl/setup`
+
+#### agency-hosting_getWebsiteSSLStatusV1
+
+Returns the SSL state of one domain of an Agency Plan website: the certificate `status`,
+whether the certificate was uploaded by the customer, and when it stops being valid.
+
+`installing` means a certificate setup is running or retrying; the `ssl_setup` entry of
+`List website processes` shows the same progress. `active` means a valid certificate is in
+place: uploaded by the customer, issued by the platform, or a lifetime certificate bought for
+the domain. `failed` means the last setup gave up and no valid certificate is in place.
+`expired` means the certificate has run out. `not_installed` means the domain has no
+certificate and no setup process. Returns 404 when the website or the domain does not exist.
+
+- **Method**: `GET`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl/status`
+
+#### agency-hosting_uninstallWebsiteSSLV1
+
+Removes the platform-issued Let's Encrypt certificate of the domain: the certificate is revoked
+and deleted before the response, so the domain is no longer served with a platform certificate
+until a new setup completes. Also succeeds when the domain has no platform certificate to
+remove. Uploaded (custom) certificates are not affected.
+
+Returns 422 when a certificate process is recorded for the domain (a failed setup counts until
+it is cleaned up), 429 when the same domain was requested less than a minute ago, and 403 when
+the website is suspended or locked, and 404 when the website or the domain does not exist.
+
+- **Method**: `DELETE`
+- **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl`
 
 #### agency-hosting_buildWebsiteNodeJSAssetsV1
 
