@@ -905,6 +905,49 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_setupWebsiteDatabaseV1",
+    "title": "Setup website database",
+    "annotations": {
+      "title": "Setup website database",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Creates a new MySQL database for the website and writes its connection details into the\nwebsite's environment variables, then restarts the application. The platform generates the\npassword (and the database name and user, unless supplied). The password is never returned;\nthe application reads it from the environment.\n\nWritten variables: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` and\n`DATABASE_URL` (`mysql://user:password@host:port/name`, user and password percent-encoded).\nExisting variables are kept. If the website already has any variable with one of these\nnames the call fails with 422 and nothing is created; the `Replace Node.js environment\nvariables` endpoint removes them.\n\nAfter this call the variables are ordinary environment variables: the\n`Replace Node.js environment variables` endpoint changes or removes them like any other.\n\nA restart is enough for apps that read environment variables at process start, such as\nExpress or NestJS. Frameworks that bake variables into the build output (Next.js,\n`NEXT_PUBLIC_*`) see the new values only after a fresh build (`Start Node.js build` endpoint).\n\nA password in the request is ignored; the platform always generates it. The optional `name`\nand `user` are identifiers, not secrets.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/databases/setup",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional database name. Generated when omitted. Letters, digits and underscores;\nmust not start with an underscore. Up to 14 characters without the account username\nprefix (`u123456789_`), which is added automatically when missing. With the prefix\nthe full name is 12 to 25 characters."
+        },
+        "user": {
+          "type": "string",
+          "description": "Optional database user. Generated when omitted. Letters, digits and underscores;\nmust not start with an underscore. Up to 14 characters without the account username\nprefix (`u123456789_`), which is added automatically when missing. With the prefix\nthe full user is 12 to 25 characters."
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_getPhpMyAdminLinkV1",
     "title": "Get phpMyAdmin link",
     "annotations": {

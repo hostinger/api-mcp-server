@@ -69,14 +69,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (400 total)
+- `hostinger-api-mcp` — unified server with every tool (401 total)
 - `hostinger-agency-hosting-mcp` — 42 tools for agency-hosting
 - `hostinger-billing-mcp` — 9 tools for billing
 - `hostinger-dns-mcp` — 8 tools for dns
 - `hostinger-domains-mcp` — 41 tools for domains
 - `hostinger-ecommerce-mcp` — 29 tools for ecommerce
 - `hostinger-horizons-mcp` — 6 tools for horizons
-- `hostinger-hosting-mcp` — 73 tools for hosting
+- `hostinger-hosting-mcp` — 74 tools for hosting
 - `hostinger-mail-mcp` — 38 tools for mail
 - `hostinger-reach-mcp` — 52 tools for reach
 - `hostinger-vps-mcp` — 64 tools for vps
@@ -1931,6 +1931,32 @@ The database name must be the full name returned by the list databases endpoint.
 
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/repair`
+
+#### hosting_setupWebsiteDatabaseV1
+
+Creates a new MySQL database for the website and writes its connection details into the
+website's environment variables, then restarts the application. The platform generates the
+password (and the database name and user, unless supplied). The password is never returned;
+the application reads it from the environment.
+
+Written variables: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` and
+`DATABASE_URL` (`mysql://user:password@host:port/name`, user and password percent-encoded).
+Existing variables are kept. If the website already has any variable with one of these
+names the call fails with 422 and nothing is created; the `Replace Node.js environment
+variables` endpoint removes them.
+
+After this call the variables are ordinary environment variables: the
+`Replace Node.js environment variables` endpoint changes or removes them like any other.
+
+A restart is enough for apps that read environment variables at process start, such as
+Express or NestJS. Frameworks that bake variables into the build output (Next.js,
+`NEXT_PUBLIC_*`) see the new values only after a fresh build (`Start Node.js build` endpoint).
+
+A password in the request is ignored; the platform always generates it. The optional `name`
+and `user` are identifiers, not secrets.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/databases/setup`
 
 #### hosting_getPhpMyAdminLinkV1
 
