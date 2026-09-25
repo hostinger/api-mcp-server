@@ -3105,7 +3105,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create a new website for the authenticated client.\n\nProvide the domain name and associated order ID to create a new website.\nThe datacenter_code parameter is required when creating the first website\non a new hosting plan - this will set up and configure new hosting account\nin the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation takes up to a few minutes to complete. Check the\nwebsites list endpoint to see when your new website becomes available.",
+    "description": "Create a new website for the authenticated client.\n\nYou must choose which hosting order to create this website on. Pass that\norder as `order_id` together with the domain name. List orders to see\navailable IDs; the website is provisioned on that order's hosting plan.\n\nThe datacenter_code parameter is required when creating the first website\non a new hosting plan - this will set up and configure new hosting account\nin the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation takes up to a few minutes to complete. Check the\nwebsites list endpoint to see when your new website becomes available.",
     "method": "POST",
     "path": "/api/hosting/v1/websites",
     "inputSchema": {
@@ -3117,7 +3117,7 @@ export default [
         },
         "order_id": {
           "type": "integer",
-          "description": "ID of the associated order"
+          "description": "Hosting order ID to create this website on. Choose the order whose hosting plan should host the new website. List orders to find available IDs."
         },
         "datacenter_code": {
           "type": "string",
