@@ -4,6 +4,22 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.3.0 — 2026-09-28
+
+### Operations
+
+- Added `hosting_websites_list-setups` — List website setups
+- Changed the description of `hosting_databases_create-remote-connection`
+- Changed the description of `hosting_files_generate-upload-url`
+- Changed the description of `hosting_websites_list`
+- Changed the description of `hosting_websites_create`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v2.2.0 — 2026-09-28
 
 ### Also in this release

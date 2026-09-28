@@ -3446,7 +3446,9 @@ The database name must be the full name returned by the list databases endpoint.
    * Allows a remote host to connect to the specified database.
 
 Provide an IPv4/IPv6 address, or "%" to allow any host. The database name must be
-the full name returned by the list databases endpoint.
+the full name returned by the list databases endpoint. Database creation is synchronous,
+so a 404 here means no database with that name exists under the username, not that it
+is still being created.
    */
   "hosting_databases_create-remote-connection": {
     params: {
@@ -3796,6 +3798,10 @@ Skip this verification when using Hostinger's free subdomains (*.hostingersite.c
   /**
    * Generate a file browser upload URL with authentication credentials
 for uploading files directly to a website's file storage.
+
+While the website is still being set up (`status: running` on the list website setups
+endpoint) this endpoint returns 409 with a `Retry-After` header: wait that many
+seconds and retry, or poll the website setups until the status is `completed`.
 
 Returns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the
 website's `public_html` directory via the TUS resumable upload protocol (TUS 1.0.0).
@@ -4577,6 +4583,28 @@ close or merge it before patching again. Available on Business and Cloud Hosting
   };
 
   /**
+   * Returns the website setups started in the last 24 hours for the hosting accounts
+accessible to the authenticated client, newest first.
+
+Meant for polling right after creating a website: the website shows up in the
+websites list before its server-side setup has finished, and while the setup is
+`running` endpoints that operate on that website may respond with `404` or `409`.
+Poll this endpoint with the `domain` filter every 10 to 15 seconds and wait for
+`status: completed` before uploading files, deploying or creating databases.
+`failed` means the setup stopped before finishing or has not reported progress for
+over an hour. Setups older than 24 hours are not listed.
+   */
+  "hosting_websites_list-setups": {
+    params: {
+      /**
+       * Filter by domain name (exact match)
+       */
+      domain?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of orders accessible to the authenticated client.
 
 This endpoint returns orders of your hosting accounts as well as orders
@@ -4931,6 +4959,11 @@ WordPress websites (`website_types=wordpress`) or only Node.js websites
 (`website_types=nodejs`). Combine with the other available query parameters to
 filter by username, order ID, enabled status, or domain name for more targeted
 results.
+
+A website appears in this list before its server-side setup has finished, and
+`is_enabled` reflects suspension, not readiness. To know when a newly created website
+is ready for file, deploy or database operations, poll the list website setups
+endpoint instead.
    */
   "hosting_websites_list": {
     params: {
@@ -4979,8 +5012,11 @@ in the selected datacenter.
 
 Subsequent websites will be hosted on the same datacenter automatically.
 
-Website creation takes up to a few minutes to complete. Check the
-websites list endpoint to see when your new website becomes available.
+Website creation is asynchronous and takes up to a few minutes. Poll the list website
+setups endpoint with the `domain` filter every 10 to 15 seconds and wait for `status:
+completed` before uploading files, deploying or creating databases. While the setup is
+`running`, endpoints that operate on the website may respond with `404` or `409`.
+`is_enabled` on the websites list reflects suspension, not readiness.
    */
   "hosting_websites_create": {
     params: {

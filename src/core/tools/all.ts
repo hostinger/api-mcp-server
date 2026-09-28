@@ -6222,7 +6222,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Allows a remote host to connect to the specified database.\n\nProvide an IPv4/IPv6 address, or \"%\" to allow any host. The database name must be\nthe full name returned by the list databases endpoint.",
+    "description": "Allows a remote host to connect to the specified database.\n\nProvide an IPv4/IPv6 address, or \"%\" to allow any host. The database name must be\nthe full name returned by the list databases endpoint. Database creation is synchronous,\nso a 404 here means no database with that name exists under the username, not that it\nis still being created.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections",
     "inputSchema": {
@@ -6774,7 +6774,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Generate a file browser upload URL with authentication credentials\nfor uploading files directly to a website's file storage.\n\nReturns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the\nwebsite's `public_html` directory via the TUS resumable upload protocol (TUS 1.0.0).\nSend `X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request\nbelow.\n\n1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers\n   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.\n2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or\n   `PATCH` requests with an `upload-offset` header tracking progress) until complete.\n\n`relative_file_path` is the destination path inside `public_html`, e.g. `app.zip`.\n\nInstead of a TUS client, plain `curl` also works:\n```\nFILE=app.zip\nSIZE=$(stat -f%z \"$FILE\")   # stat -c%s on Linux\n\ncurl -i -X POST \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Upload-Length: ${SIZE}\" \\\n  -H \"Upload-Offset: 0\"\n# -> 201 Created\n\ncurl -i -X PATCH \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Content-Type: application/offset+octet-stream\" \\\n  -H \"Upload-Offset: 0\" \\\n  --data-binary \"@${FILE}\"\n# -> 204 No Content, Upload-Offset response header equals SIZE when done\n```",
+    "description": "Generate a file browser upload URL with authentication credentials\nfor uploading files directly to a website's file storage.\n\nWhile the website is still being set up (`status: running` on the list website setups\nendpoint) this endpoint returns 409 with a `Retry-After` header: wait that many\nseconds and retry, or poll the website setups until the status is `completed`.\n\nReturns `url`, `auth_key` and `rest_auth_key`. Use these to upload a file to the\nwebsite's `public_html` directory via the TUS resumable upload protocol (TUS 1.0.0).\nSend `X-Auth: {auth_key}` and `X-Auth-Rest: {rest_auth_key}` headers on every request\nbelow.\n\n1. Create the upload: `POST` to `{url}/{relative_file_path}?override=true` with headers\n   `upload-length: {file size in bytes}` and `upload-offset: 0`. Expect `201 Created`.\n2. Upload the file: send the file bytes to the same location (any TUS 1.0.0 client, or\n   `PATCH` requests with an `upload-offset` header tracking progress) until complete.\n\n`relative_file_path` is the destination path inside `public_html`, e.g. `app.zip`.\n\nInstead of a TUS client, plain `curl` also works:\n```\nFILE=app.zip\nSIZE=$(stat -f%z \"$FILE\")   # stat -c%s on Linux\n\ncurl -i -X POST \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Upload-Length: ${SIZE}\" \\\n  -H \"Upload-Offset: 0\"\n# -> 201 Created\n\ncurl -i -X PATCH \"{url}/${FILE}?override=true\" \\\n  -H \"X-Auth: {auth_key}\" \\\n  -H \"X-Auth-Rest: {rest_auth_key}\" \\\n  -H \"Tus-Resumable: 1.0.0\" \\\n  -H \"Content-Type: application/offset+octet-stream\" \\\n  -H \"Upload-Offset: 0\" \\\n  --data-binary \"@${FILE}\"\n# -> 204 No Content, Upload-Offset response header equals SIZE when done\n```",
     "method": "POST",
     "path": "/api/hosting/v1/files/upload-urls",
     "inputSchema": {
@@ -7939,6 +7939,34 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_websites_list-setups",
+    "title": "List website setups",
+    "annotations": {
+      "title": "List website setups",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns the website setups started in the last 24 hours for the hosting accounts\naccessible to the authenticated client, newest first.\n\nMeant for polling right after creating a website: the website shows up in the\nwebsites list before its server-side setup has finished, and while the setup is\n`running` endpoints that operate on that website may respond with `404` or `409`.\nPoll this endpoint with the `domain` filter every 10 to 15 seconds and wait for\n`status: completed` before uploading files, deploying or creating databases.\n`failed` means the setup stopped before finishing or has not reported progress for\nover an hour. Setups older than 24 hours are not listed.",
+    "method": "GET",
+    "path": "/api/hosting/v1/onboardings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Filter by domain name (exact match)"
+        }
+      },
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_orders_list",
     "title": "List orders",
     "annotations": {
@@ -8517,7 +8545,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve a paginated list of websites (CloudLinux, Builder, and Horizons) accessible to the\nauthenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nEach website includes a `website_type` field describing the type of\nwebsite detected on the underlying platform (`wordpress`, `builder`,\n`horizons`, `nodejs`, or `other`). Some fields, such as\n`vhost_type`, `username`, and `root_directory`, only apply to\nCloudLinux websites and are null for other platforms.\n\nUse `website_types` to list only websites of a given detected type, e.g. only\nWordPress websites (`website_types=wordpress`) or only Node.js websites\n(`website_types=nodejs`). Combine with the other available query parameters to\nfilter by username, order ID, enabled status, or domain name for more targeted\nresults.",
+    "description": "Retrieve a paginated list of websites (CloudLinux, Builder, and Horizons) accessible to the\nauthenticated client.\n\nThis endpoint returns websites from your hosting accounts as well as\nwebsites from other client hosting accounts that have shared access\nwith you.\n\nEach website includes a `website_type` field describing the type of\nwebsite detected on the underlying platform (`wordpress`, `builder`,\n`horizons`, `nodejs`, or `other`). Some fields, such as\n`vhost_type`, `username`, and `root_directory`, only apply to\nCloudLinux websites and are null for other platforms.\n\nUse `website_types` to list only websites of a given detected type, e.g. only\nWordPress websites (`website_types=wordpress`) or only Node.js websites\n(`website_types=nodejs`). Combine with the other available query parameters to\nfilter by username, order ID, enabled status, or domain name for more targeted\nresults.\n\nA website appears in this list before its server-side setup has finished, and\n`is_enabled` reflects suspension, not readiness. To know when a newly created website\nis ready for file, deploy or database operations, poll the list website setups\nendpoint instead.",
     "method": "GET",
     "path": "/api/hosting/v1/websites",
     "inputSchema": {
@@ -8580,7 +8608,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create a new website for the authenticated client.\n\nYou must choose which hosting order to create this website on. Pass that\norder as `order_id` together with the domain name. List orders to see\navailable IDs; the website is provisioned on that order's hosting plan.\n\nThe datacenter_code parameter is required when creating the first website\non a new hosting plan - this will set up and configure new hosting account\nin the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation takes up to a few minutes to complete. Check the\nwebsites list endpoint to see when your new website becomes available.",
+    "description": "Create a new website for the authenticated client.\n\nYou must choose which hosting order to create this website on. Pass that\norder as `order_id` together with the domain name. List orders to see\navailable IDs; the website is provisioned on that order's hosting plan.\n\nThe datacenter_code parameter is required when creating the first website\non a new hosting plan - this will set up and configure new hosting account\nin the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation is asynchronous and takes up to a few minutes. Poll the list website\nsetups endpoint with the `domain` filter every 10 to 15 seconds and wait for `status:\ncompleted` before uploading files, deploying or creating databases. While the setup is\n`running`, endpoints that operate on the website may respond with `404` or `409`.\n`is_enabled` on the websites list reflects suspension, not readiness.",
     "method": "POST",
     "path": "/api/hosting/v1/websites",
     "inputSchema": {
