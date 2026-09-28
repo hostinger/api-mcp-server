@@ -1,7 +1,7 @@
 // Auto-generated tool list for group: horizons
 export default [
   {
-    "name": "horizons_cloneWebsiteV1",
+    "name": "horizons_websites_clone",
     "title": "Clone website",
     "annotations": {
       "title": "Clone website",
@@ -31,7 +31,7 @@ export default [
     "group": "horizons"
   },
   {
-    "name": "horizons_getWebsiteListV1",
+    "name": "horizons_websites_list",
     "title": "Get website list",
     "annotations": {
       "title": "Get website list",
@@ -54,7 +54,7 @@ export default [
     "group": "horizons"
   },
   {
-    "name": "horizons_createWebsiteV1",
+    "name": "horizons_websites_create",
     "title": "Create website",
     "annotations": {
       "title": "Create website",
@@ -105,7 +105,7 @@ export default [
     "group": "horizons"
   },
   {
-    "name": "horizons_editWebsiteV1",
+    "name": "horizons_websites_edit",
     "title": "Edit website",
     "annotations": {
       "title": "Edit website",
@@ -161,7 +161,7 @@ export default [
     "group": "horizons"
   },
   {
-    "name": "horizons_publishWebsiteV1",
+    "name": "horizons_websites_publish",
     "title": "Publish website",
     "annotations": {
       "title": "Publish website",
@@ -191,7 +191,7 @@ export default [
     "group": "horizons"
   },
   {
-    "name": "horizons_getWebsiteV1",
+    "name": "horizons_websites_get",
     "title": "Get website",
     "annotations": {
       "title": "Get website",

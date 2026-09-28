@@ -1,7 +1,7 @@
 // Auto-generated tool list for group: wordpress
 export default [
   {
-    "name": "hosting_showAIOptionStatusV1",
+    "name": "wordpress_ai-tools_show-option-status",
     "title": "Show AI option status",
     "annotations": {
       "title": "Show AI option status",
@@ -44,7 +44,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_setAIOptionStatusV1",
+    "name": "wordpress_ai-tools_set-option-status",
     "title": "Set AI option status",
     "annotations": {
       "title": "Set AI option status",
@@ -94,7 +94,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_checkIfWordPressInstallationsAreValidV1",
+    "name": "wordpress_installations_check-if-are-valid",
     "title": "Check if WordPress installations are valid",
     "annotations": {
       "title": "Check if WordPress installations are valid",
@@ -137,7 +137,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_deleteWordPressInstallationV1",
+    "name": "wordpress_installations_delete",
     "title": "Delete WordPress installation",
     "annotations": {
       "title": "Delete WordPress installation",
@@ -173,7 +173,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_detectWordPressInstallationsV1",
+    "name": "wordpress_installations_detect",
     "title": "Detect WordPress installations",
     "annotations": {
       "title": "Detect WordPress installations",
@@ -203,7 +203,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_importWordPressWebsiteV1",
+    "name": "wordpress_installations_import-website",
     "title": "Import WordPress website",
     "annotations": {
       "title": "Import WordPress website",
@@ -248,7 +248,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_installWordPressV1",
+    "name": "wordpress_installations_install",
     "title": "Install WordPress",
     "annotations": {
       "title": "Install WordPress",
@@ -351,7 +351,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listWordPressInstallationsV1",
+    "name": "wordpress_installations_list",
     "title": "List WordPress installations",
     "annotations": {
       "title": "List WordPress installations",
@@ -392,7 +392,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listAvailableWordPressCoreUpdatesV1",
+    "name": "wordpress_installations_list-core-updates",
     "title": "List available WordPress core updates",
     "annotations": {
       "title": "List available WordPress core updates",
@@ -427,7 +427,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_getInstallationJWTTokenV1",
+    "name": "wordpress_installations_jwt-token",
     "title": "Get installation JWT token",
     "annotations": {
       "title": "Get installation JWT token",
@@ -462,7 +462,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_showWordPressCoreVersionV1",
+    "name": "wordpress_installations_show-core-version",
     "title": "Show WordPress core version",
     "annotations": {
       "title": "Show WordPress core version",
@@ -497,7 +497,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_updateWordPressCoreV1",
+    "name": "wordpress_installations_update-core",
     "title": "Update WordPress core",
     "annotations": {
       "title": "Update WordPress core",
@@ -540,7 +540,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_purgeLiteSpeedCacheV1",
+    "name": "wordpress_litespeed-cache_purge-lite-speed",
     "title": "Purge LiteSpeed Cache",
     "annotations": {
       "title": "Purge LiteSpeed Cache",
@@ -575,7 +575,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_showLiteSpeedCacheStatusV1",
+    "name": "wordpress_litespeed-cache_show-lite-speed-status",
     "title": "Show LiteSpeed Cache status",
     "annotations": {
       "title": "Show LiteSpeed Cache status",
@@ -610,7 +610,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_createLoginLinksV1",
+    "name": "wordpress_login_create-links",
     "title": "Create login links",
     "annotations": {
       "title": "Create login links",
@@ -645,7 +645,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_showMaintenanceStatusV1",
+    "name": "wordpress_maintenance_show-status",
     "title": "Show maintenance status",
     "annotations": {
       "title": "Show maintenance status",
@@ -680,7 +680,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_toggleMaintenanceModeV1",
+    "name": "wordpress_maintenance_toggle",
     "title": "Toggle maintenance mode",
     "annotations": {
       "title": "Toggle maintenance mode",
@@ -721,7 +721,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_showMemcachedObjectCacheStatusV1",
+    "name": "wordpress_object-cache_show-memcached-status",
     "title": "Show Memcached object cache status",
     "annotations": {
       "title": "Show Memcached object cache status",
@@ -756,7 +756,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_toggleMemcachedObjectCacheV1",
+    "name": "wordpress_object-cache_toggle-memcached",
     "title": "Toggle Memcached object cache",
     "annotations": {
       "title": "Toggle Memcached object cache",
@@ -797,7 +797,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_activateWordPressPluginV1",
+    "name": "wordpress_plugins_activate",
     "title": "Activate WordPress plugin",
     "annotations": {
       "title": "Activate WordPress plugin",
@@ -837,7 +837,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_deactivateWordPressPluginV1",
+    "name": "wordpress_plugins_deactivate",
     "title": "Deactivate WordPress plugin",
     "annotations": {
       "title": "Deactivate WordPress plugin",
@@ -877,7 +877,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_deployWordPressPluginV1",
+    "name": "wordpress_plugins_deploy",
     "title": "Deploy WordPress plugin",
     "annotations": {
       "title": "Deploy WordPress plugin",
@@ -922,7 +922,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_installWordPressPluginsV1",
+    "name": "wordpress_plugins_install",
     "title": "Install WordPress plugins",
     "annotations": {
       "title": "Install WordPress plugins",
@@ -966,7 +966,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listAvailableWordPressPluginsV1",
+    "name": "wordpress_plugins_list",
     "title": "List available WordPress plugins",
     "annotations": {
       "title": "List available WordPress plugins",
@@ -1001,7 +1001,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listInstalledWordPressPluginsV1",
+    "name": "wordpress_plugins_list-installed",
     "title": "List installed WordPress plugins",
     "annotations": {
       "title": "List installed WordPress plugins",
@@ -1043,7 +1043,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_searchWordPressPluginsV1",
+    "name": "wordpress_plugins_search",
     "title": "Search WordPress plugins",
     "annotations": {
       "title": "Search WordPress plugins",
@@ -1073,7 +1073,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listSuggestedWordPressPluginsV1",
+    "name": "wordpress_plugins_list-suggested",
     "title": "List suggested WordPress plugins",
     "annotations": {
       "title": "List suggested WordPress plugins",
@@ -1101,7 +1101,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_checkIfWooCommerceIsInstalledV1",
+    "name": "wordpress_plugins_check-if-woo-commerce-is-installed",
     "title": "Check if WooCommerce is installed",
     "annotations": {
       "title": "Check if WooCommerce is installed",
@@ -1129,7 +1129,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_uninstallWordPressPluginsV1",
+    "name": "wordpress_plugins_uninstall",
     "title": "Uninstall WordPress plugins",
     "annotations": {
       "title": "Uninstall WordPress plugins",
@@ -1173,7 +1173,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_updateHostingerWordPressPluginV1",
+    "name": "wordpress_plugins_update-hostinger",
     "title": "Update Hostinger WordPress plugin",
     "annotations": {
       "title": "Update Hostinger WordPress plugin",
@@ -1220,7 +1220,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_updateWordPressPluginsV1",
+    "name": "wordpress_plugins_update",
     "title": "Update WordPress plugins",
     "annotations": {
       "title": "Update WordPress plugins",
@@ -1264,7 +1264,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_activateWordPressThemeV1",
+    "name": "wordpress_themes_activate",
     "title": "Activate WordPress theme",
     "annotations": {
       "title": "Activate WordPress theme",
@@ -1304,7 +1304,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_deployWordPressThemeV1",
+    "name": "wordpress_themes_deploy",
     "title": "Deploy WordPress theme",
     "annotations": {
       "title": "Deploy WordPress theme",
@@ -1353,7 +1353,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_installWordPressThemeV1",
+    "name": "wordpress_themes_install",
     "title": "Install WordPress theme",
     "annotations": {
       "title": "Install WordPress theme",
@@ -1413,7 +1413,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listInstalledWordPressThemesV1",
+    "name": "wordpress_themes_list-installed",
     "title": "List installed WordPress themes",
     "annotations": {
       "title": "List installed WordPress themes",
@@ -1448,7 +1448,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listWordPressThemesV1",
+    "name": "wordpress_themes_list",
     "title": "List WordPress themes",
     "annotations": {
       "title": "List WordPress themes",
@@ -1480,7 +1480,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_uninstallWordPressThemesV1",
+    "name": "wordpress_themes_uninstall",
     "title": "Uninstall WordPress themes",
     "annotations": {
       "title": "Uninstall WordPress themes",
@@ -1524,7 +1524,7 @@ export default [
     "group": "wordpress"
   },
   {
-    "name": "hosting_updateWordPressThemesV1",
+    "name": "wordpress_themes_update",
     "title": "Update WordPress themes",
     "annotations": {
       "title": "Update WordPress themes",

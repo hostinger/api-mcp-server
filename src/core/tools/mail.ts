@@ -15,7 +15,7 @@ export interface OpenApiTool extends Tool {
 
 const tools: OpenApiTool[] = [
   {
-    "name": "mail_createAliasV1",
+    "name": "mail_aliases_create-alias",
     "title": "Create alias",
     "annotations": {
       "title": "Create alias",
@@ -50,7 +50,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteAliasV1",
+    "name": "mail_aliases_delete-alias",
     "title": "Delete alias",
     "annotations": {
       "title": "Delete alias",
@@ -81,7 +81,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listAliasesV1",
+    "name": "mail_aliases_list",
     "title": "List aliases",
     "annotations": {
       "title": "List aliases",
@@ -119,7 +119,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createAPITokenV1",
+    "name": "mail_api-tokens_create",
     "title": "Create API token",
     "annotations": {
       "title": "Create API token",
@@ -176,7 +176,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_revokeAPITokenV1",
+    "name": "mail_api-tokens_revoke",
     "title": "Revoke API token",
     "annotations": {
       "title": "Revoke API token",
@@ -207,7 +207,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listAPITokensV1",
+    "name": "mail_api-tokens_list",
     "title": "List API tokens",
     "annotations": {
       "title": "List API tokens",
@@ -243,7 +243,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createAutoreplyV1",
+    "name": "mail_autoreplies_create",
     "title": "Create autoreply",
     "annotations": {
       "title": "Create autoreply",
@@ -295,7 +295,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_updateAutoreplyV1",
+    "name": "mail_autoreplies_update",
     "title": "Update autoreply",
     "annotations": {
       "title": "Update autoreply",
@@ -348,7 +348,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteAutoreplyV1",
+    "name": "mail_autoreplies_delete",
     "title": "Delete autoreply",
     "annotations": {
       "title": "Delete autoreply",
@@ -379,7 +379,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listAutorepliesV1",
+    "name": "mail_autoreplies_list",
     "title": "List autoreplies",
     "annotations": {
       "title": "List autoreplies",
@@ -417,7 +417,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createCatchAllV1",
+    "name": "mail_catchalls_create-catch-all",
     "title": "Create catch-all",
     "annotations": {
       "title": "Create catch-all",
@@ -447,7 +447,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteCatchAllV1",
+    "name": "mail_catchalls_delete-catch-all",
     "title": "Delete catch-all",
     "annotations": {
       "title": "Delete catch-all",
@@ -478,7 +478,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listCatchAllsV1",
+    "name": "mail_catchalls_list-catch-alls",
     "title": "List catch-alls",
     "annotations": {
       "title": "List catch-alls",
@@ -516,7 +516,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_resendCatchAllConfirmationV1",
+    "name": "mail_catchalls_resend-catch-all-confirmation",
     "title": "Resend catch-all confirmation",
     "annotations": {
       "title": "Resend catch-all confirmation",
@@ -546,7 +546,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createForwarderV1",
+    "name": "mail_forwarders_create",
     "title": "Create forwarder",
     "annotations": {
       "title": "Create forwarder",
@@ -585,7 +585,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteForwarderV1",
+    "name": "mail_forwarders_delete",
     "title": "Delete forwarder",
     "annotations": {
       "title": "Delete forwarder",
@@ -616,7 +616,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listForwardersV1",
+    "name": "mail_forwarders_list",
     "title": "List forwarders",
     "annotations": {
       "title": "List forwarders",
@@ -654,7 +654,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_resendForwarderConfirmationV1",
+    "name": "mail_forwarders_resend-confirmation",
     "title": "Resend forwarder confirmation",
     "annotations": {
       "title": "Resend forwarder confirmation",
@@ -684,7 +684,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_updateForwarderKeepCopySettingV1",
+    "name": "mail_forwarders_update-keep-copy-setting",
     "title": "Update forwarder keep-copy setting",
     "annotations": {
       "title": "Update forwarder keep-copy setting",
@@ -720,7 +720,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listAccessLogsV1",
+    "name": "mail_logs_list-access",
     "title": "List access logs",
     "annotations": {
       "title": "List access logs",
@@ -795,7 +795,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listActionLogsV1",
+    "name": "mail_logs_list-action",
     "title": "List action logs",
     "annotations": {
       "title": "List action logs",
@@ -857,7 +857,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listInboundLogsV1",
+    "name": "mail_logs_list-inbound",
     "title": "List inbound logs",
     "annotations": {
       "title": "List inbound logs",
@@ -927,7 +927,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listMailboxActionLogsV1",
+    "name": "mail_logs_list-mailbox-action",
     "title": "List mailbox action logs",
     "annotations": {
       "title": "List mailbox action logs",
@@ -995,7 +995,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listOutboundLogsV1",
+    "name": "mail_logs_list-outbound",
     "title": "List outbound logs",
     "annotations": {
       "title": "List outbound logs",
@@ -1065,7 +1065,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listMailboxesV1",
+    "name": "mail_mailboxes_list",
     "title": "List mailboxes",
     "annotations": {
       "title": "List mailboxes",
@@ -1115,7 +1115,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createMailboxV1",
+    "name": "mail_mailboxes_create-mailbox",
     "title": "Create mailbox",
     "annotations": {
       "title": "Create mailbox",
@@ -1155,7 +1155,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteMailboxV1",
+    "name": "mail_mailboxes_delete-mailbox",
     "title": "Delete mailbox",
     "annotations": {
       "title": "Delete mailbox",
@@ -1186,7 +1186,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_changeMailboxPasswordV1",
+    "name": "mail_mailboxes_change-mailbox-password",
     "title": "Change mailbox password",
     "annotations": {
       "title": "Change mailbox password",
@@ -1222,7 +1222,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listOrdersV1",
+    "name": "mail_orders_list",
     "title": "List orders",
     "annotations": {
       "title": "List orders",
@@ -1281,7 +1281,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_getOrderPlanV1",
+    "name": "mail_orders_plan",
     "title": "Get order plan",
     "annotations": {
       "title": "Get order plan",
@@ -1311,7 +1311,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createWebhookV1",
+    "name": "mail_webhooks_create",
     "title": "Create webhook",
     "annotations": {
       "title": "Create webhook",
@@ -1376,7 +1376,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listWebhookDeliveryLogsV1",
+    "name": "mail_webhooks_list-delivery-logs",
     "title": "List webhook delivery logs",
     "annotations": {
       "title": "List webhook delivery logs",
@@ -1418,7 +1418,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_getWebhookV1",
+    "name": "mail_webhooks_get",
     "title": "Get webhook",
     "annotations": {
       "title": "Get webhook",
@@ -1448,7 +1448,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteWebhookV1",
+    "name": "mail_webhooks_delete",
     "title": "Delete webhook",
     "annotations": {
       "title": "Delete webhook",
@@ -1479,7 +1479,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_updateWebhookV1",
+    "name": "mail_webhooks_update",
     "title": "Update webhook",
     "annotations": {
       "title": "Update webhook",
@@ -1542,7 +1542,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listWebhooksV1",
+    "name": "mail_webhooks_list",
     "title": "List webhooks",
     "annotations": {
       "title": "List webhooks",
@@ -1593,7 +1593,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_regenerateWebhookSecretV1",
+    "name": "mail_webhooks_regenerate-secret",
     "title": "Regenerate webhook secret",
     "annotations": {
       "title": "Regenerate webhook secret",
@@ -1623,7 +1623,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_testWebhookV1",
+    "name": "mail_webhooks_test",
     "title": "Test webhook",
     "annotations": {
       "title": "Test webhook",

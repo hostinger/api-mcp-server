@@ -1,6 +1,6 @@
 # Store — Hostinger Ecommerce with a custom storefront
 
-**Primary source:** execute `ecommerce_getCustomStorefrontSetupInstructionsV1` at the start of every store run — it returns the current, server-maintained integration guide, and it supersedes this file wherever they disagree. This file carries the essentials so the run can be planned before that call, and a fallback when the ecommerce operations aren't enabled.
+**Primary source:** execute `ecommerce_miscellaneous_custom-storefront-setup-instructions` at the start of every store run — it returns the current, server-maintained integration guide, and it supersedes this file wherever they disagree. This file carries the essentials so the run can be planned before that call, and a fallback when the ecommerce operations aren't enabled.
 
 ## Mental model
 
@@ -17,9 +17,9 @@ Two API surfaces — don't mix them:
 
 ## Backend setup (management tools)
 
-1. Resolve the `custom` sales channel: `ecommerce_getStoresV1` → `ecommerce_listSalesChannelsV1`. If a `custom` channel already exists, confirm with the user that it's the one to use; otherwise add one to the existing store with `ecommerce_createCustomSalesChannelV1`, or create a store with `ecommerce_createStoreV1` (with a `custom` sales channel) when no suitable store exists. Set the channel `url` to the storefront's public domain at creation when it's already known.
-2. For checkout to work the store needs all three: ≥ 1 product, ≥ 1 payment method, ≥ 1 shipping zone. Payment, shipping, and currency are store-level — check `ecommerce_getStoreMetadataV1` (`has_payment_methods` and `has_shipping` must be `true`; the same response carries `default_currency` with `code`, `decimal_digits`, `template` — read it here rather than guessing). Products are **per sales channel** — verify by listing products for the resolved channel on the Storefront API and confirming the list is non-empty. Seed what's missing with `ecommerce_createPhysicalProductV1` / `ecommerce_createDigitalProductV1`, `ecommerce_enableManualPaymentMethodV1`, and `ecommerce_setStoreShippingV1` (price `0` = free shipping) — confirming with the user before writing to a store that already has real data.
-3. After deploy, point the channel at the live site: `ecommerce_updateSalesChannelV1 { store_id, sales_channel_id, url }`.
+1. Resolve the `custom` sales channel: `ecommerce_stores_list` → `ecommerce_sales-channels_list`. If a `custom` channel already exists, confirm with the user that it's the one to use; otherwise add one to the existing store with `ecommerce_sales-channels_create`, or create a store with `ecommerce_stores_create` (with a `custom` sales channel) when no suitable store exists. Set the channel `url` to the storefront's public domain at creation when it's already known.
+2. For checkout to work the store needs all three: ≥ 1 product, ≥ 1 payment method, ≥ 1 shipping zone. Payment, shipping, and currency are store-level — check `ecommerce_stores_metadata` (`has_payment_methods` and `has_shipping` must be `true`; the same response carries `default_currency` with `code`, `decimal_digits`, `template` — read it here rather than guessing). Products are **per sales channel** — verify by listing products for the resolved channel on the Storefront API and confirming the list is non-empty. Seed what's missing with `ecommerce_products_create-physical` / `ecommerce_products_create-digital`, `ecommerce_payments_enable-manual-method`, and `ecommerce_shipping_set-store` (price `0` = free shipping) — confirming with the user before writing to a store that already has real data.
+3. After deploy, point the channel at the live site: `ecommerce_sales-channels_update { store_id, sales_channel_id, url }`.
 
 If the ecommerce operations aren't available, ask the user to enable the Ecommerce product group in the Hostinger Connector — or to provide the `sales_channel_id` directly, after which the public endpoints suffice for the frontend work.
 

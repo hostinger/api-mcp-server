@@ -15,7 +15,7 @@ export interface OpenApiTool extends Tool {
 
 const tools: OpenApiTool[] = [
   {
-    "name": "v2_getDomainVerificationsDIRECT",
+    "name": "domains_verifications_direct",
     "title": "Get domain verifications",
     "annotations": {
       "title": "Get domain verifications",
@@ -38,7 +38,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_suggestDomainNamesFromADescriptionV1",
+    "name": "domains_availability_suggest-names-from-description",
     "title": "Suggest domain names from a description",
     "annotations": {
       "title": "Suggest domain names from a description",
@@ -73,7 +73,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_suggestDomainNamesFromADomainV1",
+    "name": "domains_availability_suggest-names-from",
     "title": "Suggest domain names from a domain",
     "annotations": {
       "title": "Suggest domain names from a domain",
@@ -108,7 +108,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_checkDomainAvailabilityV1",
+    "name": "domains_availability_check",
     "title": "Check domain availability",
     "annotations": {
       "title": "Check domain availability",
@@ -151,7 +151,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainForwardingV1",
+    "name": "domains_forwarding_get",
     "title": "Get domain forwarding",
     "annotations": {
       "title": "Get domain forwarding",
@@ -181,7 +181,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_updateDomainForwardingV1",
+    "name": "domains_forwarding_update",
     "title": "Update domain forwarding",
     "annotations": {
       "title": "Update domain forwarding",
@@ -226,7 +226,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_deleteDomainForwardingV1",
+    "name": "domains_forwarding_delete",
     "title": "Delete domain forwarding",
     "annotations": {
       "title": "Delete domain forwarding",
@@ -257,7 +257,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_createDomainForwardingV1",
+    "name": "domains_forwarding_create",
     "title": "Create domain forwarding",
     "annotations": {
       "title": "Create domain forwarding",
@@ -301,7 +301,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getPendingIRTPVerificationV1",
+    "name": "domains_whois_pending-irtp-verification",
     "title": "Get pending IRTP verification",
     "annotations": {
       "title": "Get pending IRTP verification",
@@ -331,7 +331,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_cancelPendingIRTPVerificationV1",
+    "name": "domains_whois_cancel-pending-irtp-verification",
     "title": "Cancel pending IRTP verification",
     "annotations": {
       "title": "Cancel pending IRTP verification",
@@ -362,7 +362,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getIncomingDomainMoveV1",
+    "name": "domains_move_incoming",
     "title": "Get incoming domain move",
     "annotations": {
       "title": "Get incoming domain move",
@@ -396,7 +396,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_acceptIncomingDomainMoveV1",
+    "name": "domains_move_accept-incoming",
     "title": "Accept incoming domain move",
     "annotations": {
       "title": "Accept incoming domain move",
@@ -456,7 +456,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_rejectIncomingDomainMoveV1",
+    "name": "domains_move_reject-incoming",
     "title": "Reject incoming domain move",
     "annotations": {
       "title": "Reject incoming domain move",
@@ -487,7 +487,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getIncomingDomainMoveListV1",
+    "name": "domains_move_incoming-list",
     "title": "Get incoming domain move list",
     "annotations": {
       "title": "Get incoming domain move list",
@@ -510,7 +510,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getOutgoingDomainMoveV1",
+    "name": "domains_move_outgoing",
     "title": "Get outgoing domain move",
     "annotations": {
       "title": "Get outgoing domain move",
@@ -540,7 +540,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_startOutgoingDomainMoveV1",
+    "name": "domains_move_start-outgoing",
     "title": "Start outgoing domain move",
     "annotations": {
       "title": "Start outgoing domain move",
@@ -575,7 +575,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_cancelOutgoingDomainMoveV1",
+    "name": "domains_move_cancel-outgoing",
     "title": "Cancel outgoing domain move",
     "annotations": {
       "title": "Cancel outgoing domain move",
@@ -606,7 +606,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getOutgoingDomainMoveListV1",
+    "name": "domains_move_outgoing-list",
     "title": "Get outgoing domain move list",
     "annotations": {
       "title": "Get outgoing domain move list",
@@ -629,7 +629,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainAuthorizationCodeV1",
+    "name": "domains_portfolio_authorization-code",
     "title": "Get domain authorization code",
     "annotations": {
       "title": "Get domain authorization code",
@@ -659,7 +659,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_claimFreeDomainV1",
+    "name": "domains_portfolio_claim-free",
     "title": "Claim free domain",
     "annotations": {
       "title": "Claim free domain",
@@ -716,7 +716,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_enableDomainLockV1",
+    "name": "domains_portfolio_enable-lock",
     "title": "Enable domain lock",
     "annotations": {
       "title": "Enable domain lock",
@@ -747,7 +747,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_disableDomainLockV1",
+    "name": "domains_portfolio_disable-lock",
     "title": "Disable domain lock",
     "annotations": {
       "title": "Disable domain lock",
@@ -778,7 +778,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainDetailsV1",
+    "name": "domains_portfolio_get",
     "title": "Get domain details",
     "annotations": {
       "title": "Get domain details",
@@ -808,7 +808,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainListV1",
+    "name": "domains_portfolio_list",
     "title": "Get domain list",
     "annotations": {
       "title": "Get domain list",
@@ -831,7 +831,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_purchaseNewDomainV1",
+    "name": "domains_portfolio_purchase",
     "title": "Purchase new domain",
     "annotations": {
       "title": "Purchase new domain",
@@ -905,7 +905,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_enablePrivacyProtectionV1",
+    "name": "domains_portfolio_enable-privacy-protection",
     "title": "Enable privacy protection",
     "annotations": {
       "title": "Enable privacy protection",
@@ -936,7 +936,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_disablePrivacyProtectionV1",
+    "name": "domains_portfolio_disable-privacy-protection",
     "title": "Disable privacy protection",
     "annotations": {
       "title": "Disable privacy protection",
@@ -967,7 +967,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainRenewalInformationV1",
+    "name": "domains_portfolio_renewal-information",
     "title": "Get domain renewal information",
     "annotations": {
       "title": "Get domain renewal information",
@@ -997,7 +997,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_completeDomainSetupV1",
+    "name": "domains_portfolio_complete-setup",
     "title": "Complete domain setup",
     "annotations": {
       "title": "Complete domain setup",
@@ -1054,7 +1054,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_updateDomainNameserversV1",
+    "name": "domains_portfolio_update-nameservers",
     "title": "Update domain nameservers",
     "annotations": {
       "title": "Update domain nameservers",
@@ -1103,7 +1103,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_claimFreeDomainTransferV1",
+    "name": "domains_transfer_claim-free",
     "title": "Claim free domain transfer",
     "annotations": {
       "title": "Claim free domain transfer",
@@ -1164,7 +1164,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getTransferV1",
+    "name": "domains_transfer_get",
     "title": "Get transfer",
     "annotations": {
       "title": "Get transfer",
@@ -1194,7 +1194,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getTransferListV1",
+    "name": "domains_transfer_list",
     "title": "Get transfer list",
     "annotations": {
       "title": "Get transfer list",
@@ -1217,7 +1217,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_changeWHOISProfileForDomainV1",
+    "name": "domains_whois_change-for",
     "title": "Change WHOIS profile for domain",
     "annotations": {
       "title": "Change WHOIS profile for domain",
@@ -1268,7 +1268,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_setWHOISProfileAsDefaultV1",
+    "name": "domains_whois_set-as-default",
     "title": "Set WHOIS profile as default",
     "annotations": {
       "title": "Set WHOIS profile as default",
@@ -1299,7 +1299,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_unsetDefaultWHOISProfileV1",
+    "name": "domains_whois_unset-default",
     "title": "Unset default WHOIS profile",
     "annotations": {
       "title": "Unset default WHOIS profile",
@@ -1330,7 +1330,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getWHOISProfileV1",
+    "name": "domains_whois_get",
     "title": "Get WHOIS profile",
     "annotations": {
       "title": "Get WHOIS profile",
@@ -1360,7 +1360,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_deleteWHOISProfileV1",
+    "name": "domains_whois_delete",
     "title": "Delete WHOIS profile",
     "annotations": {
       "title": "Delete WHOIS profile",
@@ -1391,7 +1391,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getWHOISProfileListV1",
+    "name": "domains_whois_list",
     "title": "Get WHOIS profile list",
     "annotations": {
       "title": "Get WHOIS profile list",
@@ -1419,7 +1419,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_createWHOISProfileV1",
+    "name": "domains_whois_create",
     "title": "Create WHOIS profile",
     "annotations": {
       "title": "Create WHOIS profile",
@@ -1474,7 +1474,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getWHOISProfileUsageV1",
+    "name": "domains_whois_usage",
     "title": "Get WHOIS profile usage",
     "annotations": {
       "title": "Get WHOIS profile usage",

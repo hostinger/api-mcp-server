@@ -1,7 +1,7 @@
 // Auto-generated tool list for group: vps
 export default [
   {
-    "name": "VPS_getDataCenterListV1",
+    "name": "vps_data-centers_list",
     "title": "Get data center list",
     "annotations": {
       "title": "Get data center list",
@@ -24,7 +24,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getProjectContainersV1",
+    "name": "vps_docker_containers",
     "title": "Get project containers",
     "annotations": {
       "title": "Get project containers",
@@ -59,7 +59,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getProjectContentsV1",
+    "name": "vps_docker_get",
     "title": "Get project contents",
     "annotations": {
       "title": "Get project contents",
@@ -94,7 +94,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_deleteProjectV1",
+    "name": "vps_docker_delete",
     "title": "Delete project",
     "annotations": {
       "title": "Delete project",
@@ -130,7 +130,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getProjectListV1",
+    "name": "vps_docker_list",
     "title": "Get project list",
     "annotations": {
       "title": "Get project list",
@@ -160,7 +160,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_createNewProjectV1",
+    "name": "vps_docker_create",
     "title": "Create new project",
     "annotations": {
       "title": "Create new project",
@@ -204,7 +204,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getProjectLogsV1",
+    "name": "vps_docker_logs",
     "title": "Get project logs",
     "annotations": {
       "title": "Get project logs",
@@ -239,7 +239,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_restartProjectV1",
+    "name": "vps_docker_restart",
     "title": "Restart project",
     "annotations": {
       "title": "Restart project",
@@ -274,7 +274,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_startProjectV1",
+    "name": "vps_docker_start",
     "title": "Start project",
     "annotations": {
       "title": "Start project",
@@ -309,7 +309,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_stopProjectV1",
+    "name": "vps_docker_stop",
     "title": "Stop project",
     "annotations": {
       "title": "Stop project",
@@ -344,7 +344,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_updateProjectV1",
+    "name": "vps_docker_update",
     "title": "Update project",
     "annotations": {
       "title": "Update project",
@@ -379,7 +379,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_activateFirewallV1",
+    "name": "vps_firewall_activate",
     "title": "Activate firewall",
     "annotations": {
       "title": "Activate firewall",
@@ -414,7 +414,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_deactivateFirewallV1",
+    "name": "vps_firewall_deactivate",
     "title": "Deactivate firewall",
     "annotations": {
       "title": "Deactivate firewall",
@@ -449,7 +449,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getFirewallDetailsV1",
+    "name": "vps_firewall_get",
     "title": "Get firewall details",
     "annotations": {
       "title": "Get firewall details",
@@ -479,7 +479,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_deleteFirewallV1",
+    "name": "vps_firewall_delete",
     "title": "Delete firewall",
     "annotations": {
       "title": "Delete firewall",
@@ -510,7 +510,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getFirewallListV1",
+    "name": "vps_firewall_list",
     "title": "Get firewall list",
     "annotations": {
       "title": "Get firewall list",
@@ -538,7 +538,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_createNewFirewallV1",
+    "name": "vps_firewall_create",
     "title": "Create new firewall",
     "annotations": {
       "title": "Create new firewall",
@@ -568,7 +568,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_updateFirewallRuleV1",
+    "name": "vps_firewall_update-rule",
     "title": "Update firewall rule",
     "annotations": {
       "title": "Update firewall rule",
@@ -643,7 +643,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_deleteFirewallRuleV1",
+    "name": "vps_firewall_delete-rule",
     "title": "Delete firewall rule",
     "annotations": {
       "title": "Delete firewall rule",
@@ -679,7 +679,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_replaceAllFirewallRulesInGroupV1",
+    "name": "vps_firewall_replace-all-rules-in-group",
     "title": "Replace all firewall rules in group",
     "annotations": {
       "title": "Replace all firewall rules in group",
@@ -723,7 +723,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_createFirewallRuleV1",
+    "name": "vps_firewall_create-rule",
     "title": "Create firewall rule",
     "annotations": {
       "title": "Create firewall rule",
@@ -792,7 +792,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_syncFirewallToAllAssignedVMsV1",
+    "name": "vps_firewall_sync-to-all-assigned-v-ms",
     "title": "Sync firewall to all assigned VMs",
     "annotations": {
       "title": "Sync firewall to all assigned VMs",
@@ -822,7 +822,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_syncFirewallV1",
+    "name": "vps_firewall_sync",
     "title": "Sync firewall",
     "annotations": {
       "title": "Sync firewall",
@@ -857,7 +857,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getPostInstallScriptV1",
+    "name": "vps_post-install-scripts_get",
     "title": "Get post-install script",
     "annotations": {
       "title": "Get post-install script",
@@ -887,7 +887,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_updatePostInstallScriptV1",
+    "name": "vps_post-install-scripts_update",
     "title": "Update post-install script",
     "annotations": {
       "title": "Update post-install script",
@@ -928,7 +928,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_deletePostInstallScriptV1",
+    "name": "vps_post-install-scripts_delete",
     "title": "Delete post-install script",
     "annotations": {
       "title": "Delete post-install script",
@@ -959,7 +959,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getPostInstallScriptsV1",
+    "name": "vps_post-install-scripts_list",
     "title": "Get post-install scripts",
     "annotations": {
       "title": "Get post-install scripts",
@@ -987,7 +987,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_createPostInstallScriptV1",
+    "name": "vps_post-install-scripts_create",
     "title": "Create post-install script",
     "annotations": {
       "title": "Create post-install script",
@@ -1022,7 +1022,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_attachPublicKeyV1",
+    "name": "vps_public-keys_attach",
     "title": "Attach public key",
     "annotations": {
       "title": "Attach public key",
@@ -1061,7 +1061,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_deletePublicKeyV1",
+    "name": "vps_public-keys_delete",
     "title": "Delete public key",
     "annotations": {
       "title": "Delete public key",
@@ -1092,7 +1092,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getPublicKeysV1",
+    "name": "vps_public-keys_list",
     "title": "Get public keys",
     "annotations": {
       "title": "Get public keys",
@@ -1120,7 +1120,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_createPublicKeyV1",
+    "name": "vps_public-keys_create",
     "title": "Create public key",
     "annotations": {
       "title": "Create public key",
@@ -1155,7 +1155,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getTemplateDetailsV1",
+    "name": "vps_templates_get",
     "title": "Get template details",
     "annotations": {
       "title": "Get template details",
@@ -1185,7 +1185,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getTemplatesV1",
+    "name": "vps_templates_list",
     "title": "Get templates",
     "annotations": {
       "title": "Get templates",
@@ -1208,7 +1208,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getActionDetailsV1",
+    "name": "vps_actions_get",
     "title": "Get action details",
     "annotations": {
       "title": "Get action details",
@@ -1243,7 +1243,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getActionsV1",
+    "name": "vps_actions_list",
     "title": "Get actions",
     "annotations": {
       "title": "Get actions",
@@ -1277,7 +1277,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getAttachedPublicKeysV1",
+    "name": "vps_virtual-machines_attached-public-keys",
     "title": "Get attached public keys",
     "annotations": {
       "title": "Get attached public keys",
@@ -1311,7 +1311,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getBackupsV1",
+    "name": "vps_backups_list",
     "title": "Get backups",
     "annotations": {
       "title": "Get backups",
@@ -1345,7 +1345,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_restoreBackupV1",
+    "name": "vps_backups_restore",
     "title": "Restore backup",
     "annotations": {
       "title": "Restore backup",
@@ -1380,7 +1380,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_setHostnameV1",
+    "name": "vps_virtual-machines_set-hostname",
     "title": "Set hostname",
     "annotations": {
       "title": "Set hostname",
@@ -1416,7 +1416,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_resetHostnameV1",
+    "name": "vps_virtual-machines_reset-hostname",
     "title": "Reset hostname",
     "annotations": {
       "title": "Reset hostname",
@@ -1447,7 +1447,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getVirtualMachineDetailsV1",
+    "name": "vps_virtual-machines_get",
     "title": "Get virtual machine details",
     "annotations": {
       "title": "Get virtual machine details",
@@ -1477,7 +1477,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getVirtualMachinesV1",
+    "name": "vps_virtual-machines_list",
     "title": "Get virtual machines",
     "annotations": {
       "title": "Get virtual machines",
@@ -1500,7 +1500,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_purchaseNewVirtualMachineV1",
+    "name": "vps_virtual-machines_purchase",
     "title": "Purchase new virtual machine",
     "annotations": {
       "title": "Purchase new virtual machine",
@@ -1547,7 +1547,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getScanMetricsV1",
+    "name": "vps_monarx_scan-metrics",
     "title": "Get scan metrics",
     "annotations": {
       "title": "Get scan metrics",
@@ -1577,7 +1577,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_installMonarxV1",
+    "name": "vps_monarx_install",
     "title": "Install Monarx",
     "annotations": {
       "title": "Install Monarx",
@@ -1607,7 +1607,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_uninstallMonarxV1",
+    "name": "vps_monarx_uninstall",
     "title": "Uninstall Monarx",
     "annotations": {
       "title": "Uninstall Monarx",
@@ -1638,7 +1638,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getMetricsV1",
+    "name": "vps_virtual-machines_metrics",
     "title": "Get metrics",
     "annotations": {
       "title": "Get metrics",
@@ -1678,7 +1678,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_setNameserversV1",
+    "name": "vps_virtual-machines_set-nameservers",
     "title": "Set nameservers",
     "annotations": {
       "title": "Set nameservers",
@@ -1722,7 +1722,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_createPTRRecordV1",
+    "name": "vps_ptr_create",
     "title": "Create PTR record",
     "annotations": {
       "title": "Create PTR record",
@@ -1762,7 +1762,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_deletePTRRecordV1",
+    "name": "vps_ptr_delete",
     "title": "Delete PTR record",
     "annotations": {
       "title": "Delete PTR record",
@@ -1798,7 +1798,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_setPanelPasswordV1",
+    "name": "vps_virtual-machines_set-panel-password",
     "title": "Set panel password",
     "annotations": {
       "title": "Set panel password",
@@ -1834,7 +1834,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_startRecoveryModeV1",
+    "name": "vps_recovery_start",
     "title": "Start recovery mode",
     "annotations": {
       "title": "Start recovery mode",
@@ -1869,7 +1869,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_stopRecoveryModeV1",
+    "name": "vps_recovery_stop",
     "title": "Stop recovery mode",
     "annotations": {
       "title": "Stop recovery mode",
@@ -1900,7 +1900,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_recreateVirtualMachineV1",
+    "name": "vps_virtual-machines_recreate",
     "title": "Recreate virtual machine",
     "annotations": {
       "title": "Recreate virtual machine",
@@ -1947,7 +1947,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_restartVirtualMachineV1",
+    "name": "vps_virtual-machines_restart",
     "title": "Restart virtual machine",
     "annotations": {
       "title": "Restart virtual machine",
@@ -1977,7 +1977,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_setRootPasswordV1",
+    "name": "vps_virtual-machines_set-root-password",
     "title": "Set root password",
     "annotations": {
       "title": "Set root password",
@@ -2013,7 +2013,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_setupPurchasedVirtualMachineV1",
+    "name": "vps_virtual-machines_setup",
     "title": "Setup purchased virtual machine",
     "annotations": {
       "title": "Setup purchased virtual machine",
@@ -2095,7 +2095,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_getSnapshotV1",
+    "name": "vps_snapshots_get",
     "title": "Get snapshot",
     "annotations": {
       "title": "Get snapshot",
@@ -2125,7 +2125,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_createSnapshotV1",
+    "name": "vps_snapshots_create",
     "title": "Create snapshot",
     "annotations": {
       "title": "Create snapshot",
@@ -2155,7 +2155,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_deleteSnapshotV1",
+    "name": "vps_snapshots_delete",
     "title": "Delete snapshot",
     "annotations": {
       "title": "Delete snapshot",
@@ -2186,7 +2186,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_restoreSnapshotV1",
+    "name": "vps_snapshots_restore",
     "title": "Restore snapshot",
     "annotations": {
       "title": "Restore snapshot",
@@ -2216,7 +2216,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_startVirtualMachineV1",
+    "name": "vps_virtual-machines_start",
     "title": "Start virtual machine",
     "annotations": {
       "title": "Start virtual machine",
@@ -2246,7 +2246,7 @@ export default [
     "group": "vps"
   },
   {
-    "name": "VPS_stopVirtualMachineV1",
+    "name": "vps_virtual-machines_stop",
     "title": "Stop virtual machine",
     "annotations": {
       "title": "Stop virtual machine",

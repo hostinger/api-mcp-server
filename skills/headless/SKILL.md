@@ -52,5 +52,5 @@ Run non-interactively wherever possible. The exceptions that must involve the us
 
 The inputSchema returned by search is authoritative for request shapes — read it before calling. Two live sources supersede anything written here when they disagree:
 
-- The ecommerce operation `ecommerce_getCustomStorefrontSetupInstructionsV1` returns the current storefront integration guide from the server — execute it at the start of any store run.
+- The ecommerce operation `ecommerce_miscellaneous_custom-storefront-setup-instructions` returns the current storefront integration guide from the server — execute it at the start of any store run.
 - The Hostinger API reference at https://developers.hostinger.com describes every endpoint behind the operations.

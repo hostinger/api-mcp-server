@@ -20,11 +20,11 @@ Two surfaces, like the store recipe:
 
 ## Setup (management tools)
 
-1. **Check for an existing installation first**: `hosting_listWordPressInstallationsV1` filtered by the site's username/domain. Reuse a valid install when the user agrees — never overwrite one silently.
-2. **Choose where WordPress lives.** Default: a dedicated subdomain of the site, e.g. `cms.<domain>` — create it with `hosting_createWebsiteSubdomainV1` so the main domain stays free for the frontend. A separate free-subdomain website (per `SETUP.md`) also works when the plan allows another website.
-3. **Install**: `hosting_installWordPressV1` on that domain. The call only queues the job — **poll** `hosting_listWordPressInstallationsV1` until the installation appears (typically 1–2 minutes). Don't proceed on the queued response alone.
-4. **Hand the owner their editor**: mint a one-click wp-admin link with `hosting_createLoginLinksV1` and show it to the user. Content authoring happens in wp-admin — the skill does not seed posts (there is no anonymous write path, by design). The fresh install ships with a sample post, which is enough to build and verify the frontend against.
-5. **Caching** (recommended before finishing): enable the object cache with `hosting_toggleMemcachedObjectCacheV1`; after config changes, purge with `hosting_purgeLiteSpeedCacheV1`.
+1. **Check for an existing installation first**: `wordpress_installations_list` filtered by the site's username/domain. Reuse a valid install when the user agrees — never overwrite one silently.
+2. **Choose where WordPress lives.** Default: a dedicated subdomain of the site, e.g. `cms.<domain>` — create it with `hosting_domains_create-website-subdomain` so the main domain stays free for the frontend. A separate free-subdomain website (per `SETUP.md`) also works when the plan allows another website.
+3. **Install**: `wordpress_installations_install` on that domain. The call only queues the job — **poll** `wordpress_installations_list` until the installation appears (typically 1–2 minutes). Don't proceed on the queued response alone.
+4. **Hand the owner their editor**: mint a one-click wp-admin link with `wordpress_login_create-links` and show it to the user. Content authoring happens in wp-admin — the skill does not seed posts (there is no anonymous write path, by design). The fresh install ships with a sample post, which is enough to build and verify the frontend against.
+5. **Caching** (recommended before finishing): enable the object cache with `wordpress_object-cache_toggle-memcached`; after config changes, purge with `wordpress_litespeed-cache_purge-lite-speed`.
 
 ## Frontend contract
 

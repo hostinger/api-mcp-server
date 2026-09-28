@@ -213,7 +213,7 @@ console.log("Available tools:", tools);
 // Execute an operation
 const result = await client.callTool({
   name: "execute",
-  arguments: { operation: "billing_getCatalogItemListV1", params: { category: "DOMAIN" } }
+  arguments: { operation: "billing_catalog_list", params: { category: "DOMAIN" } }
 });
 console.log("Tool result:", result);
 ```
@@ -232,21 +232,21 @@ The operations reachable through `execute`, by binary:
 
 ### `hostinger-agency-hosting-mcp`
 
-#### agency-hosting_deployNodeStaticWebsite
+#### agency-hosting_deploy-node-static-website
 
-Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agencyHosting_deployPhpApplication instead. The website UID is automatically resolved from the domain.
-
-- **Method**: `custom`
-- **Path**: `custom`
-
-#### agency-hosting_deployPhpApplication
-
-Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For node-static websites that require a build step, use agencyHosting_deployNodeStaticWebsite instead. The website UID is automatically resolved from the domain.
+Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agency-hosting_deploy-php-application instead. The website UID is automatically resolved from the domain.
 
 - **Method**: `custom`
 - **Path**: `custom`
 
-#### agency-hosting_listAvailableDatacentersV1
+#### agency-hosting_deploy-php-application
+
+Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For node-static websites that require a build step, use agency-hosting_deploy-node-static-website instead. The website UID is automatically resolved from the domain.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### agency-hosting_datacenters_list
 
 Lists the datacenters available for provisioning a new website on the given Agency Plan
 hosting order.
@@ -258,7 +258,7 @@ ping) before choosing its `code` as the `datacenter_code` when creating a websit
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/datacenters`
 
-#### agency-hosting_changeWebsiteDomainV1
+#### agency-hosting_domains_change-website
 
 Changes the primary domain for an Agency Plan website.
 
@@ -268,14 +268,14 @@ Set domain to null to revert to the temporary domain.
 - **Method**: `PUT`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{from_domain}`
 
-#### agency-hosting_linkDomainToWebsiteV1
+#### agency-hosting_domains_link-to-website
 
 Links a domain to the specified Agency Plan website so it can serve traffic for that domain.
 
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains`
 
-#### agency-hosting_listDomainsV1
+#### agency-hosting_domains_list
 
 Returns a paginated list of domains associated with Agency Plan websites accessible to the authenticated client.
 
@@ -284,7 +284,7 @@ Use the website_uuids filter to narrow results to specific websites.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/domains`
 
-#### agency-hosting_unlinkDomainFromWebsiteV1
+#### agency-hosting_domains_unlink-from-website
 
 Unlinks a domain from the specified Agency Plan website.
 
@@ -297,7 +297,7 @@ If this is the only domain on the website, unlinking leaves the website without 
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}`
 
-#### agency-hosting_generateUploadURLV1
+#### agency-hosting_files_generate-upload-url
 
 Generate a file browser upload URL with authentication credentials for uploading files
 to an Agency Plan website's file storage.
@@ -340,7 +340,7 @@ curl -i -X PATCH "{url}/${FILE}?override=true" \
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/files/upload-urls`
 
-#### agency-hosting_importWebsiteFromArchiveV1
+#### agency-hosting_files_import-website-from-archive
 
 Imports an Agency Plan website from an already-uploaded archive.
 
@@ -351,7 +351,7 @@ archive types: .zip, .tar, .tar.gz, .tgz.
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/files/import-archive`
 
-#### agency-hosting_listAgencyPlanOrderDiskUsageMetricsV1
+#### agency-hosting_metrics_list-plan-order-disk-usage
 
 Returns aggregated disk and inode usage for the Agency Plan order over the
 selected time frame, plus the plan quotas. Figures cover the whole order
@@ -361,14 +361,14 @@ are on the resource-usage-metrics endpoint.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/disk-usage-metrics`
 
-#### agency-hosting_listOrdersV1
+#### agency-hosting_orders_list
 
 Returns a paginated list of Agency Plan orders accessible to the authenticated client.
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders`
 
-#### agency-hosting_listOrderResourceUsageMetricsV1
+#### agency-hosting_metrics_list-order-resource-usage
 
 Returns aggregated CPU, memory, and process usage for the Agency Plan order
 over the selected time frame, plus the plan quotas and a per-website
@@ -380,56 +380,56 @@ disk-usage-metrics endpoint.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/resource-usage-metrics`
 
-#### agency-hosting_listPHPExtensionsForAWebsiteV1
+#### agency-hosting_php_list-extensions-for-website
 
 Lists every PHP extension available to an Agency Plan website and whether it is currently enabled.
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/extensions`
 
-#### agency-hosting_replaceWebsitePHPExtensionsV1
+#### agency-hosting_php_replace-website-extensions
 
 Replaces the set of PHP extensions enabled on an Agency Plan website with the ones provided. Any toggleable extension not in the request is disabled, so call the extensions endpoint first and send the full desired set. Extensions compiled into PHP, reported with the "built-in" state, are always active and are unaffected.
 
 - **Method**: `PUT`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/extensions`
 
-#### agency-hosting_listPHPOptionsForAWebsiteV1
+#### agency-hosting_php_list-options-for-website
 
 Lists the php.ini directives that can be configured for an Agency Plan website, each with its default, the value currently in effect, and the values it accepts.
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/options`
 
-#### agency-hosting_replaceWebsitePHPOptionsV1
+#### agency-hosting_php_replace-website-options
 
 Replaces the custom php.ini values on an Agency Plan website with the ones provided. Any option not in the request is reset to its default, so call the options endpoint first and send the full desired set. Sending an empty array resets every option to its default.
 
 - **Method**: `PUT`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/options`
 
-#### agency-hosting_listAvailablePHPVersionsForAnOrderV1
+#### agency-hosting_php_list-versions-for-order
 
 Lists the PHP versions available to websites created under an Agency Plan order, determined by the server the order is hosted on. Use this before creating a website; for a website that already exists, call the website-scoped versions endpoint instead.
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/websites/php-settings/versions`
 
-#### agency-hosting_listAvailablePHPVersionsForAWebsiteV1
+#### agency-hosting_php_list-versions-for-website
 
 Lists the PHP versions an Agency Plan website can be switched to. The version the website is currently running is returned as settings.php.version by the website details endpoint.
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/versions`
 
-#### agency-hosting_updateWebsitePHPVersionV1
+#### agency-hosting_php_update-website-version
 
 Switches an Agency Plan website to a different PHP version. Call the available versions endpoint first to see which versions can be selected. The website restarts on the new version, so requests served during the switch may fail and code that is incompatible with the target version will break.
 
 - **Method**: `PATCH`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/php-settings/version`
 
-#### agency-hosting_createANewWebsiteV1
+#### agency-hosting_website-setups_create
 
 Provisions a new website on one of your Agency Plan hosting orders.
 
@@ -452,7 +452,7 @@ that identifies the job. The new website becomes reachable once provisioning fin
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/websites/setups`
 
-#### agency-hosting_getWebsiteSetupStatusV1
+#### agency-hosting_website-setups_status
 
 Returns the current status of an Agency Plan website setup started via the setups
 endpoint.
@@ -463,7 +463,7 @@ Poll this endpoint using the `setup_uuid` returned from the provisioning request
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/orders/{order_id}/websites/setups/{setup_uuid}`
 
-#### agency-hosting_reinstallWebsiteSSLV1
+#### agency-hosting_ssl_reinstall-website
 
 Replaces the Let's Encrypt certificate of the domain: the current platform certificate, when
 one is recorded, is revoked and removed, then a new setup starts in the background. Returns at
@@ -477,7 +477,7 @@ when the website is suspended or locked, and 404 when the website or the domain 
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl/reinstall`
 
-#### agency-hosting_installWebsiteSSLV1
+#### agency-hosting_ssl_install-website
 
 Starts a Let's Encrypt certificate setup for the domain and returns at once; the setup runs in
 the background. `Get website SSL status` reports `installing` while it runs, then `active` or
@@ -492,7 +492,7 @@ domain was requested less than a minute ago, 403 when the website is suspended o
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl/setup`
 
-#### agency-hosting_getWebsiteSSLStatusV1
+#### agency-hosting_ssl_website-status
 
 Returns the SSL state of one domain of an Agency Plan website: the certificate `status`,
 whether the certificate was uploaded by the customer, and when it stops being valid.
@@ -507,7 +507,7 @@ certificate and no setup process. Returns 404 when the website or the domain doe
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl/status`
 
-#### agency-hosting_uninstallWebsiteSSLV1
+#### agency-hosting_ssl_uninstall-website
 
 Removes the platform-issued Let's Encrypt certificate of the domain: the certificate is revoked
 and deleted before the response, so the domain is no longer served with a platform certificate
@@ -521,7 +521,7 @@ the website is suspended or locked, and 404 when the website or the domain does 
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/domains/{domain}/ssl`
 
-#### agency-hosting_buildWebsiteNodeJSAssetsV1
+#### agency-hosting_websites_build-nodejs-assets
 
 Builds and deploys a Node.js application for an Agency Plan website from an already-uploaded archive.
 
@@ -531,7 +531,7 @@ Website contents are overwritten by the build result, which is deployed to publi
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/build-assets`
 
-#### agency-hosting_clearWebsiteCacheV1
+#### agency-hosting_cache_clear-website
 
 Clears cache for all domains associated with an Agency Plan website, including its preview domain.
 
@@ -540,7 +540,7 @@ This operation clears all cache types for the website.
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cache`
 
-#### agency-hosting_listWebsiteCronJobsV1
+#### agency-hosting_cron-jobs_list-website
 
 Returns a paginated list of cron jobs configured for an Agency Plan website.
 
@@ -549,7 +549,7 @@ Each entry includes the schedule expression and the command executed on that sch
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs`
 
-#### agency-hosting_createWebsiteCronJobV1
+#### agency-hosting_cron-jobs_create-website
 
 Creates a cron job for an Agency Plan website from a schedule expression and a command.
 
@@ -558,7 +558,7 @@ Returns the created cron job, including its uuid, which is required to delete th
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs`
 
-#### agency-hosting_deleteWebsiteCronJobV1
+#### agency-hosting_cron-jobs_delete-website
 
 Permanently deletes the cron job identified by its uuid from an Agency Plan website.
 
@@ -567,7 +567,7 @@ The operation is idempotent: deleting a cron job that does not exist succeeds wi
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/cron-jobs/{uuid}`
 
-#### agency-hosting_listWebsiteDatabasesV1
+#### agency-hosting_databases_list-website
 
 Returns a paginated list of MySQL databases created for an Agency Plan website.
 
@@ -576,7 +576,7 @@ Each entry includes the database's non-system users.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases`
 
-#### agency-hosting_createWebsiteDatabaseV1
+#### agency-hosting_databases_create-website
 
 Creates a MySQL database with a dedicated user for an Agency Plan website.
 
@@ -585,7 +585,7 @@ The database name, username, and password must all be provided by the caller.
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases`
 
-#### agency-hosting_deleteWebsiteDatabaseV1
+#### agency-hosting_databases_delete-website
 
 Permanently deletes a MySQL database and all its data from an Agency Plan website, including its users.
 
@@ -594,7 +594,7 @@ The operation is idempotent: deleting a database that does not exist succeeds wi
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}`
 
-#### agency-hosting_createWebsiteDatabaseUserV1
+#### agency-hosting_databases_create-website-user
 
 Creates a user for an existing database on an Agency Plan website.
 
@@ -603,7 +603,7 @@ Each database supports a single non-system user; creating a user for a database 
 - **Method**: `POST`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users`
 
-#### agency-hosting_deleteWebsiteDatabaseUserV1
+#### agency-hosting_databases_delete-website-user
 
 Permanently deletes a database user from an Agency Plan website database, revoking all access it had.
 
@@ -612,7 +612,7 @@ The operation is idempotent: deleting a user that does not exist succeeds withou
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/databases/{database_name}/users/{database_user_name}`
 
-#### agency-hosting_getWebsiteDetailsV1
+#### agency-hosting_websites_get
 
 Retrieves detailed information about a specific Agency Plan website, including configuration,
 status, metadata, hosting plan details, and resource quotas.
@@ -620,7 +620,7 @@ status, metadata, hosting plan details, and resource quotas.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}`
 
-#### agency-hosting_deleteWebsiteV1
+#### agency-hosting_websites_delete
 
 Permanently deletes an Agency Plan website. Deletion is processed asynchronously: the
 website is immediately transitioned to a deleting state and the underlying server
@@ -629,7 +629,7 @@ resources are removed in the background.
 - **Method**: `DELETE`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}`
 
-#### agency-hosting_listAgencyPlanWebsitesV1
+#### agency-hosting_websites_list-plan
 
 Retrieve a paginated list of Agency Plan websites (H5G, Builder, and Horizons) accessible to
 the authenticated client.
@@ -648,7 +648,7 @@ targeted results.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites`
 
-#### agency-hosting_listWebsiteProcessesV1
+#### agency-hosting_websites_list-processes
 
 Lists active and recently completed asynchronous processes for an Agency Plan website.
 
@@ -658,14 +658,14 @@ Poll this endpoint after initiating async operations (SSL setup, backups, clonin
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/processes`
 
-#### agency-hosting_changeWordPressVersionV1
+#### agency-hosting_wordpress_change-version
 
 Changes the installed WordPress core version on an Agency Plan website to one of the versions available for installation.
 
 - **Method**: `PATCH`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/version`
 
-#### agency-hosting_getWordPressSettingsV1
+#### agency-hosting_wordpress_settings
 
 Returns the current WordPress settings for an Agency Plan website: installed core version,
 LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
@@ -673,7 +673,7 @@ LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings`
 
-#### agency-hosting_listAvailableWordPressVersionsV1
+#### agency-hosting_wordpress_list-versions
 
 Lists the WordPress core versions available for installation on an Agency Plan website.
 
@@ -682,7 +682,7 @@ Lists the WordPress core versions available for installation on an Agency Plan w
 
 ### `hostinger-billing-mcp`
 
-#### billing_getCatalogItemListV1
+#### billing_catalog_list
 
 Retrieve catalog items available for order.
 
@@ -694,7 +694,7 @@ Use this endpoint to view available services and pricing before placing orders.
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/catalog`
 
-#### billing_createPurchaseOrderV1
+#### billing_orders_create-purchase
 
 Create a purchase order for any Hostinger product.
 
@@ -718,7 +718,7 @@ Use this endpoint to purchase any product available in the catalog.
 - **Method**: `POST`
 - **Path**: `/api/billing/v1/orders`
 
-#### billing_setDefaultPaymentMethodV1
+#### billing_payment-methods_set-default
 
 Set the default payment method for your account.
 
@@ -727,7 +727,7 @@ Use this endpoint to configure the primary payment method for future orders.
 - **Method**: `POST`
 - **Path**: `/api/billing/v1/payment-methods/{paymentMethodId}`
 
-#### billing_deletePaymentMethodV1
+#### billing_payment-methods_delete
 
 Delete a payment method from your account.
 
@@ -736,7 +736,7 @@ Use this endpoint to remove unused payment methods from user accounts.
 - **Method**: `DELETE`
 - **Path**: `/api/billing/v1/payment-methods/{paymentMethodId}`
 
-#### billing_getPaymentMethodListV1
+#### billing_payment-methods_list
 
 Retrieve available payment methods that can be used for placing new orders.
 
@@ -748,7 +748,7 @@ Use this endpoint to view available payment options before creating orders.
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/payment-methods`
 
-#### billing_getSubscriptionListV1
+#### billing_subscriptions_list
 
 Retrieve a list of all subscriptions associated with your account.
 
@@ -757,7 +757,7 @@ Use this endpoint to monitor active services and billing status.
 - **Method**: `GET`
 - **Path**: `/api/billing/v1/subscriptions`
 
-#### billing_disableAutoRenewalV1
+#### billing_subscriptions_disable-auto-renewal
 
 Disable auto-renewal for a subscription.
 
@@ -766,7 +766,7 @@ Use this endpoint when disable auto-renewal for a subscription.
 - **Method**: `DELETE`
 - **Path**: `/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/disable`
 
-#### billing_enableAutoRenewalV1
+#### billing_subscriptions_enable-auto-renewal
 
 Enable auto-renewal for a subscription.
 
@@ -775,7 +775,7 @@ Use this endpoint when enable auto-renewal for a subscription.
 - **Method**: `PATCH`
 - **Path**: `/api/billing/v1/subscriptions/{subscriptionId}/auto-renewal/enable`
 
-#### billing_renewSubscriptionV1
+#### billing_subscriptions_renew
 
 Create a renewal order for an existing Hostinger subscription.
 
@@ -796,7 +796,7 @@ Use this endpoint to renew any subscription available in your account.
 
 ### `hostinger-dns-mcp`
 
-#### DNS_getDNSSnapshotV1
+#### dns_snapshots_get
 
 Retrieve particular DNS snapshot with contents of DNS zone records.
 
@@ -805,7 +805,7 @@ Use this endpoint to view historical DNS configurations for domains.
 - **Method**: `GET`
 - **Path**: `/api/dns/v1/snapshots/{domain}/{snapshotId}`
 
-#### DNS_getDNSSnapshotListV1
+#### dns_snapshots_list
 
 Retrieve DNS snapshots for a domain.
 
@@ -814,7 +814,7 @@ Use this endpoint to view available DNS backup points for restoration.
 - **Method**: `GET`
 - **Path**: `/api/dns/v1/snapshots/{domain}`
 
-#### DNS_restoreDNSSnapshotV1
+#### dns_snapshots_restore
 
 Restore DNS zone to the selected snapshot.
 
@@ -823,7 +823,7 @@ Use this endpoint to revert domain DNS to a previous configuration.
 - **Method**: `POST`
 - **Path**: `/api/dns/v1/snapshots/{domain}/{snapshotId}/restore`
 
-#### DNS_getDNSRecordsV1
+#### dns_records_list
 
 Retrieve DNS zone records for a specific domain.
 
@@ -832,7 +832,7 @@ Use this endpoint to view current DNS configuration for domain management.
 - **Method**: `GET`
 - **Path**: `/api/dns/v1/zones/{domain}`
 
-#### DNS_updateDNSRecordsV1
+#### dns_records_update
 
 Update DNS records for the selected domain.
 
@@ -844,7 +844,7 @@ Use this endpoint to modify domain DNS configuration.
 - **Method**: `PUT`
 - **Path**: `/api/dns/v1/zones/{domain}`
 
-#### DNS_deleteDNSRecordsV1
+#### dns_records_delete
 
 Delete DNS records for the selected domain.
 
@@ -859,7 +859,7 @@ Use this endpoint to remove specific DNS records from domains.
 - **Method**: `DELETE`
 - **Path**: `/api/dns/v1/zones/{domain}`
 
-#### DNS_resetDNSRecordsV1
+#### dns_records_reset
 
 Reset DNS zone to the default records.
 
@@ -868,7 +868,7 @@ Use this endpoint to restore domain DNS to original configuration.
 - **Method**: `POST`
 - **Path**: `/api/dns/v1/zones/{domain}/reset`
 
-#### DNS_validateDNSRecordsV1
+#### dns_records_validate
 
 Validate DNS records prior to update for the selected domain.
 
@@ -882,14 +882,14 @@ Use this endpoint to verify DNS record validity before applying changes.
 
 ### `hostinger-domains-mcp`
 
-#### v2_getDomainVerificationsDIRECT
+#### domains_verifications_direct
 
 Retrieve a list of pending and completed domain verifications.
 
 - **Method**: `GET`
 - **Path**: `/api/v2/direct/verifications/active`
 
-#### domains_suggestDomainNamesFromADescriptionV1
+#### domains_availability_suggest-names-from-description
 
 Suggest available domain names based on a free-text description of your project.
 
@@ -902,7 +902,7 @@ Use this endpoint to find a domain name when you only know what the website is a
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/availability/alternatives-from-description`
 
-#### domains_suggestDomainNamesFromADomainV1
+#### domains_availability_suggest-names-from
 
 Suggest available domain names based on a domain name you already have in mind.
 
@@ -915,7 +915,7 @@ Use this endpoint when the domain you wanted is taken and you need close alterna
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/availability/alternatives-from-domain`
 
-#### domains_checkDomainAvailabilityV1
+#### domains_availability_check
 
 Check availability of domain names across multiple TLDs.
 
@@ -930,7 +930,7 @@ Use this endpoint to verify domain availability before purchase.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/availability`
 
-#### domains_getDomainForwardingV1
+#### domains_forwarding_get
 
 Retrieve domain forwarding data.
 
@@ -939,7 +939,7 @@ Use this endpoint to view current redirect configuration for domains.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/forwarding/{domain}`
 
-#### domains_updateDomainForwardingV1
+#### domains_forwarding_update
 
 Update domain forwarding configuration.
 
@@ -948,7 +948,7 @@ Use this endpoint to modify existing redirect configuration for domains.
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/forwarding/{domain}`
 
-#### domains_deleteDomainForwardingV1
+#### domains_forwarding_delete
 
 Delete domain forwarding data.
 
@@ -957,7 +957,7 @@ Use this endpoint to remove redirect configuration from domains.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/forwarding/{domain}`
 
-#### domains_createDomainForwardingV1
+#### domains_forwarding_create
 
 Create domain forwarding configuration.
 
@@ -966,7 +966,7 @@ Use this endpoint to set up domain redirects to other URLs.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/forwarding`
 
-#### domains_getPendingIRTPVerificationV1
+#### domains_whois_pending-irtp-verification
 
 Retrieve a pending IRTP verification for a domain.
 
@@ -977,7 +977,7 @@ Use this endpoint to check the status of a WHOIS change awaiting registrant conf
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/irtp/{domain}`
 
-#### domains_cancelPendingIRTPVerificationV1
+#### domains_whois_cancel-pending-irtp-verification
 
 Cancel a pending IRTP verification.
 
@@ -987,7 +987,7 @@ for example when the confirmation email cannot be received, without waiting out 
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/irtp/{domain}`
 
-#### domains_getIncomingDomainMoveV1
+#### domains_move_incoming
 
 Retrieve the incoming move for a specified domain.
 
@@ -998,7 +998,7 @@ Use this endpoint to check whether a domain addressed to you is still waiting to
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/move/incoming/{domain}`
 
-#### domains_acceptIncomingDomainMoveV1
+#### domains_move_accept-incoming
 
 Accept an incoming move for a specified domain.
 
@@ -1019,7 +1019,7 @@ Use this endpoint to take ownership of a domain offered to you.
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/move/incoming/{domain}`
 
-#### domains_rejectIncomingDomainMoveV1
+#### domains_move_reject-incoming
 
 Reject an incoming move for a specified domain.
 
@@ -1031,7 +1031,7 @@ Use this endpoint to decline a domain you do not want to take over.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/move/incoming/{domain}`
 
-#### domains_getIncomingDomainMoveListV1
+#### domains_move_incoming-list
 
 Retrieve all domains other Hostinger accounts are moving to your account.
 
@@ -1042,7 +1042,7 @@ Use this endpoint to find domains waiting for you to accept them.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/move/incoming`
 
-#### domains_getOutgoingDomainMoveV1
+#### domains_move_outgoing
 
 Retrieve the outgoing move for a specified domain.
 
@@ -1053,7 +1053,7 @@ Use this endpoint to track the status of a move you have initiated for a single 
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/move/outgoing/{domain}`
 
-#### domains_startOutgoingDomainMoveV1
+#### domains_move_start-outgoing
 
 Initiate a move of a specified domain to another Hostinger account.
 
@@ -1071,7 +1071,7 @@ Use this endpoint to hand a domain over to another Hostinger user.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/move/outgoing/{domain}`
 
-#### domains_cancelOutgoingDomainMoveV1
+#### domains_move_cancel-outgoing
 
 Cancel an outgoing move for a specified domain.
 
@@ -1083,7 +1083,7 @@ Use this endpoint to withdraw a move you no longer want to complete.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/move/outgoing/{domain}`
 
-#### domains_getOutgoingDomainMoveListV1
+#### domains_move_outgoing-list
 
 Retrieve all domains you are moving to other Hostinger accounts.
 
@@ -1094,7 +1094,7 @@ Use this endpoint to track moves you have initiated and the accounts they are ad
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/move/outgoing`
 
-#### domains_getDomainAuthorizationCodeV1
+#### domains_portfolio_authorization-code
 
 Retrieve the authorization (EPP) code for a specified domain so it can be transferred
 away from Hostinger to another registrar.
@@ -1106,7 +1106,7 @@ Use this endpoint to obtain the code required to transfer a domain to another re
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/portfolio/{domain}/auth-code`
 
-#### domains_claimFreeDomainV1
+#### domains_portfolio_claim-free
 
 Claim a free domain available on your account and register it.
 
@@ -1129,7 +1129,7 @@ Use this endpoint to register a domain using a free domain from your account.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/portfolio/claim`
 
-#### domains_enableDomainLockV1
+#### domains_portfolio_enable-lock
 
 Enable domain lock for the domain.
 
@@ -1141,7 +1141,7 @@ Use this endpoint to secure domains against unauthorized transfers.
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/domain-lock`
 
-#### domains_disableDomainLockV1
+#### domains_portfolio_disable-lock
 
 Disable domain lock for the domain.
 
@@ -1152,7 +1152,7 @@ Use this endpoint to prepare domains for transfer to other registrars.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/portfolio/{domain}/domain-lock`
 
-#### domains_getDomainDetailsV1
+#### domains_portfolio_get
 
 Retrieve detailed information for specified domain.
 
@@ -1161,7 +1161,7 @@ Use this endpoint to view comprehensive domain configuration and status.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/portfolio/{domain}`
 
-#### domains_getDomainListV1
+#### domains_portfolio_list
 
 Retrieve all domains associated with your account.
 
@@ -1170,7 +1170,7 @@ Use this endpoint to view user's domain portfolio.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/portfolio`
 
-#### domains_purchaseNewDomainV1
+#### domains_portfolio_purchase
 
 Purchase and register a new domain name.
 
@@ -1192,7 +1192,7 @@ Use this endpoint to register new domains for users.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/portfolio`
 
-#### domains_enablePrivacyProtectionV1
+#### domains_portfolio_enable-privacy-protection
 
 Enable privacy protection for the domain.
 
@@ -1203,7 +1203,7 @@ Use this endpoint to protect domain owner's personal information from public vie
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/privacy-protection`
 
-#### domains_disablePrivacyProtectionV1
+#### domains_portfolio_disable-privacy-protection
 
 Disable privacy protection for the domain.
 
@@ -1214,7 +1214,7 @@ Use this endpoint to make domain owner's information publicly visible.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/portfolio/{domain}/privacy-protection`
 
-#### domains_getDomainRenewalInformationV1
+#### domains_portfolio_renewal-information
 
 Retrieve renewal information for a specified domain, including its status and current
 expiration date.
@@ -1224,7 +1224,7 @@ Use this endpoint to build renewal automation and expiry monitoring for a single
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/portfolio/{domain}/renewal`
 
-#### domains_completeDomainSetupV1
+#### domains_portfolio_complete-setup
 
 Register a domain you have already paid for but which has not been set up yet.
 
@@ -1257,7 +1257,7 @@ Use this endpoint to finish registering a domain that is awaiting setup on your 
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/portfolio/{domain}/setup`
 
-#### domains_updateDomainNameserversV1
+#### domains_portfolio_update-nameservers
 
 Set nameservers for a specified domain.
 
@@ -1268,7 +1268,7 @@ Use this endpoint to configure custom DNS hosting for domains.
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/portfolio/{domain}/nameservers`
 
-#### domains_claimFreeDomainTransferV1
+#### domains_transfer_claim-free
 
 Claim a free domain transfer available on your account and start the transfer.
 
@@ -1292,7 +1292,7 @@ Use this endpoint to transfer a domain using a free domain transfer from your ac
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/transfers/claim`
 
-#### domains_getTransferV1
+#### domains_transfer_get
 
 Retrieve the transfer for a specified domain.
 
@@ -1301,7 +1301,7 @@ Use this endpoint to track an incoming or outgoing registrar transfer and its st
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/transfers/{domain}`
 
-#### domains_getTransferListV1
+#### domains_transfer_list
 
 Retrieve all domain transfers in your portfolio.
 
@@ -1310,7 +1310,7 @@ Use this endpoint to monitor incoming and outgoing registrar transfers across yo
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/transfers`
 
-#### domains_changeWHOISProfileForDomainV1
+#### domains_whois_change-for
 
 Change WHOIS contact profile for a domain.
 
@@ -1327,7 +1327,7 @@ Use this endpoint to move a registered domain onto different contact information
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/whois/change`
 
-#### domains_setWHOISProfileAsDefaultV1
+#### domains_whois_set-as-default
 
 Set WHOIS contact profile as default.
 
@@ -1338,7 +1338,7 @@ Use this endpoint to avoid picking contact information for every registration.
 - **Method**: `PUT`
 - **Path**: `/api/domains/v1/whois/default/{whoisId}`
 
-#### domains_unsetDefaultWHOISProfileV1
+#### domains_whois_unset-default
 
 Unset WHOIS contact profile as default.
 
@@ -1349,7 +1349,7 @@ Use this endpoint to stop reusing contact information for new registrations.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/whois/default/{whoisId}`
 
-#### domains_getWHOISProfileV1
+#### domains_whois_get
 
 Retrieve a WHOIS contact profile.
 
@@ -1358,7 +1358,7 @@ Use this endpoint to view domain registration contact information.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/whois/{whoisId}`
 
-#### domains_deleteWHOISProfileV1
+#### domains_whois_delete
 
 Delete WHOIS contact profile.
 
@@ -1367,7 +1367,7 @@ Use this endpoint to remove unused contact profiles from account.
 - **Method**: `DELETE`
 - **Path**: `/api/domains/v1/whois/{whoisId}`
 
-#### domains_getWHOISProfileListV1
+#### domains_whois_list
 
 Retrieve WHOIS contact profiles.
 
@@ -1376,7 +1376,7 @@ Use this endpoint to view available contact profiles for domain registration.
 - **Method**: `GET`
 - **Path**: `/api/domains/v1/whois`
 
-#### domains_createWHOISProfileV1
+#### domains_whois_create
 
 Create WHOIS contact profile.
 
@@ -1385,7 +1385,7 @@ Use this endpoint to add new contact information for domain registration.
 - **Method**: `POST`
 - **Path**: `/api/domains/v1/whois`
 
-#### domains_getWHOISProfileUsageV1
+#### domains_whois_usage
 
 Retrieve domain list where provided WHOIS contact profile is used.
 
@@ -1396,7 +1396,7 @@ Use this endpoint to view which domains use specific contact profiles.
 
 ### `hostinger-ecommerce-mcp`
 
-#### ecommerce_listDiscountsV1
+#### ecommerce_discounts_list
 
 List a store's discounts. Filter by free text over code and name, or by disabled state.
 Amounts for fixed discounts are integers in the smallest currency unit; percentage
@@ -1405,7 +1405,7 @@ discounts carry a whole-number value between 1 and 100.
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/discounts`
 
-#### ecommerce_createADiscountV1
+#### ecommerce_discounts_create
 
 Create a discount for a store. Fixed discounts take an amount in the smallest currency
 unit (e.g. $10 is 1000); percentage discounts take a whole-number value between 1 and 100.
@@ -1414,7 +1414,7 @@ Free-shipping discounts ignore value. Returns the created discount.
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/discounts`
 
-#### ecommerce_getCustomStorefrontSetupInstructionsV1
+#### ecommerce_miscellaneous_custom-storefront-setup-instructions
 
 Retrieve step-by-step setup instructions, formatted as Markdown, for connecting a custom sales
 channel to your store and keeping your catalog, orders, shipping and payments in sync through
@@ -1423,14 +1423,14 @@ the Ecommerce API.
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/miscellaneous/custom-storefront-instructions`
 
-#### ecommerce_cancelAnOrderV1
+#### ecommerce_orders_cancel
 
 Cancel the order and optionally email the customer. Returns the updated order summary.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/orders/{order_id}/cancel`
 
-#### ecommerce_fulfilAnOrderV1
+#### ecommerce_orders_fulfil
 
 Create a fulfilment for the order and attach tracking in one call. Omit items to fulfil
 every remaining unfulfilled item. Returns the updated order summary.
@@ -1438,7 +1438,7 @@ every remaining unfulfilled item. Returns the updated order summary.
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/orders/{order_id}/fulfill`
 
-#### ecommerce_listStoreOrdersV1
+#### ecommerce_orders_list-store
 
 List a store's orders newest first as summaries. Filter by status, payment or fulfilment
 status, customer email, order number or a free-text query. Amounts are in the smallest
@@ -1447,7 +1447,7 @@ currency unit. Retrieve a single order for its line items, addresses and fulfilm
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/orders`
 
-#### ecommerce_retrieveAnOrderV1
+#### ecommerce_orders_retrieve
 
 Retrieve one order in full: line items (each with the id the fulfil endpoint needs),
 addresses, the totals breakdown and fulfilments with tracking. Amounts are in the
@@ -1456,14 +1456,14 @@ smallest currency unit.
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/orders/{order_id}`
 
-#### ecommerce_enableManualPaymentMethodV1
+#### ecommerce_payments_enable-manual-method
 
 Enable a manual payment method so the store can accept orders without an online payment provider.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/payment-methods/manual`
 
-#### ecommerce_createAPaymentProviderConnectLinkV1
+#### ecommerce_payments_create-provider-connect-link
 
 Create an onboarding link for connecting a payment gateway to the store. Returns the gateway
 onboarding URL for the merchant to open and a deep-link into the store admin.
@@ -1471,7 +1471,7 @@ onboarding URL for the merchant to open and a deep-link into the store admin.
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/payment-providers/{provider_id}/connect-link`
 
-#### ecommerce_listStorePaymentProvidersV1
+#### ecommerce_payments_list-store-providers
 
 List a store's payment providers, split into providers already connected to the store and
 gateways available to install. Never exposes gateway credentials, secrets, or configuration.
@@ -1479,7 +1479,7 @@ gateways available to install. Never exposes gateway credentials, secrets, or co
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/payment-providers`
 
-#### ecommerce_createAProductImageUploadURLV1
+#### ecommerce_products_create-image-upload-url
 
 Returns a signed URL to upload a product image to (multipart/form-data POST). Then call the
 attach-image endpoint with the returned object_name to scan and attach it to the product.
@@ -1487,7 +1487,7 @@ attach-image endpoint with the returned object_name to scan and attach it to the
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images/upload-url`
 
-#### ecommerce_deleteAProductV1
+#### ecommerce_products_delete
 
 Delete a product and its variants from the store. A subscription product with active
 subscribers is archived instead of deleted so its data stays available.
@@ -1495,7 +1495,7 @@ subscribers is archived instead of deleted so its data stays available.
 - **Method**: `DELETE`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}`
 
-#### ecommerce_updateAProductV1
+#### ecommerce_products_update
 
 Update a product's name, description or status. Set status to published to make it buyable,
 draft to hide it, or archived to retire it. Variants, prices and inventory are managed
@@ -1504,14 +1504,14 @@ through the variant endpoints, not here. Returns the updated product summary.
 - **Method**: `PATCH`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}`
 
-#### ecommerce_createDigitalProductV1
+#### ecommerce_products_create-digital
 
 Create a published digital product with a single variant and an optional external download link.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/digital`
 
-#### ecommerce_listProductsV1
+#### ecommerce_products_list
 
 List a store's products newest first as lean summaries (name, status, thumbnail, variant
 count and price range). Prices are integers in the smallest currency unit and live on
@@ -1521,14 +1521,14 @@ embed each product's variants with prices and inventory, and include=media to em
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products`
 
-#### ecommerce_createPhysicalProductV1
+#### ecommerce_products_create-physical
 
 Create a published physical product with a single variant priced in the store currency.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/physical`
 
-#### ecommerce_uploadAndAttachAProductImageV1
+#### ecommerce_products_upload-and-attach-image
 
 Fetch a raster image (JPEG, PNG, GIF or WebP, max 15MB) from a URL and attach it to a product in a
 single call. Image downloads require HTTPS on port 443 without embedded credentials. At most one redirect
@@ -1539,14 +1539,14 @@ and validated by content, then stored on the CDN. Set is_thumbnail to make it th
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/images`
 
-#### ecommerce_listSalesChannelsV1
+#### ecommerce_sales-channels_list
 
 List a store's active sales channels with their full metadata.
 
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels`
 
-#### ecommerce_createASalesChannelV1
+#### ecommerce_sales-channels_create
 
 Create a sales channel for a store. A "custom" channel is headless: build your own frontend and keep
 your catalog, orders, shipping and payments in sync through the Ecommerce API. A "quick-link" channel
@@ -1555,7 +1555,7 @@ is a hosted one-page store whose handle is auto-generated.
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels`
 
-#### ecommerce_updateSalesChannelV1
+#### ecommerce_sales-channels_update
 
 Update a custom sales channel. The merchant-facing `name` and the public `url`
 (returned as the channel `domain`) can be changed. Pass `null` to clear a value.
@@ -1563,14 +1563,14 @@ Update a custom sales channel. The merchant-facing `name` and the public `url`
 - **Method**: `PATCH`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/sales-channels/{sales_channel_id}`
 
-#### ecommerce_setStoreShippingV1
+#### ecommerce_shipping_set-store
 
 Set the flat-rate shipping price for a store, creating the shipping zone if it does not exist yet.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/shipping`
 
-#### ecommerce_deleteStoreV1
+#### ecommerce_stores_delete
 
 Soft-delete a store owned by your account.
 
@@ -1579,14 +1579,14 @@ The underlying store data is preserved; only the store is marked as deleted.
 - **Method**: `DELETE`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}`
 
-#### ecommerce_getStoresV1
+#### ecommerce_stores_list
 
 Retrieve the stores associated with your account.
 
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores`
 
-#### ecommerce_createStoreV1
+#### ecommerce_stores_create
 
 Create a new store for your account.
 
@@ -1595,7 +1595,7 @@ A primary sales channel is created alongside the store.
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores`
 
-#### ecommerce_getStoreMetadataV1
+#### ecommerce_stores_metadata
 
 Get a store's readiness metadata: whether payment methods and shipping are configured,
 plus its default currency. Useful to verify prerequisites before building a storefront.
@@ -1603,7 +1603,7 @@ plus its default currency. Useful to verify prerequisites before building a stor
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/metadata`
 
-#### ecommerce_updateProductVariantsInBatchV1
+#### ecommerce_product-variants_update-in-batch
 
 Update up to 100 existing variants in place by id — title, inventory, stock tracking and
 prices. Variants omitted from the request are left untouched. Prices replace the variant's
@@ -1612,14 +1612,14 @@ existing prices in full. Returns the updated variants.
 - **Method**: `PATCH`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants/batch`
 
-#### ecommerce_deleteAProductVariantV1
+#### ecommerce_product-variants_delete
 
 Delete a single variant from the product.
 
 - **Method**: `DELETE`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants/{variant_id}`
 
-#### ecommerce_listProductVariantsV1
+#### ecommerce_product-variants_list
 
 List a product's variants, ordered by rank, with their options, prices and inventory.
 Prices are integers in the smallest currency unit and live on variants.
@@ -1627,7 +1627,7 @@ Prices are integers in the smallest currency unit and live on variants.
 - **Method**: `GET`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants`
 
-#### ecommerce_createAProductVariantV1
+#### ecommerce_product-variants_create
 
 Add a variant to a product along one or more option dimensions (e.g. Size, Color). Options
 missing from the product are created automatically; provide a value for every option the
@@ -1639,7 +1639,7 @@ store currency. Returns the created variant.
 
 ### `hostinger-horizons-mcp`
 
-#### horizons_cloneWebsiteV1
+#### horizons_websites_clone
 
 Clone a Hostinger Horizons website into a new website.\n
 Use this tool when the user wants a copy of an existing website, for example to try out
@@ -1652,7 +1652,7 @@ open the provided website URL in Hostinger Horizons interface.
 - **Method**: `POST`
 - **Path**: `/api/horizons/v1/websites/{websiteId}/clone`
 
-#### horizons_getWebsiteListV1
+#### horizons_websites_list
 
 List the Hostinger Horizons websites the user owns.\n
 Use this tool when the user asks which websites they have, or when you need a website ID
@@ -1664,7 +1664,7 @@ The complete list of websites is returned in a single response - it is not pagin
 - **Method**: `GET`
 - **Path**: `/api/horizons/v1/websites`
 
-#### horizons_createWebsiteV1
+#### horizons_websites_create
 
 Create new Hostinger Horizons website from the given message.\n
 Use this tool when user asks you to create a website, landing page, blog
@@ -1705,7 +1705,7 @@ MAPS:\n
 - **Method**: `POST`
 - **Path**: `/api/horizons/v1/websites`
 
-#### horizons_editWebsiteV1
+#### horizons_websites_edit
 
 Edit an existing Hostinger Horizons website with a follow-up message.\n
 Use this tool when the user wants to change, extend or fix a website that already exists.\n
@@ -1721,7 +1721,7 @@ and do not generate code yourself in the chat.
 - **Method**: `POST`
 - **Path**: `/api/horizons/v1/websites/{websiteId}/messages`
 
-#### horizons_publishWebsiteV1
+#### horizons_websites_publish
 
 Publish a Hostinger Horizons website so its latest changes go live.\n
 Use this tool when the user asks to publish, deploy or make their website live.\n
@@ -1733,7 +1733,7 @@ that the website is being published and you should provide the published URL to 
 - **Method**: `POST`
 - **Path**: `/api/horizons/v1/websites/{websiteId}/publish`
 
-#### horizons_getWebsiteV1
+#### horizons_websites_get
 
 Get the link for the user to open their website in Hostinger Horizons interface.\n
 Use this tool when the user wants the link to an existing website, or when you need its
@@ -1746,56 +1746,56 @@ interface in the provided website URL.
 
 ### `hostinger-hosting-mcp`
 
-#### hosting_importWordpressWebsite
+#### hosting_import-wordpress-website
 
 Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.
 
 - **Method**: `custom`
 - **Path**: `custom`
 
-#### hosting_deployWordpressPlugin
+#### hosting_deploy-wordpress-plugin
 
 Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.
 
 - **Method**: `custom`
 - **Path**: `custom`
 
-#### hosting_deployWordpressTheme
+#### hosting_deploy-wordpress-theme
 
 Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.
 
 - **Method**: `custom`
 - **Path**: `custom`
 
-#### hosting_deployJsApplication
+#### hosting_deploy-js-application
 
-Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.
-
-- **Method**: `custom`
-- **Path**: `custom`
-
-#### hosting_deployStaticWebsite
-
-Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.
+Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_list-js-deployments tool to check deployment status and track build progress.
 
 - **Method**: `custom`
 - **Path**: `custom`
 
-#### hosting_listJsDeployments
+#### hosting_deploy-static-website
+
+Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deploy-js-application instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_list-js-deployments
 
 List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.
 
 - **Method**: `custom`
 - **Path**: `custom`
 
-#### hosting_showJsDeploymentLogs
+#### hosting_show-js-deployment-logs
 
 Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.
 
 - **Method**: `custom`
 - **Path**: `custom`
 
-#### hosting_clearWebsiteCacheV1
+#### hosting_cache_clear-website
 
 Permanently clears all server-side cache for the website at once. Use it when content was
 updated and needs to be visible immediately, or after making major changes.
@@ -1806,7 +1806,7 @@ installation living in a subdirectory, pass the directory query parameter to cle
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/clear`
 
-#### hosting_toggleCachelessModeV1
+#### hosting_cache_toggle-cacheless
 
 Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing
 is cached, effectively turning off all caching for the website; use it while actively developing,
@@ -1816,7 +1816,7 @@ finishing development work to restore the performance benefits of caching.
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/toggle`
 
-#### hosting_toggleWebsiteCacheV1
+#### hosting_cache_toggle-website
 
 Turns server-side caching for the website on or off, based on the enabled flag. Enable it for
 faster page loads, reduced server load, and improved user experience; recommended for production
@@ -1828,14 +1828,14 @@ Does nothing if caching is already in the requested state.
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/toggle`
 
-#### hosting_listAccountCronJobsV1
+#### hosting_cron-jobs_list
 
 Returns the list of cron jobs configured for the specified account, including their schedule and command.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/cron-jobs`
 
-#### hosting_createAccountCronJobV1
+#### hosting_cron-jobs_create
 
 Creates a cron job for the specified account from a schedule expression and a command.
 
@@ -1844,7 +1844,7 @@ Returns the created cron job, including its uid, which is required to delete the
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/cron-jobs`
 
-#### hosting_deleteAccountCronJobV1
+#### hosting_cron-jobs_delete
 
 Permanently deletes the cron job identified by its uid.
 
@@ -1853,7 +1853,7 @@ The uid is returned by the list cron jobs endpoint.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/cron-jobs/{uid}`
 
-#### hosting_getCronJobOutputV1
+#### hosting_cron-jobs_output
 
 Returns the output captured from the last execution of the cron job identified by its uid.
 
@@ -1862,7 +1862,7 @@ The uid is returned by the list cron jobs endpoint.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/cron-jobs/{uid}/output`
 
-#### hosting_changeDatabasePasswordV1
+#### hosting_databases_change-password
 
 Changes the password for the specified database user.
 
@@ -1872,7 +1872,7 @@ The password must also be updated in any website configuration that uses this da
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/change-password`
 
-#### hosting_listAccountDatabasesV1
+#### hosting_databases_list
 
 Returns a paginated list of databases for the specified account.
 
@@ -1881,7 +1881,7 @@ Use the domain and is_assigned filters to find databases assigned to a specific 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases`
 
-#### hosting_createAccountDatabaseV1
+#### hosting_databases_create
 
 Creates a database with a database user and password for the specified account.
 
@@ -1890,7 +1890,7 @@ The database name and user are automatically prefixed with the account username 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases`
 
-#### hosting_deleteAccountDatabaseV1
+#### hosting_databases_delete
 
 Permanently deletes a database and its remote connections.
 
@@ -1899,7 +1899,7 @@ The database name must be the full name returned by the list databases endpoint.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}`
 
-#### hosting_createDatabaseRemoteConnectionV1
+#### hosting_databases_create-remote-connection
 
 Allows a remote host to connect to the specified database.
 
@@ -1909,7 +1909,7 @@ the full name returned by the list databases endpoint.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections`
 
-#### hosting_deleteDatabaseRemoteConnectionV1
+#### hosting_databases_delete-remote-connection
 
 Permanently removes a remote-access rule, revoking the given host's remote access to the database.
 
@@ -1920,7 +1920,7 @@ the full name returned by the list databases endpoint.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/remote-connections`
 
-#### hosting_listDatabaseRemoteConnectionsV1
+#### hosting_databases_list-remote-connections
 
 Returns the remote-access rules for the specified account: the remote hosts
 (IPv4/IPv6 addresses, or "%" for any host) allowed to connect to the account databases.
@@ -1930,7 +1930,7 @@ Use the domain filter to only return rules for databases assigned to a specific 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/remote-connections`
 
-#### hosting_repairDatabaseV1
+#### hosting_databases_repair
 
 Repairs corrupted database tables asynchronously.
 
@@ -1940,7 +1940,7 @@ The database name must be the full name returned by the list databases endpoint.
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/repair`
 
-#### hosting_setupWebsiteDatabaseV1
+#### hosting_databases_setup-website
 
 Creates a new MySQL database for the website and writes its connection details into the
 website's environment variables, then restarts the application. The platform generates the
@@ -1966,7 +1966,7 @@ and `user` are identifiers, not secrets.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/databases/setup`
 
-#### hosting_getPhpMyAdminLinkV1
+#### hosting_databases_phpmyadmin-link
 
 Returns a direct sign-on link to phpMyAdmin for the specified database.
 
@@ -1976,7 +1976,7 @@ The database name must be the full name returned by the list databases endpoint.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/databases/{name}/phpmyadmin-link`
 
-#### hosting_listAvailableDatacentersV1
+#### hosting_datacenters_list
 
 Retrieve a list of datacenters available for setting up hosting plans
 based on available datacenter capacity and hosting plan of your order.
@@ -1986,7 +1986,7 @@ requirements.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/datacenters`
 
-#### hosting_generateAFreeSubdomainV1
+#### hosting_domains_generate-free-subdomain
 
 Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.
 Free subdomains allow you to start using hosting services immediately
@@ -1995,7 +1995,7 @@ and you can always connect a custom domain to your site later.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/free-subdomains`
 
-#### hosting_listWebsiteParkedDomainsV1
+#### hosting_domains_list-website-parked
 
 Retrieve all parked or alias domains created under the selected website.
 
@@ -2005,7 +2005,7 @@ including the parent domain and root directory assigned to each parked domain.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains`
 
-#### hosting_createWebsiteParkedDomainV1
+#### hosting_domains_create-website-parked
 
 Create a parked or alias domain for the selected website.
 
@@ -2015,7 +2015,7 @@ as the parent domain.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains`
 
-#### hosting_deleteWebsiteParkedDomainV1
+#### hosting_domains_delete-website-parked
 
 Delete an existing parked or alias domain from the selected website.
 
@@ -2024,7 +2024,7 @@ Use this endpoint to remove parked domains that are no longer needed.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains/{parkedDomain}`
 
-#### hosting_listWebsiteSubdomainsV1
+#### hosting_domains_list-website-subdomains
 
 Retrieve all subdomains created under the selected website.
 
@@ -2034,7 +2034,7 @@ including the parent domain and root directory assigned to each subdomain.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains`
 
-#### hosting_createWebsiteSubdomainV1
+#### hosting_domains_create-website-subdomain
 
 Create a new subdomain for the selected website.
 
@@ -2044,7 +2044,7 @@ website public directory to use as the subdomain root.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains`
 
-#### hosting_deleteWebsiteSubdomainV1
+#### hosting_domains_delete-website-subdomain
 
 Delete an existing subdomain from the selected website.
 
@@ -2053,7 +2053,7 @@ Use this endpoint to remove subdomains that are no longer needed.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains/{subdomain}`
 
-#### hosting_verifyDomainOwnershipV1
+#### hosting_domains_verify-ownership
 
 Verify ownership of a single domain and return the verification status.
 
@@ -2067,7 +2067,7 @@ Skip this verification when using Hostinger's free subdomains (*.hostingersite.c
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/domains/verify-ownership`
 
-#### hosting_generateUploadURLV1
+#### hosting_files_generate-upload-url
 
 Generate a file browser upload URL with authentication credentials
 for uploading files directly to a website's file storage.
@@ -2110,7 +2110,7 @@ curl -i -X PATCH "{url}/${FILE}?override=true" \
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/files/upload-urls`
 
-#### hosting_listWebsiteFilesAndDirectoriesV1
+#### hosting_files_list-website-and-directories
 
 List files and directories under a website's document root.
 
@@ -2120,7 +2120,7 @@ are listed but never traversed into or resolved.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/domains/{domain}/files`
 
-#### hosting_getWebsiteFileContentV1
+#### hosting_files_website-content
 
 Get a single file's content, relative to a website's document root.
 
@@ -2130,7 +2130,7 @@ containing secrets (e.g. credential files) — none of these are returned by thi
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/domains/{domain}/files/content`
 
-#### hosting_getGitAutoDeploymentSettingsV1
+#### hosting_git_auto-deployment-settings
 
 Returns the Git auto-deployment settings of the website: which repository and branch deploy
 into which directory, and whether pushes trigger a deployment. `is_enabled` false keeps the
@@ -2142,7 +2142,7 @@ When the website has no auto-deployment configured every field is null. Save set
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/git/auto-deployments/settings`
 
-#### hosting_updateGitAutoDeploymentSettingsV1
+#### hosting_git_update-auto-deployment-settings
 
 Creates or replaces the Git auto-deployment settings of the website: repository, branch, the
 directory under the document root to deploy into, and `is_enabled`. Send the full set;
@@ -2159,7 +2159,7 @@ settings stored for the website.
 - **Method**: `PUT`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/git/auto-deployments/settings`
 
-#### hosting_deleteGitAutoDeploymentSettingsV1
+#### hosting_git_delete-auto-deployment-settings
 
 Removes the Git auto-deployment settings of the website. Files already deployed stay on the
 website; pushes stop deploying until settings are saved again. Succeeds also when nothing is
@@ -2168,7 +2168,7 @@ configured.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/git/auto-deployments/settings`
 
-#### hosting_listGitInstallationsV1
+#### hosting_git_list-installations
 
 Lists the Git provider accounts the customer has connected. Only installations with status
 `active` are returned unless the `status` filter says otherwise.
@@ -2185,7 +2185,7 @@ Use `uuid` as the path parameter of `List Git installation repositories`, and as
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/git/installations`
 
-#### hosting_listGitInstallationRepositoriesV1
+#### hosting_git_list-installation-repositories
 
 Lists the repositories the Git installation can access, read live from the provider. Works
 for github and gitlab installations. Use an active installation: a suspended or pending one
@@ -2201,7 +2201,7 @@ installation does not belong to the customer. Limited to 10 calls per minute per
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/git/installations/{uuid}/repositories`
 
-#### hosting_listNodeJSBuildsV1
+#### hosting_nodejs_list-builds
 
 Retrieve a paginated list of Node.js build processes for a specific website.
 
@@ -2212,7 +2212,7 @@ Use the `uuid` from a build to poll its output via the `Get Node.js Build Logs` 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds`
 
-#### hosting_startNode_jsBuildV1
+#### hosting_nodejs_start-build
 
 Start a Node.js build process using files already present on the website's file storage.
 
@@ -2236,7 +2236,7 @@ the `Get Node.js Build Logs` endpoint.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds`
 
-#### hosting_getNode_jsBuildSettingsV1
+#### hosting_nodejs_build-settings
 
 Returns the build settings stored for the website: framework (`app_type`), Node.js version,
 root and output directory, build script, entry file and package manager. Stored settings
@@ -2250,7 +2250,7 @@ fix them with the `Update Node.js build settings` endpoint.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings`
 
-#### hosting_updateNode_jsBuildSettingsV1
+#### hosting_nodejs_update-build-settings
 
 Replaces the build settings stored for the website. Send the full set: `node_version` is
 required and every nullable field you omit is stored as null. Creates the settings when
@@ -2265,7 +2265,7 @@ apps.
 - **Method**: `PUT`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings`
 
-#### hosting_getNode_jsBuildSettingsFromArchiveV1
+#### hosting_nodejs_build-settings-from-archive
 
 Auto-detect Node.js build settings from a package.json inside an archive already on the server.
 
@@ -2279,7 +2279,7 @@ The archive must already be present on the website's file storage. Use the
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/from-archive`
 
-#### hosting_listNode_jsEnvironmentVariablesV1
+#### hosting_nodejs_list-environment-variables
 
 Lists the Node.js environment variables currently set for the website. Values are always
 masked as `********` and cannot be read back through this API. Use this endpoint to see
@@ -2293,7 +2293,7 @@ prompt instead.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/env`
 
-#### hosting_replaceNode_jsEnvironmentVariablesV1
+#### hosting_nodejs_replace-environment-variables
 
 Replaces the website's Node.js environment variables with the ones provided. This is a
 full replace: any variable not in the request is deleted, and sending an empty `env_vars`
@@ -2313,7 +2313,7 @@ values taken from the project `.env` file or the user prompt.
 - **Method**: `PUT`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/env`
 
-#### hosting_analyseFailedNode_jsBuildV1
+#### hosting_nodejs_analyse-failed-build
 
 Returns an AI analysis of why a build failed and how to fix it, based on the build logs,
 the project file list and package.json. Only builds in the `failed` state can be analysed;
@@ -2326,7 +2326,7 @@ Limited to 5 calls per minute per API client (429 above that).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/analysis`
 
-#### hosting_getNode_jsBuildDetailsV1
+#### hosting_nodejs_build
 
 Returns one build by UUID: its state (`pending`, `running`, `completed`, `failed`), the
 options it ran with and timestamps. Poll this while a build is pending or running. When it
@@ -2336,7 +2336,7 @@ Returns 404 when the UUID does not belong to a build of this website.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}`
 
-#### hosting_getNodeJSBuildLogsV1
+#### hosting_nodejs_build-logs
 
 Retrieve logs from a specific Node.js build process.
 
@@ -2348,7 +2348,7 @@ Log content may contain ANSI escape sequences (color codes).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/{uuid}/logs`
 
-#### hosting_getNode_jsRuntimeLogsV1
+#### hosting_nodejs_runtime-logs
 
 Returns the Node.js application's runtime console log entries, oldest first, each with
 timestamp, level and message. On the first call send `period` (`1h`, `1d`, `1w` or `1m`)
@@ -2365,7 +2365,7 @@ the application has not written a log file yet.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/runtime-logs`
 
-#### hosting_clearNode_jsRuntimeLogsV1
+#### hosting_nodejs_clear-runtime-logs
 
 Empties the Node.js application's runtime log file. This cannot be undone, so confirm with
 the user before calling it. Returns success even when no log file exists yet.
@@ -2377,7 +2377,7 @@ from before the clear.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/runtime-logs`
 
-#### hosting_restartNode_jsApplicationV1
+#### hosting_nodejs_restart-application
 
 Restarts the Node.js server process for the website. Does not rebuild or redeploy the
 application. Use it to apply environment or configuration changes, or to recover a hung
@@ -2390,7 +2390,7 @@ has no effect. Returns success even when the website has no server process to re
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/server/restart`
 
-#### hosting_listNode_jsVulnerabilitiesV1
+#### hosting_nodejs_list-vulnerabilities
 
 Lists known npm package vulnerabilities detected on a Node.js website, enriched with
 advisory metadata (severity, CVSS score, CVE, advisory URL). Results are sorted from
@@ -2413,7 +2413,7 @@ Cloud Hosting plans.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/vulnerabilities`
 
-#### hosting_patchNode_jsVulnerabilitiesV1
+#### hosting_nodejs_patch-vulnerabilities
 
 Patches the selected Node.js vulnerabilities by updating the affected package versions
 in `package.json` and opening a GitHub pull request in the connected repository. The
@@ -2433,7 +2433,7 @@ close or merge it before patching again. Available on Business and Cloud Hosting
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/vulnerabilities/patch`
 
-#### hosting_listOrdersV1
+#### hosting_orders_list
 
 Retrieve a paginated list of orders accessible to the authenticated client.
 
@@ -2446,7 +2446,7 @@ or specific order IDs for more targeted results.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/orders`
 
-#### hosting_resetPHPExtensionsV1
+#### hosting_php_reset-extensions
 
 Resets all PHP extensions of the website to their default state.
 
@@ -2455,7 +2455,7 @@ Use it to recover from extension conflicts or restore the original configuration
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions/reset`
 
-#### hosting_getPHPDetailsV1
+#### hosting_php_get
 
 Returns the full PHP configuration for the website: current version, available versions
 (supported and unsupported), enabled/disabled extensions, options with their current value,
@@ -2466,7 +2466,7 @@ Use it to check the current PHP setup before updating the version, extensions or
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/details`
 
-#### hosting_getPHPInfoV1
+#### hosting_php_info
 
 Returns the full phpinfo page (HTML) for the website.
 
@@ -2475,7 +2475,7 @@ Use it to debug PHP issues or inspect the complete PHP environment of the websit
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/php-info`
 
-#### hosting_updatePHPExtensionsV1
+#### hosting_php_update-extensions
 
 Enables or disables PHP extensions (modules) for the website.
 
@@ -2484,7 +2484,7 @@ Use the Get PHP details endpoint to check the current extension states before ch
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions`
 
-#### hosting_updatePHPOptionsV1
+#### hosting_php_update-options
 
 Updates PHP options for the website (e.g. `memory_limit`, `max_execution_time`, `upload_max_filesize`).
 Only provide the options you want to change, inside the `options` object.
@@ -2495,7 +2495,7 @@ with a smaller applied value. Call the Get PHP details endpoint afterwards to re
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/options`
 
-#### hosting_updatePHPVersionV1
+#### hosting_php_update-version
 
 Changes the PHP version of the website.
 
@@ -2504,21 +2504,21 @@ Use the Get PHP details endpoint to see the versions available for the website.
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/version`
 
-#### hosting_listWebsiteRedirectsV1
+#### hosting_redirects_list-website
 
 Returns a paginated list of redirects configured for the selected website.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/redirects`
 
-#### hosting_createWebsiteRedirectV1
+#### hosting_redirects_create-website
 
 Creates a redirect from a URL on the selected website to another URL or IP address.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/redirects`
 
-#### hosting_deleteWebsiteRedirectV1
+#### hosting_redirects_delete-website
 
 Permanently deletes the redirect identified by its source URL.
 
@@ -2527,7 +2527,7 @@ Pass the `from` value exactly as returned by the list redirects endpoint.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/redirects`
 
-#### hosting_installSSLV1
+#### hosting_ssl_install
 
 Requests a lifetime SSL certificate for the website. The installation runs in the background;
 `Get SSL status` reports `active` or `failed` when it ends. An `active` lifetime certificate
@@ -2542,7 +2542,7 @@ one has to be uninstalled first.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/setup`
 
-#### hosting_getSSLStatusV1
+#### hosting_ssl_status
 
 Returns the SSL state of the website: the certificate `status` and `provider`, whether the
 certificate is a lifetime one managed by the platform, whether HTTP requests are redirected to
@@ -2558,7 +2558,7 @@ they report `active` with `provider` and `expires_at` null.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/status`
 
-#### hosting_toggleHTTPSRedirectV1
+#### hosting_ssl_toggle-https-redirect
 
 Turns the HTTP to HTTPS redirect of the website on or off, based on `is_enabled`. Does
 nothing when the redirect is already in the requested state. Turning it on requires an
@@ -2568,7 +2568,7 @@ when there is none; turning it off is always accepted.
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/https-redirect/toggle`
 
-#### hosting_uninstallSSLV1
+#### hosting_ssl_uninstall
 
 Removes the SSL certificate assigned to the website, turns the HTTPS redirect off and cancels
 a pending installation retry. The website serves plain HTTP until a new installation
@@ -2581,7 +2581,7 @@ installation is `installing`.
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl`
 
-#### hosting_listWebsitesV1
+#### hosting_websites_list
 
 Retrieve a paginated list of websites (CloudLinux, Builder, and Horizons) accessible to the
 authenticated client.
@@ -2605,7 +2605,7 @@ results.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/websites`
 
-#### hosting_createWebsiteV1
+#### hosting_websites_create
 
 Create a new website for the authenticated client.
 
@@ -2625,7 +2625,7 @@ websites list endpoint to see when your new website becomes available.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/websites`
 
-#### hosting_deployStaticSiteArchiveV1
+#### hosting_websites_deploy-static-site-archive
 
 Deploy a static application from an archive file.
 
@@ -2643,7 +2643,7 @@ use `Import WordPress website`.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/deploy`
 
-#### hosting_deleteWebsiteV1
+#### hosting_websites_delete
 
 This endpoint permanently removes a website and all of its data. This action
 cannot be undone. Before calling it, make sure the user understands the
@@ -2668,7 +2668,7 @@ complete. The response returns before the removal finishes.
 
 ### `hostinger-mail-mcp`
 
-#### mail_createAliasV1
+#### mail_aliases_create-alias
 
 Create an alias for the given mailbox. The alias address is formed
 from the given local part and the domain of the mailbox. Messages
@@ -2677,7 +2677,7 @@ sent to the alias are delivered to the mailbox.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/mailboxes/{mailboxId}/aliases`
 
-#### mail_deleteAliasV1
+#### mail_aliases_delete-alias
 
 Delete an alias. Messages sent to the alias address are no longer
 delivered to the mailbox.
@@ -2685,7 +2685,7 @@ delivered to the mailbox.
 - **Method**: `DELETE`
 - **Path**: `/api/mail/v1/aliases/{aliasId}`
 
-#### mail_listAliasesV1
+#### mail_aliases_list
 
 Retrieve a paginated list of aliases across all mailboxes of a mail
 order.
@@ -2693,7 +2693,7 @@ order.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/aliases`
 
-#### mail_createAPITokenV1
+#### mail_api-tokens_create
 
 Create an API token for the given mail order. The token grants access
 to the [Hostinger Email API](https://api.mail.hostinger.com/), where
@@ -2707,7 +2707,7 @@ or list specific mailboxes in `scope.mailbox_ids`.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/orders/{orderId}/api-tokens`
 
-#### mail_revokeAPITokenV1
+#### mail_api-tokens_revoke
 
 Revoke an API token. The token immediately loses access to the
 [Hostinger Email API](https://api.mail.hostinger.com/). This action
@@ -2716,7 +2716,7 @@ cannot be undone.
 - **Method**: `DELETE`
 - **Path**: `/api/mail/v1/api-tokens/{tokenId}`
 
-#### mail_listAPITokensV1
+#### mail_api-tokens_list
 
 Retrieve a paginated list of
 [Hostinger Email API](https://api.mail.hostinger.com/) tokens across
@@ -2726,7 +2726,7 @@ are never included; they are returned only when a token is created.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/api-tokens`
 
-#### mail_createAutoreplyV1
+#### mail_autoreplies_create
 
 Create an automatic reply for the given mailbox. A mailbox can have
 only one autoreply. Omit `starts_at` to activate the autoreply
@@ -2735,7 +2735,7 @@ immediately and omit `ends_at` to keep it active indefinitely.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/mailboxes/{mailboxId}/autoreplies`
 
-#### mail_updateAutoreplyV1
+#### mail_autoreplies_update
 
 Replace the autoreply with the given content and schedule. Omitted
 optional fields are cleared: omit `starts_at` to activate the
@@ -2745,7 +2745,7 @@ indefinitely.
 - **Method**: `PUT`
 - **Path**: `/api/mail/v1/autoreplies/{autoreplyId}`
 
-#### mail_deleteAutoreplyV1
+#### mail_autoreplies_delete
 
 Delete the autoreply of a mailbox. The mailbox stops sending
 automatic replies immediately.
@@ -2753,7 +2753,7 @@ automatic replies immediately.
 - **Method**: `DELETE`
 - **Path**: `/api/mail/v1/autoreplies/{autoreplyId}`
 
-#### mail_listAutorepliesV1
+#### mail_autoreplies_list
 
 Retrieve a paginated list of autoreplies across all mailboxes of a
 mail order.
@@ -2761,7 +2761,7 @@ mail order.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/autoreplies`
 
-#### mail_createCatchAllV1
+#### mail_catchalls_create-catch-all
 
 Create a catch-all that routes all messages sent to unknown addresses
 of the domain to the given mailbox. The mailbox address receives a
@@ -2771,7 +2771,7 @@ confirmed. A domain can have only one catch-all.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/mailboxes/{mailboxId}/catchalls`
 
-#### mail_deleteCatchAllV1
+#### mail_catchalls_delete-catch-all
 
 Delete a catch-all. Messages sent to unknown addresses of the domain
 are no longer routed to the mailbox.
@@ -2779,7 +2779,7 @@ are no longer routed to the mailbox.
 - **Method**: `DELETE`
 - **Path**: `/api/mail/v1/catchalls/{catchallId}`
 
-#### mail_listCatchAllsV1
+#### mail_catchalls_list-catch-alls
 
 Retrieve a paginated list of catch-alls across all mailboxes of a
 mail order.
@@ -2787,7 +2787,7 @@ mail order.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/catchalls`
 
-#### mail_resendCatchAllConfirmationV1
+#### mail_catchalls_resend-catch-all-confirmation
 
 Resend the confirmation email to the mailbox address of an
 unconfirmed catch-all.
@@ -2795,7 +2795,7 @@ unconfirmed catch-all.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/catchalls/{catchallId}/confirmation/resend`
 
-#### mail_createForwarderV1
+#### mail_forwarders_create
 
 Create a forwarder from the given mailbox to the destination address.
 The destination receives a confirmation email and forwarding becomes
@@ -2804,7 +2804,7 @@ active only after it is confirmed.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/mailboxes/{mailboxId}/forwarders`
 
-#### mail_deleteForwarderV1
+#### mail_forwarders_delete
 
 Delete a forwarder. The mailbox stops forwarding messages to the
 destination address immediately.
@@ -2812,7 +2812,7 @@ destination address immediately.
 - **Method**: `DELETE`
 - **Path**: `/api/mail/v1/forwarders/{forwarderId}`
 
-#### mail_listForwardersV1
+#### mail_forwarders_list
 
 Retrieve a paginated list of forwarders across all mailboxes of a
 mail order.
@@ -2820,7 +2820,7 @@ mail order.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/forwarders`
 
-#### mail_resendForwarderConfirmationV1
+#### mail_forwarders_resend-confirmation
 
 Resend the confirmation email to the destination address of an
 unconfirmed forwarder.
@@ -2828,7 +2828,7 @@ unconfirmed forwarder.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/forwarders/{forwarderId}/confirmation/resend`
 
-#### mail_updateForwarderKeepCopySettingV1
+#### mail_forwarders_update-keep-copy-setting
 
 Enable or disable keeping a copy of forwarded messages in the
 mailbox.
@@ -2836,7 +2836,7 @@ mailbox.
 - **Method**: `PATCH`
 - **Path**: `/api/mail/v1/forwarders/{forwarderId}/keep-copy`
 
-#### mail_listAccessLogsV1
+#### mail_logs_list-access
 
 Retrieve paginated access logs for the domain attached to the given
 mail order. Supports filtering by account, date range, protocol,
@@ -2845,7 +2845,7 @@ status, and deletion flag. Results are sorted by timestamp descending.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/logs/access`
 
-#### mail_listActionLogsV1
+#### mail_logs_list-action
 
 Retrieve paginated account action logs (administrative and user
 actions) for the given mail order. Supports filtering by account,
@@ -2854,7 +2854,7 @@ date range, and status. Results are sorted by timestamp descending.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/logs/action`
 
-#### mail_listInboundLogsV1
+#### mail_logs_list-inbound
 
 Retrieve paginated inbound (received mail) delivery logs for the
 domain attached to the given mail order. Supports filtering by
@@ -2864,7 +2864,7 @@ sorted by timestamp descending.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/logs/inbound`
 
-#### mail_listMailboxActionLogsV1
+#### mail_logs_list-mailbox-action
 
 Retrieve paginated mailbox action logs (message and mailbox events)
 for a mailbox in the given mail order. The mailbox email must belong
@@ -2874,7 +2874,7 @@ Results are sorted by timestamp descending.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/logs/mailbox-actions`
 
-#### mail_listOutboundLogsV1
+#### mail_logs_list-outbound
 
 Retrieve paginated outbound (sent mail) delivery logs for the domain
 attached to the given mail order. Supports filtering by account, date
@@ -2884,7 +2884,7 @@ descending.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/logs/outbound`
 
-#### mail_listMailboxesV1
+#### mail_mailboxes_list
 
 Retrieve a paginated list of mailboxes belonging to a mail order.
 
@@ -2895,7 +2895,7 @@ periodically synced usage numbers (usage may lag behind live values).
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/mailboxes`
 
-#### mail_createMailboxV1
+#### mail_mailboxes_create-mailbox
 
 Create a mailbox under the given mail order. The full email address is
 composed from the given local part and the domain of the order.
@@ -2903,7 +2903,7 @@ composed from the given local part and the domain of the order.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/orders/{orderId}/mailboxes`
 
-#### mail_deleteMailboxV1
+#### mail_mailboxes_delete-mailbox
 
 Delete a mailbox. The mailbox is soft-deleted and stays restorable
 for a limited period before it is permanently removed.
@@ -2911,14 +2911,14 @@ for a limited period before it is permanently removed.
 - **Method**: `DELETE`
 - **Path**: `/api/mail/v1/mailboxes/{mailboxId}`
 
-#### mail_changeMailboxPasswordV1
+#### mail_mailboxes_change-mailbox-password
 
 Change the password of a mailbox.
 
 - **Method**: `PATCH`
 - **Path**: `/api/mail/v1/mailboxes/{mailboxId}/password`
 
-#### mail_listOrdersV1
+#### mail_orders_list
 
 Retrieve a paginated list of mail orders associated with your account.
 
@@ -2928,7 +2928,7 @@ plan, attached domain, and expiration details.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders`
 
-#### mail_getOrderPlanV1
+#### mail_orders_plan
 
 Retrieve the plan the given mail order was purchased with, including
 domain-level and mailbox-level quotas, limits, and protocol
@@ -2937,7 +2937,7 @@ availability.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/plan`
 
-#### mail_createWebhookV1
+#### mail_webhooks_create
 
 Create a webhook for the given mailbox. The generated secret is
 returned only in this response and is sent as a bearer token with
@@ -2946,7 +2946,7 @@ every delivery.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/mailboxes/{mailboxId}/webhooks`
 
-#### mail_listWebhookDeliveryLogsV1
+#### mail_webhooks_list-delivery-logs
 
 Retrieve a paginated list of webhook delivery logs for the given mail
 order, including delivery outcome, duration, and retry counts.
@@ -2955,7 +2955,7 @@ Supports filtering by mailbox.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/webhooks/delivery-logs`
 
-#### mail_getWebhookV1
+#### mail_webhooks_get
 
 Retrieve the details of a single webhook. The webhook secret is never
 included; it is returned only when a webhook is created or its secret
@@ -2964,7 +2964,7 @@ is regenerated.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/webhooks/{webhookId}`
 
-#### mail_deleteWebhookV1
+#### mail_webhooks_delete
 
 Permanently delete a webhook. This action cannot be undone. After
 deletion the URL no longer receives event notifications.
@@ -2972,7 +2972,7 @@ deletion the URL no longer receives event notifications.
 - **Method**: `DELETE`
 - **Path**: `/api/mail/v1/webhooks/{webhookId}`
 
-#### mail_updateWebhookV1
+#### mail_webhooks_update
 
 Partially update a webhook. Only the fields included in the request
 body are changed; omitted fields retain their current values. Pass
@@ -2981,7 +2981,7 @@ body are changed; omitted fields retain their current values. Pass
 - **Method**: `PATCH`
 - **Path**: `/api/mail/v1/webhooks/{webhookId}`
 
-#### mail_listWebhooksV1
+#### mail_webhooks_list
 
 Retrieve a paginated list of webhooks belonging to the given mail
 order. Supports filtering by mailbox and status. The webhook secret
@@ -2991,7 +2991,7 @@ its secret is regenerated.
 - **Method**: `GET`
 - **Path**: `/api/mail/v1/orders/{orderId}/webhooks`
 
-#### mail_regenerateWebhookSecretV1
+#### mail_webhooks_regenerate-secret
 
 Regenerate the secret of a webhook. The previous secret is
 immediately invalidated. The new secret is returned only in this
@@ -3000,7 +3000,7 @@ response and is sent as a bearer token with every delivery.
 - **Method**: `POST`
 - **Path**: `/api/mail/v1/webhooks/{webhookId}/regenerate-secret`
 
-#### mail_testWebhookV1
+#### mail_webhooks_test
 
 Send a test delivery to the webhook URL and return the result. Test
 requests are rate limited upstream.
@@ -3010,7 +3010,7 @@ requests are rate limited upstream.
 
 ### `hostinger-reach-mcp`
 
-#### reach_getAutomationDetailsV1
+#### reach_automations_get
 
 Get a single automation with the counts of contacts that entered it, are moving through it,
 finished it or failed on the way.
@@ -3020,7 +3020,7 @@ This describes the automation itself. To see the workflow it runs, use the steps
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/automations/{automationUuid}`
 
-#### reach_listAutomationsV1
+#### reach_automations_list
 
 Get a paginated list of the automations in a profile.
 
@@ -3032,7 +3032,7 @@ endpoint instead.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/automations`
 
-#### reach_listAutomationStepsV1
+#### reach_automations_list-steps
 
 Get the workflow of an automation as a flat list of steps.
 
@@ -3043,7 +3043,7 @@ steps yet returns an empty list.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/automations/{automationUuid}/steps`
 
-#### reach_getCampaignDetailsV1
+#### reach_campaigns_get
 
 Get a single campaign with its sender, subject, template reference, targeting and delivery
 progress.
@@ -3054,7 +3054,7 @@ unsubscribes use the campaign statistics endpoint.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}`
 
-#### reach_listCampaignsV1
+#### reach_campaigns_list
 
 Get a paginated list of the campaigns in a profile.
 
@@ -3066,7 +3066,7 @@ emails sent by automations or the double opt-in confirmations instead.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns`
 
-#### reach_createADraftCampaignV1
+#### reach_campaigns_create-draft
 
 Create a campaign in a profile.
 
@@ -3077,7 +3077,7 @@ finished and sent from the Reach interface.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns`
 
-#### reach_getCampaignPerformanceV1
+#### reach_campaigns_performance
 
 Get the performance of a campaign: delivery, opens, clicks and unsubscribes, with the
 matching rates.
@@ -3088,7 +3088,7 @@ five times is counted once.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}/statistics`
 
-#### reach_deleteAContactV1
+#### reach_contacts_delete
 
 Delete a contact with the specified UUID.
 
@@ -3101,7 +3101,7 @@ client's default profile and cannot delete contacts of any other profile. Use
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/contacts/{uuid}`
 
-#### reach_deleteAContactFieldV1
+#### reach_contact-fields_delete
 
 Delete a custom contact field.
 
@@ -3111,7 +3111,7 @@ are its options. The contacts themselves are not affected.
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts/fields/{fieldUuid}`
 
-#### reach_updateAContactFieldV1
+#### reach_contact-fields_update
 
 Rename a custom contact field and, for the choice types, replace its option set.
 
@@ -3122,7 +3122,7 @@ it. The field type and slug cannot be changed.
 - **Method**: `PATCH`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts/fields/{fieldUuid}`
 
-#### reach_listContactFieldsV1
+#### reach_contact-fields_list
 
 Get the custom contact fields defined in a profile.
 
@@ -3133,7 +3133,7 @@ options available to pick from.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts/fields`
 
-#### reach_createAContactFieldV1
+#### reach_contact-fields_create
 
 Define a new custom contact field in a profile.
 
@@ -3143,7 +3143,7 @@ Use the returned uuid to set values on contacts.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts/fields`
 
-#### reach_listContactGroupsV1
+#### reach_contacts_list-groups
 
 Get a list of all contact groups.
 
@@ -3152,7 +3152,7 @@ This endpoint returns a list of contact groups that can be used to organize cont
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/contacts/groups`
 
-#### reach_listContactsV1
+#### reach_contacts_list
 
 Get a list of contacts, optionally filtered by group and subscription status.
 
@@ -3167,7 +3167,7 @@ group filter with a tag filter.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/contacts`
 
-#### reach_createANewContactV1
+#### reach_contacts_create
 
 Create a new contact in the email marketing system.
 
@@ -3179,7 +3179,7 @@ the contact will be created with a pending status and a confirmation email will 
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/contacts`
 
-#### reach_getContactDetailsV1
+#### reach_contacts_get
 
 Get the full details of a single contact.
 
@@ -3189,7 +3189,7 @@ values it holds for the profile's custom contact fields.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}`
 
-#### reach_deleteAProfileContactV1
+#### reach_contacts_delete-profile
 
 Permanently delete a contact from a profile.
 
@@ -3198,7 +3198,7 @@ The contact is removed together with its custom field values and tag assignments
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}`
 
-#### reach_updateAContactV1
+#### reach_contacts_update
 
 Update a contact's attributes and custom field values.
 
@@ -3211,7 +3211,7 @@ values, source and note with `GET /api/reach/v1/profiles/{profileUuid}/contacts/
 - **Method**: `PATCH`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}`
 
-#### reach_createContactsInBulkV1
+#### reach_contacts_create-in-bulk
 
 Create many contacts in a profile in a single call.
 
@@ -3223,7 +3223,7 @@ sent a confirmation email.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts/bulk`
 
-#### reach_listProfileContactsV1
+#### reach_contacts_list-profile
 
 Get a paginated list of contacts belonging to a profile.
 
@@ -3234,7 +3234,7 @@ so calling this endpoint without filters gives the profile's total contact count
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts`
 
-#### reach_createNewContactsV1
+#### reach_contacts_create-bulk
 
 Create a new contact in the email marketing system.
 
@@ -3246,7 +3246,7 @@ and a confirmation email will be sent.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts`
 
-#### reach_listSegmentsV1
+#### reach_segments_list
 
 Get a list of all contact segments.
 
@@ -3259,7 +3259,7 @@ the client's default profile and cannot list the segments of any other profile. 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments`
 
-#### reach_createANewContactSegmentV1
+#### reach_segments_create
 
 Create a new contact segment.
 
@@ -3273,7 +3273,7 @@ the client's default profile and cannot create segments in any other profile. Us
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/segmentation/segments`
 
-#### reach_countProfileSegmentContactsV1
+#### reach_segments_count-profile-contacts
 
 Count the contacts currently matching a segment without listing them.
 
@@ -3282,7 +3282,7 @@ Cheaper than paging through the segment contacts endpoint when only the size is 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/count`
 
-#### reach_listProfileSegmentContactsV1
+#### reach_segments_list-profile-contacts
 
 Retrieve contacts associated with a specific segment for a given profile.
 
@@ -3292,7 +3292,7 @@ identified by its UUID, scoped to a specific profile.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts`
 
-#### reach_getProfileSegmentDetailsV1
+#### reach_segments_profile
 
 Get a single segment of a profile, including the conditions that define it.
 
@@ -3302,7 +3302,7 @@ endpoint instead.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}`
 
-#### reach_updateAProfileSegmentV1
+#### reach_segments_update-profile
 
 Rename a segment and/or replace the conditions that define it.
 
@@ -3313,7 +3313,7 @@ Contacts are never modified, but which of them match the segment can change imme
 - **Method**: `PUT`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}`
 
-#### reach_deleteAProfileSegmentV1
+#### reach_segments_delete-profile
 
 Delete a segment.
 
@@ -3322,7 +3322,7 @@ Only the segment definition is removed. The contacts that matched it are left un
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}`
 
-#### reach_listSegmentFilterAttributesV1
+#### reach_segments_list-filter-attributes
 
 List every attribute a segment condition can filter on, with the operators each attribute
 accepts, the value format they expect and, where the value is constrained, the allowed
@@ -3336,7 +3336,7 @@ it before creating or updating a segment to discover the valid `attribute`, `ope
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/filters/attributes`
 
-#### reach_previewContactsMatchingConditionsV1
+#### reach_segments_preview-contacts-matching-conditions
 
 Preview the contacts matching a set of conditions without saving a segment.
 
@@ -3350,7 +3350,7 @@ Call the segment filter attributes endpoint first to discover the valid `attribu
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/filters/contacts`
 
-#### reach_listProfileSegmentsV1
+#### reach_segments_list-profile
 
 Get a paginated list of the segments defined in a profile.
 
@@ -3361,7 +3361,7 @@ the subscribed ones.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments`
 
-#### reach_createAProfileSegmentV1
+#### reach_segments_create-profile
 
 Create a segment in a profile.
 
@@ -3371,7 +3371,7 @@ as contacts change. Creating one does not modify any contact.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/segmentation/segments`
 
-#### reach_listSegmentContactsV1
+#### reach_segments_list-contacts
 
 Retrieve contacts associated with a specific segment.
 
@@ -3385,7 +3385,7 @@ the client's default profile and cannot read segments of any other profile. Use
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments/{segmentUuid}/contacts`
 
-#### reach_getSegmentDetailsV1
+#### reach_segments_get
 
 Get details of a specific segment.
 
@@ -3399,7 +3399,7 @@ the client's default profile and cannot read segments of any other profile. Use
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/segmentation/segments/{segmentUuid}`
 
-#### reach_assignAContactToATagV1
+#### reach_tags_assign-contact-to
 
 Assign a tag to a single contact.
 
@@ -3409,7 +3409,7 @@ the contact already carries succeeds without duplicating it.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts/{contactUuid}`
 
-#### reach_removeAContactFromATagV1
+#### reach_tags_remove-contact-from
 
 Remove a tag from a single contact.
 
@@ -3419,7 +3419,7 @@ nor the contact is deleted.
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts/{contactUuid}`
 
-#### reach_assignContactsToATagV1
+#### reach_tags_assign-contacts-to
 
 Assign a tag to many contacts at once.
 
@@ -3430,7 +3430,7 @@ finished. Contacts that already carry the tag are left alone.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts`
 
-#### reach_removeContactsFromATagV1
+#### reach_tags_remove-contacts-from
 
 Remove a tag from many contacts at once.
 
@@ -3441,7 +3441,7 @@ finished. The tag itself and the contacts are not deleted.
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}/contacts`
 
-#### reach_deleteATagV1
+#### reach_tags_delete
 
 Delete a tag and remove it from every contact carrying it.
 
@@ -3451,7 +3451,7 @@ exist in the profile still succeeds.
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}`
 
-#### reach_renameATagV1
+#### reach_tags_rename
 
 Rename a tag.
 
@@ -3461,7 +3461,7 @@ renaming a tag to a name that is already taken is rejected.
 - **Method**: `PATCH`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/tags/{tagUuid}`
 
-#### reach_listProfileTagsV1
+#### reach_tags_list-profile
 
 Get all tags defined in a profile.
 
@@ -3471,7 +3471,7 @@ list or to build segments.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/tags`
 
-#### reach_createOrFindTagsV1
+#### reach_tags_create-or-find
 
 Create tags in a profile.
 
@@ -3482,7 +3482,7 @@ was created now or already existed.
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/tags`
 
-#### reach_getFormDetailsV1
+#### reach_forms_get
 
 Get a single form with the URL of its hosted template and the tags it applies to the contacts
 it captures.
@@ -3493,7 +3493,7 @@ or build your own embed around the form uuid.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}`
 
-#### reach_deleteFormV1
+#### reach_forms_delete
 
 Permanently delete a form together with its template.
 
@@ -3504,7 +3504,7 @@ do not block deletion.
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}`
 
-#### reach_listFormsV1
+#### reach_forms_list
 
 Get a paginated list of the signup forms in a profile.
 
@@ -3514,7 +3514,7 @@ directly usable template URL and for the tags the form puts on the contacts it c
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/forms`
 
-#### reach_getProfileDomainDNSStatusV1
+#### reach_profiles_domain-dns-status
 
 Retrieve the DNS configuration status for a profile's domain.
 
@@ -3524,7 +3524,7 @@ actual records found and the suggested records required for correct email delive
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/domains/dns-status`
 
-#### reach_getConnectedSendingDomainV1
+#### reach_profiles_connected-sending-domain
 
 Get the sending domain connected to the profile, its verification status and any suspended
 sender addresses.
@@ -3537,7 +3537,7 @@ behind the status, use the DNS status endpoint.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/domains`
 
-#### reach_listPlanFeatureAccessV1
+#### reach_profiles_list-plan-feature-access
 
 List which plan features the profile can use.
 
@@ -3551,7 +3551,7 @@ automation on a plan without automation activation.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/features`
 
-#### reach_getRemainingPlanLimitsV1
+#### reach_profiles_remaining-plan-limits
 
 Get how much of the plan is left for the current period.
 
@@ -3564,14 +3564,14 @@ not kept.
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/limits`
 
-#### reach_listProfilesV1
+#### reach_profiles_list
 
 This endpoint returns all profiles available to the client, including their basic information.
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles`
 
-#### reach_listEmailTemplatesV1
+#### reach_templates_list-email
 
 Get a list of the email templates in a profile, most recently updated first.
 
@@ -3582,7 +3582,7 @@ and only the metadata is returned - the template content itself is not exposed. 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/templates`
 
-#### reach_createAnEmailTemplateV1
+#### reach_templates_create-email
 
 Create an email template in a profile.
 
@@ -3595,7 +3595,7 @@ reference it as the `template_uuid` of a campaign.
 
 ### `hostinger-vps-mcp`
 
-#### VPS_getDataCenterListV1
+#### vps_data-centers_list
 
 Retrieve all available data centers.
 
@@ -3604,7 +3604,7 @@ Use this endpoint to view location options before deploying VPS instances.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/data-centers`
 
-#### VPS_getProjectContainersV1
+#### vps_docker_containers
 
 Retrieves a list of all containers belonging to a specific Docker Compose project on the virtual machine. 
 
@@ -3616,7 +3616,7 @@ Use this to monitor the health and state of all services within your Docker Comp
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/containers`
 
-#### VPS_getProjectContentsV1
+#### vps_docker_get
 
 Retrieves the complete project information including the docker-compose.yml
 file contents, project metadata, and current deployment status.
@@ -3628,7 +3628,7 @@ Use this to inspect project settings, review the compose file, or check the over
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}`
 
-#### VPS_deleteProjectV1
+#### vps_docker_delete
 
 Completely removes a Docker Compose project from the virtual machine, stopping all containers and cleaning up 
 associated resources including networks, volumes, and images. 
@@ -3640,7 +3640,7 @@ Use this when you want to permanently remove a project and free up system resour
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/down`
 
-#### VPS_getProjectListV1
+#### vps_docker_list
 
 Retrieves a list of all Docker Compose projects currently deployed on the virtual machine. 
 
@@ -3655,7 +3655,7 @@ Use this to get an overview of all Docker projects on your VPS instance.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker`
 
-#### VPS_createNewProjectV1
+#### vps_docker_create
 
 Deploy new project from docker-compose.yaml contents or download contents from URL. 
 
@@ -3669,7 +3669,7 @@ If project with the same name already exists, existing project will be replaced.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker`
 
-#### VPS_getProjectLogsV1
+#### vps_docker_logs
 
 Retrieves aggregated log entries from all services within a Docker Compose project. 
 
@@ -3682,7 +3682,7 @@ troubleshooting issues across your entire project stack.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/logs`
 
-#### VPS_restartProjectV1
+#### vps_docker_restart
 
 Restarts all services in a Docker Compose project by stopping and starting
 containers in the correct dependency order.
@@ -3694,7 +3694,7 @@ Use this to apply configuration changes or recover from service failures.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/restart`
 
-#### VPS_startProjectV1
+#### vps_docker_start
 
 Starts all services in a Docker Compose project that are currently stopped. 
 
@@ -3705,7 +3705,7 @@ Use this to resume a project that was previously stopped or to start services af
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/start`
 
-#### VPS_stopProjectV1
+#### vps_docker_stop
 
 Stops all running services in a Docker Compose project while preserving
 container configurations and data volumes.
@@ -3717,7 +3717,7 @@ Use this to temporarily halt a project without removing data or configurations.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/stop`
 
-#### VPS_updateProjectV1
+#### vps_docker_update
 
 Updates a Docker Compose project by pulling the latest image versions and
 recreating containers with new configurations.
@@ -3730,7 +3730,7 @@ refresh container images to their latest versions.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/docker/{projectName}/update`
 
-#### VPS_activateFirewallV1
+#### vps_firewall_activate
 
 Activate a firewall for a specified virtual machine.
 
@@ -3741,7 +3741,7 @@ Use this endpoint to apply firewall rules to VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/activate/{virtualMachineId}`
 
-#### VPS_deactivateFirewallV1
+#### vps_firewall_deactivate
 
 Deactivate a firewall for a specified virtual machine.
 
@@ -3750,7 +3750,7 @@ Use this endpoint to remove firewall protection from VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/deactivate/{virtualMachineId}`
 
-#### VPS_getFirewallDetailsV1
+#### vps_firewall_get
 
 Retrieve firewall by its ID and rules associated with it.
 
@@ -3759,7 +3759,7 @@ Use this endpoint to view specific firewall configuration and rules.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/firewall/{firewallId}`
 
-#### VPS_deleteFirewallV1
+#### vps_firewall_delete
 
 Delete a specified firewall.
 
@@ -3770,7 +3770,7 @@ Use this endpoint to remove unused firewall configurations.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/firewall/{firewallId}`
 
-#### VPS_getFirewallListV1
+#### vps_firewall_list
 
 Retrieve all available firewalls.
 
@@ -3779,7 +3779,7 @@ Use this endpoint to view existing firewall configurations.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/firewall`
 
-#### VPS_createNewFirewallV1
+#### vps_firewall_create
 
 Create a new firewall.
 
@@ -3788,7 +3788,7 @@ Use this endpoint to set up new firewall configurations for VPS security.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall`
 
-#### VPS_updateFirewallRuleV1
+#### vps_firewall_update-rule
 
 Update a specific firewall rule from a specified firewall.
 
@@ -3800,7 +3800,7 @@ Use this endpoint to modify existing firewall rules.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules/{ruleId}`
 
-#### VPS_deleteFirewallRuleV1
+#### vps_firewall_delete-rule
 
 Delete a specific firewall rule from a specified firewall.
 
@@ -3812,7 +3812,7 @@ Use this endpoint to remove specific firewall rules.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules/{ruleId}`
 
-#### VPS_replaceAllFirewallRulesInGroupV1
+#### vps_firewall_replace-all-rules-in-group
 
 Replaces all firewall rules within a specified firewall group with the provided set of rules
 in a single atomic operation, instead of creating or deleting rules one by one.
@@ -3823,7 +3823,7 @@ pass the "sync" parameter to trigger synchronization immediately.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules`
 
-#### VPS_createFirewallRuleV1
+#### vps_firewall_create-rule
 
 Create new firewall rule for a specified firewall.
 
@@ -3838,7 +3838,7 @@ Use this endpoint to add new security rules to firewalls.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/rules`
 
-#### VPS_syncFirewallToAllAssignedVMsV1
+#### vps_firewall_sync-to-all-assigned-v-ms
 
 Sync a firewall's rules to every virtual machine it's assigned to.
 
@@ -3849,7 +3849,7 @@ Use this endpoint to apply updated firewall rules to all VPS instances assigned 
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/sync`
 
-#### VPS_syncFirewallV1
+#### vps_firewall_sync
 
 Deprecated: use `POST /api/vps/v1/firewall/{firewallId}/sync` instead, which syncs the firewall
 to all virtual machines assigned to it.
@@ -3863,7 +3863,7 @@ Use this endpoint to apply updated firewall rules to VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/firewall/{firewallId}/sync/{virtualMachineId}`
 
-#### VPS_getPostInstallScriptV1
+#### vps_post-install-scripts_get
 
 Retrieve post-install script by its ID.
 
@@ -3872,7 +3872,7 @@ Use this endpoint to view specific automation script details.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/post-install-scripts/{postInstallScriptId}`
 
-#### VPS_updatePostInstallScriptV1
+#### vps_post-install-scripts_update
 
 Update a specific post-install script.
 
@@ -3881,7 +3881,7 @@ Use this endpoint to modify existing automation scripts.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/post-install-scripts/{postInstallScriptId}`
 
-#### VPS_deletePostInstallScriptV1
+#### vps_post-install-scripts_delete
 
 Delete a post-install script from your account.
        
@@ -3890,7 +3890,7 @@ Use this endpoint to remove unused automation scripts.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/post-install-scripts/{postInstallScriptId}`
 
-#### VPS_getPostInstallScriptsV1
+#### vps_post-install-scripts_list
 
 Retrieve post-install scripts associated with your account.
 
@@ -3899,7 +3899,7 @@ Use this endpoint to view available automation scripts for VPS deployment.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/post-install-scripts`
 
-#### VPS_createPostInstallScriptV1
+#### vps_post-install-scripts_create
 
 Add a new post-install script to your account, which can then be used after virtual machine installation.
 
@@ -3912,7 +3912,7 @@ Use this endpoint to create automation scripts for VPS setup tasks.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/post-install-scripts`
 
-#### VPS_attachPublicKeyV1
+#### vps_public-keys_attach
 
 Attach existing public keys from your account to a specified virtual machine.
 
@@ -3923,7 +3923,7 @@ Use this endpoint to enable SSH key authentication for VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/public-keys/attach/{virtualMachineId}`
 
-#### VPS_deletePublicKeyV1
+#### vps_public-keys_delete
 
 Delete a public key from your account. 
 
@@ -3934,7 +3934,7 @@ Use this endpoint to remove unused SSH keys from account.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/public-keys/{publicKeyId}`
 
-#### VPS_getPublicKeysV1
+#### vps_public-keys_list
 
 Retrieve public keys associated with your account.
 
@@ -3943,7 +3943,7 @@ Use this endpoint to view available SSH keys for VPS authentication.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/public-keys`
 
-#### VPS_createPublicKeyV1
+#### vps_public-keys_create
 
 Add a new public key to your account.
 
@@ -3952,7 +3952,7 @@ Use this endpoint to register SSH keys for VPS authentication.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/public-keys`
 
-#### VPS_getTemplateDetailsV1
+#### vps_templates_get
 
 Retrieve detailed information about a specific OS template for virtual machines.
 
@@ -3961,7 +3961,7 @@ Use this endpoint to view specific template specifications before deployment.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/templates/{templateId}`
 
-#### VPS_getTemplatesV1
+#### vps_templates_list
 
 Retrieve available OS templates for virtual machines.
 
@@ -3970,7 +3970,7 @@ Use this endpoint to view operating system options before creating or recreating
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/templates`
 
-#### VPS_getActionDetailsV1
+#### vps_actions_get
 
 Retrieve detailed information about a specific action performed on a specified virtual machine.
 
@@ -3979,7 +3979,7 @@ Use this endpoint to monitor specific VPS operation status and details.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/actions/{actionId}`
 
-#### VPS_getActionsV1
+#### vps_actions_list
 
 Retrieve actions performed on a specified virtual machine.
 
@@ -3993,7 +3993,7 @@ Use this endpoint to view VPS operation history and troubleshoot issues.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/actions`
 
-#### VPS_getAttachedPublicKeysV1
+#### vps_virtual-machines_attached-public-keys
 
 Retrieve public keys attached to a specified virtual machine.
 
@@ -4002,7 +4002,7 @@ Use this endpoint to view SSH keys configured for specific VPS instances.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/public-keys`
 
-#### VPS_getBackupsV1
+#### vps_backups_list
 
 Retrieve backups for a specified virtual machine.
 
@@ -4011,7 +4011,7 @@ Use this endpoint to view available backup points for VPS data recovery.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/backups`
 
-#### VPS_restoreBackupV1
+#### vps_backups_restore
 
 Restore a backup for a specified virtual machine.
 
@@ -4024,7 +4024,7 @@ Use this endpoint to recover VPS data from backup points.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/backups/{backupId}/restore`
 
-#### VPS_setHostnameV1
+#### vps_virtual-machines_set-hostname
 
 Set hostname for a specified virtual machine.
 
@@ -4037,7 +4037,7 @@ Use this endpoint to configure custom hostnames for VPS instances.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/hostname`
 
-#### VPS_resetHostnameV1
+#### vps_virtual-machines_reset-hostname
 
 Reset hostname and PTR record of a specified virtual machine to default value.
 
@@ -4046,7 +4046,7 @@ Use this endpoint to restore default hostname configuration for VPS instances.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/hostname`
 
-#### VPS_getVirtualMachineDetailsV1
+#### vps_virtual-machines_get
 
 Retrieve detailed information about a specified virtual machine.
 
@@ -4055,7 +4055,7 @@ Use this endpoint to view comprehensive VPS configuration and status.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}`
 
-#### VPS_getVirtualMachinesV1
+#### vps_virtual-machines_list
 
 Retrieve all available virtual machines.
 
@@ -4064,7 +4064,7 @@ Use this endpoint to view available VPS instances.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines`
 
-#### VPS_purchaseNewVirtualMachineV1
+#### vps_virtual-machines_purchase
 
 Purchase and setup a new virtual machine.
 
@@ -4082,7 +4082,7 @@ Use this endpoint to create new VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines`
 
-#### VPS_getScanMetricsV1
+#### vps_monarx_scan-metrics
 
 Retrieve scan metrics for the [Monarx](https://www.monarx.com/) malware scanner
 installed on a specified virtual machine.
@@ -4097,7 +4097,7 @@ Use this endpoint to monitor VPS security scan results and threat detection.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/monarx`
 
-#### VPS_installMonarxV1
+#### vps_monarx_install
 
 Install the Monarx malware scanner on a specified virtual machine.
 
@@ -4111,7 +4111,7 @@ Use this endpoint to enable malware protection on VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/monarx`
 
-#### VPS_uninstallMonarxV1
+#### vps_monarx_uninstall
 
 Uninstall the Monarx malware scanner on a specified virtual machine.
 
@@ -4122,7 +4122,7 @@ Use this endpoint to remove malware scanner from VPS instances.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/monarx`
 
-#### VPS_getMetricsV1
+#### vps_virtual-machines_metrics
 
 Retrieve historical metrics for a specified virtual machine.
 
@@ -4138,7 +4138,7 @@ Use this endpoint to monitor VPS performance and resource utilization over time.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/metrics`
 
-#### VPS_setNameserversV1
+#### vps_virtual-machines_set-nameservers
 
 Set nameservers for a specified virtual machine.
 
@@ -4150,7 +4150,7 @@ Use this endpoint to configure custom DNS resolvers for VPS instances.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/nameservers`
 
-#### VPS_createPTRRecordV1
+#### vps_ptr_create
 
 Create or update a PTR (Pointer) record for a specified virtual machine.
 
@@ -4159,7 +4159,7 @@ Use this endpoint to configure reverse DNS lookup for VPS IP addresses.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}`
 
-#### VPS_deletePTRRecordV1
+#### vps_ptr_delete
 
 Delete a PTR (Pointer) record for a specified virtual machine.
 
@@ -4171,7 +4171,7 @@ Use this endpoint to remove reverse DNS configuration from VPS instances.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/ptr/{ipAddressId}`
 
-#### VPS_setPanelPasswordV1
+#### vps_virtual-machines_set-panel-password
 
 Set panel password for a specified virtual machine.
 
@@ -4184,7 +4184,7 @@ Use this endpoint to configure control panel access credentials for VPS instance
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/panel-password`
 
-#### VPS_startRecoveryModeV1
+#### vps_recovery_start
 
 Initiate recovery mode for a specified virtual machine.
 
@@ -4199,7 +4199,7 @@ Use this endpoint to enable system rescue operations on VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/recovery`
 
-#### VPS_stopRecoveryModeV1
+#### vps_recovery_stop
 
 Stop recovery mode for a specified virtual machine.
 
@@ -4210,7 +4210,7 @@ Use this endpoint to exit system rescue mode and return VPS to normal operation.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/recovery`
 
-#### VPS_recreateVirtualMachineV1
+#### vps_virtual-machines_recreate
 
 Recreate a virtual machine from scratch.
 
@@ -4234,7 +4234,7 @@ Use this endpoint to completely rebuild VPS instances with fresh OS installation
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/recreate`
 
-#### VPS_restartVirtualMachineV1
+#### vps_virtual-machines_restart
 
 Restart a specified virtual machine by fully stopping and starting it.
 
@@ -4245,7 +4245,7 @@ Use this endpoint to reboot VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/restart`
 
-#### VPS_setRootPasswordV1
+#### vps_virtual-machines_set-root-password
 
 Set root password for a specified virtual machine.
 
@@ -4257,7 +4257,7 @@ Use this endpoint to update administrator credentials for VPS instances.
 - **Method**: `PUT`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/root-password`
 
-#### VPS_setupPurchasedVirtualMachineV1
+#### vps_virtual-machines_setup
 
 Setup newly purchased virtual machine with `initial` state.
 
@@ -4266,7 +4266,7 @@ Use this endpoint to configure and initialize purchased VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/setup`
 
-#### VPS_getSnapshotV1
+#### vps_snapshots_get
 
 Retrieve snapshot for a specified virtual machine.
 
@@ -4275,7 +4275,7 @@ Use this endpoint to view current VPS snapshot information.
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
 
-#### VPS_createSnapshotV1
+#### vps_snapshots_create
 
 Create a snapshot of a specified virtual machine.
 
@@ -4291,7 +4291,7 @@ Use this endpoint to capture VPS state for backup and recovery purposes.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
 
-#### VPS_deleteSnapshotV1
+#### vps_snapshots_delete
 
 Delete a snapshot of a specified virtual machine.
 
@@ -4300,7 +4300,7 @@ Use this endpoint to remove VPS snapshots.
 - **Method**: `DELETE`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
 
-#### VPS_restoreSnapshotV1
+#### vps_snapshots_restore
 
 Restore a specified virtual machine to a previous state using a snapshot.
 
@@ -4312,7 +4312,7 @@ Use this endpoint to revert VPS instances to previous saved states.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot/restore`
 
-#### VPS_startVirtualMachineV1
+#### vps_virtual-machines_start
 
 Start a specified virtual machine.
 
@@ -4323,7 +4323,7 @@ Use this endpoint to power on stopped VPS instances.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/start`
 
-#### VPS_stopVirtualMachineV1
+#### vps_virtual-machines_stop
 
 Stop a specified virtual machine.
 
@@ -4339,7 +4339,7 @@ Use this endpoint to power off running VPS instances.
 
 ### `hostinger-wordpress-mcp`
 
-#### hosting_showAIOptionStatusV1
+#### wordpress_ai-tools_show-option-status
 
 Show the current AI option status for the Hostinger Tools plugin on the
 specified WordPress installation. Filter by `option` to return a single
@@ -4351,7 +4351,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status`
 
-#### hosting_setAIOptionStatusV1
+#### wordpress_ai-tools_set-option-status
 
 Enable or disable an AI option for the Hostinger Tools plugin on the specified
 WordPress installation.
@@ -4362,7 +4362,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/hostinger-plugins/ai-option/status`
 
-#### hosting_checkIfWordPressInstallationsAreValidV1
+#### wordpress_installations_check-if-are-valid
 
 Check whether one or more WordPress installations are valid and working
 correctly. Detects broken installations caused by missing files, broken
@@ -4375,7 +4375,7 @@ field).
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/installations/check-is-valid`
 
-#### hosting_deleteWordPressInstallationV1
+#### wordpress_installations_delete
 
 Delete the specified WordPress installation, with optional file and database
 removal. This removes all associated components including plugins, themes,
@@ -4387,7 +4387,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}`
 
-#### hosting_detectWordPressInstallationsV1
+#### wordpress_installations_detect
 
 Trigger a background scan to detect WordPress installations for the account.
 
@@ -4398,7 +4398,7 @@ detected installations once the scan completes.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/installations/detect`
 
-#### hosting_importWordPressWebsiteV1
+#### wordpress_installations_import-website
 
 Import WordPress website to the specified domain.
 
@@ -4411,7 +4411,7 @@ database files that have been uploaded to the website's directory.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/import`
 
-#### hosting_installWordPressV1
+#### wordpress_installations_install
 
 Install WordPress on an existing website.
 
@@ -4433,7 +4433,7 @@ that list, WordPress is ready.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/installations`
 
-#### hosting_listWordPressInstallationsV1
+#### wordpress_installations_list
 
 List WordPress installations accessible to the authenticated client.
 
@@ -4448,7 +4448,7 @@ Each installation includes a `valid` flag and, when invalid, a
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/wordpress/installations`
 
-#### hosting_listAvailableWordPressCoreUpdatesV1
+#### wordpress_installations_list-core-updates
 
 List available WordPress core updates for the specified installation.
 
@@ -4458,7 +4458,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/updates`
 
-#### hosting_getInstallationJWTTokenV1
+#### wordpress_installations_jwt-token
 
 Return a JWT token used to authenticate requests against the specified
 WordPress installation, including its MCP (Model Context Protocol) endpoint.
@@ -4469,7 +4469,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/jwt-token`
 
-#### hosting_showWordPressCoreVersionV1
+#### wordpress_installations_show-core-version
 
 Show the WordPress core version for the specified installation, along with
 known vulnerabilities affecting it.
@@ -4480,7 +4480,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/version`
 
-#### hosting_updateWordPressCoreV1
+#### wordpress_installations_update-core
 
 Update the WordPress core for the specified installation (minor update or a
 specific version).
@@ -4494,7 +4494,7 @@ job has been queued.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/update`
 
-#### hosting_purgeLiteSpeedCacheV1
+#### wordpress_litespeed-cache_purge-lite-speed
 
 Purge the LiteSpeed Cache for the specified WordPress installation.
 
@@ -4504,7 +4504,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/purge`
 
-#### hosting_showLiteSpeedCacheStatusV1
+#### wordpress_litespeed-cache_show-lite-speed-status
 
 Show the LiteSpeed Cache status for the specified WordPress installation.
 
@@ -4514,7 +4514,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/litespeed-cache/status`
 
-#### hosting_createLoginLinksV1
+#### wordpress_login_create-links
 
 Create temporary auto-login links for the specified WordPress installation.
 
@@ -4524,7 +4524,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/login/links`
 
-#### hosting_showMaintenanceStatusV1
+#### wordpress_maintenance_show-status
 
 Show the maintenance mode status for the specified WordPress installation.
 
@@ -4534,7 +4534,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/status`
 
-#### hosting_toggleMaintenanceModeV1
+#### wordpress_maintenance_toggle
 
 Enable or disable maintenance mode for the specified WordPress installation,
 based on the `enabled` flag.
@@ -4545,7 +4545,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/maintenance/toggle`
 
-#### hosting_showMemcachedObjectCacheStatusV1
+#### wordpress_object-cache_show-memcached-status
 
 Show the Memcached object cache status for the specified WordPress
 installation.
@@ -4556,7 +4556,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/status`
 
-#### hosting_toggleMemcachedObjectCacheV1
+#### wordpress_object-cache_toggle-memcached
 
 Activate or deactivate the Memcached object cache for the specified WordPress
 installation, based on the `enabled` flag.
@@ -4567,7 +4567,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/memcached/toggle`
 
-#### hosting_activateWordPressPluginV1
+#### wordpress_plugins_activate
 
 Activate an installed plugin on a WordPress installation.
 
@@ -4580,7 +4580,7 @@ job has been queued.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/activate`
 
-#### hosting_deactivateWordPressPluginV1
+#### wordpress_plugins_deactivate
 
 Deactivate an installed plugin on a WordPress installation.
 
@@ -4593,7 +4593,7 @@ deactivation job has been queued.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/deactivate`
 
-#### hosting_deployWordPressPluginV1
+#### wordpress_plugins_deploy
 
 Deploy a WordPress plugin from an already uploaded directory.
 
@@ -4603,7 +4603,7 @@ The plugin will be activated and made available in the WordPress admin panel.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/plugins/deploy`
 
-#### hosting_installWordPressPluginsV1
+#### wordpress_plugins_install
 
 Install one or more plugins on an existing WordPress installation.
 
@@ -4618,7 +4618,7 @@ job has been queued, not that the plugins are ready.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install`
 
-#### hosting_listAvailableWordPressPluginsV1
+#### wordpress_plugins_list
 
 List plugins recommended for installation on a WordPress installation that are
 not yet installed.
@@ -4629,7 +4629,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/available`
 
-#### hosting_listInstalledWordPressPluginsV1
+#### wordpress_plugins_list-installed
 
 List plugins installed on a WordPress installation, including their status,
 available updates and known vulnerabilities.
@@ -4640,7 +4640,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins`
 
-#### hosting_searchWordPressPluginsV1
+#### wordpress_plugins_search
 
 Search the WordPress.org plugin directory for plugins available to install.
 
@@ -4650,7 +4650,7 @@ POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/wordpress/plugins`
 
-#### hosting_listSuggestedWordPressPluginsV1
+#### wordpress_plugins_list-suggested
 
 List curated plugin suggestions grouped by website type.
 
@@ -4660,7 +4660,7 @@ POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/wordpress/plugins/suggested`
 
-#### hosting_checkIfWooCommerceIsInstalledV1
+#### wordpress_plugins_check-if-woo-commerce-is-installed
 
 Check whether WooCommerce is installed on any WordPress installation of a
 domain. Optionally filter by domain to scope the check.
@@ -4668,7 +4668,7 @@ domain. Optionally filter by domain to scope the check.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/wordpress/plugins/is-woocommerce-installed`
 
-#### hosting_uninstallWordPressPluginsV1
+#### wordpress_plugins_uninstall
 
 Uninstall one or more plugins from a WordPress installation.
 
@@ -4681,7 +4681,7 @@ job has been queued.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/uninstall`
 
-#### hosting_updateHostingerWordPressPluginV1
+#### wordpress_plugins_update-hostinger
 
 Update a Hostinger plugin to its latest version on a WordPress installation.
 
@@ -4694,7 +4694,7 @@ has been queued.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/hostinger/update`
 
-#### hosting_updateWordPressPluginsV1
+#### wordpress_plugins_update
 
 Update one or more installed plugins to their latest version on a WordPress
 installation.
@@ -4708,7 +4708,7 @@ has been queued.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/update`
 
-#### hosting_activateWordPressThemeV1
+#### wordpress_themes_activate
 
 Activate an installed theme on a WordPress installation.
 
@@ -4721,7 +4721,7 @@ job has been queued.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/activate`
 
-#### hosting_deployWordPressThemeV1
+#### wordpress_themes_deploy
 
 Deploy a WordPress theme from an already uploaded directory.
 
@@ -4731,7 +4731,7 @@ The theme can be optionally activated after deployment.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/themes/deploy`
 
-#### hosting_installWordPressThemeV1
+#### wordpress_themes_install
 
 Install a theme on an existing WordPress installation.
 
@@ -4750,7 +4750,7 @@ job has been queued, not that the theme is ready.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install`
 
-#### hosting_listInstalledWordPressThemesV1
+#### wordpress_themes_list-installed
 
 List themes installed on a WordPress installation, including their status,
 available updates and known vulnerabilities.
@@ -4761,7 +4761,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes`
 
-#### hosting_listWordPressThemesV1
+#### wordpress_themes_list
 
 List WordPress themes available to install.
 
@@ -4771,7 +4771,7 @@ POST /api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/wordpress/themes`
 
-#### hosting_uninstallWordPressThemesV1
+#### wordpress_themes_uninstall
 
 Uninstall one or more themes from a WordPress installation.
 
@@ -4784,7 +4784,7 @@ job has been queued.
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/themes/uninstall`
 
-#### hosting_updateWordPressThemesV1
+#### wordpress_themes_update
 
 Update one or more installed themes to their latest version on a WordPress
 installation.

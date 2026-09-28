@@ -5,9 +5,9 @@
 
 export interface APITools {
   /**
-   * Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agencyHosting_deployPhpApplication instead. The website UID is automatically resolved from the domain.
+   * Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agency-hosting_deploy-php-application instead. The website UID is automatically resolved from the domain.
    */
-  "agency-hosting_deployNodeStaticWebsite": {
+  "agency-hosting_deploy-node-static-website": {
     params: {
       /**
        * Domain name of the Agency Plan website (e.g., example.com)
@@ -26,9 +26,9 @@ export interface APITools {
   };
 
   /**
-   * Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For node-static websites that require a build step, use agencyHosting_deployNodeStaticWebsite instead. The website UID is automatically resolved from the domain.
+   * Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For node-static websites that require a build step, use agency-hosting_deploy-node-static-website instead. The website UID is automatically resolved from the domain.
    */
-  "agency-hosting_deployPhpApplication": {
+  "agency-hosting_deploy-php-application": {
     params: {
       /**
        * Domain name of the Agency Plan website (e.g., example.com)
@@ -49,7 +49,7 @@ export interface APITools {
   /**
    * Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.
    */
-  "hosting_importWordpressWebsite": {
+  "hosting_import-wordpress-website": {
     params: {
       /**
        * Domain name associated with the hosting account (e.g., example.com)
@@ -70,7 +70,7 @@ export interface APITools {
   /**
    * Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.
    */
-  "hosting_deployWordpressPlugin": {
+  "hosting_deploy-wordpress-plugin": {
     params: {
       /**
        * Domain name associated with the hosting account (e.g., example.com)
@@ -91,7 +91,7 @@ export interface APITools {
   /**
    * Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.
    */
-  "hosting_deployWordpressTheme": {
+  "hosting_deploy-wordpress-theme": {
     params: {
       /**
        * Domain name associated with the hosting account (e.g., example.com)
@@ -114,9 +114,9 @@ export interface APITools {
   };
 
   /**
-   * Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.
+   * Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_list-js-deployments tool to check deployment status and track build progress.
    */
-  "hosting_deployJsApplication": {
+  "hosting_deploy-js-application": {
     params: {
       /**
        * Domain name associated with the hosting account (e.g., example.com)
@@ -135,9 +135,9 @@ export interface APITools {
   };
 
   /**
-   * Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.
+   * Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deploy-js-application instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.
    */
-  "hosting_deployStaticWebsite": {
+  "hosting_deploy-static-website": {
     params: {
       /**
        * Domain name associated with the hosting account (e.g., example.com)
@@ -158,7 +158,7 @@ export interface APITools {
   /**
    * List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.
    */
-  "hosting_listJsDeployments": {
+  "hosting_list-js-deployments": {
     params: {
       /**
        * Domain name associated with the hosting account (e.g., example.com)
@@ -183,7 +183,7 @@ export interface APITools {
   /**
    * Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.
    */
-  "hosting_showJsDeploymentLogs": {
+  "hosting_show-js-deployment-logs": {
     params: {
       /**
        * Domain name associated with the hosting account (e.g., example.com)
@@ -209,7 +209,7 @@ Each datacenter includes a `pinger_url` you can ping from the client to measure 
 latency; comparing the results across datacenters lets you pick the nearest one (lowest
 ping) before choosing its `code` as the `datacenter_code` when creating a website setup.
    */
-  "agency-hosting_listAvailableDatacentersV1": {
+  "agency-hosting_datacenters_list": {
     params: {
       /**
        * Agency Plan order ID
@@ -225,7 +225,7 @@ ping) before choosing its `code` as the `datacenter_code` when creating a websit
 Provide the current domain in the path and the new domain in the request body.
 Set domain to null to revert to the temporary domain.
    */
-  "agency-hosting_changeWebsiteDomainV1": {
+  "agency-hosting_domains_change-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -246,7 +246,7 @@ Set domain to null to revert to the temporary domain.
   /**
    * Links a domain to the specified Agency Plan website so it can serve traffic for that domain.
    */
-  "agency-hosting_linkDomainToWebsiteV1": {
+  "agency-hosting_domains_link-to-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -265,7 +265,7 @@ Set domain to null to revert to the temporary domain.
 
 Use the website_uuids filter to narrow results to specific websites.
    */
-  "agency-hosting_listDomainsV1": {
+  "agency-hosting_domains_list": {
     params: {
       /**
        * Page number
@@ -292,7 +292,7 @@ Website files and database are preserved, and any other linked domains remain ac
 
 If this is the only domain on the website, unlinking leaves the website without an accessible domain.
    */
-  "agency-hosting_unlinkDomainFromWebsiteV1": {
+  "agency-hosting_domains_unlink-from-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -345,7 +345,7 @@ curl -i -X PATCH "{url}/${FILE}?override=true" \
 # -> 204 No Content, Upload-Offset response header equals SIZE when done
 ```
    */
-  "agency-hosting_generateUploadURLV1": {
+  "agency-hosting_files_generate-upload-url": {
     params: {
       /**
        * Agency Plan website UID
@@ -362,7 +362,7 @@ Upload the archive to the website's root directory via file browser first, then 
 filename in this request. Website contents are overwritten by the archive contents. Supported
 archive types: .zip, .tar, .tar.gz, .tgz.
    */
-  "agency-hosting_importWebsiteFromArchiveV1": {
+  "agency-hosting_files_import-website-from-archive": {
     params: {
       /**
        * Agency Plan website UID
@@ -382,7 +382,7 @@ selected time frame, plus the plan quotas. Figures cover the whole order
 account. Values may be up to one hour stale. CPU, memory, and process usage
 are on the resource-usage-metrics endpoint.
    */
-  "agency-hosting_listAgencyPlanOrderDiskUsageMetricsV1": {
+  "agency-hosting_metrics_list-plan-order-disk-usage": {
     params: {
       /**
        * Agency Plan order ID
@@ -399,7 +399,7 @@ are on the resource-usage-metrics endpoint.
   /**
    * Returns a paginated list of Agency Plan orders accessible to the authenticated client.
    */
-  "agency-hosting_listOrdersV1": {
+  "agency-hosting_orders_list": {
     params: {
       /**
        * Page number
@@ -421,7 +421,7 @@ are excluded from both the order totals and the per-website breakdown.
 Values may be up to one hour stale. Disk and inode usage are on the
 disk-usage-metrics endpoint.
    */
-  "agency-hosting_listOrderResourceUsageMetricsV1": {
+  "agency-hosting_metrics_list-order-resource-usage": {
     params: {
       /**
        * Agency Plan order ID
@@ -438,7 +438,7 @@ disk-usage-metrics endpoint.
   /**
    * Lists every PHP extension available to an Agency Plan website and whether it is currently enabled.
    */
-  "agency-hosting_listPHPExtensionsForAWebsiteV1": {
+  "agency-hosting_php_list-extensions-for-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -451,7 +451,7 @@ disk-usage-metrics endpoint.
   /**
    * Replaces the set of PHP extensions enabled on an Agency Plan website with the ones provided. Any toggleable extension not in the request is disabled, so call the extensions endpoint first and send the full desired set. Extensions compiled into PHP, reported with the "built-in" state, are always active and are unaffected.
    */
-  "agency-hosting_replaceWebsitePHPExtensionsV1": {
+  "agency-hosting_php_replace-website-extensions": {
     params: {
       /**
        * Agency Plan website UID
@@ -468,7 +468,7 @@ disk-usage-metrics endpoint.
   /**
    * Lists the php.ini directives that can be configured for an Agency Plan website, each with its default, the value currently in effect, and the values it accepts.
    */
-  "agency-hosting_listPHPOptionsForAWebsiteV1": {
+  "agency-hosting_php_list-options-for-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -481,7 +481,7 @@ disk-usage-metrics endpoint.
   /**
    * Replaces the custom php.ini values on an Agency Plan website with the ones provided. Any option not in the request is reset to its default, so call the options endpoint first and send the full desired set. Sending an empty array resets every option to its default.
    */
-  "agency-hosting_replaceWebsitePHPOptionsV1": {
+  "agency-hosting_php_replace-website-options": {
     params: {
       /**
        * Agency Plan website UID
@@ -498,7 +498,7 @@ disk-usage-metrics endpoint.
   /**
    * Lists the PHP versions available to websites created under an Agency Plan order, determined by the server the order is hosted on. Use this before creating a website; for a website that already exists, call the website-scoped versions endpoint instead.
    */
-  "agency-hosting_listAvailablePHPVersionsForAnOrderV1": {
+  "agency-hosting_php_list-versions-for-order": {
     params: {
       /**
        * Agency Plan order ID
@@ -511,7 +511,7 @@ disk-usage-metrics endpoint.
   /**
    * Lists the PHP versions an Agency Plan website can be switched to. The version the website is currently running is returned as settings.php.version by the website details endpoint.
    */
-  "agency-hosting_listAvailablePHPVersionsForAWebsiteV1": {
+  "agency-hosting_php_list-versions-for-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -524,7 +524,7 @@ disk-usage-metrics endpoint.
   /**
    * Switches an Agency Plan website to a different PHP version. Call the available versions endpoint first to see which versions can be selected. The website restarts on the new version, so requests served during the switch may fail and code that is incompatible with the target version will break.
    */
-  "agency-hosting_updateWebsitePHPVersionV1": {
+  "agency-hosting_php_update-website-version": {
     params: {
       /**
        * Agency Plan website UID
@@ -557,7 +557,7 @@ Common setups:
 Provisioning runs in the background, so the response returns immediately with a setup UUID
 that identifies the job. The new website becomes reachable once provisioning finishes.
    */
-  "agency-hosting_createANewWebsiteV1": {
+  "agency-hosting_website-setups_create": {
     params: {
       /**
        * Agency Plan order ID
@@ -598,7 +598,7 @@ endpoint.
 Poll this endpoint using the `setup_uuid` returned from the provisioning request until
 `status` becomes `completed`, at which point `website_uid` identifies the new website.
    */
-  "agency-hosting_getWebsiteSetupStatusV1": {
+  "agency-hosting_website-setups_status": {
     params: {
       /**
        * Agency Plan order ID
@@ -622,7 +622,7 @@ failed setup counts until it is cleaned up), or when the domain hit its limit of
 per seven days. Returns 429 when the same domain was requested less than a minute ago, and 403
 when the website is suspended or locked, and 404 when the website or the domain does not exist.
    */
-  "agency-hosting_reinstallWebsiteSSLV1": {
+  "agency-hosting_ssl_reinstall-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -647,7 +647,7 @@ or when the domain hit its limit of three setups per seven days. Returns 429 whe
 domain was requested less than a minute ago, 403 when the website is suspended or locked, and
 404 when the website or the domain does not exist.
    */
-  "agency-hosting_installWebsiteSSLV1": {
+  "agency-hosting_ssl_install-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -672,7 +672,7 @@ the domain. `failed` means the last setup gave up and no valid certificate is in
 `expired` means the certificate has run out. `not_installed` means the domain has no
 certificate and no setup process. Returns 404 when the website or the domain does not exist.
    */
-  "agency-hosting_getWebsiteSSLStatusV1": {
+  "agency-hosting_ssl_website-status": {
     params: {
       /**
        * Agency Plan website UID
@@ -696,7 +696,7 @@ Returns 422 when a certificate process is recorded for the domain (a failed setu
 it is cleaned up), 429 when the same domain was requested less than a minute ago, and 403 when
 the website is suspended or locked, and 404 when the website or the domain does not exist.
    */
-  "agency-hosting_uninstallWebsiteSSLV1": {
+  "agency-hosting_ssl_uninstall-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -716,7 +716,7 @@ the website is suspended or locked, and 404 when the website or the domain does 
 Upload the archive to file browser first, then provide its relative path from document root in this request.
 Website contents are overwritten by the build result, which is deployed to public_html.
    */
-  "agency-hosting_buildWebsiteNodeJSAssetsV1": {
+  "agency-hosting_websites_build-nodejs-assets": {
     params: {
       /**
        * Agency Plan website UID
@@ -735,7 +735,7 @@ Website contents are overwritten by the build result, which is deployed to publi
 
 This operation clears all cache types for the website.
    */
-  "agency-hosting_clearWebsiteCacheV1": {
+  "agency-hosting_cache_clear-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -750,7 +750,7 @@ This operation clears all cache types for the website.
 
 Each entry includes the schedule expression and the command executed on that schedule.
    */
-  "agency-hosting_listWebsiteCronJobsV1": {
+  "agency-hosting_cron-jobs_list-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -773,7 +773,7 @@ Each entry includes the schedule expression and the command executed on that sch
 
 Returns the created cron job, including its uuid, which is required to delete the cron job.
    */
-  "agency-hosting_createWebsiteCronJobV1": {
+  "agency-hosting_cron-jobs_create-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -796,7 +796,7 @@ Returns the created cron job, including its uuid, which is required to delete th
 
 The operation is idempotent: deleting a cron job that does not exist succeeds without error.
    */
-  "agency-hosting_deleteWebsiteCronJobV1": {
+  "agency-hosting_cron-jobs_delete-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -815,7 +815,7 @@ The operation is idempotent: deleting a cron job that does not exist succeeds wi
 
 Each entry includes the database's non-system users.
    */
-  "agency-hosting_listWebsiteDatabasesV1": {
+  "agency-hosting_databases_list-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -838,7 +838,7 @@ Each entry includes the database's non-system users.
 
 The database name, username, and password must all be provided by the caller.
    */
-  "agency-hosting_createWebsiteDatabaseV1": {
+  "agency-hosting_databases_create-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -865,7 +865,7 @@ The database name, username, and password must all be provided by the caller.
 
 The operation is idempotent: deleting a database that does not exist succeeds without error.
    */
-  "agency-hosting_deleteWebsiteDatabaseV1": {
+  "agency-hosting_databases_delete-website": {
     params: {
       /**
        * Agency Plan website UID
@@ -884,7 +884,7 @@ The operation is idempotent: deleting a database that does not exist succeeds wi
 
 Each database supports a single non-system user; creating a user for a database that already has one fails.
    */
-  "agency-hosting_createWebsiteDatabaseUserV1": {
+  "agency-hosting_databases_create-website-user": {
     params: {
       /**
        * Agency Plan website UID
@@ -915,7 +915,7 @@ Each database supports a single non-system user; creating a user for a database 
 
 The operation is idempotent: deleting a user that does not exist succeeds without error.
    */
-  "agency-hosting_deleteWebsiteDatabaseUserV1": {
+  "agency-hosting_databases_delete-website-user": {
     params: {
       /**
        * Agency Plan website UID
@@ -937,7 +937,7 @@ The operation is idempotent: deleting a user that does not exist succeeds withou
    * Retrieves detailed information about a specific Agency Plan website, including configuration,
 status, metadata, hosting plan details, and resource quotas.
    */
-  "agency-hosting_getWebsiteDetailsV1": {
+  "agency-hosting_websites_get": {
     params: {
       /**
        * Agency Plan website UID
@@ -952,7 +952,7 @@ status, metadata, hosting plan details, and resource quotas.
 website is immediately transitioned to a deleting state and the underlying server
 resources are removed in the background.
    */
-  "agency-hosting_deleteWebsiteV1": {
+  "agency-hosting_websites_delete": {
     params: {
       /**
        * Agency Plan website UID
@@ -977,7 +977,7 @@ WordPress websites (`website_types=wordpress`) or only Node.js websites
 (`website_types=nodejs`). Combine with `order_ids`, `states`, or `domain` for more
 targeted results.
    */
-  "agency-hosting_listAgencyPlanWebsitesV1": {
+  "agency-hosting_websites_list-plan": {
     params: {
       /**
        * Page number
@@ -1013,7 +1013,7 @@ targeted results.
 Each process has a unique ID (for tracking), a type, and a status (running, completed, failed).
 Poll this endpoint after initiating async operations (SSL setup, backups, cloning) to track progress.
    */
-  "agency-hosting_listWebsiteProcessesV1": {
+  "agency-hosting_websites_list-processes": {
     params: {
       /**
        * Agency Plan website UID
@@ -1026,7 +1026,7 @@ Poll this endpoint after initiating async operations (SSL setup, backups, clonin
   /**
    * Changes the installed WordPress core version on an Agency Plan website to one of the versions available for installation.
    */
-  "agency-hosting_changeWordPressVersionV1": {
+  "agency-hosting_wordpress_change-version": {
     params: {
       /**
        * Agency Plan website UID
@@ -1044,7 +1044,7 @@ Poll this endpoint after initiating async operations (SSL setup, backups, clonin
    * Returns the current WordPress settings for an Agency Plan website: installed core version,
 LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
    */
-  "agency-hosting_getWordPressSettingsV1": {
+  "agency-hosting_wordpress_settings": {
     params: {
       /**
        * Agency Plan website UID
@@ -1057,7 +1057,7 @@ LiteSpeed Cache plugin status, object cache status, and maintenance mode status.
   /**
    * Lists the WordPress core versions available for installation on an Agency Plan website.
    */
-  "agency-hosting_listAvailableWordPressVersionsV1": {
+  "agency-hosting_wordpress_list-versions": {
     params: {
       /**
        * Agency Plan website UID
@@ -1075,7 +1075,7 @@ e.g: float `17.99` is displayed as integer `1799`.
 
 Use this endpoint to view available services and pricing before placing orders.
    */
-  "billing_getCatalogItemListV1": {
+  "billing_catalog_list": {
     params: {
       /**
        * Filter catalog items by category
@@ -1109,7 +1109,7 @@ order completes, use the relevant product endpoints or
 
 Use this endpoint to purchase any product available in the catalog.
    */
-  "billing_createPurchaseOrderV1": {
+  "billing_orders_create-purchase": {
     params: {
       /**
        * Payment method ID, default will be used if not provided
@@ -1132,7 +1132,7 @@ Use this endpoint to purchase any product available in the catalog.
 
 Use this endpoint to configure the primary payment method for future orders.
    */
-  "billing_setDefaultPaymentMethodV1": {
+  "billing_payment-methods_set-default": {
     params: {
       /**
        * Payment method ID
@@ -1147,7 +1147,7 @@ Use this endpoint to configure the primary payment method for future orders.
 
 Use this endpoint to remove unused payment methods from user accounts.
    */
-  "billing_deletePaymentMethodV1": {
+  "billing_payment-methods_delete": {
     params: {
       /**
        * Payment method ID
@@ -1165,7 +1165,7 @@ please use [hPanel](https://hpanel.hostinger.com/billing/payment-methods).
 
 Use this endpoint to view available payment options before creating orders.
    */
-  "billing_getPaymentMethodListV1": {
+  "billing_payment-methods_list": {
     params: {
 
     };
@@ -1177,7 +1177,7 @@ Use this endpoint to view available payment options before creating orders.
 
 Use this endpoint to monitor active services and billing status.
    */
-  "billing_getSubscriptionListV1": {
+  "billing_subscriptions_list": {
     params: {
 
     };
@@ -1189,7 +1189,7 @@ Use this endpoint to monitor active services and billing status.
 
 Use this endpoint when disable auto-renewal for a subscription.
    */
-  "billing_disableAutoRenewalV1": {
+  "billing_subscriptions_disable-auto-renewal": {
     params: {
       /**
        * Subscription ID
@@ -1204,7 +1204,7 @@ Use this endpoint when disable auto-renewal for a subscription.
 
 Use this endpoint when enable auto-renewal for a subscription.
    */
-  "billing_enableAutoRenewalV1": {
+  "billing_subscriptions_enable-auto-renewal": {
     params: {
       /**
        * Subscription ID
@@ -1229,7 +1229,7 @@ complete asynchronously once the payment is confirmed.
 
 Use this endpoint to renew any subscription available in your account.
    */
-  "billing_renewSubscriptionV1": {
+  "billing_subscriptions_renew": {
     params: {
       /**
        * Subscription ID
@@ -1252,7 +1252,7 @@ Use this endpoint to renew any subscription available in your account.
 
 Use this endpoint to view historical DNS configurations for domains.
    */
-  "DNS_getDNSSnapshotV1": {
+  "dns_snapshots_get": {
     params: {
       /**
        * Domain name
@@ -1271,7 +1271,7 @@ Use this endpoint to view historical DNS configurations for domains.
 
 Use this endpoint to view available DNS backup points for restoration.
    */
-  "DNS_getDNSSnapshotListV1": {
+  "dns_snapshots_list": {
     params: {
       /**
        * Domain name
@@ -1286,7 +1286,7 @@ Use this endpoint to view available DNS backup points for restoration.
 
 Use this endpoint to revert domain DNS to a previous configuration.
    */
-  "DNS_restoreDNSSnapshotV1": {
+  "dns_snapshots_restore": {
     params: {
       /**
        * Domain name
@@ -1305,7 +1305,7 @@ Use this endpoint to revert domain DNS to a previous configuration.
 
 Use this endpoint to view current DNS configuration for domain management.
    */
-  "DNS_getDNSRecordsV1": {
+  "dns_records_list": {
     params: {
       /**
        * Domain name
@@ -1323,7 +1323,7 @@ Otherwise existing records will be updated and new records will be added.
 
 Use this endpoint to modify domain DNS configuration.
    */
-  "DNS_updateDNSRecordsV1": {
+  "dns_records_update": {
     params: {
       /**
        * Domain name
@@ -1354,7 +1354,7 @@ refer to the `Update zone records` endpoint.
 
 Use this endpoint to remove specific DNS records from domains.
    */
-  "DNS_deleteDNSRecordsV1": {
+  "dns_records_delete": {
     params: {
       /**
        * Domain name
@@ -1369,7 +1369,7 @@ Use this endpoint to remove specific DNS records from domains.
 
 Use this endpoint to restore domain DNS to original configuration.
    */
-  "DNS_resetDNSRecordsV1": {
+  "dns_records_reset": {
     params: {
       /**
        * Domain name
@@ -1399,7 +1399,7 @@ If there is validation error, the response will fail with `422 Validation error`
 
 Use this endpoint to verify DNS record validity before applying changes.
    */
-  "DNS_validateDNSRecordsV1": {
+  "dns_records_validate": {
     params: {
       /**
        * Domain name
@@ -1422,7 +1422,7 @@ If no matching RRs are found, they are created.
   /**
    * Retrieve a list of pending and completed domain verifications.
    */
-  "v2_getDomainVerificationsDIRECT": {
+  "domains_verifications_direct": {
     params: {
 
     };
@@ -1438,7 +1438,7 @@ Endpoint has rate limit of 90 requests per minute.
 
 Use this endpoint to find a domain name when you only know what the website is about.
    */
-  "domains_suggestDomainNamesFromADescriptionV1": {
+  "domains_availability_suggest-names-from-description": {
     params: {
       /**
        * Free-text description of the project the domain is needed for
@@ -1461,7 +1461,7 @@ Endpoint has rate limit of 90 requests per minute.
 
 Use this endpoint when the domain you wanted is taken and you need close alternatives.
    */
-  "domains_suggestDomainNamesFromADomainV1": {
+  "domains_availability_suggest-names-from": {
     params: {
       /**
        * Domain name to base the suggestions on
@@ -1486,7 +1486,7 @@ Endpoint has rate limit of 90 requests per minute.
 
 Use this endpoint to verify domain availability before purchase.
    */
-  "domains_checkDomainAvailabilityV1": {
+  "domains_availability_check": {
     params: {
       /**
        * Domain name (without TLD)
@@ -1509,7 +1509,7 @@ Use this endpoint to verify domain availability before purchase.
 
 Use this endpoint to view current redirect configuration for domains.
    */
-  "domains_getDomainForwardingV1": {
+  "domains_forwarding_get": {
     params: {
       /**
        * Domain name
@@ -1524,7 +1524,7 @@ Use this endpoint to view current redirect configuration for domains.
 
 Use this endpoint to modify existing redirect configuration for domains.
    */
-  "domains_updateDomainForwardingV1": {
+  "domains_forwarding_update": {
     params: {
       /**
        * Domain name
@@ -1547,7 +1547,7 @@ Use this endpoint to modify existing redirect configuration for domains.
 
 Use this endpoint to remove redirect configuration from domains.
    */
-  "domains_deleteDomainForwardingV1": {
+  "domains_forwarding_delete": {
     params: {
       /**
        * Domain name
@@ -1562,7 +1562,7 @@ Use this endpoint to remove redirect configuration from domains.
 
 Use this endpoint to set up domain redirects to other URLs.
    */
-  "domains_createDomainForwardingV1": {
+  "domains_forwarding_create": {
     params: {
       /**
        * Domain name
@@ -1587,7 +1587,7 @@ Both the old and new registrant must confirm it before the WHOIS change takes ef
 
 Use this endpoint to check the status of a WHOIS change awaiting registrant confirmation.
    */
-  "domains_getPendingIRTPVerificationV1": {
+  "domains_whois_pending-irtp-verification": {
     params: {
       /**
        * Domain name
@@ -1603,7 +1603,7 @@ Use this endpoint to check the status of a WHOIS change awaiting registrant conf
 Use this endpoint to back out of a WHOIS change that is stuck waiting on registrant confirmation,
 for example when the confirmation email cannot be received, without waiting out the 5-day expiry.
    */
-  "domains_cancelPendingIRTPVerificationV1": {
+  "domains_whois_cancel-pending-irtp-verification": {
     params: {
       /**
        * Domain name
@@ -1620,7 +1620,7 @@ Returns 404 when no account is moving this domain to you.
 
 Use this endpoint to check whether a domain addressed to you is still waiting to be accepted.
    */
-  "domains_getIncomingDomainMoveV1": {
+  "domains_move_incoming": {
     params: {
       /**
        * Domain name
@@ -1651,7 +1651,7 @@ Until then the move stays in the `activating` status, which can be followed with
 
 Use this endpoint to take ownership of a domain offered to you.
    */
-  "domains_acceptIncomingDomainMoveV1": {
+  "domains_move_accept-incoming": {
     params: {
       /**
        * Domain name
@@ -1673,7 +1673,7 @@ Moves you have already accepted cannot be rejected anymore.
 
 Use this endpoint to decline a domain you do not want to take over.
    */
-  "domains_rejectIncomingDomainMoveV1": {
+  "domains_move_reject-incoming": {
     params: {
       /**
        * Domain name
@@ -1690,7 +1690,7 @@ Moves of every status are returned, including the ones which already completed.
 
 Use this endpoint to find domains waiting for you to accept them.
    */
-  "domains_getIncomingDomainMoveListV1": {
+  "domains_move_incoming-list": {
     params: {
 
     };
@@ -1704,7 +1704,7 @@ Returns 404 when the domain has no move in progress.
 
 Use this endpoint to track the status of a move you have initiated for a single domain.
    */
-  "domains_getOutgoingDomainMoveV1": {
+  "domains_move_outgoing": {
     params: {
       /**
        * Domain name
@@ -1728,7 +1728,7 @@ such requests are rejected with a 428 status code.
 
 Use this endpoint to hand a domain over to another Hostinger user.
    */
-  "domains_startOutgoingDomainMoveV1": {
+  "domains_move_start-outgoing": {
     params: {
       /**
        * Domain name
@@ -1750,7 +1750,7 @@ The domain stays in your account.
 
 Use this endpoint to withdraw a move you no longer want to complete.
    */
-  "domains_cancelOutgoingDomainMoveV1": {
+  "domains_move_cancel-outgoing": {
     params: {
       /**
        * Domain name
@@ -1767,7 +1767,7 @@ Only moves which have not completed yet are returned.
 
 Use this endpoint to track moves you have initiated and the accounts they are addressed to.
    */
-  "domains_getOutgoingDomainMoveListV1": {
+  "domains_move_outgoing-list": {
     params: {
 
     };
@@ -1782,7 +1782,7 @@ Requesting a new code invalidates any code retrieved previously.
 
 Use this endpoint to obtain the code required to transfer a domain to another registrar.
    */
-  "domains_getDomainAuthorizationCodeV1": {
+  "domains_portfolio_authorization-code": {
     params: {
       /**
        * Domain name
@@ -1811,7 +1811,7 @@ for example `2037` when no free domain is available.
 
 Use this endpoint to register a domain using a free domain from your account.
    */
-  "domains_claimFreeDomainV1": {
+  "domains_portfolio_claim-free": {
     params: {
       /**
        * Domain name
@@ -1837,7 +1837,7 @@ the domain cannot be transferred to another registrar without first disabling th
 
 Use this endpoint to secure domains against unauthorized transfers.
    */
-  "domains_enableDomainLockV1": {
+  "domains_portfolio_enable-lock": {
     params: {
       /**
        * Domain name
@@ -1854,7 +1854,7 @@ Domain lock needs to be disabled before transferring the domain to another regis
 
 Use this endpoint to prepare domains for transfer to other registrars.
    */
-  "domains_disableDomainLockV1": {
+  "domains_portfolio_disable-lock": {
     params: {
       /**
        * Domain name
@@ -1869,7 +1869,7 @@ Use this endpoint to prepare domains for transfer to other registrars.
 
 Use this endpoint to view comprehensive domain configuration and status.
    */
-  "domains_getDomainDetailsV1": {
+  "domains_portfolio_get": {
     params: {
       /**
        * Domain name
@@ -1884,7 +1884,7 @@ Use this endpoint to view comprehensive domain configuration and status.
 
 Use this endpoint to view user's domain portfolio.
    */
-  "domains_getDomainListV1": {
+  "domains_portfolio_list": {
     params: {
 
     };
@@ -1909,7 +1909,7 @@ Some TLDs require `additional_details` to be provided and these will be validate
 
 Use this endpoint to register new domains for users.
    */
-  "domains_purchaseNewDomainV1": {
+  "domains_portfolio_purchase": {
     params: {
       /**
        * Domain name
@@ -1946,7 +1946,7 @@ When privacy protection is enabled, domain owner's personal information is hidde
 
 Use this endpoint to protect domain owner's personal information from public view.
    */
-  "domains_enablePrivacyProtectionV1": {
+  "domains_portfolio_enable-privacy-protection": {
     params: {
       /**
        * Domain name
@@ -1963,7 +1963,7 @@ When privacy protection is disabled, domain owner's personal information is visi
 
 Use this endpoint to make domain owner's information publicly visible.
    */
-  "domains_disablePrivacyProtectionV1": {
+  "domains_portfolio_disable-privacy-protection": {
     params: {
       /**
        * Domain name
@@ -1979,7 +1979,7 @@ expiration date.
 
 Use this endpoint to build renewal automation and expiry monitoring for a single domain.
    */
-  "domains_getDomainRenewalInformationV1": {
+  "domains_portfolio_renewal-information": {
     params: {
       /**
        * Domain name
@@ -2018,7 +2018,7 @@ only once it is registered.
 
 Use this endpoint to finish registering a domain that is awaiting setup on your account.
    */
-  "domains_completeDomainSetupV1": {
+  "domains_portfolio_complete-setup": {
     params: {
       /**
        * Domain name
@@ -2043,7 +2043,7 @@ Be aware, that improper nameserver configuration can lead to the domain being un
 
 Use this endpoint to configure custom DNS hosting for domains.
    */
-  "domains_updateDomainNameserversV1": {
+  "domains_portfolio_update-nameservers": {
     params: {
       /**
        * Domain name
@@ -2089,7 +2089,7 @@ Requests which cannot be fulfilled are rejected with an error code in the respon
 
 Use this endpoint to transfer a domain using a free domain transfer from your account.
    */
-  "domains_claimFreeDomainTransferV1": {
+  "domains_transfer_claim-free": {
     params: {
       /**
        * Domain name
@@ -2116,7 +2116,7 @@ Use this endpoint to transfer a domain using a free domain transfer from your ac
 
 Use this endpoint to track an incoming or outgoing registrar transfer and its status.
    */
-  "domains_getTransferV1": {
+  "domains_transfer_get": {
     params: {
       /**
        * Domain name
@@ -2131,7 +2131,7 @@ Use this endpoint to track an incoming or outgoing registrar transfer and its st
 
 Use this endpoint to monitor incoming and outgoing registrar transfers across your domains.
    */
-  "domains_getTransferListV1": {
+  "domains_transfer_list": {
     params: {
 
     };
@@ -2151,7 +2151,7 @@ The change is processed asynchronously.
 
 Use this endpoint to move a registered domain onto different contact information.
    */
-  "domains_changeWHOISProfileForDomainV1": {
+  "domains_whois_change-for": {
     params: {
       /**
        * WHOIS profile ID to assign to the domain
@@ -2176,7 +2176,7 @@ The default profile is pre-selected for the TLD it belongs to when registering n
 
 Use this endpoint to avoid picking contact information for every registration.
    */
-  "domains_setWHOISProfileAsDefaultV1": {
+  "domains_whois_set-as-default": {
     params: {
       /**
        * WHOIS ID
@@ -2193,7 +2193,7 @@ The profile itself is kept, it is only no longer pre-selected for its TLD.
 
 Use this endpoint to stop reusing contact information for new registrations.
    */
-  "domains_unsetDefaultWHOISProfileV1": {
+  "domains_whois_unset-default": {
     params: {
       /**
        * WHOIS ID
@@ -2208,7 +2208,7 @@ Use this endpoint to stop reusing contact information for new registrations.
 
 Use this endpoint to view domain registration contact information.
    */
-  "domains_getWHOISProfileV1": {
+  "domains_whois_get": {
     params: {
       /**
        * WHOIS ID
@@ -2223,7 +2223,7 @@ Use this endpoint to view domain registration contact information.
 
 Use this endpoint to remove unused contact profiles from account.
    */
-  "domains_deleteWHOISProfileV1": {
+  "domains_whois_delete": {
     params: {
       /**
        * WHOIS ID
@@ -2238,7 +2238,7 @@ Use this endpoint to remove unused contact profiles from account.
 
 Use this endpoint to view available contact profiles for domain registration.
    */
-  "domains_getWHOISProfileListV1": {
+  "domains_whois_list": {
     params: {
       /**
        * Filter by TLD (without leading dot)
@@ -2253,7 +2253,7 @@ Use this endpoint to view available contact profiles for domain registration.
 
 Use this endpoint to add new contact information for domain registration.
    */
-  "domains_createWHOISProfileV1": {
+  "domains_whois_create": {
     params: {
       /**
        * TLD of the domain (without leading dot)
@@ -2284,7 +2284,7 @@ Use this endpoint to add new contact information for domain registration.
 
 Use this endpoint to view which domains use specific contact profiles.
    */
-  "domains_getWHOISProfileUsageV1": {
+  "domains_whois_usage": {
     params: {
       /**
        * WHOIS ID
@@ -2299,7 +2299,7 @@ Use this endpoint to view which domains use specific contact profiles.
 Amounts for fixed discounts are integers in the smallest currency unit; percentage
 discounts carry a whole-number value between 1 and 100.
    */
-  "ecommerce_listDiscountsV1": {
+  "ecommerce_discounts_list": {
     params: {
       /**
        * The ID of the store to list discounts for.
@@ -2326,7 +2326,7 @@ discounts carry a whole-number value between 1 and 100.
 unit (e.g. $10 is 1000); percentage discounts take a whole-number value between 1 and 100.
 Free-shipping discounts ignore value. Returns the created discount.
    */
-  "ecommerce_createADiscountV1": {
+  "ecommerce_discounts_create": {
     params: {
       /**
        * The ID of the store to create the discount for.
@@ -2381,7 +2381,7 @@ Free-shipping discounts ignore value. Returns the created discount.
 channel to your store and keeping your catalog, orders, shipping and payments in sync through
 the Ecommerce API.
    */
-  "ecommerce_getCustomStorefrontSetupInstructionsV1": {
+  "ecommerce_miscellaneous_custom-storefront-setup-instructions": {
     params: {
 
     };
@@ -2391,7 +2391,7 @@ the Ecommerce API.
   /**
    * Cancel the order and optionally email the customer. Returns the updated order summary.
    */
-  "ecommerce_cancelAnOrderV1": {
+  "ecommerce_orders_cancel": {
     params: {
       /**
        * The ID of the store that owns the order.
@@ -2413,7 +2413,7 @@ the Ecommerce API.
    * Create a fulfilment for the order and attach tracking in one call. Omit items to fulfil
 every remaining unfulfilled item. Returns the updated order summary.
    */
-  "ecommerce_fulfilAnOrderV1": {
+  "ecommerce_orders_fulfil": {
     params: {
       /**
        * The ID of the store that owns the order.
@@ -2448,7 +2448,7 @@ every remaining unfulfilled item. Returns the updated order summary.
 status, customer email, order number or a free-text query. Amounts are in the smallest
 currency unit. Retrieve a single order for its line items, addresses and fulfilments.
    */
-  "ecommerce_listStoreOrdersV1": {
+  "ecommerce_orders_list-store": {
     params: {
       /**
        * The ID of the store to list orders for.
@@ -2499,7 +2499,7 @@ currency unit. Retrieve a single order for its line items, addresses and fulfilm
 addresses, the totals breakdown and fulfilments with tracking. Amounts are in the
 smallest currency unit.
    */
-  "ecommerce_retrieveAnOrderV1": {
+  "ecommerce_orders_retrieve": {
     params: {
       /**
        * The ID of the store that owns the order.
@@ -2516,7 +2516,7 @@ smallest currency unit.
   /**
    * Enable a manual payment method so the store can accept orders without an online payment provider.
    */
-  "ecommerce_enableManualPaymentMethodV1": {
+  "ecommerce_payments_enable-manual-method": {
     params: {
       /**
        * The ID of the store to enable manual payment for.
@@ -2534,7 +2534,7 @@ smallest currency unit.
    * Create an onboarding link for connecting a payment gateway to the store. Returns the gateway
 onboarding URL for the merchant to open and a deep-link into the store admin.
    */
-  "ecommerce_createAPaymentProviderConnectLinkV1": {
+  "ecommerce_payments_create-provider-connect-link": {
     params: {
       /**
        * The ID of the store to connect the payment provider to.
@@ -2552,7 +2552,7 @@ onboarding URL for the merchant to open and a deep-link into the store admin.
    * List a store's payment providers, split into providers already connected to the store and
 gateways available to install. Never exposes gateway credentials, secrets, or configuration.
    */
-  "ecommerce_listStorePaymentProvidersV1": {
+  "ecommerce_payments_list-store-providers": {
     params: {
       /**
        * The ID of the store to list payment providers for.
@@ -2570,7 +2570,7 @@ gateways available to install. Never exposes gateway credentials, secrets, or co
    * Returns a signed URL to upload a product image to (multipart/form-data POST). Then call the
 attach-image endpoint with the returned object_name to scan and attach it to the product.
    */
-  "ecommerce_createAProductImageUploadURLV1": {
+  "ecommerce_products_create-image-upload-url": {
     params: {
       /**
        * The ID of the store the product belongs to.
@@ -2588,7 +2588,7 @@ attach-image endpoint with the returned object_name to scan and attach it to the
    * Delete a product and its variants from the store. A subscription product with active
 subscribers is archived instead of deleted so its data stays available.
    */
-  "ecommerce_deleteAProductV1": {
+  "ecommerce_products_delete": {
     params: {
       /**
        * The ID of the store that owns the product.
@@ -2607,7 +2607,7 @@ subscribers is archived instead of deleted so its data stays available.
 draft to hide it, or archived to retire it. Variants, prices and inventory are managed
 through the variant endpoints, not here. Returns the updated product summary.
    */
-  "ecommerce_updateAProductV1": {
+  "ecommerce_products_update": {
     params: {
       /**
        * The ID of the store that owns the product.
@@ -2636,7 +2636,7 @@ through the variant endpoints, not here. Returns the updated product summary.
   /**
    * Create a published digital product with a single variant and an optional external download link.
    */
-  "ecommerce_createDigitalProductV1": {
+  "ecommerce_products_create-digital": {
     params: {
       /**
        * The ID of the store to create the product in.
@@ -2672,7 +2672,7 @@ count and price range). Prices are integers in the smallest currency unit and li
 variants. Filter by status, free text or a set of product ids. Use include=variants to
 embed each product's variants with prices and inventory, and include=media to embed its media.
    */
-  "ecommerce_listProductsV1": {
+  "ecommerce_products_list": {
     params: {
       /**
        * The ID of the store to list products for.
@@ -2705,7 +2705,7 @@ embed each product's variants with prices and inventory, and include=media to em
   /**
    * Create a published physical product with a single variant priced in the store currency.
    */
-  "ecommerce_createPhysicalProductV1": {
+  "ecommerce_products_create-physical": {
     params: {
       /**
        * The ID of the store to create the product in.
@@ -2738,7 +2738,7 @@ is allowed, and its destination must meet the same requirements. Private or rese
 destinations, unsupported URLs and longer redirect chains are rejected. The image is virus-scanned
 and validated by content, then stored on the CDN. Set is_thumbnail to make it the product's primary image.
    */
-  "ecommerce_uploadAndAttachAProductImageV1": {
+  "ecommerce_products_upload-and-attach-image": {
     params: {
       /**
        * The ID of the store the product belongs to.
@@ -2773,7 +2773,7 @@ thumbnail only if the product does not have one yet.
   /**
    * List a store's active sales channels with their full metadata.
    */
-  "ecommerce_listSalesChannelsV1": {
+  "ecommerce_sales-channels_list": {
     params: {
       /**
        * The ID of the store to list sales channels for.
@@ -2788,7 +2788,7 @@ thumbnail only if the product does not have one yet.
 your catalog, orders, shipping and payments in sync through the Ecommerce API. A "quick-link" channel
 is a hosted one-page store whose handle is auto-generated.
    */
-  "ecommerce_createASalesChannelV1": {
+  "ecommerce_sales-channels_create": {
     params: {
       /**
        * The ID of the store to create the sales channel for.
@@ -2815,7 +2815,7 @@ is a hosted one-page store whose handle is auto-generated.
    * Update a custom sales channel. The merchant-facing `name` and the public `url`
 (returned as the channel `domain`) can be changed. Pass `null` to clear a value.
    */
-  "ecommerce_updateSalesChannelV1": {
+  "ecommerce_sales-channels_update": {
     params: {
       /**
        * The ID of the store that owns the sales channel.
@@ -2840,7 +2840,7 @@ is a hosted one-page store whose handle is auto-generated.
   /**
    * Set the flat-rate shipping price for a store, creating the shipping zone if it does not exist yet.
    */
-  "ecommerce_setStoreShippingV1": {
+  "ecommerce_shipping_set-store": {
     params: {
       /**
        * The ID of the store to configure shipping for.
@@ -2859,7 +2859,7 @@ is a hosted one-page store whose handle is auto-generated.
 
 The underlying store data is preserved; only the store is marked as deleted.
    */
-  "ecommerce_deleteStoreV1": {
+  "ecommerce_stores_delete": {
     params: {
       /**
        * The ID of the store to delete.
@@ -2872,7 +2872,7 @@ The underlying store data is preserved; only the store is marked as deleted.
   /**
    * Retrieve the stores associated with your account.
    */
-  "ecommerce_getStoresV1": {
+  "ecommerce_stores_list": {
     params: {
       /**
        * Page number
@@ -2887,7 +2887,7 @@ The underlying store data is preserved; only the store is marked as deleted.
 
 A primary sales channel is created alongside the store.
    */
-  "ecommerce_createStoreV1": {
+  "ecommerce_stores_create": {
     params: {
       /**
        * name parameter
@@ -2921,7 +2921,7 @@ A primary sales channel is created alongside the store.
    * Get a store's readiness metadata: whether payment methods and shipping are configured,
 plus its default currency. Useful to verify prerequisites before building a storefront.
    */
-  "ecommerce_getStoreMetadataV1": {
+  "ecommerce_stores_metadata": {
     params: {
       /**
        * The ID of the store to read metadata for.
@@ -2936,7 +2936,7 @@ plus its default currency. Useful to verify prerequisites before building a stor
 prices. Variants omitted from the request are left untouched. Prices replace the variant's
 existing prices in full. Returns the updated variants.
    */
-  "ecommerce_updateProductVariantsInBatchV1": {
+  "ecommerce_product-variants_update-in-batch": {
     params: {
       /**
        * The ID of the store that owns the product.
@@ -2957,7 +2957,7 @@ existing prices in full. Returns the updated variants.
   /**
    * Delete a single variant from the product.
    */
-  "ecommerce_deleteAProductVariantV1": {
+  "ecommerce_product-variants_delete": {
     params: {
       /**
        * The ID of the store that owns the product.
@@ -2979,7 +2979,7 @@ existing prices in full. Returns the updated variants.
    * List a product's variants, ordered by rank, with their options, prices and inventory.
 Prices are integers in the smallest currency unit and live on variants.
    */
-  "ecommerce_listProductVariantsV1": {
+  "ecommerce_product-variants_list": {
     params: {
       /**
        * The ID of the store that owns the product.
@@ -3003,7 +3003,7 @@ missing from the product are created automatically; provide a value for every op
 product already has. Prices are integers in the smallest currency unit and default to the
 store currency. Returns the created variant.
    */
-  "ecommerce_createAProductVariantV1": {
+  "ecommerce_product-variants_create": {
     params: {
       /**
        * The ID of the store that owns the product.
@@ -3050,7 +3050,7 @@ The original website is left untouched.\n
 To edit the copy, use the `Edit website` tool with the returned website ID, or the user can
 open the provided website URL in Hostinger Horizons interface.
    */
-  "horizons_cloneWebsiteV1": {
+  "horizons_websites_clone": {
     params: {
       /**
        * The website ID
@@ -3068,7 +3068,7 @@ Each website is returned with its ID, status, domain and the URL to open it
 in Hostinger Horizons interface.\n
 The complete list of websites is returned in a single response - it is not paginated.
    */
-  "horizons_getWebsiteListV1": {
+  "horizons_websites_list": {
     params: {
 
     };
@@ -3112,7 +3112,7 @@ MAPS:\n
 - OpenStreetMap is the default provider.\n
 - Alternative providers (Google Maps, Mapbox) are allowed ONLY if explicitly requested by the user.\n
    */
-  "horizons_createWebsiteV1": {
+  "horizons_websites_create": {
     params: {
       /**
        * message parameter
@@ -3134,7 +3134,7 @@ Do not write code.\n
 If the tool call fails with an error, you should provide a clear explanation of the error
 and do not generate code yourself in the chat.
    */
-  "horizons_editWebsiteV1": {
+  "horizons_websites_edit": {
     params: {
       /**
        * The website ID
@@ -3156,7 +3156,7 @@ Publishing happens asynchronously and takes a few minutes.\n
 After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
 that the website is being published and you should provide the published URL to the user immediately.
    */
-  "horizons_publishWebsiteV1": {
+  "horizons_websites_publish": {
     params: {
       /**
        * The website ID
@@ -3173,7 +3173,7 @@ website URL before or after editing it.\n
 Websites can be edited with the `Edit website` tool, or by the user in Hostinger Horizons
 interface in the provided website URL.
    */
-  "horizons_getWebsiteV1": {
+  "horizons_websites_get": {
     params: {
       /**
        * The website ID
@@ -3190,7 +3190,7 @@ updated and needs to be visible immediately, or after making major changes.
 Also purges the Hostinger CDN cache when CDN is enabled on the website. For a WordPress
 installation living in a subdirectory, pass the directory query parameter to clear its cache.
    */
-  "hosting_clearWebsiteCacheV1": {
+  "hosting_cache_clear-website": {
     params: {
       /**
        * username parameter
@@ -3215,7 +3215,7 @@ is cached, effectively turning off all caching for the website; use it while act
 testing changes, debugging issues, or when real-time updates must be visible. Disable it after
 finishing development work to restore the performance benefits of caching.
    */
-  "hosting_toggleCachelessModeV1": {
+  "hosting_cache_toggle-cacheless": {
     params: {
       /**
        * username parameter
@@ -3241,7 +3241,7 @@ debugging, prefer toggling cacheless mode instead.
 
 Does nothing if caching is already in the requested state.
    */
-  "hosting_toggleWebsiteCacheV1": {
+  "hosting_cache_toggle-website": {
     params: {
       /**
        * username parameter
@@ -3262,7 +3262,7 @@ Does nothing if caching is already in the requested state.
   /**
    * Returns the list of cron jobs configured for the specified account, including their schedule and command.
    */
-  "hosting_listAccountCronJobsV1": {
+  "hosting_cron-jobs_list": {
     params: {
       /**
        * username parameter
@@ -3277,7 +3277,7 @@ Does nothing if caching is already in the requested state.
 
 Returns the created cron job, including its uid, which is required to delete the cron job or fetch its output.
    */
-  "hosting_createAccountCronJobV1": {
+  "hosting_cron-jobs_create": {
     params: {
       /**
        * username parameter
@@ -3300,7 +3300,7 @@ Returns the created cron job, including its uid, which is required to delete the
 
 The uid is returned by the list cron jobs endpoint.
    */
-  "hosting_deleteAccountCronJobV1": {
+  "hosting_cron-jobs_delete": {
     params: {
       /**
        * username parameter
@@ -3319,7 +3319,7 @@ The uid is returned by the list cron jobs endpoint.
 
 The uid is returned by the list cron jobs endpoint.
    */
-  "hosting_getCronJobOutputV1": {
+  "hosting_cron-jobs_output": {
     params: {
       /**
        * username parameter
@@ -3339,7 +3339,7 @@ The uid is returned by the list cron jobs endpoint.
 The database name must be the full name returned by the list databases endpoint.
 The password must also be updated in any website configuration that uses this database.
    */
-  "hosting_changeDatabasePasswordV1": {
+  "hosting_databases_change-password": {
     params: {
       /**
        * username parameter
@@ -3362,7 +3362,7 @@ The password must also be updated in any website configuration that uses this da
 
 Use the domain and is_assigned filters to find databases assigned to a specific domain.
    */
-  "hosting_listAccountDatabasesV1": {
+  "hosting_databases_list": {
     params: {
       /**
        * username parameter
@@ -3397,7 +3397,7 @@ Use the domain and is_assigned filters to find databases assigned to a specific 
 
 The database name and user are automatically prefixed with the account username when needed.
    */
-  "hosting_createAccountDatabaseV1": {
+  "hosting_databases_create": {
     params: {
       /**
        * username parameter
@@ -3428,7 +3428,7 @@ The database name and user are automatically prefixed with the account username 
 
 The database name must be the full name returned by the list databases endpoint.
    */
-  "hosting_deleteAccountDatabaseV1": {
+  "hosting_databases_delete": {
     params: {
       /**
        * username parameter
@@ -3448,7 +3448,7 @@ The database name must be the full name returned by the list databases endpoint.
 Provide an IPv4/IPv6 address, or "%" to allow any host. The database name must be
 the full name returned by the list databases endpoint.
    */
-  "hosting_createDatabaseRemoteConnectionV1": {
+  "hosting_databases_create-remote-connection": {
     params: {
       /**
        * username parameter
@@ -3473,7 +3473,7 @@ Identify the rule with the required ip query parameter (the IPv4/IPv6 address, o
 exactly as returned by the list remote connections endpoint). The database name must be
 the full name returned by the list databases endpoint.
    */
-  "hosting_deleteDatabaseRemoteConnectionV1": {
+  "hosting_databases_delete-remote-connection": {
     params: {
       /**
        * username parameter
@@ -3498,7 +3498,7 @@ exactly as returned by the list remote connections endpoint.
 
 Use the domain filter to only return rules for databases assigned to a specific domain.
    */
-  "hosting_listDatabaseRemoteConnectionsV1": {
+  "hosting_databases_list-remote-connections": {
     params: {
       /**
        * username parameter
@@ -3519,7 +3519,7 @@ Rules for databases not assigned to any domain are always included.
 Use when database errors, crashes, or corruption are reported.
 The database name must be the full name returned by the list databases endpoint.
    */
-  "hosting_repairDatabaseV1": {
+  "hosting_databases_repair": {
     params: {
       /**
        * username parameter
@@ -3555,7 +3555,7 @@ Express or NestJS. Frameworks that bake variables into the build output (Next.js
 A password in the request is ignored; the platform always generates it. The optional `name`
 and `user` are identifiers, not secrets.
    */
-  "hosting_setupWebsiteDatabaseV1": {
+  "hosting_databases_setup-website": {
     params: {
       /**
        * username parameter
@@ -3589,7 +3589,7 @@ the full user is 12 to 25 characters.
 Use this when a visual database interface is needed for SQL queries, imports, exports, or table management.
 The database name must be the full name returned by the list databases endpoint.
    */
-  "hosting_getPhpMyAdminLinkV1": {
+  "hosting_databases_phpmyadmin-link": {
     params: {
       /**
        * username parameter
@@ -3609,7 +3609,7 @@ based on available datacenter capacity and hosting plan of your order.
 The first item in the list is the best match for your specific order
 requirements.
    */
-  "hosting_listAvailableDatacentersV1": {
+  "hosting_datacenters_list": {
     params: {
       /**
        * Order ID
@@ -3624,7 +3624,7 @@ requirements.
 Free subdomains allow you to start using hosting services immediately
 and you can always connect a custom domain to your site later.
    */
-  "hosting_generateAFreeSubdomainV1": {
+  "hosting_domains_generate-free-subdomain": {
     params: {
 
     };
@@ -3637,7 +3637,7 @@ and you can always connect a custom domain to your site later.
 Use this endpoint to inspect parked domain configuration for a specific website,
 including the parent domain and root directory assigned to each parked domain.
    */
-  "hosting_listWebsiteParkedDomainsV1": {
+  "hosting_domains_list-website-parked": {
     params: {
       /**
        * username parameter
@@ -3657,7 +3657,7 @@ including the parent domain and root directory assigned to each parked domain.
 Provide a domain name or IP address to park on the website so it serves the same content
 as the parent domain.
    */
-  "hosting_createWebsiteParkedDomainV1": {
+  "hosting_domains_create-website-parked": {
     params: {
       /**
        * username parameter
@@ -3680,7 +3680,7 @@ as the parent domain.
 
 Use this endpoint to remove parked domains that are no longer needed.
    */
-  "hosting_deleteWebsiteParkedDomainV1": {
+  "hosting_domains_delete-website-parked": {
     params: {
       /**
        * username parameter
@@ -3704,7 +3704,7 @@ Use this endpoint to remove parked domains that are no longer needed.
 Use this endpoint to inspect subdomain configuration for a specific website,
 including the parent domain and root directory assigned to each subdomain.
    */
-  "hosting_listWebsiteSubdomainsV1": {
+  "hosting_domains_list-website-subdomains": {
     params: {
       /**
        * username parameter
@@ -3724,7 +3724,7 @@ including the parent domain and root directory assigned to each subdomain.
 Provide a subdomain prefix and, optionally, a custom directory or the
 website public directory to use as the subdomain root.
    */
-  "hosting_createWebsiteSubdomainV1": {
+  "hosting_domains_create-website-subdomain": {
     params: {
       /**
        * username parameter
@@ -3755,7 +3755,7 @@ website public directory to use as the subdomain root.
 
 Use this endpoint to remove subdomains that are no longer needed.
    */
-  "hosting_deleteWebsiteSubdomainV1": {
+  "hosting_domains_delete-website-subdomain": {
     params: {
       /**
        * username parameter
@@ -3783,7 +3783,7 @@ Keep in mind that it may take up to 10 minutes for new TXT DNS records to propag
 
 Skip this verification when using Hostinger's free subdomains (*.hostingersite.com).
    */
-  "hosting_verifyDomainOwnershipV1": {
+  "hosting_domains_verify-ownership": {
     params: {
       /**
        * Domain to verify ownership for
@@ -3832,7 +3832,7 @@ curl -i -X PATCH "{url}/${FILE}?override=true" \
 # -> 204 No Content, Upload-Offset response header equals SIZE when done
 ```
    */
-  "hosting_generateUploadURLV1": {
+  "hosting_files_generate-upload-url": {
     params: {
       /**
        * Account username
@@ -3852,7 +3852,7 @@ curl -i -X PATCH "{url}/${FILE}?override=true" \
 Use `directory` to browse a subdirectory relative to the document root. Symlinked entries
 are listed but never traversed into or resolved.
    */
-  "hosting_listWebsiteFilesAndDirectoriesV1": {
+  "hosting_files_list-website-and-directories": {
     params: {
       /**
        * username parameter
@@ -3892,7 +3892,7 @@ are listed but never traversed into or resolved.
 Read-only; refuses symlinks, oversized files, non-text file types, and files identified as
 containing secrets (e.g. credential files) — none of these are returned by this endpoint.
    */
-  "hosting_getWebsiteFileContentV1": {
+  "hosting_files_website-content": {
     params: {
       /**
        * username parameter
@@ -3926,7 +3926,7 @@ repository link but ignores pushes.
 When the website has no auto-deployment configured every field is null. Save settings with
 `Update Git auto-deployment settings`.
    */
-  "hosting_getGitAutoDeploymentSettingsV1": {
+  "hosting_git_auto-deployment-settings": {
     params: {
       /**
        * username parameter
@@ -3953,7 +3953,7 @@ does not clone anything. On a Node.js website start the first deploy with
 `Start Node.js build` using `source_type` `git`; pushes then trigger new builds with the build
 settings stored for the website.
    */
-  "hosting_updateGitAutoDeploymentSettingsV1": {
+  "hosting_git_update-auto-deployment-settings": {
     params: {
       /**
        * username parameter
@@ -3998,7 +3998,7 @@ the document root.
 website; pushes stop deploying until settings are saved again. Succeeds also when nothing is
 configured.
    */
-  "hosting_deleteGitAutoDeploymentSettingsV1": {
+  "hosting_git_delete-auto-deployment-settings": {
     params: {
       /**
        * username parameter
@@ -4025,7 +4025,7 @@ Use `uuid` as the path parameter of `List Git installation repositories`, and as
 `installation_uuid` in `Start Node.js build` with `source_type` `git` and in
 `Update Git auto-deployment settings`.
    */
-  "hosting_listGitInstallationsV1": {
+  "hosting_git_list-installations": {
     params: {
       /**
        * Filter by Git provider
@@ -4051,7 +4051,7 @@ more, name the repository directly instead of searching this list.
 installation does not belong to the customer. Limited to 10 calls per minute per API client
 (429 above that).
    */
-  "hosting_listGitInstallationRepositoriesV1": {
+  "hosting_git_list-installation-repositories": {
     params: {
       /**
        * Git installation UUID from the List Git installations endpoint
@@ -4068,7 +4068,7 @@ Each build represents a single run of the Node.js build pipeline. Use the `state
 query parameter to filter results by build state (pending, running, completed, failed).
 Use the `uuid` from a build to poll its output via the `Get Node.js Build Logs` endpoint.
    */
-  "hosting_listNodeJSBuildsV1": {
+  "hosting_nodejs_list-builds": {
     params: {
       /**
        * username parameter
@@ -4114,7 +4114,7 @@ head. The installation must belong to the same customer as the website.
 The returned build `uuid` can be used to poll progress and retrieve logs via
 the `Get Node.js Build Logs` endpoint.
    */
-  "hosting_startNode_jsBuildV1": {
+  "hosting_nodejs_start-build": {
     params: {
       /**
        * username parameter
@@ -4177,7 +4177,7 @@ Returns 404 until the first build or the first settings update stores them. Use 
 a failed build to check whether the framework or the entry file were detected wrong, then
 fix them with the `Update Node.js build settings` endpoint.
    */
-  "hosting_getNode_jsBuildSettingsV1": {
+  "hosting_nodejs_build-settings": {
     params: {
       /**
        * username parameter
@@ -4202,7 +4202,7 @@ settings call `Start Node.js build` with the same values. Typical fixes: a wrong
 after auto-detection, or a missing `entry_file` for express, fastify, nest, nuxt and hono
 apps.
    */
-  "hosting_updateNode_jsBuildSettingsV1": {
+  "hosting_nodejs_update-build-settings": {
     params: {
       /**
        * username parameter
@@ -4256,7 +4256,7 @@ output directory, build script) before committing to a build.
 The archive must already be present on the website's file storage. Use the
 `Generate Upload URL` endpoint to obtain credentials and upload the archive first.
    */
-  "hosting_getNode_jsBuildSettingsFromArchiveV1": {
+  "hosting_nodejs_build-settings-from-archive": {
     params: {
       /**
        * username parameter
@@ -4284,7 +4284,7 @@ the whole set, so never copy the masked values from this response into that requ
 the full desired set with real values taken from the project `.env` file or the user
 prompt instead.
    */
-  "hosting_listNode_jsEnvironmentVariablesV1": {
+  "hosting_nodejs_list-environment-variables": {
     params: {
       /**
        * username parameter
@@ -4314,7 +4314,7 @@ The `List Node.js environment variables` endpoint returns masked values (`******
 never copy values from it into this request. Always send the full desired set with real
 values taken from the project `.env` file or the user prompt.
    */
-  "hosting_replaceNode_jsEnvironmentVariablesV1": {
+  "hosting_nodejs_replace-environment-variables": {
     params: {
       /**
        * username parameter
@@ -4342,7 +4342,7 @@ any other state returns 422. When no analysis could be produced both `analysis` 
 Each call runs the analysis again, so call it once per failed build and keep the result.
 Limited to 5 calls per minute per API client (429 above that).
    */
-  "hosting_analyseFailedNode_jsBuildV1": {
+  "hosting_nodejs_analyse-failed-build": {
     params: {
       /**
        * username parameter
@@ -4366,7 +4366,7 @@ options it ran with and timestamps. Poll this while a build is pending or runnin
 is failed, read `Get NodeJS build logs` and `Analyse failed Node.js build` for the cause.
 Returns 404 when the UUID does not belong to a build of this website.
    */
-  "hosting_getNode_jsBuildDetailsV1": {
+  "hosting_nodejs_build": {
     params: {
       /**
        * username parameter
@@ -4392,7 +4392,7 @@ while the build state is `running`, passing the previously returned `lines` coun
 as `from_line` to fetch only new output since the last call.
 Log content may contain ANSI escape sequences (color codes).
    */
-  "hosting_getNodeJSBuildLogsV1": {
+  "hosting_nodejs_build-logs": {
     params: {
       /**
        * username parameter
@@ -4427,7 +4427,7 @@ entries while `total_lines` counts every raw line. Entries with a timestamp befo
 `last_deployed_at` belong to the previous deployment. Returns an empty `logs` list when
 the application has not written a log file yet.
    */
-  "hosting_getNode_jsRuntimeLogsV1": {
+  "hosting_nodejs_runtime-logs": {
     params: {
       /**
        * username parameter
@@ -4468,7 +4468,7 @@ Use it before reproducing a problem so the next `Get Node.js runtime logs` call 
 only fresh entries; start that call with `period` again instead of reusing a `from_line`
 from before the clear.
    */
-  "hosting_clearNode_jsRuntimeLogsV1": {
+  "hosting_nodejs_clear-runtime-logs": {
     params: {
       /**
        * username parameter
@@ -4491,7 +4491,7 @@ Only applicable to server-side applications (Express, Next.js, NestJS, etc.). St
 front-end apps (React, Vue, Vite) have no persistent server process, so restarting them
 has no effect. Returns success even when the website has no server process to restart.
    */
-  "hosting_restartNode_jsApplicationV1": {
+  "hosting_nodejs_restart-application": {
     params: {
       /**
        * username parameter
@@ -4524,7 +4524,7 @@ An empty list means the most recent scan found no vulnerabilities; it does not
 guarantee the current deployment is vulnerability-free. Available on Business and
 Cloud Hosting plans.
    */
-  "hosting_listNode_jsVulnerabilitiesV1": {
+  "hosting_nodejs_list-vulnerabilities": {
     params: {
       /**
        * username parameter
@@ -4558,7 +4558,7 @@ in `patched_vulnerability_ids`. Selections without any patchable vulnerability a
 rejected with a 422. Only one patch pull request can be open at a time per website;
 close or merge it before patching again. Available on Business and Cloud Hosting plans.
    */
-  "hosting_patchNode_jsVulnerabilitiesV1": {
+  "hosting_nodejs_patch-vulnerabilities": {
     params: {
       /**
        * username parameter
@@ -4585,7 +4585,7 @@ of other client hosting accounts that have shared access with you.
 Use the available query parameters to filter results by order statuses
 or specific order IDs for more targeted results.
    */
-  "hosting_listOrdersV1": {
+  "hosting_orders_list": {
     params: {
       /**
        * Page number
@@ -4612,7 +4612,7 @@ or specific order IDs for more targeted results.
 
 Use it to recover from extension conflicts or restore the original configuration.
    */
-  "hosting_resetPHPExtensionsV1": {
+  "hosting_php_reset-extensions": {
     params: {
       /**
        * username parameter
@@ -4633,7 +4633,7 @@ default, type and the plan limit (`max`), and conflicting extension groups.
 
 Use it to check the current PHP setup before updating the version, extensions or options.
    */
-  "hosting_getPHPDetailsV1": {
+  "hosting_php_get": {
     params: {
       /**
        * username parameter
@@ -4652,7 +4652,7 @@ Use it to check the current PHP setup before updating the version, extensions or
 
 Use it to debug PHP issues or inspect the complete PHP environment of the website.
    */
-  "hosting_getPHPInfoV1": {
+  "hosting_php_info": {
     params: {
       /**
        * username parameter
@@ -4671,7 +4671,7 @@ Use it to debug PHP issues or inspect the complete PHP environment of the websit
 
 Use the Get PHP details endpoint to check the current extension states before changing them.
    */
-  "hosting_updatePHPExtensionsV1": {
+  "hosting_php_update-extensions": {
     params: {
       /**
        * username parameter
@@ -4700,7 +4700,7 @@ Only provide the options you want to change, inside the `options` object.
 Values above the account plan limit are silently capped to that limit, so the request can succeed
 with a smaller applied value. Call the Get PHP details endpoint afterwards to read the applied value.
    */
-  "hosting_updatePHPOptionsV1": {
+  "hosting_php_update-options": {
     params: {
       /**
        * username parameter
@@ -4723,7 +4723,7 @@ with a smaller applied value. Call the Get PHP details endpoint afterwards to re
 
 Use the Get PHP details endpoint to see the versions available for the website.
    */
-  "hosting_updatePHPVersionV1": {
+  "hosting_php_update-version": {
     params: {
       /**
        * username parameter
@@ -4744,7 +4744,7 @@ Use the Get PHP details endpoint to see the versions available for the website.
   /**
    * Returns a paginated list of redirects configured for the selected website.
    */
-  "hosting_listWebsiteRedirectsV1": {
+  "hosting_redirects_list-website": {
     params: {
       /**
        * username parameter
@@ -4769,7 +4769,7 @@ Use the Get PHP details endpoint to see the versions available for the website.
   /**
    * Creates a redirect from a URL on the selected website to another URL or IP address.
    */
-  "hosting_createWebsiteRedirectV1": {
+  "hosting_redirects_create-website": {
     params: {
       /**
        * username parameter
@@ -4796,7 +4796,7 @@ Use the Get PHP details endpoint to see the versions available for the website.
 
 Pass the `from` value exactly as returned by the list redirects endpoint.
    */
-  "hosting_deleteWebsiteRedirectV1": {
+  "hosting_redirects_delete-website": {
     params: {
       /**
        * username parameter
@@ -4825,7 +4825,7 @@ installation is `installing` or `waiting_for_retry`, when the website's certific
 revoked (it cannot be reissued), and when an uploaded custom certificate is installed; that
 one has to be uninstalled first.
    */
-  "hosting_installSSLV1": {
+  "hosting_ssl_install": {
     params: {
       /**
        * username parameter
@@ -4851,7 +4851,7 @@ means the assigned certificate's validity has ended. `not_installed` means no ce
 assigned. Free subdomains use a platform-managed certificate: with no installation recorded
 they report `active` with `provider` and `expires_at` null.
    */
-  "hosting_getSSLStatusV1": {
+  "hosting_ssl_status": {
     params: {
       /**
        * username parameter
@@ -4871,7 +4871,7 @@ nothing when the redirect is already in the requested state. Turning it on requi
 installed certificate (`status` `active` or `expired` on `Get SSL status`) and returns 422
 when there is none; turning it off is always accepted.
    */
-  "hosting_toggleHTTPSRedirectV1": {
+  "hosting_ssl_toggle-https-redirect": {
     params: {
       /**
        * username parameter
@@ -4898,7 +4898,7 @@ succeeds when no certificate is assigned, so repeating it is safe.
 Returns 422 for free subdomains (their certificate is managed by the platform) and while an
 installation is `installing`.
    */
-  "hosting_uninstallSSLV1": {
+  "hosting_ssl_uninstall": {
     params: {
       /**
        * username parameter
@@ -4932,7 +4932,7 @@ WordPress websites (`website_types=wordpress`) or only Node.js websites
 filter by username, order ID, enabled status, or domain name for more targeted
 results.
    */
-  "hosting_listWebsitesV1": {
+  "hosting_websites_list": {
     params: {
       /**
        * Page number
@@ -4982,7 +4982,7 @@ Subsequent websites will be hosted on the same datacenter automatically.
 Website creation takes up to a few minutes to complete. Check the
 websites list endpoint to see when your new website becomes available.
    */
-  "hosting_createWebsiteV1": {
+  "hosting_websites_create": {
     params: {
       /**
        * Domain name for the website. Cannot start with "www."
@@ -5014,7 +5014,7 @@ Node.js applications, use `Create NodeJS build from archive` instead, or
 `Start Node.js build` if the archive is already uploaded. For WordPress sites,
 use `Import WordPress website`.
    */
-  "hosting_deployStaticSiteArchiveV1": {
+  "hosting_websites_deploy-static-site-archive": {
     params: {
       /**
        * username parameter
@@ -5051,7 +5051,7 @@ authenticated client.
 Website removal is processed asynchronously and can take a few minutes to
 complete. The response returns before the removal finishes.
    */
-  "hosting_deleteWebsiteV1": {
+  "hosting_websites_delete": {
     params: {
       /**
        * Domain name
@@ -5066,7 +5066,7 @@ complete. The response returns before the removal finishes.
 from the given local part and the domain of the mailbox. Messages
 sent to the alias are delivered to the mailbox.
    */
-  "mail_createAliasV1": {
+  "mail_aliases_create-alias": {
     params: {
       /**
        * Mailbox resource ID
@@ -5084,7 +5084,7 @@ sent to the alias are delivered to the mailbox.
    * Delete an alias. Messages sent to the alias address are no longer
 delivered to the mailbox.
    */
-  "mail_deleteAliasV1": {
+  "mail_aliases_delete-alias": {
     params: {
       /**
        * Alias resource ID
@@ -5098,7 +5098,7 @@ delivered to the mailbox.
    * Retrieve a paginated list of aliases across all mailboxes of a mail
 order.
    */
-  "mail_listAliasesV1": {
+  "mail_aliases_list": {
     params: {
       /**
        * Order resource ID
@@ -5126,7 +5126,7 @@ A maximum of 10 tokens can exist per order. Use
 `scope.has_all_mailboxes` to cover all current and future mailboxes,
 or list specific mailboxes in `scope.mailbox_ids`.
    */
-  "mail_createAPITokenV1": {
+  "mail_api-tokens_create": {
     params: {
       /**
        * Order resource ID
@@ -5149,7 +5149,7 @@ or list specific mailboxes in `scope.mailbox_ids`.
 [Hostinger Email API](https://api.mail.hostinger.com/). This action
 cannot be undone.
    */
-  "mail_revokeAPITokenV1": {
+  "mail_api-tokens_revoke": {
     params: {
       /**
        * API token ID (returned when the token was created)
@@ -5165,7 +5165,7 @@ cannot be undone.
 all your mail orders, optionally filtered by order. Plaintext tokens
 are never included; they are returned only when a token is created.
    */
-  "mail_listAPITokensV1": {
+  "mail_api-tokens_list": {
     params: {
       /**
        * Filter tokens by order resource ID. Single value or comma-separated list.
@@ -5188,7 +5188,7 @@ are never included; they are returned only when a token is created.
 only one autoreply. Omit `starts_at` to activate the autoreply
 immediately and omit `ends_at` to keep it active indefinitely.
    */
-  "mail_createAutoreplyV1": {
+  "mail_autoreplies_create": {
     params: {
       /**
        * Mailbox resource ID
@@ -5224,7 +5224,7 @@ optional fields are cleared: omit `starts_at` to activate the
 autoreply immediately and omit `ends_at` to keep it active
 indefinitely.
    */
-  "mail_updateAutoreplyV1": {
+  "mail_autoreplies_update": {
     params: {
       /**
        * Autoreply resource ID
@@ -5258,7 +5258,7 @@ indefinitely.
    * Delete the autoreply of a mailbox. The mailbox stops sending
 automatic replies immediately.
    */
-  "mail_deleteAutoreplyV1": {
+  "mail_autoreplies_delete": {
     params: {
       /**
        * Autoreply resource ID
@@ -5272,7 +5272,7 @@ automatic replies immediately.
    * Retrieve a paginated list of autoreplies across all mailboxes of a
 mail order.
    */
-  "mail_listAutorepliesV1": {
+  "mail_autoreplies_list": {
     params: {
       /**
        * Order resource ID
@@ -5296,7 +5296,7 @@ of the domain to the given mailbox. The mailbox address receives a
 confirmation email and the catch-all becomes active only after it is
 confirmed. A domain can have only one catch-all.
    */
-  "mail_createCatchAllV1": {
+  "mail_catchalls_create-catch-all": {
     params: {
       /**
        * Mailbox resource ID
@@ -5310,7 +5310,7 @@ confirmed. A domain can have only one catch-all.
    * Delete a catch-all. Messages sent to unknown addresses of the domain
 are no longer routed to the mailbox.
    */
-  "mail_deleteCatchAllV1": {
+  "mail_catchalls_delete-catch-all": {
     params: {
       /**
        * Catch-all resource ID
@@ -5324,7 +5324,7 @@ are no longer routed to the mailbox.
    * Retrieve a paginated list of catch-alls across all mailboxes of a
 mail order.
    */
-  "mail_listCatchAllsV1": {
+  "mail_catchalls_list-catch-alls": {
     params: {
       /**
        * Order resource ID
@@ -5346,7 +5346,7 @@ mail order.
    * Resend the confirmation email to the mailbox address of an
 unconfirmed catch-all.
    */
-  "mail_resendCatchAllConfirmationV1": {
+  "mail_catchalls_resend-catch-all-confirmation": {
     params: {
       /**
        * Catch-all resource ID
@@ -5361,7 +5361,7 @@ unconfirmed catch-all.
 The destination receives a confirmation email and forwarding becomes
 active only after it is confirmed.
    */
-  "mail_createForwarderV1": {
+  "mail_forwarders_create": {
     params: {
       /**
        * Mailbox resource ID
@@ -5383,7 +5383,7 @@ active only after it is confirmed.
    * Delete a forwarder. The mailbox stops forwarding messages to the
 destination address immediately.
    */
-  "mail_deleteForwarderV1": {
+  "mail_forwarders_delete": {
     params: {
       /**
        * Forwarder resource ID
@@ -5397,7 +5397,7 @@ destination address immediately.
    * Retrieve a paginated list of forwarders across all mailboxes of a
 mail order.
    */
-  "mail_listForwardersV1": {
+  "mail_forwarders_list": {
     params: {
       /**
        * Order resource ID
@@ -5419,7 +5419,7 @@ mail order.
    * Resend the confirmation email to the destination address of an
 unconfirmed forwarder.
    */
-  "mail_resendForwarderConfirmationV1": {
+  "mail_forwarders_resend-confirmation": {
     params: {
       /**
        * Forwarder resource ID
@@ -5433,7 +5433,7 @@ unconfirmed forwarder.
    * Enable or disable keeping a copy of forwarded messages in the
 mailbox.
    */
-  "mail_updateForwarderKeepCopySettingV1": {
+  "mail_forwarders_update-keep-copy-setting": {
     params: {
       /**
        * Forwarder resource ID
@@ -5452,7 +5452,7 @@ mailbox.
 mail order. Supports filtering by account, date range, protocol,
 status, and deletion flag. Results are sorted by timestamp descending.
    */
-  "mail_listAccessLogsV1": {
+  "mail_logs_list-access": {
     params: {
       /**
        * Order resource ID
@@ -5503,7 +5503,7 @@ status, and deletion flag. Results are sorted by timestamp descending.
 actions) for the given mail order. Supports filtering by account,
 date range, and status. Results are sorted by timestamp descending.
    */
-  "mail_listActionLogsV1": {
+  "mail_logs_list-action": {
     params: {
       /**
        * Order resource ID
@@ -5547,7 +5547,7 @@ domain attached to the given mail order. Supports filtering by
 account, date range, status, sender, and recipient. Results are
 sorted by timestamp descending.
    */
-  "mail_listInboundLogsV1": {
+  "mail_logs_list-inbound": {
     params: {
       /**
        * Order resource ID
@@ -5599,7 +5599,7 @@ for a mailbox in the given mail order. The mailbox email must belong
 to the order's domain. Supports date range and event type filters.
 Results are sorted by timestamp descending.
    */
-  "mail_listMailboxActionLogsV1": {
+  "mail_logs_list-mailbox-action": {
     params: {
       /**
        * Order resource ID
@@ -5643,7 +5643,7 @@ attached to the given mail order. Supports filtering by account, date
 range, status, sender, and recipient. Results are sorted by timestamp
 descending.
    */
-  "mail_listOutboundLogsV1": {
+  "mail_logs_list-outbound": {
     params: {
       /**
        * Order resource ID
@@ -5696,7 +5696,7 @@ Use this endpoint to monitor mailboxes of your mail service, including
 their status, enabled protocols, attached resource counts, and
 periodically synced usage numbers (usage may lag behind live values).
    */
-  "mail_listMailboxesV1": {
+  "mail_mailboxes_list": {
     params: {
       /**
        * Order resource ID
@@ -5726,7 +5726,7 @@ periodically synced usage numbers (usage may lag behind live values).
    * Create a mailbox under the given mail order. The full email address is
 composed from the given local part and the domain of the order.
    */
-  "mail_createMailboxV1": {
+  "mail_mailboxes_create-mailbox": {
     params: {
       /**
        * Order resource ID
@@ -5748,7 +5748,7 @@ composed from the given local part and the domain of the order.
    * Delete a mailbox. The mailbox is soft-deleted and stays restorable
 for a limited period before it is permanently removed.
    */
-  "mail_deleteMailboxV1": {
+  "mail_mailboxes_delete-mailbox": {
     params: {
       /**
        * Mailbox resource ID
@@ -5761,7 +5761,7 @@ for a limited period before it is permanently removed.
   /**
    * Change the password of a mailbox.
    */
-  "mail_changeMailboxPasswordV1": {
+  "mail_mailboxes_change-mailbox-password": {
     params: {
       /**
        * Mailbox resource ID
@@ -5781,7 +5781,7 @@ for a limited period before it is permanently removed.
 Use this endpoint to monitor your mail services, including their status,
 plan, attached domain, and expiration details.
    */
-  "mail_listOrdersV1": {
+  "mail_orders_list": {
     params: {
       /**
        * Filter orders by domain name (exact match)
@@ -5816,7 +5816,7 @@ plan, attached domain, and expiration details.
 domain-level and mailbox-level quotas, limits, and protocol
 availability.
    */
-  "mail_getOrderPlanV1": {
+  "mail_orders_plan": {
     params: {
       /**
        * Order resource ID
@@ -5831,7 +5831,7 @@ availability.
 returned only in this response and is sent as a bearer token with
 every delivery.
    */
-  "mail_createWebhookV1": {
+  "mail_webhooks_create": {
     params: {
       /**
        * Mailbox resource ID
@@ -5866,7 +5866,7 @@ every delivery.
 order, including delivery outcome, duration, and retry counts.
 Supports filtering by mailbox.
    */
-  "mail_listWebhookDeliveryLogsV1": {
+  "mail_webhooks_list-delivery-logs": {
     params: {
       /**
        * Order resource ID
@@ -5893,7 +5893,7 @@ Supports filtering by mailbox.
 included; it is returned only when a webhook is created or its secret
 is regenerated.
    */
-  "mail_getWebhookV1": {
+  "mail_webhooks_get": {
     params: {
       /**
        * Webhook ID (returned when the webhook was created)
@@ -5907,7 +5907,7 @@ is regenerated.
    * Permanently delete a webhook. This action cannot be undone. After
 deletion the URL no longer receives event notifications.
    */
-  "mail_deleteWebhookV1": {
+  "mail_webhooks_delete": {
     params: {
       /**
        * Webhook ID (returned when the webhook was created)
@@ -5922,7 +5922,7 @@ deletion the URL no longer receives event notifications.
 body are changed; omitted fields retain their current values. Pass
 `"description": null` to clear the description.
    */
-  "mail_updateWebhookV1": {
+  "mail_webhooks_update": {
     params: {
       /**
        * Webhook ID (returned when the webhook was created)
@@ -5958,7 +5958,7 @@ order. Supports filtering by mailbox and status. The webhook secret
 is never included; it is returned only when a webhook is created or
 its secret is regenerated.
    */
-  "mail_listWebhooksV1": {
+  "mail_webhooks_list": {
     params: {
       /**
        * Order resource ID
@@ -5989,7 +5989,7 @@ its secret is regenerated.
 immediately invalidated. The new secret is returned only in this
 response and is sent as a bearer token with every delivery.
    */
-  "mail_regenerateWebhookSecretV1": {
+  "mail_webhooks_regenerate-secret": {
     params: {
       /**
        * Webhook ID (returned when the webhook was created)
@@ -6003,7 +6003,7 @@ response and is sent as a bearer token with every delivery.
    * Send a test delivery to the webhook URL and return the result. Test
 requests are rate limited upstream.
    */
-  "mail_testWebhookV1": {
+  "mail_webhooks_test": {
     params: {
       /**
        * Webhook ID (returned when the webhook was created)
@@ -6019,7 +6019,7 @@ finished it or failed on the way.
 
 This describes the automation itself. To see the workflow it runs, use the steps endpoint.
    */
-  "reach_getAutomationDetailsV1": {
+  "reach_automations_get": {
     params: {
       /**
        * Profile uuid parameter
@@ -6041,7 +6041,7 @@ finished it or failed on the way. Those counts describe the contact journey and 
 email engagement metrics - for opens, clicks and unsubscribes use the campaign statistics
 endpoint instead.
    */
-  "reach_listAutomationsV1": {
+  "reach_automations_list": {
     params: {
       /**
        * Profile uuid parameter
@@ -6077,7 +6077,7 @@ The steps form a tree rather than a straight line: follow `parent_uuid` to recon
 branches, and use `step_order` to order the steps that share a parent. An automation with no
 steps yet returns an empty list.
    */
-  "reach_listAutomationStepsV1": {
+  "reach_automations_list-steps": {
     params: {
       /**
        * Profile uuid parameter
@@ -6098,7 +6098,7 @@ progress.
 This describes how the campaign was set up and how far it has got. For opens, clicks and
 unsubscribes use the campaign statistics endpoint.
    */
-  "reach_getCampaignDetailsV1": {
+  "reach_campaigns_get": {
     params: {
       /**
        * Profile uuid parameter
@@ -6120,7 +6120,7 @@ scheduled, sending or sent campaigns, keeping in mind that a fully sent campaign
 status `publish`. By default only regular campaigns are returned - pass `type` to get the
 emails sent by automations or the double opt-in confirmations instead.
    */
-  "reach_listCampaignsV1": {
+  "reach_campaigns_list": {
     params: {
       /**
        * Profile uuid parameter
@@ -6163,7 +6163,7 @@ The campaign is created as a draft, so nothing is sent and no contact is touched
 audience yet either - targeting and scheduling are not part of this request, the draft is
 finished and sent from the Reach interface.
    */
-  "reach_createADraftCampaignV1": {
+  "reach_campaigns_create-draft": {
     params: {
       /**
        * Profile uuid parameter
@@ -6206,7 +6206,7 @@ matching rates.
 Every count is unique contacts rather than raw events, so a contact who opens the same email
 five times is counted once.
    */
-  "reach_getCampaignPerformanceV1": {
+  "reach_campaigns_performance": {
     params: {
       /**
        * Profile uuid parameter
@@ -6229,7 +6229,7 @@ This endpoint permanently removes a contact from the email marketing system.
 client's default profile and cannot delete contacts of any other profile. Use
 `DELETE /api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}` instead.
    */
-  "reach_deleteAContactV1": {
+  "reach_contacts_delete": {
     params: {
       /**
        * UUID of the contact to delete
@@ -6245,7 +6245,7 @@ client's default profile and cannot delete contacts of any other profile. Use
 Every value contacts hold for the field is deleted with it, and for the choice types so
 are its options. The contacts themselves are not affected.
    */
-  "reach_deleteAContactFieldV1": {
+  "reach_contact-fields_delete": {
     params: {
       /**
        * Profile uuid parameter
@@ -6266,7 +6266,7 @@ Options carrying a uuid are kept and relabelled, options without one are created
 existing option left out of the list is deleted along with the values contacts hold for
 it. The field type and slug cannot be changed.
    */
-  "reach_updateAContactFieldV1": {
+  "reach_contact-fields_update": {
     params: {
       /**
        * Profile uuid parameter
@@ -6295,7 +6295,7 @@ Custom fields let you store your own attributes on contacts. The returned uuids 
 you pass to the contact update endpoint to set values, and choice fields also list the
 options available to pick from.
    */
-  "reach_listContactFieldsV1": {
+  "reach_contact-fields_list": {
     params: {
       /**
        * Profile uuid parameter
@@ -6311,7 +6311,7 @@ options available to pick from.
 The `slug` is derived from the label and, like the field type, cannot be changed later.
 Use the returned uuid to set values on contacts.
    */
-  "reach_createAContactFieldV1": {
+  "reach_contact-fields_create": {
     params: {
       /**
        * Profile uuid parameter
@@ -6338,7 +6338,7 @@ Use the returned uuid to set values on contacts.
 
 This endpoint returns a list of contact groups that can be used to organize contacts.
    */
-  "reach_listContactGroupsV1": {
+  "reach_contacts_list-groups": {
     params: {
 
     };
@@ -6356,7 +6356,7 @@ client's default profile and cannot list contacts of any other profile. Use
 `GET /api/reach/v1/profiles/{profileUuid}/contacts` instead, which also replaces the
 group filter with a tag filter.
    */
-  "reach_listContactsV1": {
+  "reach_contacts_list": {
     params: {
       /**
        * Filter contacts by group UUID
@@ -6382,7 +6382,7 @@ This endpoint allows you to create a new contact with basic information like nam
 If double opt-in is enabled,
 the contact will be created with a pending status and a confirmation email will be sent.
    */
-  "reach_createANewContactV1": {
+  "reach_contacts_create": {
     params: {
       /**
        * email parameter
@@ -6418,7 +6418,7 @@ the contact will be created with a pending status and a confirmation email will 
 Alongside the contact's own attributes this returns the tags assigned to it and the
 values it holds for the profile's custom contact fields.
    */
-  "reach_getContactDetailsV1": {
+  "reach_contacts_get": {
     params: {
       /**
        * Profile uuid parameter
@@ -6437,7 +6437,7 @@ values it holds for the profile's custom contact fields.
 
 The contact is removed together with its custom field values and tag assignments.
    */
-  "reach_deleteAProfileContactV1": {
+  "reach_contacts_delete-profile": {
     params: {
       /**
        * Profile uuid parameter
@@ -6460,7 +6460,7 @@ to change a single attribute. Sending a property as `null` clears it.
 The response carries the contact's core attributes. Read back its tags, custom field
 values, source and note with `GET /api/reach/v1/profiles/{profileUuid}/contacts/{contactUuid}`.
    */
-  "reach_updateAContactV1": {
+  "reach_contacts_update": {
     params: {
       /**
        * Profile uuid parameter
@@ -6510,7 +6510,7 @@ accepted rather than finished. Contacts whose email already exists in the profil
 left as they are. If double opt-in is enabled, new contacts start off pending and are
 sent a confirmation email.
    */
-  "reach_createContactsInBulkV1": {
+  "reach_contacts_create-in-bulk": {
     params: {
       /**
        * Profile uuid parameter
@@ -6539,7 +6539,7 @@ Contacts can be filtered by subscription status, by tag, and by an email search 
 The `meta.total` field of the response is the number of contacts matching the filters,
 so calling this endpoint without filters gives the profile's total contact count.
    */
-  "reach_listProfileContactsV1": {
+  "reach_contacts_list-profile": {
     params: {
       /**
        * Profile uuid parameter
@@ -6577,7 +6577,7 @@ This endpoint allows you to create a new contact with basic information like nam
 If double opt-in is enabled, the contact will be created with a pending status
 and a confirmation email will be sent.
    */
-  "reach_createNewContactsV1": {
+  "reach_contacts_create-bulk": {
     params: {
       /**
        * Profile uuid parameter
@@ -6620,7 +6620,7 @@ This endpoint returns a list of contact segments that can be used to organize co
 the client's default profile and cannot list the segments of any other profile. Use
 `GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.
    */
-  "reach_listSegmentsV1": {
+  "reach_segments_list": {
     params: {
 
     };
@@ -6637,7 +6637,7 @@ The segment can be configured with specific criteria like email, name, subscript
 the client's default profile and cannot create segments in any other profile. Use
 `POST /api/reach/v1/profiles/{profileUuid}/segmentation/segments` instead.
    */
-  "reach_createANewContactSegmentV1": {
+  "reach_segments_create": {
     params: {
       /**
        * name parameter
@@ -6660,7 +6660,7 @@ the client's default profile and cannot create segments in any other profile. Us
 
 Cheaper than paging through the segment contacts endpoint when only the size is needed.
    */
-  "reach_countProfileSegmentContactsV1": {
+  "reach_segments_count-profile-contacts": {
     params: {
       /**
        * Profile uuid parameter
@@ -6680,7 +6680,7 @@ Cheaper than paging through the segment contacts endpoint when only the size is 
 This endpoint allows you to fetch and filter contacts that belong to a particular segment,
 identified by its UUID, scoped to a specific profile.
    */
-  "reach_listProfileSegmentContactsV1": {
+  "reach_segments_list-profile-contacts": {
     params: {
       /**
        * Profile uuid parameter
@@ -6708,7 +6708,7 @@ identified by its UUID, scoped to a specific profile.
 To retrieve the contacts currently matching those conditions, use the segment contacts
 endpoint instead.
    */
-  "reach_getProfileSegmentDetailsV1": {
+  "reach_segments_profile": {
     params: {
       /**
        * Profile uuid parameter
@@ -6729,7 +6729,7 @@ endpoint instead.
 supply them and they replace the existing set entirely rather than being merged into it.
 Contacts are never modified, but which of them match the segment can change immediately.
    */
-  "reach_updateAProfileSegmentV1": {
+  "reach_segments_update-profile": {
     params: {
       /**
        * Profile uuid parameter
@@ -6760,7 +6760,7 @@ Contacts are never modified, but which of them match the segment can change imme
 
 Only the segment definition is removed. The contacts that matched it are left untouched.
    */
-  "reach_deleteAProfileSegmentV1": {
+  "reach_segments_delete-profile": {
     params: {
       /**
        * Profile uuid parameter
@@ -6784,7 +6784,7 @@ its 20 most recently published campaigns, so the valid attributes cannot be hard
 it before creating or updating a segment to discover the valid `attribute`, `operator` and
 `value` combinations.
    */
-  "reach_listSegmentFilterAttributesV1": {
+  "reach_segments_list-filter-attributes": {
     params: {
       /**
        * Profile uuid parameter
@@ -6804,7 +6804,7 @@ and no contact is modified.
 Call the segment filter attributes endpoint first to discover the valid `attribute`,
 `operator` and `value` combinations.
    */
-  "reach_previewContactsMatchingConditionsV1": {
+  "reach_segments_preview-contacts-matching-conditions": {
     params: {
       /**
        * Profile uuid parameter
@@ -6849,7 +6849,7 @@ Each entry carries the number of contacts currently matching it, which is recalc
 read rather than stored. Use `count_type` to count either every matching contact or only
 the subscribed ones.
    */
-  "reach_listProfileSegmentsV1": {
+  "reach_segments_list-profile": {
     params: {
       /**
        * Profile uuid parameter
@@ -6877,7 +6877,7 @@ the subscribed ones.
 A segment is a saved set of conditions rather than a fixed list, so its membership changes
 as contacts change. Creating one does not modify any contact.
    */
-  "reach_createAProfileSegmentV1": {
+  "reach_segments_create-profile": {
     params: {
       /**
        * Profile uuid parameter
@@ -6909,7 +6909,7 @@ identified by its UUID.
 the client's default profile and cannot read segments of any other profile. Use
 `GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}/contacts` instead.
    */
-  "reach_listSegmentContactsV1": {
+  "reach_segments_list-contacts": {
     params: {
       /**
        * Segment uuid parameter
@@ -6937,7 +6937,7 @@ Segments are used to organize and group contacts based on specific criteria.
 the client's default profile and cannot read segments of any other profile. Use
 `GET /api/reach/v1/profiles/{profileUuid}/segmentation/segments/{segmentUuid}` instead.
    */
-  "reach_getSegmentDetailsV1": {
+  "reach_segments_get": {
     params: {
       /**
        * Segment uuid parameter
@@ -6953,7 +6953,7 @@ the client's default profile and cannot read segments of any other profile. Use
 Unlike the bulk endpoint this is applied immediately rather than queued. Assigning a tag
 the contact already carries succeeds without duplicating it.
    */
-  "reach_assignAContactToATagV1": {
+  "reach_tags_assign-contact-to": {
     params: {
       /**
        * Profile uuid parameter
@@ -6977,7 +6977,7 @@ the contact already carries succeeds without duplicating it.
 Unlike the bulk endpoint this is applied immediately rather than queued. Neither the tag
 nor the contact is deleted.
    */
-  "reach_removeAContactFromATagV1": {
+  "reach_tags_remove-contact-from": {
     params: {
       /**
        * Profile uuid parameter
@@ -7002,7 +7002,7 @@ Pass `contact_uuids` to target specific contacts, or `all_contacts` to target ev
 in the profile. The work is queued, so a success response means it was accepted rather than
 finished. Contacts that already carry the tag are left alone.
    */
-  "reach_assignContactsToATagV1": {
+  "reach_tags_assign-contacts-to": {
     params: {
       /**
        * Profile uuid parameter
@@ -7031,7 +7031,7 @@ Pass `contact_uuids` to target specific contacts, or `all_contacts` to target ev
 in the profile. The work is queued, so a success response means it was accepted rather than
 finished. The tag itself and the contacts are not deleted.
    */
-  "reach_removeContactsFromATagV1": {
+  "reach_tags_remove-contacts-from": {
     params: {
       /**
        * Profile uuid parameter
@@ -7051,7 +7051,7 @@ finished. The tag itself and the contacts are not deleted.
 The contacts themselves are not deleted. This is idempotent: deleting a tag that does not
 exist in the profile still succeeds.
    */
-  "reach_deleteATagV1": {
+  "reach_tags_delete": {
     params: {
       /**
        * Profile uuid parameter
@@ -7071,7 +7071,7 @@ exist in the profile still succeeds.
 The contacts assigned to the tag are unaffected. Names are unique within a profile, so
 renaming a tag to a name that is already taken is rejected.
    */
-  "reach_renameATagV1": {
+  "reach_tags_rename": {
     params: {
       /**
        * Profile uuid parameter
@@ -7095,7 +7095,7 @@ renaming a tag to a name that is already taken is rejected.
 Tags are the way contacts are grouped in Reach, and can be used to filter the contact
 list or to build segments.
    */
-  "reach_listProfileTagsV1": {
+  "reach_tags_list-profile": {
     params: {
       /**
        * Profile uuid parameter
@@ -7112,7 +7112,7 @@ Names that already exist in the profile are not duplicated: the existing tag is 
 instead, so the call is safe to repeat. Every tag in the request is returned, whether it
 was created now or already existed.
    */
-  "reach_createOrFindTagsV1": {
+  "reach_tags_create-or-find": {
     params: {
       /**
        * Profile uuid parameter
@@ -7133,7 +7133,7 @@ it captures.
 There is no ready-made embed snippet in the response - either serve the template HTML yourself
 or build your own embed around the form uuid.
    */
-  "reach_getFormDetailsV1": {
+  "reach_forms_get": {
     params: {
       /**
        * Profile uuid parameter
@@ -7154,7 +7154,7 @@ A form that has already captured submissions cannot be deleted, so that the cont
 are never silently discarded - pause the form instead to stop it collecting new ones. Views alone
 do not block deletion.
    */
-  "reach_deleteFormV1": {
+  "reach_forms_delete": {
     params: {
       /**
        * Profile uuid parameter
@@ -7174,7 +7174,7 @@ do not block deletion.
 Each form carries a reference to the template that renders it. Get the form details for a
 directly usable template URL and for the tags the form puts on the contacts it captures.
    */
-  "reach_listFormsV1": {
+  "reach_forms_list": {
     params: {
       /**
        * Profile uuid parameter
@@ -7198,7 +7198,7 @@ directly usable template URL and for the tags the form puts on the contacts it c
 This endpoint reports the state of MX, SPF, DKIM and DMARC records, including the
 actual records found and the suggested records required for correct email delivery.
    */
-  "reach_getProfileDomainDNSStatusV1": {
+  "reach_profiles_domain-dns-status": {
     params: {
       /**
        * Profile uuid parameter
@@ -7217,7 +7217,7 @@ check that precondition before building one. A profile with no domain connected 
 same shape with every field set to `null`. For the individual MX, SPF, DKIM and DMARC records
 behind the status, use the DNS status endpoint.
    */
-  "reach_getConnectedSendingDomainV1": {
+  "reach_profiles_connected-sending-domain": {
     params: {
       /**
        * Profile uuid parameter
@@ -7237,7 +7237,7 @@ For remaining emails, recipients and AI credits use the limits endpoint instead.
 Worth checking before building something that cannot be activated afterwards, such as an
 automation on a plan without automation activation.
    */
-  "reach_listPlanFeatureAccessV1": {
+  "reach_profiles_list-plan-feature-access": {
     params: {
       /**
        * Profile uuid parameter
@@ -7256,7 +7256,7 @@ subscription started. And usage is tracked per order, so every profile on the sa
 one pool and reports the same numbers here. Only the current period is available, past usage is
 not kept.
    */
-  "reach_getRemainingPlanLimitsV1": {
+  "reach_profiles_remaining-plan-limits": {
     params: {
       /**
        * Profile uuid parameter
@@ -7269,7 +7269,7 @@ not kept.
   /**
    * This endpoint returns all profiles available to the client, including their basic information.
    */
-  "reach_listProfilesV1": {
+  "reach_profiles_list": {
     params: {
 
     };
@@ -7283,7 +7283,7 @@ Templates are the reusable email bodies a campaign is built from. The list is no
 and only the metadata is returned - the template content itself is not exposed. Use the
 `uuid` of a template as the `template_uuid` when creating a campaign.
    */
-  "reach_listEmailTemplatesV1": {
+  "reach_templates_list-email": {
     params: {
       /**
        * Profile uuid parameter
@@ -7300,7 +7300,7 @@ The template holds the HTML body a campaign reuses, so it can be created before 
 campaign exists. Only the template metadata comes back - keep the returned `uuid` to
 reference it as the `template_uuid` of a campaign.
    */
-  "reach_createAnEmailTemplateV1": {
+  "reach_templates_create-email": {
     params: {
       /**
        * Profile uuid parameter
@@ -7325,7 +7325,7 @@ the markup self-contained.
 
 Use this endpoint to view location options before deploying VPS instances.
    */
-  "VPS_getDataCenterListV1": {
+  "vps_data-centers_list": {
     params: {
 
     };
@@ -7340,7 +7340,7 @@ their current status, port mappings, and runtime configuration.
 
 Use this to monitor the health and state of all services within your Docker Compose project.
    */
-  "VPS_getProjectContainersV1": {
+  "vps_docker_containers": {
     params: {
       /**
        * Virtual Machine ID
@@ -7362,7 +7362,7 @@ This endpoint provides the full configuration and state details of a specific Do
 
 Use this to inspect project settings, review the compose file, or check the overall project health.
    */
-  "VPS_getProjectContentsV1": {
+  "vps_docker_get": {
     params: {
       /**
        * Virtual Machine ID
@@ -7384,7 +7384,7 @@ This operation is irreversible and will delete all project data.
 
 Use this when you want to permanently remove a project and free up system resources.
    */
-  "VPS_deleteProjectV1": {
+  "vps_docker_delete": {
     params: {
       /**
        * Virtual Machine ID
@@ -7409,7 +7409,7 @@ stats included, use the `Get project containers` endpoint.
 
 Use this to get an overview of all Docker projects on your VPS instance.
    */
-  "VPS_getProjectListV1": {
+  "vps_docker_list": {
     params: {
       /**
        * Virtual Machine ID
@@ -7429,7 +7429,7 @@ file contents.
 
 If project with the same name already exists, existing project will be replaced.
    */
-  "VPS_createNewProjectV1": {
+  "vps_docker_create": {
     params: {
       /**
        * Virtual Machine ID
@@ -7460,7 +7460,7 @@ The response contains the last 300 log entries across all services.
 Use this for debugging, monitoring application behavior, and
 troubleshooting issues across your entire project stack.
    */
-  "VPS_getProjectLogsV1": {
+  "vps_docker_logs": {
     params: {
       /**
        * Virtual Machine ID
@@ -7482,7 +7482,7 @@ This operation preserves data volumes and network configurations while refreshin
 
 Use this to apply configuration changes or recover from service failures.
    */
-  "VPS_restartProjectV1": {
+  "vps_docker_restart": {
     params: {
       /**
        * Virtual Machine ID
@@ -7503,7 +7503,7 @@ This operation brings up containers in the correct dependency order as defined i
 
 Use this to resume a project that was previously stopped or to start services after a system reboot.
    */
-  "VPS_startProjectV1": {
+  "vps_docker_start": {
     params: {
       /**
        * Virtual Machine ID
@@ -7525,7 +7525,7 @@ This operation gracefully shuts down containers in reverse dependency order.
 
 Use this to temporarily halt a project without removing data or configurations.
    */
-  "VPS_stopProjectV1": {
+  "vps_docker_stop": {
     params: {
       /**
        * Virtual Machine ID
@@ -7548,7 +7548,7 @@ This operation preserves data volumes while applying changes from the compose fi
 Use this to deploy application updates, apply configuration changes, or
 refresh container images to their latest versions.
    */
-  "VPS_updateProjectV1": {
+  "vps_docker_update": {
     params: {
       /**
        * Virtual Machine ID
@@ -7569,7 +7569,7 @@ Only one firewall can be active for a virtual machine at a time.
 
 Use this endpoint to apply firewall rules to VPS instances.
    */
-  "VPS_activateFirewallV1": {
+  "vps_firewall_activate": {
     params: {
       /**
        * Firewall ID
@@ -7588,7 +7588,7 @@ Use this endpoint to apply firewall rules to VPS instances.
 
 Use this endpoint to remove firewall protection from VPS instances.
    */
-  "VPS_deactivateFirewallV1": {
+  "vps_firewall_deactivate": {
     params: {
       /**
        * Firewall ID
@@ -7607,7 +7607,7 @@ Use this endpoint to remove firewall protection from VPS instances.
 
 Use this endpoint to view specific firewall configuration and rules.
    */
-  "VPS_getFirewallDetailsV1": {
+  "vps_firewall_get": {
     params: {
       /**
        * Firewall ID
@@ -7624,7 +7624,7 @@ Any virtual machine that has this firewall activated will automatically have it 
 
 Use this endpoint to remove unused firewall configurations.
    */
-  "VPS_deleteFirewallV1": {
+  "vps_firewall_delete": {
     params: {
       /**
        * Firewall ID
@@ -7639,7 +7639,7 @@ Use this endpoint to remove unused firewall configurations.
 
 Use this endpoint to view existing firewall configurations.
    */
-  "VPS_getFirewallListV1": {
+  "vps_firewall_list": {
     params: {
       /**
        * Page number
@@ -7654,7 +7654,7 @@ Use this endpoint to view existing firewall configurations.
 
 Use this endpoint to set up new firewall configurations for VPS security.
    */
-  "VPS_createNewFirewallV1": {
+  "vps_firewall_create": {
     params: {
       /**
        * name parameter
@@ -7672,7 +7672,7 @@ and will have to be synced again manually.
 
 Use this endpoint to modify existing firewall rules.
    */
-  "VPS_updateFirewallRuleV1": {
+  "vps_firewall_update-rule": {
     params: {
       /**
        * Firewall ID
@@ -7710,7 +7710,7 @@ and will have to be synced again manually.
 
 Use this endpoint to remove specific firewall rules.
    */
-  "VPS_deleteFirewallRuleV1": {
+  "vps_firewall_delete-rule": {
     params: {
       /**
        * Firewall ID
@@ -7731,7 +7731,7 @@ in a single atomic operation, instead of creating or deleting rules one by one.
 Any virtual machine using this firewall group will need to be synchronized after replacing rules;
 pass the "sync" parameter to trigger synchronization immediately.
    */
-  "VPS_replaceAllFirewallRulesInGroupV1": {
+  "vps_firewall_replace-all-rules-in-group": {
     params: {
       /**
        * Firewall ID
@@ -7760,7 +7760,7 @@ and will have to be synced again manually.
 
 Use this endpoint to add new security rules to firewalls.
    */
-  "VPS_createFirewallRuleV1": {
+  "vps_firewall_create-rule": {
     params: {
       /**
        * Firewall ID
@@ -7793,7 +7793,7 @@ Firewall can lose sync with a virtual machine if the firewall has new rules adde
 
 Use this endpoint to apply updated firewall rules to all VPS instances assigned to the firewall.
    */
-  "VPS_syncFirewallToAllAssignedVMsV1": {
+  "vps_firewall_sync-to-all-assigned-v-ms": {
     params: {
       /**
        * Firewall ID
@@ -7813,7 +7813,7 @@ Firewall can lose sync with virtual machine if the firewall has new rules added,
 
 Use this endpoint to apply updated firewall rules to VPS instances.
    */
-  "VPS_syncFirewallV1": {
+  "vps_firewall_sync": {
     params: {
       /**
        * Firewall ID
@@ -7832,7 +7832,7 @@ Use this endpoint to apply updated firewall rules to VPS instances.
 
 Use this endpoint to view specific automation script details.
    */
-  "VPS_getPostInstallScriptV1": {
+  "vps_post-install-scripts_get": {
     params: {
       /**
        * Post-install script ID
@@ -7847,7 +7847,7 @@ Use this endpoint to view specific automation script details.
 
 Use this endpoint to modify existing automation scripts.
    */
-  "VPS_updatePostInstallScriptV1": {
+  "vps_post-install-scripts_update": {
     params: {
       /**
        * Post-install script ID
@@ -7870,7 +7870,7 @@ Use this endpoint to modify existing automation scripts.
        
 Use this endpoint to remove unused automation scripts.
    */
-  "VPS_deletePostInstallScriptV1": {
+  "vps_post-install-scripts_delete": {
     params: {
       /**
        * Post-install script ID
@@ -7885,7 +7885,7 @@ Use this endpoint to remove unused automation scripts.
 
 Use this endpoint to view available automation scripts for VPS deployment.
    */
-  "VPS_getPostInstallScriptsV1": {
+  "vps_post-install-scripts_list": {
     params: {
       /**
        * Page number
@@ -7904,7 +7904,7 @@ The output of the script will be redirected to `/post_install.log`. Maximum scri
 
 Use this endpoint to create automation scripts for VPS setup tasks.
    */
-  "VPS_createPostInstallScriptV1": {
+  "vps_post-install-scripts_create": {
     params: {
       /**
        * Name of the script
@@ -7925,7 +7925,7 @@ Multiple keys can be attached to a single virtual machine.
 
 Use this endpoint to enable SSH key authentication for VPS instances.
    */
-  "VPS_attachPublicKeyV1": {
+  "vps_public-keys_attach": {
     params: {
       /**
        * Virtual Machine ID
@@ -7946,7 +7946,7 @@ Use this endpoint to enable SSH key authentication for VPS instances.
        
 Use this endpoint to remove unused SSH keys from account.
    */
-  "VPS_deletePublicKeyV1": {
+  "vps_public-keys_delete": {
     params: {
       /**
        * Public Key ID
@@ -7961,7 +7961,7 @@ Use this endpoint to remove unused SSH keys from account.
 
 Use this endpoint to view available SSH keys for VPS authentication.
    */
-  "VPS_getPublicKeysV1": {
+  "vps_public-keys_list": {
     params: {
       /**
        * Page number
@@ -7976,7 +7976,7 @@ Use this endpoint to view available SSH keys for VPS authentication.
 
 Use this endpoint to register SSH keys for VPS authentication.
    */
-  "VPS_createPublicKeyV1": {
+  "vps_public-keys_create": {
     params: {
       /**
        * name parameter
@@ -7995,7 +7995,7 @@ Use this endpoint to register SSH keys for VPS authentication.
 
 Use this endpoint to view specific template specifications before deployment.
    */
-  "VPS_getTemplateDetailsV1": {
+  "vps_templates_get": {
     params: {
       /**
        * Template ID
@@ -8010,7 +8010,7 @@ Use this endpoint to view specific template specifications before deployment.
 
 Use this endpoint to view operating system options before creating or recreating VPS instances.
    */
-  "VPS_getTemplatesV1": {
+  "vps_templates_list": {
     params: {
 
     };
@@ -8022,7 +8022,7 @@ Use this endpoint to view operating system options before creating or recreating
 
 Use this endpoint to monitor specific VPS operation status and details.
    */
-  "VPS_getActionDetailsV1": {
+  "vps_actions_get": {
     params: {
       /**
        * Virtual Machine ID
@@ -8046,7 +8046,7 @@ each action, such as the action name, timestamp, and status.
 
 Use this endpoint to view VPS operation history and troubleshoot issues.
    */
-  "VPS_getActionsV1": {
+  "vps_actions_list": {
     params: {
       /**
        * Virtual Machine ID
@@ -8065,7 +8065,7 @@ Use this endpoint to view VPS operation history and troubleshoot issues.
 
 Use this endpoint to view SSH keys configured for specific VPS instances.
    */
-  "VPS_getAttachedPublicKeysV1": {
+  "vps_virtual-machines_attached-public-keys": {
     params: {
       /**
        * Virtual Machine ID
@@ -8084,7 +8084,7 @@ Use this endpoint to view SSH keys configured for specific VPS instances.
 
 Use this endpoint to view available backup points for VPS data recovery.
    */
-  "VPS_getBackupsV1": {
+  "vps_backups_list": {
     params: {
       /**
        * Virtual Machine ID
@@ -8107,7 +8107,7 @@ The system will then initiate the restore process, which may take some time depe
 
 Use this endpoint to recover VPS data from backup points.
    */
-  "VPS_restoreBackupV1": {
+  "vps_backups_restore": {
     params: {
       /**
        * Virtual Machine ID
@@ -8130,7 +8130,7 @@ you need to point your domain A/AAAA records to virtual machine IP as well.
 
 Use this endpoint to configure custom hostnames for VPS instances.
    */
-  "VPS_setHostnameV1": {
+  "vps_virtual-machines_set-hostname": {
     params: {
       /**
        * Virtual Machine ID
@@ -8149,7 +8149,7 @@ Use this endpoint to configure custom hostnames for VPS instances.
 
 Use this endpoint to restore default hostname configuration for VPS instances.
    */
-  "VPS_resetHostnameV1": {
+  "vps_virtual-machines_reset-hostname": {
     params: {
       /**
        * Virtual Machine ID
@@ -8164,7 +8164,7 @@ Use this endpoint to restore default hostname configuration for VPS instances.
 
 Use this endpoint to view comprehensive VPS configuration and status.
    */
-  "VPS_getVirtualMachineDetailsV1": {
+  "vps_virtual-machines_get": {
     params: {
       /**
        * Virtual Machine ID
@@ -8179,7 +8179,7 @@ Use this endpoint to view comprehensive VPS configuration and status.
 
 Use this endpoint to view available VPS instances.
    */
-  "VPS_getVirtualMachinesV1": {
+  "vps_virtual-machines_list": {
     params: {
 
     };
@@ -8200,7 +8200,7 @@ was not set up. Login to
 
 Use this endpoint to create new VPS instances.
    */
-  "VPS_purchaseNewVirtualMachineV1": {
+  "vps_virtual-machines_purchase": {
     params: {
       /**
        * Catalog price item ID
@@ -8233,7 +8233,7 @@ virtual machine and assessing effectiveness of the malware scanner.
 
 Use this endpoint to monitor VPS security scan results and threat detection.
    */
-  "VPS_getScanMetricsV1": {
+  "vps_monarx_scan-metrics": {
     params: {
       /**
        * Virtual Machine ID
@@ -8253,7 +8253,7 @@ protected against malicious software.
 
 Use this endpoint to enable malware protection on VPS instances.
    */
-  "VPS_installMonarxV1": {
+  "vps_monarx_install": {
     params: {
       /**
        * Virtual Machine ID
@@ -8270,7 +8270,7 @@ If Monarx is not installed, the request will still be processed without any effe
 
 Use this endpoint to remove malware scanner from VPS instances.
    */
-  "VPS_uninstallMonarxV1": {
+  "vps_monarx_uninstall": {
     params: {
       /**
        * Virtual Machine ID
@@ -8292,7 +8292,7 @@ It includes the following metrics:
 
 Use this endpoint to monitor VPS performance and resource utilization over time.
    */
-  "VPS_getMetricsV1": {
+  "vps_virtual-machines_metrics": {
     params: {
       /**
        * Virtual Machine ID
@@ -8318,7 +8318,7 @@ machine being unable to resolve domain names.
 
 Use this endpoint to configure custom DNS resolvers for VPS instances.
    */
-  "VPS_setNameserversV1": {
+  "vps_virtual-machines_set-nameservers": {
     params: {
       /**
        * Virtual Machine ID
@@ -8345,7 +8345,7 @@ Use this endpoint to configure custom DNS resolvers for VPS instances.
 
 Use this endpoint to configure reverse DNS lookup for VPS IP addresses.
    */
-  "VPS_createPTRRecordV1": {
+  "vps_ptr_create": {
     params: {
       /**
        * Virtual Machine ID
@@ -8371,7 +8371,7 @@ no longer return the previously configured hostname.
 
 Use this endpoint to remove reverse DNS configuration from VPS instances.
    */
-  "VPS_deletePTRRecordV1": {
+  "vps_ptr_delete": {
     params: {
       /**
        * Virtual Machine ID
@@ -8394,7 +8394,7 @@ endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMac
 
 Use this endpoint to configure control panel access credentials for VPS instances.
    */
-  "VPS_setPanelPasswordV1": {
+  "vps_virtual-machines_set-panel-password": {
     params: {
       /**
        * Virtual Machine ID
@@ -8419,7 +8419,7 @@ Virtual machine will boot recovery disk image and original disk image will be mo
 
 Use this endpoint to enable system rescue operations on VPS instances.
    */
-  "VPS_startRecoveryModeV1": {
+  "vps_recovery_start": {
     params: {
       /**
        * Virtual Machine ID
@@ -8440,7 +8440,7 @@ If virtual machine is not in recovery mode, this operation will fail.
 
 Use this endpoint to exit system rescue mode and return VPS to normal operation.
    */
-  "VPS_stopRecoveryModeV1": {
+  "vps_recovery_stop": {
     params: {
       /**
        * Virtual Machine ID
@@ -8470,7 +8470,7 @@ Requirements for the password are:
 
 Use this endpoint to completely rebuild VPS instances with fresh OS installation.
    */
-  "VPS_recreateVirtualMachineV1": {
+  "vps_virtual-machines_recreate": {
     params: {
       /**
        * Virtual Machine ID
@@ -8506,7 +8506,7 @@ If the virtual machine was stopped, it will be started.
 
 Use this endpoint to reboot VPS instances.
    */
-  "VPS_restartVirtualMachineV1": {
+  "vps_virtual-machines_restart": {
     params: {
       /**
        * Virtual Machine ID
@@ -8524,7 +8524,7 @@ endpoint](/#tag/vps-virtual-machine/POST/api/vps/v1/virtual-machines/{virtualMac
 
 Use this endpoint to update administrator credentials for VPS instances.
    */
-  "VPS_setRootPasswordV1": {
+  "vps_virtual-machines_set-root-password": {
     params: {
       /**
        * Virtual Machine ID
@@ -8543,7 +8543,7 @@ Use this endpoint to update administrator credentials for VPS instances.
 
 Use this endpoint to configure and initialize purchased VPS instances.
    */
-  "VPS_setupPurchasedVirtualMachineV1": {
+  "vps_virtual-machines_setup": {
     params: {
       /**
        * Virtual Machine ID
@@ -8599,7 +8599,7 @@ Password will not be shown in the response.
 
 Use this endpoint to view current VPS snapshot information.
    */
-  "VPS_getSnapshotV1": {
+  "vps_snapshots_get": {
     params: {
       /**
        * Virtual Machine ID
@@ -8621,7 +8621,7 @@ and testing changes without affecting the current state of the virtual machine.
 
 Use this endpoint to capture VPS state for backup and recovery purposes.
    */
-  "VPS_createSnapshotV1": {
+  "vps_snapshots_create": {
     params: {
       /**
        * Virtual Machine ID
@@ -8636,7 +8636,7 @@ Use this endpoint to capture VPS state for backup and recovery purposes.
 
 Use this endpoint to remove VPS snapshots.
    */
-  "VPS_deleteSnapshotV1": {
+  "vps_snapshots_delete": {
     params: {
       /**
        * Virtual Machine ID
@@ -8654,7 +8654,7 @@ which is useful for system recovery, undoing changes, or testing.
 
 Use this endpoint to revert VPS instances to previous saved states.
    */
-  "VPS_restoreSnapshotV1": {
+  "vps_snapshots_restore": {
     params: {
       /**
        * Virtual Machine ID
@@ -8671,7 +8671,7 @@ If the virtual machine is already running, the request will still be processed w
 
 Use this endpoint to power on stopped VPS instances.
    */
-  "VPS_startVirtualMachineV1": {
+  "vps_virtual-machines_start": {
     params: {
       /**
        * Virtual Machine ID
@@ -8691,7 +8691,7 @@ disable auto-renewal on the owning subscription.
 
 Use this endpoint to power off running VPS instances.
    */
-  "VPS_stopVirtualMachineV1": {
+  "vps_virtual-machines_stop": {
     params: {
       /**
        * Virtual Machine ID
@@ -8709,7 +8709,7 @@ option, or omit it to return all options.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_showAIOptionStatusV1": {
+  "wordpress_ai-tools_show-option-status": {
     params: {
       /**
        * username parameter
@@ -8734,7 +8734,7 @@ WordPress installation.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_setAIOptionStatusV1": {
+  "wordpress_ai-tools_set-option-status": {
     params: {
       /**
        * username parameter
@@ -8765,7 +8765,7 @@ Provide the WordPress installation (software) identifiers in the body. They
 can be obtained from GET /api/hosting/v1/wordpress/installations (the `id`
 field).
    */
-  "hosting_checkIfWordPressInstallationsAreValidV1": {
+  "wordpress_installations_check-if-are-valid": {
     params: {
       /**
        * username parameter
@@ -8791,7 +8791,7 @@ staging websites and any other related data.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_deleteWordPressInstallationV1": {
+  "wordpress_installations_delete": {
     params: {
       /**
        * username parameter
@@ -8812,7 +8812,7 @@ This operation is asynchronous: a successful response only means the scan has
 been queued. Poll GET /api/hosting/v1/wordpress/installations to fetch the
 detected installations once the scan completes.
    */
-  "hosting_detectWordPressInstallationsV1": {
+  "wordpress_installations_detect": {
     params: {
       /**
        * username parameter
@@ -8831,7 +8831,7 @@ verify this is intended before calling this endpoint.
 This endpoint allows you to import a WordPress website from archive and
 database files that have been uploaded to the website's directory.
    */
-  "hosting_importWordPressWebsiteV1": {
+  "wordpress_installations_import-website": {
     params: {
       /**
        * username parameter
@@ -8871,7 +8871,7 @@ takes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered
 by username and domain to track progress. When the installation appears in
 that list, WordPress is ready.
    */
-  "hosting_installWordPressV1": {
+  "wordpress_installations_install": {
     params: {
       /**
        * username parameter
@@ -8928,7 +8928,7 @@ username and domain to narrow results to a specific website.
 Each installation includes a `valid` flag and, when invalid, a
 `validationError` describing why.
    */
-  "hosting_listWordPressInstallationsV1": {
+  "wordpress_installations_list": {
     params: {
       /**
        * Filter by specific username
@@ -8952,7 +8952,7 @@ Each installation includes a `valid` flag and, when invalid, a
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_listAvailableWordPressCoreUpdatesV1": {
+  "wordpress_installations_list-core-updates": {
     params: {
       /**
        * username parameter
@@ -8973,7 +8973,7 @@ WordPress installation, including its MCP (Model Context Protocol) endpoint.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_getInstallationJWTTokenV1": {
+  "wordpress_installations_jwt-token": {
     params: {
       /**
        * username parameter
@@ -8994,7 +8994,7 @@ known vulnerabilities affecting it.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_showWordPressCoreVersionV1": {
+  "wordpress_installations_show-core-version": {
     params: {
       /**
        * username parameter
@@ -9018,7 +9018,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 This operation is asynchronous: a successful response only means the update
 job has been queued.
    */
-  "hosting_updateWordPressCoreV1": {
+  "wordpress_installations_update-core": {
     params: {
       /**
        * username parameter
@@ -9046,7 +9046,7 @@ job has been queued.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_purgeLiteSpeedCacheV1": {
+  "wordpress_litespeed-cache_purge-lite-speed": {
     params: {
       /**
        * username parameter
@@ -9066,7 +9066,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_showLiteSpeedCacheStatusV1": {
+  "wordpress_litespeed-cache_show-lite-speed-status": {
     params: {
       /**
        * username parameter
@@ -9086,7 +9086,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_createLoginLinksV1": {
+  "wordpress_login_create-links": {
     params: {
       /**
        * username parameter
@@ -9106,7 +9106,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_showMaintenanceStatusV1": {
+  "wordpress_maintenance_show-status": {
     params: {
       /**
        * username parameter
@@ -9127,7 +9127,7 @@ based on the `enabled` flag.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_toggleMaintenanceModeV1": {
+  "wordpress_maintenance_toggle": {
     params: {
       /**
        * username parameter
@@ -9152,7 +9152,7 @@ installation.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_showMemcachedObjectCacheStatusV1": {
+  "wordpress_object-cache_show-memcached-status": {
     params: {
       /**
        * username parameter
@@ -9173,7 +9173,7 @@ installation, based on the `enabled` flag.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_toggleMemcachedObjectCacheV1": {
+  "wordpress_object-cache_toggle-memcached": {
     params: {
       /**
        * username parameter
@@ -9200,7 +9200,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 This operation is asynchronous: a successful response only means the activation
 job has been queued.
    */
-  "hosting_activateWordPressPluginV1": {
+  "wordpress_plugins_activate": {
     params: {
       /**
        * username parameter
@@ -9227,7 +9227,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 This operation is asynchronous: a successful response only means the
 deactivation job has been queued.
    */
-  "hosting_deactivateWordPressPluginV1": {
+  "wordpress_plugins_deactivate": {
     params: {
       /**
        * username parameter
@@ -9251,7 +9251,7 @@ deactivation job has been queued.
 This endpoint allows you to deploy a WordPress plugin that has been uploaded to the website's directory.
 The plugin will be activated and made available in the WordPress admin panel.
    */
-  "hosting_deployWordPressPluginV1": {
+  "wordpress_plugins_deploy": {
     params: {
       /**
        * username parameter
@@ -9284,7 +9284,7 @@ slugs available for installation.
 This operation is asynchronous: a successful response only means the install
 job has been queued, not that the plugins are ready.
    */
-  "hosting_installWordPressPluginsV1": {
+  "wordpress_plugins_install": {
     params: {
       /**
        * username parameter
@@ -9309,7 +9309,7 @@ not yet installed.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_listAvailableWordPressPluginsV1": {
+  "wordpress_plugins_list": {
     params: {
       /**
        * username parameter
@@ -9330,7 +9330,7 @@ available updates and known vulnerabilities.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_listInstalledWordPressPluginsV1": {
+  "wordpress_plugins_list-installed": {
     params: {
       /**
        * username parameter
@@ -9354,7 +9354,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 Use the returned `slug` values with
 POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
    */
-  "hosting_searchWordPressPluginsV1": {
+  "wordpress_plugins_search": {
     params: {
       /**
        * Search term to match against plugin names. Minimum 3 characters.
@@ -9370,7 +9370,7 @@ POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
 Use the returned `slug` values with
 POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
    */
-  "hosting_listSuggestedWordPressPluginsV1": {
+  "wordpress_plugins_list-suggested": {
     params: {
       /**
        * Optionally scope suggestions to a specific order.
@@ -9384,7 +9384,7 @@ POST /api/hosting/v1/accounts/{username}/wordpress/{software}/plugins/install.
    * Check whether WooCommerce is installed on any WordPress installation of a
 domain. Optionally filter by domain to scope the check.
    */
-  "hosting_checkIfWooCommerceIsInstalledV1": {
+  "wordpress_plugins_check-if-woo-commerce-is-installed": {
     params: {
       /**
        * Filter by domain name (case-insensitive substring match)
@@ -9403,7 +9403,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 This operation is asynchronous: a successful response only means the uninstall
 job has been queued.
    */
-  "hosting_uninstallWordPressPluginsV1": {
+  "wordpress_plugins_uninstall": {
     params: {
       /**
        * username parameter
@@ -9430,7 +9430,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 This operation is asynchronous: a successful response only means the update job
 has been queued.
    */
-  "hosting_updateHostingerWordPressPluginV1": {
+  "wordpress_plugins_update-hostinger": {
     params: {
       /**
        * username parameter
@@ -9458,7 +9458,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 This operation is asynchronous: a successful response only means the update job
 has been queued.
    */
-  "hosting_updateWordPressPluginsV1": {
+  "wordpress_plugins_update": {
     params: {
       /**
        * username parameter
@@ -9485,7 +9485,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 This operation is asynchronous: a successful response only means the activation
 job has been queued.
    */
-  "hosting_activateWordPressThemeV1": {
+  "wordpress_themes_activate": {
     params: {
       /**
        * username parameter
@@ -9509,7 +9509,7 @@ job has been queued.
 This endpoint allows you to deploy a WordPress theme that has been uploaded to the website's directory.
 The theme can be optionally activated after deployment.
    */
-  "hosting_deployWordPressThemeV1": {
+  "wordpress_themes_deploy": {
     params: {
       /**
        * username parameter
@@ -9550,7 +9550,7 @@ palette1, layout1, default). For any other theme they are ignored.
 This operation is asynchronous: a successful response only means the install
 job has been queued, not that the theme is ready.
    */
-  "hosting_installWordPressThemeV1": {
+  "wordpress_themes_install": {
     params: {
       /**
        * username parameter
@@ -9587,7 +9587,7 @@ available updates and known vulnerabilities.
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
    */
-  "hosting_listInstalledWordPressThemesV1": {
+  "wordpress_themes_list-installed": {
     params: {
       /**
        * username parameter
@@ -9607,7 +9607,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 Use the returned `slug` values with
 POST /api/hosting/v1/accounts/{username}/wordpress/{software}/themes/install.
    */
-  "hosting_listWordPressThemesV1": {
+  "wordpress_themes_list": {
     params: {
       /**
        * Optionally scope themes to a specific order.
@@ -9630,7 +9630,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 This operation is asynchronous: a successful response only means the uninstall
 job has been queued.
    */
-  "hosting_uninstallWordPressThemesV1": {
+  "wordpress_themes_uninstall": {
     params: {
       /**
        * username parameter
@@ -9658,7 +9658,7 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 This operation is asynchronous: a successful response only means the update job
 has been queued.
    */
-  "hosting_updateWordPressThemesV1": {
+  "wordpress_themes_update": {
     params: {
       /**
        * username parameter

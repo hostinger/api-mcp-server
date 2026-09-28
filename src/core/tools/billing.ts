@@ -15,7 +15,7 @@ export interface OpenApiTool extends Tool {
 
 const tools: OpenApiTool[] = [
   {
-    "name": "billing_getCatalogItemListV1",
+    "name": "billing_catalog_list",
     "title": "Get catalog item list",
     "annotations": {
       "title": "Get catalog item list",
@@ -52,7 +52,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_createPurchaseOrderV1",
+    "name": "billing_orders_create-purchase",
     "title": "Create purchase order",
     "annotations": {
       "title": "Create purchase order",
@@ -111,7 +111,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_setDefaultPaymentMethodV1",
+    "name": "billing_payment-methods_set-default",
     "title": "Set default payment method",
     "annotations": {
       "title": "Set default payment method",
@@ -141,7 +141,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_deletePaymentMethodV1",
+    "name": "billing_payment-methods_delete",
     "title": "Delete payment method",
     "annotations": {
       "title": "Delete payment method",
@@ -172,7 +172,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_getPaymentMethodListV1",
+    "name": "billing_payment-methods_list",
     "title": "Get payment method list",
     "annotations": {
       "title": "Get payment method list",
@@ -195,7 +195,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_getSubscriptionListV1",
+    "name": "billing_subscriptions_list",
     "title": "Get subscription list",
     "annotations": {
       "title": "Get subscription list",
@@ -218,7 +218,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_disableAutoRenewalV1",
+    "name": "billing_subscriptions_disable-auto-renewal",
     "title": "Disable auto-renewal",
     "annotations": {
       "title": "Disable auto-renewal",
@@ -249,7 +249,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_enableAutoRenewalV1",
+    "name": "billing_subscriptions_enable-auto-renewal",
     "title": "Enable auto-renewal",
     "annotations": {
       "title": "Enable auto-renewal",
@@ -280,7 +280,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_renewSubscriptionV1",
+    "name": "billing_subscriptions_renew",
     "title": "Renew subscription",
     "annotations": {
       "title": "Renew subscription",

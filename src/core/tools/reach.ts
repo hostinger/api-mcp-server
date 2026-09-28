@@ -15,7 +15,7 @@ export interface OpenApiTool extends Tool {
 
 const tools: OpenApiTool[] = [
   {
-    "name": "reach_getAutomationDetailsV1",
+    "name": "reach_automations_get",
     "title": "Get automation details",
     "annotations": {
       "title": "Get automation details",
@@ -50,7 +50,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listAutomationsV1",
+    "name": "reach_automations_list",
     "title": "List automations",
     "annotations": {
       "title": "List automations",
@@ -105,7 +105,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listAutomationStepsV1",
+    "name": "reach_automations_list-steps",
     "title": "List automation steps",
     "annotations": {
       "title": "List automation steps",
@@ -140,7 +140,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getCampaignDetailsV1",
+    "name": "reach_campaigns_get",
     "title": "Get campaign details",
     "annotations": {
       "title": "Get campaign details",
@@ -175,7 +175,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listCampaignsV1",
+    "name": "reach_campaigns_list",
     "title": "List campaigns",
     "annotations": {
       "title": "List campaigns",
@@ -241,7 +241,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createADraftCampaignV1",
+    "name": "reach_campaigns_create-draft",
     "title": "Create a draft campaign",
     "annotations": {
       "title": "Create a draft campaign",
@@ -307,7 +307,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getCampaignPerformanceV1",
+    "name": "reach_campaigns_performance",
     "title": "Get campaign performance",
     "annotations": {
       "title": "Get campaign performance",
@@ -342,7 +342,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteAContactV1",
+    "name": "reach_contacts_delete",
     "title": "Delete a contact",
     "annotations": {
       "title": "Delete a contact",
@@ -373,7 +373,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteAContactFieldV1",
+    "name": "reach_contact-fields_delete",
     "title": "Delete a contact field",
     "annotations": {
       "title": "Delete a contact field",
@@ -409,7 +409,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_updateAContactFieldV1",
+    "name": "reach_contact-fields_update",
     "title": "Update a contact field",
     "annotations": {
       "title": "Update a contact field",
@@ -471,7 +471,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listContactFieldsV1",
+    "name": "reach_contact-fields_list",
     "title": "List contact fields",
     "annotations": {
       "title": "List contact fields",
@@ -501,7 +501,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createAContactFieldV1",
+    "name": "reach_contact-fields_create",
     "title": "Create a contact field",
     "annotations": {
       "title": "Create a contact field",
@@ -556,7 +556,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listContactGroupsV1",
+    "name": "reach_contacts_list-groups",
     "title": "List contact groups",
     "annotations": {
       "title": "List contact groups",
@@ -579,7 +579,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listContactsV1",
+    "name": "reach_contacts_list",
     "title": "List contacts",
     "annotations": {
       "title": "List contacts",
@@ -621,7 +621,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createANewContactV1",
+    "name": "reach_contacts_create",
     "title": "Create a new contact",
     "annotations": {
       "title": "Create a new contact",
@@ -675,7 +675,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getContactDetailsV1",
+    "name": "reach_contacts_get",
     "title": "Get contact details",
     "annotations": {
       "title": "Get contact details",
@@ -710,7 +710,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteAProfileContactV1",
+    "name": "reach_contacts_delete-profile",
     "title": "Delete a profile contact",
     "annotations": {
       "title": "Delete a profile contact",
@@ -746,7 +746,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_updateAContactV1",
+    "name": "reach_contacts_update",
     "title": "Update a contact",
     "annotations": {
       "title": "Update a contact",
@@ -841,7 +841,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createContactsInBulkV1",
+    "name": "reach_contacts_create-in-bulk",
     "title": "Create contacts in bulk",
     "annotations": {
       "title": "Create contacts in bulk",
@@ -913,7 +913,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfileContactsV1",
+    "name": "reach_contacts_list-profile",
     "title": "List profile contacts",
     "annotations": {
       "title": "List profile contacts",
@@ -969,7 +969,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createNewContactsV1",
+    "name": "reach_contacts_create-bulk",
     "title": "Create new contacts",
     "annotations": {
       "title": "Create new contacts",
@@ -1028,7 +1028,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listSegmentsV1",
+    "name": "reach_segments_list",
     "title": "List segments",
     "annotations": {
       "title": "List segments",
@@ -1051,7 +1051,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createANewContactSegmentV1",
+    "name": "reach_segments_create",
     "title": "Create a new contact segment",
     "annotations": {
       "title": "Create a new contact segment",
@@ -1163,7 +1163,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_countProfileSegmentContactsV1",
+    "name": "reach_segments_count-profile-contacts",
     "title": "Count profile segment contacts",
     "annotations": {
       "title": "Count profile segment contacts",
@@ -1198,7 +1198,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfileSegmentContactsV1",
+    "name": "reach_segments_list-profile-contacts",
     "title": "List profile segment contacts",
     "annotations": {
       "title": "List profile segment contacts",
@@ -1241,7 +1241,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getProfileSegmentDetailsV1",
+    "name": "reach_segments_profile",
     "title": "Get profile segment details",
     "annotations": {
       "title": "Get profile segment details",
@@ -1276,7 +1276,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_updateAProfileSegmentV1",
+    "name": "reach_segments_update-profile",
     "title": "Update a profile segment",
     "annotations": {
       "title": "Update a profile segment",
@@ -1380,7 +1380,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteAProfileSegmentV1",
+    "name": "reach_segments_delete-profile",
     "title": "Delete a profile segment",
     "annotations": {
       "title": "Delete a profile segment",
@@ -1416,7 +1416,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listSegmentFilterAttributesV1",
+    "name": "reach_segments_list-filter-attributes",
     "title": "List segment filter attributes",
     "annotations": {
       "title": "List segment filter attributes",
@@ -1446,7 +1446,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_previewContactsMatchingConditionsV1",
+    "name": "reach_segments_preview-contacts-matching-conditions",
     "title": "Preview contacts matching conditions",
     "annotations": {
       "title": "Preview contacts matching conditions",
@@ -1572,7 +1572,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfileSegmentsV1",
+    "name": "reach_segments_list-profile",
     "title": "List profile segments",
     "annotations": {
       "title": "List profile segments",
@@ -1618,7 +1618,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createAProfileSegmentV1",
+    "name": "reach_segments_create-profile",
     "title": "Create a profile segment",
     "annotations": {
       "title": "Create a profile segment",
@@ -1718,7 +1718,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listSegmentContactsV1",
+    "name": "reach_segments_list-contacts",
     "title": "List segment contacts",
     "annotations": {
       "title": "List segment contacts",
@@ -1756,7 +1756,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getSegmentDetailsV1",
+    "name": "reach_segments_get",
     "title": "Get segment details",
     "annotations": {
       "title": "Get segment details",
@@ -1786,7 +1786,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_assignAContactToATagV1",
+    "name": "reach_tags_assign-contact-to",
     "title": "Assign a contact to a tag",
     "annotations": {
       "title": "Assign a contact to a tag",
@@ -1826,7 +1826,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_removeAContactFromATagV1",
+    "name": "reach_tags_remove-contact-from",
     "title": "Remove a contact from a tag",
     "annotations": {
       "title": "Remove a contact from a tag",
@@ -1867,7 +1867,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_assignContactsToATagV1",
+    "name": "reach_tags_assign-contacts-to",
     "title": "Assign contacts to a tag",
     "annotations": {
       "title": "Assign contacts to a tag",
@@ -1914,7 +1914,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_removeContactsFromATagV1",
+    "name": "reach_tags_remove-contacts-from",
     "title": "Remove contacts from a tag",
     "annotations": {
       "title": "Remove contacts from a tag",
@@ -1950,7 +1950,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteATagV1",
+    "name": "reach_tags_delete",
     "title": "Delete a tag",
     "annotations": {
       "title": "Delete a tag",
@@ -1986,7 +1986,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_renameATagV1",
+    "name": "reach_tags_rename",
     "title": "Rename a tag",
     "annotations": {
       "title": "Rename a tag",
@@ -2027,7 +2027,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfileTagsV1",
+    "name": "reach_tags_list-profile",
     "title": "List profile tags",
     "annotations": {
       "title": "List profile tags",
@@ -2057,7 +2057,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createOrFindTagsV1",
+    "name": "reach_tags_create-or-find",
     "title": "Create or find tags",
     "annotations": {
       "title": "Create or find tags",
@@ -2096,7 +2096,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getFormDetailsV1",
+    "name": "reach_forms_get",
     "title": "Get form details",
     "annotations": {
       "title": "Get form details",
@@ -2131,7 +2131,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteFormV1",
+    "name": "reach_forms_delete",
     "title": "Delete form",
     "annotations": {
       "title": "Delete form",
@@ -2167,7 +2167,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listFormsV1",
+    "name": "reach_forms_list",
     "title": "List forms",
     "annotations": {
       "title": "List forms",
@@ -2205,7 +2205,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getProfileDomainDNSStatusV1",
+    "name": "reach_profiles_domain-dns-status",
     "title": "Get profile domain DNS status",
     "annotations": {
       "title": "Get profile domain DNS status",
@@ -2235,7 +2235,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getConnectedSendingDomainV1",
+    "name": "reach_profiles_connected-sending-domain",
     "title": "Get connected sending domain",
     "annotations": {
       "title": "Get connected sending domain",
@@ -2265,7 +2265,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listPlanFeatureAccessV1",
+    "name": "reach_profiles_list-plan-feature-access",
     "title": "List plan feature access",
     "annotations": {
       "title": "List plan feature access",
@@ -2295,7 +2295,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getRemainingPlanLimitsV1",
+    "name": "reach_profiles_remaining-plan-limits",
     "title": "Get remaining plan limits",
     "annotations": {
       "title": "Get remaining plan limits",
@@ -2325,7 +2325,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfilesV1",
+    "name": "reach_profiles_list",
     "title": "List Profiles",
     "annotations": {
       "title": "List Profiles",
@@ -2348,7 +2348,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listEmailTemplatesV1",
+    "name": "reach_templates_list-email",
     "title": "List email templates",
     "annotations": {
       "title": "List email templates",
@@ -2378,7 +2378,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createAnEmailTemplateV1",
+    "name": "reach_templates_create-email",
     "title": "Create an email template",
     "annotations": {
       "title": "Create an email template",

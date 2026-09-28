@@ -1,7 +1,7 @@
 // Auto-generated tool list for group: ecommerce
 export default [
   {
-    "name": "ecommerce_listDiscountsV1",
+    "name": "ecommerce_discounts_list",
     "title": "List discounts",
     "annotations": {
       "title": "List discounts",
@@ -47,7 +47,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createADiscountV1",
+    "name": "ecommerce_discounts_create",
     "title": "Create a discount",
     "annotations": {
       "title": "Create a discount",
@@ -129,7 +129,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_getCustomStorefrontSetupInstructionsV1",
+    "name": "ecommerce_miscellaneous_custom-storefront-setup-instructions",
     "title": "Get custom storefront setup instructions",
     "annotations": {
       "title": "Get custom storefront setup instructions",
@@ -152,7 +152,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_cancelAnOrderV1",
+    "name": "ecommerce_orders_cancel",
     "title": "Cancel an order",
     "annotations": {
       "title": "Cancel an order",
@@ -191,7 +191,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_fulfilAnOrderV1",
+    "name": "ecommerce_orders_fulfil",
     "title": "Fulfil an order",
     "annotations": {
       "title": "Fulfil an order",
@@ -260,7 +260,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listStoreOrdersV1",
+    "name": "ecommerce_orders_list-store",
     "title": "List store orders",
     "annotations": {
       "title": "List store orders",
@@ -366,7 +366,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_retrieveAnOrderV1",
+    "name": "ecommerce_orders_retrieve",
     "title": "Retrieve an order",
     "annotations": {
       "title": "Retrieve an order",
@@ -401,7 +401,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_enableManualPaymentMethodV1",
+    "name": "ecommerce_payments_enable-manual-method",
     "title": "Enable manual payment method",
     "annotations": {
       "title": "Enable manual payment method",
@@ -435,7 +435,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createAPaymentProviderConnectLinkV1",
+    "name": "ecommerce_payments_create-provider-connect-link",
     "title": "Create a payment provider connect link",
     "annotations": {
       "title": "Create a payment provider connect link",
@@ -470,7 +470,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listStorePaymentProvidersV1",
+    "name": "ecommerce_payments_list-store-providers",
     "title": "List store payment providers",
     "annotations": {
       "title": "List store payment providers",
@@ -504,7 +504,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createAProductImageUploadURLV1",
+    "name": "ecommerce_products_create-image-upload-url",
     "title": "Create a product image upload URL",
     "annotations": {
       "title": "Create a product image upload URL",
@@ -539,7 +539,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_deleteAProductV1",
+    "name": "ecommerce_products_delete",
     "title": "Delete a product",
     "annotations": {
       "title": "Delete a product",
@@ -575,7 +575,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_updateAProductV1",
+    "name": "ecommerce_products_update",
     "title": "Update a product",
     "annotations": {
       "title": "Update a product",
@@ -628,7 +628,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createDigitalProductV1",
+    "name": "ecommerce_products_create-digital",
     "title": "Create digital product",
     "annotations": {
       "title": "Create digital product",
@@ -680,7 +680,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listProductsV1",
+    "name": "ecommerce_products_list",
     "title": "List products",
     "annotations": {
       "title": "List products",
@@ -753,7 +753,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createPhysicalProductV1",
+    "name": "ecommerce_products_create-physical",
     "title": "Create physical product",
     "annotations": {
       "title": "Create physical product",
@@ -801,7 +801,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_uploadAndAttachAProductImageV1",
+    "name": "ecommerce_products_upload-and-attach-image",
     "title": "Upload and attach a product image",
     "annotations": {
       "title": "Upload and attach a product image",
@@ -848,7 +848,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listSalesChannelsV1",
+    "name": "ecommerce_sales-channels_list",
     "title": "List sales channels",
     "annotations": {
       "title": "List sales channels",
@@ -878,7 +878,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createASalesChannelV1",
+    "name": "ecommerce_sales-channels_create",
     "title": "Create a sales channel",
     "annotations": {
       "title": "Create a sales channel",
@@ -925,7 +925,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_updateSalesChannelV1",
+    "name": "ecommerce_sales-channels_update",
     "title": "Update sales channel",
     "annotations": {
       "title": "Update sales channel",
@@ -969,7 +969,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_setStoreShippingV1",
+    "name": "ecommerce_shipping_set-store",
     "title": "Set store shipping",
     "annotations": {
       "title": "Set store shipping",
@@ -1004,7 +1004,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_deleteStoreV1",
+    "name": "ecommerce_stores_delete",
     "title": "Delete store",
     "annotations": {
       "title": "Delete store",
@@ -1035,7 +1035,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_getStoresV1",
+    "name": "ecommerce_stores_list",
     "title": "Get stores",
     "annotations": {
       "title": "Get stores",
@@ -1063,7 +1063,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createStoreV1",
+    "name": "ecommerce_stores_create",
     "title": "Create store",
     "annotations": {
       "title": "Create store",
@@ -1124,7 +1124,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_getStoreMetadataV1",
+    "name": "ecommerce_stores_metadata",
     "title": "Get store metadata",
     "annotations": {
       "title": "Get store metadata",
@@ -1154,7 +1154,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_updateProductVariantsInBatchV1",
+    "name": "ecommerce_product-variants_update-in-batch",
     "title": "Update product variants in batch",
     "annotations": {
       "title": "Update product variants in batch",
@@ -1245,7 +1245,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_deleteAProductVariantV1",
+    "name": "ecommerce_product-variants_delete",
     "title": "Delete a product variant",
     "annotations": {
       "title": "Delete a product variant",
@@ -1286,7 +1286,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listProductVariantsV1",
+    "name": "ecommerce_product-variants_list",
     "title": "List product variants",
     "annotations": {
       "title": "List product variants",
@@ -1325,7 +1325,7 @@ export default [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createAProductVariantV1",
+    "name": "ecommerce_product-variants_create",
     "title": "Create a product variant",
     "annotations": {
       "title": "Create a product variant",

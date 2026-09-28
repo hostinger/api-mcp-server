@@ -1,7 +1,7 @@
 // Auto-generated tool list for group: hosting
 export default [
   {
-    "name": "hosting_importWordpressWebsite",
+    "name": "hosting_import-wordpress-website",
     "title": "Import WordPress website",
     "annotations": {
       "title": "Import WordPress website",
@@ -42,7 +42,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployWordpressPlugin",
+    "name": "hosting_deploy-wordpress-plugin",
     "title": "Deploy WordPress plugin",
     "annotations": {
       "title": "Deploy WordPress plugin",
@@ -83,7 +83,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployWordpressTheme",
+    "name": "hosting_deploy-wordpress-theme",
     "title": "Deploy WordPress theme",
     "annotations": {
       "title": "Deploy WordPress theme",
@@ -128,7 +128,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployJsApplication",
+    "name": "hosting_deploy-js-application",
     "title": "Deploy JavaScript application",
     "annotations": {
       "title": "Deploy JavaScript application",
@@ -136,7 +136,7 @@ export default [
       "destructiveHint": true
     },
     "topic": "hosting",
-    "description": "Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.",
+    "description": "Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_list-js-deployments tool to check deployment status and track build progress.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -168,7 +168,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployStaticWebsite",
+    "name": "hosting_deploy-static-website",
     "title": "Deploy static website",
     "annotations": {
       "title": "Deploy static website",
@@ -176,7 +176,7 @@ export default [
       "destructiveHint": true
     },
     "topic": "hosting",
-    "description": "Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
+    "description": "Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deploy-js-application instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -208,7 +208,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listJsDeployments",
+    "name": "hosting_list-js-deployments",
     "title": "List JavaScript deployments",
     "annotations": {
       "title": "List JavaScript deployments",
@@ -260,7 +260,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_showJsDeploymentLogs",
+    "name": "hosting_show-js-deployment-logs",
     "title": "Show JavaScript deployment logs",
     "annotations": {
       "title": "Show JavaScript deployment logs",
@@ -300,7 +300,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_clearWebsiteCacheV1",
+    "name": "hosting_cache_clear-website",
     "title": "Clear website cache",
     "annotations": {
       "title": "Clear website cache",
@@ -340,7 +340,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_toggleCachelessModeV1",
+    "name": "hosting_cache_toggle-cacheless",
     "title": "Toggle cacheless mode",
     "annotations": {
       "title": "Toggle cacheless mode",
@@ -381,7 +381,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_toggleWebsiteCacheV1",
+    "name": "hosting_cache_toggle-website",
     "title": "Toggle website cache",
     "annotations": {
       "title": "Toggle website cache",
@@ -422,7 +422,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listAccountCronJobsV1",
+    "name": "hosting_cron-jobs_list",
     "title": "List account cron jobs",
     "annotations": {
       "title": "List account cron jobs",
@@ -452,7 +452,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_createAccountCronJobV1",
+    "name": "hosting_cron-jobs_create",
     "title": "Create account cron job",
     "annotations": {
       "title": "Create account cron job",
@@ -492,7 +492,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteAccountCronJobV1",
+    "name": "hosting_cron-jobs_delete",
     "title": "Delete account cron job",
     "annotations": {
       "title": "Delete account cron job",
@@ -528,7 +528,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getCronJobOutputV1",
+    "name": "hosting_cron-jobs_output",
     "title": "Get cron job output",
     "annotations": {
       "title": "Get cron job output",
@@ -563,7 +563,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_changeDatabasePasswordV1",
+    "name": "hosting_databases_change-password",
     "title": "Change database password",
     "annotations": {
       "title": "Change database password",
@@ -604,7 +604,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listAccountDatabasesV1",
+    "name": "hosting_databases_list",
     "title": "List account databases",
     "annotations": {
       "title": "List account databases",
@@ -654,7 +654,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_createAccountDatabaseV1",
+    "name": "hosting_databases_create",
     "title": "Create account database",
     "annotations": {
       "title": "Create account database",
@@ -704,7 +704,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteAccountDatabaseV1",
+    "name": "hosting_databases_delete",
     "title": "Delete account database",
     "annotations": {
       "title": "Delete account database",
@@ -740,7 +740,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_createDatabaseRemoteConnectionV1",
+    "name": "hosting_databases_create-remote-connection",
     "title": "Create database remote connection",
     "annotations": {
       "title": "Create database remote connection",
@@ -780,7 +780,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteDatabaseRemoteConnectionV1",
+    "name": "hosting_databases_delete-remote-connection",
     "title": "Delete database remote connection",
     "annotations": {
       "title": "Delete database remote connection",
@@ -821,7 +821,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listDatabaseRemoteConnectionsV1",
+    "name": "hosting_databases_list-remote-connections",
     "title": "List database remote connections",
     "annotations": {
       "title": "List database remote connections",
@@ -855,7 +855,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_repairDatabaseV1",
+    "name": "hosting_databases_repair",
     "title": "Repair database",
     "annotations": {
       "title": "Repair database",
@@ -891,7 +891,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_setupWebsiteDatabaseV1",
+    "name": "hosting_databases_setup-website",
     "title": "Setup website database",
     "annotations": {
       "title": "Setup website database",
@@ -934,7 +934,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getPhpMyAdminLinkV1",
+    "name": "hosting_databases_phpmyadmin-link",
     "title": "Get phpMyAdmin link",
     "annotations": {
       "title": "Get phpMyAdmin link",
@@ -969,7 +969,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listAvailableDatacentersV1",
+    "name": "hosting_datacenters_list",
     "title": "List available datacenters",
     "annotations": {
       "title": "List available datacenters",
@@ -999,7 +999,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_generateAFreeSubdomainV1",
+    "name": "hosting_domains_generate-free-subdomain",
     "title": "Generate a free subdomain",
     "annotations": {
       "title": "Generate a free subdomain",
@@ -1022,7 +1022,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsiteParkedDomainsV1",
+    "name": "hosting_domains_list-website-parked",
     "title": "List website parked domains",
     "annotations": {
       "title": "List website parked domains",
@@ -1057,7 +1057,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_createWebsiteParkedDomainV1",
+    "name": "hosting_domains_create-website-parked",
     "title": "Create website parked domain",
     "annotations": {
       "title": "Create website parked domain",
@@ -1097,7 +1097,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteWebsiteParkedDomainV1",
+    "name": "hosting_domains_delete-website-parked",
     "title": "Delete website parked domain",
     "annotations": {
       "title": "Delete website parked domain",
@@ -1138,7 +1138,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsiteSubdomainsV1",
+    "name": "hosting_domains_list-website-subdomains",
     "title": "List website subdomains",
     "annotations": {
       "title": "List website subdomains",
@@ -1173,7 +1173,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_createWebsiteSubdomainV1",
+    "name": "hosting_domains_create-website-subdomain",
     "title": "Create website subdomain",
     "annotations": {
       "title": "Create website subdomain",
@@ -1221,7 +1221,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteWebsiteSubdomainV1",
+    "name": "hosting_domains_delete-website-subdomain",
     "title": "Delete website subdomain",
     "annotations": {
       "title": "Delete website subdomain",
@@ -1262,7 +1262,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_verifyDomainOwnershipV1",
+    "name": "hosting_domains_verify-ownership",
     "title": "Verify domain ownership",
     "annotations": {
       "title": "Verify domain ownership",
@@ -1292,7 +1292,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_generateUploadURLV1",
+    "name": "hosting_files_generate-upload-url",
     "title": "Generate upload URL",
     "annotations": {
       "title": "Generate upload URL",
@@ -1327,7 +1327,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsiteFilesAndDirectoriesV1",
+    "name": "hosting_files_list-website-and-directories",
     "title": "List website files and directories",
     "annotations": {
       "title": "List website files and directories",
@@ -1392,7 +1392,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getWebsiteFileContentV1",
+    "name": "hosting_files_website-content",
     "title": "Get website file content",
     "annotations": {
       "title": "Get website file content",
@@ -1440,7 +1440,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getGitAutoDeploymentSettingsV1",
+    "name": "hosting_git_auto-deployment-settings",
     "title": "Get Git auto-deployment settings",
     "annotations": {
       "title": "Get Git auto-deployment settings",
@@ -1475,7 +1475,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_updateGitAutoDeploymentSettingsV1",
+    "name": "hosting_git_update-auto-deployment-settings",
     "title": "Update Git auto-deployment settings",
     "annotations": {
       "title": "Update Git auto-deployment settings",
@@ -1539,7 +1539,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteGitAutoDeploymentSettingsV1",
+    "name": "hosting_git_delete-auto-deployment-settings",
     "title": "Delete Git auto-deployment settings",
     "annotations": {
       "title": "Delete Git auto-deployment settings",
@@ -1575,7 +1575,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listGitInstallationsV1",
+    "name": "hosting_git_list-installations",
     "title": "List Git installations",
     "annotations": {
       "title": "List Git installations",
@@ -1617,7 +1617,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listGitInstallationRepositoriesV1",
+    "name": "hosting_git_list-installation-repositories",
     "title": "List Git installation repositories",
     "annotations": {
       "title": "List Git installation repositories",
@@ -1647,7 +1647,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listNodeJSBuildsV1",
+    "name": "hosting_nodejs_list-builds",
     "title": "List NodeJS builds",
     "annotations": {
       "title": "List NodeJS builds",
@@ -1704,7 +1704,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_startNode_jsBuildV1",
+    "name": "hosting_nodejs_start-build",
     "title": "Start Node.js build",
     "annotations": {
       "title": "Start Node.js build",
@@ -1840,7 +1840,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNode_jsBuildSettingsV1",
+    "name": "hosting_nodejs_build-settings",
     "title": "Get Node.js build settings",
     "annotations": {
       "title": "Get Node.js build settings",
@@ -1875,7 +1875,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_updateNode_jsBuildSettingsV1",
+    "name": "hosting_nodejs_update-build-settings",
     "title": "Update Node.js build settings",
     "annotations": {
       "title": "Update Node.js build settings",
@@ -1972,7 +1972,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNode_jsBuildSettingsFromArchiveV1",
+    "name": "hosting_nodejs_build-settings-from-archive",
     "title": "Get Node.js build settings from archive",
     "annotations": {
       "title": "Get Node.js build settings from archive",
@@ -2012,7 +2012,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listNode_jsEnvironmentVariablesV1",
+    "name": "hosting_nodejs_list-environment-variables",
     "title": "List Node.js environment variables",
     "annotations": {
       "title": "List Node.js environment variables",
@@ -2047,7 +2047,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_replaceNode_jsEnvironmentVariablesV1",
+    "name": "hosting_nodejs_replace-environment-variables",
     "title": "Replace Node.js environment variables",
     "annotations": {
       "title": "Replace Node.js environment variables",
@@ -2106,7 +2106,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_analyseFailedNode_jsBuildV1",
+    "name": "hosting_nodejs_analyse-failed-build",
     "title": "Analyse failed Node.js build",
     "annotations": {
       "title": "Analyse failed Node.js build",
@@ -2146,7 +2146,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNode_jsBuildDetailsV1",
+    "name": "hosting_nodejs_build",
     "title": "Get Node.js build details",
     "annotations": {
       "title": "Get Node.js build details",
@@ -2186,7 +2186,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNodeJSBuildLogsV1",
+    "name": "hosting_nodejs_build-logs",
     "title": "Get NodeJS build logs",
     "annotations": {
       "title": "Get NodeJS build logs",
@@ -2230,7 +2230,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNode_jsRuntimeLogsV1",
+    "name": "hosting_nodejs_runtime-logs",
     "title": "Get Node.js runtime logs",
     "annotations": {
       "title": "Get Node.js runtime logs",
@@ -2299,7 +2299,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_clearNode_jsRuntimeLogsV1",
+    "name": "hosting_nodejs_clear-runtime-logs",
     "title": "Clear Node.js runtime logs",
     "annotations": {
       "title": "Clear Node.js runtime logs",
@@ -2335,7 +2335,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_restartNode_jsApplicationV1",
+    "name": "hosting_nodejs_restart-application",
     "title": "Restart Node.js application",
     "annotations": {
       "title": "Restart Node.js application",
@@ -2370,7 +2370,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listNode_jsVulnerabilitiesV1",
+    "name": "hosting_nodejs_list-vulnerabilities",
     "title": "List Node.js vulnerabilities",
     "annotations": {
       "title": "List Node.js vulnerabilities",
@@ -2420,7 +2420,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_patchNode_jsVulnerabilitiesV1",
+    "name": "hosting_nodejs_patch-vulnerabilities",
     "title": "Patch Node.js vulnerabilities",
     "annotations": {
       "title": "Patch Node.js vulnerabilities",
@@ -2464,7 +2464,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listOrdersV1",
+    "name": "hosting_orders_list",
     "title": "List orders",
     "annotations": {
       "title": "List orders",
@@ -2518,7 +2518,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_resetPHPExtensionsV1",
+    "name": "hosting_php_reset-extensions",
     "title": "Reset PHP extensions",
     "annotations": {
       "title": "Reset PHP extensions",
@@ -2554,7 +2554,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getPHPDetailsV1",
+    "name": "hosting_php_get",
     "title": "Get PHP details",
     "annotations": {
       "title": "Get PHP details",
@@ -2589,7 +2589,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getPHPInfoV1",
+    "name": "hosting_php_info",
     "title": "Get PHP info",
     "annotations": {
       "title": "Get PHP info",
@@ -2624,7 +2624,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_updatePHPExtensionsV1",
+    "name": "hosting_php_update-extensions",
     "title": "Update PHP extensions",
     "annotations": {
       "title": "Update PHP extensions",
@@ -2676,7 +2676,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_updatePHPOptionsV1",
+    "name": "hosting_php_update-options",
     "title": "Update PHP options",
     "annotations": {
       "title": "Update PHP options",
@@ -2718,7 +2718,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_updatePHPVersionV1",
+    "name": "hosting_php_update-version",
     "title": "Update PHP version",
     "annotations": {
       "title": "Update PHP version",
@@ -2759,7 +2759,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsiteRedirectsV1",
+    "name": "hosting_redirects_list-website",
     "title": "List website redirects",
     "annotations": {
       "title": "List website redirects",
@@ -2802,7 +2802,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_createWebsiteRedirectV1",
+    "name": "hosting_redirects_create-website",
     "title": "Create website redirect",
     "annotations": {
       "title": "Create website redirect",
@@ -2847,7 +2847,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteWebsiteRedirectV1",
+    "name": "hosting_redirects_delete-website",
     "title": "Delete website redirect",
     "annotations": {
       "title": "Delete website redirect",
@@ -2888,7 +2888,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_installSSLV1",
+    "name": "hosting_ssl_install",
     "title": "Install SSL",
     "annotations": {
       "title": "Install SSL",
@@ -2923,7 +2923,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_getSSLStatusV1",
+    "name": "hosting_ssl_status",
     "title": "Get SSL status",
     "annotations": {
       "title": "Get SSL status",
@@ -2958,7 +2958,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_toggleHTTPSRedirectV1",
+    "name": "hosting_ssl_toggle-https-redirect",
     "title": "Toggle HTTPS redirect",
     "annotations": {
       "title": "Toggle HTTPS redirect",
@@ -2999,7 +2999,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_uninstallSSLV1",
+    "name": "hosting_ssl_uninstall",
     "title": "Uninstall SSL",
     "annotations": {
       "title": "Uninstall SSL",
@@ -3035,7 +3035,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsitesV1",
+    "name": "hosting_websites_list",
     "title": "List websites",
     "annotations": {
       "title": "List websites",
@@ -3098,7 +3098,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_createWebsiteV1",
+    "name": "hosting_websites_create",
     "title": "Create website",
     "annotations": {
       "title": "Create website",
@@ -3137,7 +3137,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployStaticSiteArchiveV1",
+    "name": "hosting_websites_deploy-static-site-archive",
     "title": "Deploy static site archive",
     "annotations": {
       "title": "Deploy static site archive",
@@ -3177,7 +3177,7 @@ export default [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteWebsiteV1",
+    "name": "hosting_websites_delete",
     "title": "Delete website",
     "annotations": {
       "title": "Delete website",

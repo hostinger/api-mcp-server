@@ -15,7 +15,7 @@ export interface OpenApiTool extends Tool {
 
 const tools: OpenApiTool[] = [
   {
-    "name": "agency-hosting_deployNodeStaticWebsite",
+    "name": "agency-hosting_deploy-node-static-website",
     "title": "Deploy node-static website",
     "annotations": {
       "title": "Deploy node-static website",
@@ -23,7 +23,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true
     },
     "topic": "agency-hosting",
-    "description": "Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agencyHosting_deployPhpApplication instead. The website UID is automatically resolved from the domain.",
+    "description": "Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agency-hosting_deploy-php-application instead. The website UID is automatically resolved from the domain.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -55,7 +55,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deployPhpApplication",
+    "name": "agency-hosting_deploy-php-application",
     "title": "Deploy PHP application",
     "annotations": {
       "title": "Deploy PHP application",
@@ -63,7 +63,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true
     },
     "topic": "agency-hosting",
-    "description": "Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For node-static websites that require a build step, use agencyHosting_deployNodeStaticWebsite instead. The website UID is automatically resolved from the domain.",
+    "description": "Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For node-static websites that require a build step, use agency-hosting_deploy-node-static-website instead. The website UID is automatically resolved from the domain.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -95,7 +95,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "hosting_importWordpressWebsite",
+    "name": "hosting_import-wordpress-website",
     "title": "Import WordPress website",
     "annotations": {
       "title": "Import WordPress website",
@@ -136,7 +136,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployWordpressPlugin",
+    "name": "hosting_deploy-wordpress-plugin",
     "title": "Deploy WordPress plugin",
     "annotations": {
       "title": "Deploy WordPress plugin",
@@ -177,7 +177,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployWordpressTheme",
+    "name": "hosting_deploy-wordpress-theme",
     "title": "Deploy WordPress theme",
     "annotations": {
       "title": "Deploy WordPress theme",
@@ -222,7 +222,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployJsApplication",
+    "name": "hosting_deploy-js-application",
     "title": "Deploy JavaScript application",
     "annotations": {
       "title": "Deploy JavaScript application",
@@ -230,7 +230,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true
     },
     "topic": "hosting",
-    "description": "Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_listJsDeployments tool to check deployment status and track build progress.",
+    "description": "Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_list-js-deployments tool to check deployment status and track build progress.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -262,7 +262,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployStaticWebsite",
+    "name": "hosting_deploy-static-website",
     "title": "Deploy static website",
     "annotations": {
       "title": "Deploy static website",
@@ -270,7 +270,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true
     },
     "topic": "hosting",
-    "description": "Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deployJsApplication instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
+    "description": "Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deploy-js-application instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -302,7 +302,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listJsDeployments",
+    "name": "hosting_list-js-deployments",
     "title": "List JavaScript deployments",
     "annotations": {
       "title": "List JavaScript deployments",
@@ -354,7 +354,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_showJsDeploymentLogs",
+    "name": "hosting_show-js-deployment-logs",
     "title": "Show JavaScript deployment logs",
     "annotations": {
       "title": "Show JavaScript deployment logs",
@@ -394,7 +394,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "agency-hosting_listAvailableDatacentersV1",
+    "name": "agency-hosting_datacenters_list",
     "title": "List available datacenters",
     "annotations": {
       "title": "List available datacenters",
@@ -424,7 +424,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_changeWebsiteDomainV1",
+    "name": "agency-hosting_domains_change-website",
     "title": "Change website domain",
     "annotations": {
       "title": "Change website domain",
@@ -465,7 +465,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_linkDomainToWebsiteV1",
+    "name": "agency-hosting_domains_link-to-website",
     "title": "Link domain to website",
     "annotations": {
       "title": "Link domain to website",
@@ -500,7 +500,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listDomainsV1",
+    "name": "agency-hosting_domains_list",
     "title": "List domains",
     "annotations": {
       "title": "List domains",
@@ -540,7 +540,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_unlinkDomainFromWebsiteV1",
+    "name": "agency-hosting_domains_unlink-from-website",
     "title": "Unlink domain from website",
     "annotations": {
       "title": "Unlink domain from website",
@@ -576,7 +576,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_generateUploadURLV1",
+    "name": "agency-hosting_files_generate-upload-url",
     "title": "Generate upload URL",
     "annotations": {
       "title": "Generate upload URL",
@@ -606,7 +606,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_importWebsiteFromArchiveV1",
+    "name": "agency-hosting_files_import-website-from-archive",
     "title": "Import website from archive",
     "annotations": {
       "title": "Import website from archive",
@@ -641,7 +641,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAgencyPlanOrderDiskUsageMetricsV1",
+    "name": "agency-hosting_metrics_list-plan-order-disk-usage",
     "title": "List Agency Plan order disk usage metrics",
     "annotations": {
       "title": "List Agency Plan order disk usage metrics",
@@ -681,7 +681,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listOrdersV1",
+    "name": "agency-hosting_orders_list",
     "title": "List orders",
     "annotations": {
       "title": "List orders",
@@ -713,7 +713,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listOrderResourceUsageMetricsV1",
+    "name": "agency-hosting_metrics_list-order-resource-usage",
     "title": "List order resource usage metrics",
     "annotations": {
       "title": "List order resource usage metrics",
@@ -754,7 +754,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listPHPExtensionsForAWebsiteV1",
+    "name": "agency-hosting_php_list-extensions-for-website",
     "title": "List PHP extensions for a website",
     "annotations": {
       "title": "List PHP extensions for a website",
@@ -784,7 +784,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_replaceWebsitePHPExtensionsV1",
+    "name": "agency-hosting_php_replace-website-extensions",
     "title": "Replace website PHP extensions",
     "annotations": {
       "title": "Replace website PHP extensions",
@@ -824,7 +824,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listPHPOptionsForAWebsiteV1",
+    "name": "agency-hosting_php_list-options-for-website",
     "title": "List PHP options for a website",
     "annotations": {
       "title": "List PHP options for a website",
@@ -854,7 +854,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_replaceWebsitePHPOptionsV1",
+    "name": "agency-hosting_php_replace-website-options",
     "title": "Replace website PHP options",
     "annotations": {
       "title": "Replace website PHP options",
@@ -908,7 +908,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAvailablePHPVersionsForAnOrderV1",
+    "name": "agency-hosting_php_list-versions-for-order",
     "title": "List available PHP versions for an order",
     "annotations": {
       "title": "List available PHP versions for an order",
@@ -938,7 +938,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAvailablePHPVersionsForAWebsiteV1",
+    "name": "agency-hosting_php_list-versions-for-website",
     "title": "List available PHP versions for a website",
     "annotations": {
       "title": "List available PHP versions for a website",
@@ -968,7 +968,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_updateWebsitePHPVersionV1",
+    "name": "agency-hosting_php_update-website-version",
     "title": "Update website PHP version",
     "annotations": {
       "title": "Update website PHP version",
@@ -1004,7 +1004,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createANewWebsiteV1",
+    "name": "agency-hosting_website-setups_create",
     "title": "Create a new website",
     "annotations": {
       "title": "Create a new website",
@@ -1120,7 +1120,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getWebsiteSetupStatusV1",
+    "name": "agency-hosting_website-setups_status",
     "title": "Get website setup status",
     "annotations": {
       "title": "Get website setup status",
@@ -1155,7 +1155,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_reinstallWebsiteSSLV1",
+    "name": "agency-hosting_ssl_reinstall-website",
     "title": "Reinstall website SSL",
     "annotations": {
       "title": "Reinstall website SSL",
@@ -1190,7 +1190,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_installWebsiteSSLV1",
+    "name": "agency-hosting_ssl_install-website",
     "title": "Install website SSL",
     "annotations": {
       "title": "Install website SSL",
@@ -1225,7 +1225,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getWebsiteSSLStatusV1",
+    "name": "agency-hosting_ssl_website-status",
     "title": "Get website SSL status",
     "annotations": {
       "title": "Get website SSL status",
@@ -1260,7 +1260,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_uninstallWebsiteSSLV1",
+    "name": "agency-hosting_ssl_uninstall-website",
     "title": "Uninstall website SSL",
     "annotations": {
       "title": "Uninstall website SSL",
@@ -1296,7 +1296,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_buildWebsiteNodeJSAssetsV1",
+    "name": "agency-hosting_websites_build-nodejs-assets",
     "title": "Build website NodeJS assets",
     "annotations": {
       "title": "Build website NodeJS assets",
@@ -1331,7 +1331,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_clearWebsiteCacheV1",
+    "name": "agency-hosting_cache_clear-website",
     "title": "Clear website cache",
     "annotations": {
       "title": "Clear website cache",
@@ -1362,7 +1362,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listWebsiteCronJobsV1",
+    "name": "agency-hosting_cron-jobs_list-website",
     "title": "List website cron jobs",
     "annotations": {
       "title": "List website cron jobs",
@@ -1400,7 +1400,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createWebsiteCronJobV1",
+    "name": "agency-hosting_cron-jobs_create-website",
     "title": "Create website cron job",
     "annotations": {
       "title": "Create website cron job",
@@ -1440,7 +1440,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteWebsiteCronJobV1",
+    "name": "agency-hosting_cron-jobs_delete-website",
     "title": "Delete website cron job",
     "annotations": {
       "title": "Delete website cron job",
@@ -1476,7 +1476,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listWebsiteDatabasesV1",
+    "name": "agency-hosting_databases_list-website",
     "title": "List website databases",
     "annotations": {
       "title": "List website databases",
@@ -1514,7 +1514,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createWebsiteDatabaseV1",
+    "name": "agency-hosting_databases_create-website",
     "title": "Create website database",
     "annotations": {
       "title": "Create website database",
@@ -1559,7 +1559,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteWebsiteDatabaseV1",
+    "name": "agency-hosting_databases_delete-website",
     "title": "Delete website database",
     "annotations": {
       "title": "Delete website database",
@@ -1595,7 +1595,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createWebsiteDatabaseUserV1",
+    "name": "agency-hosting_databases_create-website-user",
     "title": "Create website database user",
     "annotations": {
       "title": "Create website database user",
@@ -1644,7 +1644,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteWebsiteDatabaseUserV1",
+    "name": "agency-hosting_databases_delete-website-user",
     "title": "Delete website database user",
     "annotations": {
       "title": "Delete website database user",
@@ -1685,7 +1685,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getWebsiteDetailsV1",
+    "name": "agency-hosting_websites_get",
     "title": "Get website details",
     "annotations": {
       "title": "Get website details",
@@ -1715,7 +1715,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteWebsiteV1",
+    "name": "agency-hosting_websites_delete",
     "title": "Delete website",
     "annotations": {
       "title": "Delete website",
@@ -1746,7 +1746,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAgencyPlanWebsitesV1",
+    "name": "agency-hosting_websites_list-plan",
     "title": "List Agency Plan websites",
     "annotations": {
       "title": "List Agency Plan websites",
@@ -1820,7 +1820,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listWebsiteProcessesV1",
+    "name": "agency-hosting_websites_list-processes",
     "title": "List website processes",
     "annotations": {
       "title": "List website processes",
@@ -1850,7 +1850,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_changeWordPressVersionV1",
+    "name": "agency-hosting_wordpress_change-version",
     "title": "Change WordPress version",
     "annotations": {
       "title": "Change WordPress version",
@@ -1886,7 +1886,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getWordPressSettingsV1",
+    "name": "agency-hosting_wordpress_settings",
     "title": "Get WordPress settings",
     "annotations": {
       "title": "Get WordPress settings",
@@ -1916,7 +1916,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAvailableWordPressVersionsV1",
+    "name": "agency-hosting_wordpress_list-versions",
     "title": "List available WordPress versions",
     "annotations": {
       "title": "List available WordPress versions",
@@ -1946,7 +1946,7 @@ const tools: OpenApiTool[] = [
     "group": "agency-hosting"
   },
   {
-    "name": "billing_getCatalogItemListV1",
+    "name": "billing_catalog_list",
     "title": "Get catalog item list",
     "annotations": {
       "title": "Get catalog item list",
@@ -1983,7 +1983,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_createPurchaseOrderV1",
+    "name": "billing_orders_create-purchase",
     "title": "Create purchase order",
     "annotations": {
       "title": "Create purchase order",
@@ -2042,7 +2042,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_setDefaultPaymentMethodV1",
+    "name": "billing_payment-methods_set-default",
     "title": "Set default payment method",
     "annotations": {
       "title": "Set default payment method",
@@ -2072,7 +2072,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_deletePaymentMethodV1",
+    "name": "billing_payment-methods_delete",
     "title": "Delete payment method",
     "annotations": {
       "title": "Delete payment method",
@@ -2103,7 +2103,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_getPaymentMethodListV1",
+    "name": "billing_payment-methods_list",
     "title": "Get payment method list",
     "annotations": {
       "title": "Get payment method list",
@@ -2126,7 +2126,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_getSubscriptionListV1",
+    "name": "billing_subscriptions_list",
     "title": "Get subscription list",
     "annotations": {
       "title": "Get subscription list",
@@ -2149,7 +2149,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_disableAutoRenewalV1",
+    "name": "billing_subscriptions_disable-auto-renewal",
     "title": "Disable auto-renewal",
     "annotations": {
       "title": "Disable auto-renewal",
@@ -2180,7 +2180,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_enableAutoRenewalV1",
+    "name": "billing_subscriptions_enable-auto-renewal",
     "title": "Enable auto-renewal",
     "annotations": {
       "title": "Enable auto-renewal",
@@ -2211,7 +2211,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "billing_renewSubscriptionV1",
+    "name": "billing_subscriptions_renew",
     "title": "Renew subscription",
     "annotations": {
       "title": "Renew subscription",
@@ -2253,7 +2253,7 @@ const tools: OpenApiTool[] = [
     "group": "billing"
   },
   {
-    "name": "DNS_getDNSSnapshotV1",
+    "name": "dns_snapshots_get",
     "title": "Get DNS snapshot",
     "annotations": {
       "title": "Get DNS snapshot",
@@ -2288,7 +2288,7 @@ const tools: OpenApiTool[] = [
     "group": "dns"
   },
   {
-    "name": "DNS_getDNSSnapshotListV1",
+    "name": "dns_snapshots_list",
     "title": "Get DNS snapshot list",
     "annotations": {
       "title": "Get DNS snapshot list",
@@ -2318,7 +2318,7 @@ const tools: OpenApiTool[] = [
     "group": "dns"
   },
   {
-    "name": "DNS_restoreDNSSnapshotV1",
+    "name": "dns_snapshots_restore",
     "title": "Restore DNS snapshot",
     "annotations": {
       "title": "Restore DNS snapshot",
@@ -2353,7 +2353,7 @@ const tools: OpenApiTool[] = [
     "group": "dns"
   },
   {
-    "name": "DNS_getDNSRecordsV1",
+    "name": "dns_records_list",
     "title": "Get DNS records",
     "annotations": {
       "title": "Get DNS records",
@@ -2383,7 +2383,7 @@ const tools: OpenApiTool[] = [
     "group": "dns"
   },
   {
-    "name": "DNS_updateDNSRecordsV1",
+    "name": "dns_records_update",
     "title": "Update DNS records",
     "annotations": {
       "title": "Update DNS records",
@@ -2475,7 +2475,7 @@ const tools: OpenApiTool[] = [
     "group": "dns"
   },
   {
-    "name": "DNS_deleteDNSRecordsV1",
+    "name": "dns_records_delete",
     "title": "Delete DNS records",
     "annotations": {
       "title": "Delete DNS records",
@@ -2506,7 +2506,7 @@ const tools: OpenApiTool[] = [
     "group": "dns"
   },
   {
-    "name": "DNS_resetDNSRecordsV1",
+    "name": "dns_records_reset",
     "title": "Reset DNS records",
     "annotations": {
       "title": "Reset DNS records",
@@ -2552,7 +2552,7 @@ const tools: OpenApiTool[] = [
     "group": "dns"
   },
   {
-    "name": "DNS_validateDNSRecordsV1",
+    "name": "dns_records_validate",
     "title": "Validate DNS records",
     "annotations": {
       "title": "Validate DNS records",
@@ -2643,7 +2643,7 @@ const tools: OpenApiTool[] = [
     "group": "dns"
   },
   {
-    "name": "v2_getDomainVerificationsDIRECT",
+    "name": "domains_verifications_direct",
     "title": "Get domain verifications",
     "annotations": {
       "title": "Get domain verifications",
@@ -2666,7 +2666,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_suggestDomainNamesFromADescriptionV1",
+    "name": "domains_availability_suggest-names-from-description",
     "title": "Suggest domain names from a description",
     "annotations": {
       "title": "Suggest domain names from a description",
@@ -2701,7 +2701,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_suggestDomainNamesFromADomainV1",
+    "name": "domains_availability_suggest-names-from",
     "title": "Suggest domain names from a domain",
     "annotations": {
       "title": "Suggest domain names from a domain",
@@ -2736,7 +2736,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_checkDomainAvailabilityV1",
+    "name": "domains_availability_check",
     "title": "Check domain availability",
     "annotations": {
       "title": "Check domain availability",
@@ -2779,7 +2779,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainForwardingV1",
+    "name": "domains_forwarding_get",
     "title": "Get domain forwarding",
     "annotations": {
       "title": "Get domain forwarding",
@@ -2809,7 +2809,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_updateDomainForwardingV1",
+    "name": "domains_forwarding_update",
     "title": "Update domain forwarding",
     "annotations": {
       "title": "Update domain forwarding",
@@ -2854,7 +2854,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_deleteDomainForwardingV1",
+    "name": "domains_forwarding_delete",
     "title": "Delete domain forwarding",
     "annotations": {
       "title": "Delete domain forwarding",
@@ -2885,7 +2885,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_createDomainForwardingV1",
+    "name": "domains_forwarding_create",
     "title": "Create domain forwarding",
     "annotations": {
       "title": "Create domain forwarding",
@@ -2929,7 +2929,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getPendingIRTPVerificationV1",
+    "name": "domains_whois_pending-irtp-verification",
     "title": "Get pending IRTP verification",
     "annotations": {
       "title": "Get pending IRTP verification",
@@ -2959,7 +2959,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_cancelPendingIRTPVerificationV1",
+    "name": "domains_whois_cancel-pending-irtp-verification",
     "title": "Cancel pending IRTP verification",
     "annotations": {
       "title": "Cancel pending IRTP verification",
@@ -2990,7 +2990,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getIncomingDomainMoveV1",
+    "name": "domains_move_incoming",
     "title": "Get incoming domain move",
     "annotations": {
       "title": "Get incoming domain move",
@@ -3024,7 +3024,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_acceptIncomingDomainMoveV1",
+    "name": "domains_move_accept-incoming",
     "title": "Accept incoming domain move",
     "annotations": {
       "title": "Accept incoming domain move",
@@ -3084,7 +3084,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_rejectIncomingDomainMoveV1",
+    "name": "domains_move_reject-incoming",
     "title": "Reject incoming domain move",
     "annotations": {
       "title": "Reject incoming domain move",
@@ -3115,7 +3115,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getIncomingDomainMoveListV1",
+    "name": "domains_move_incoming-list",
     "title": "Get incoming domain move list",
     "annotations": {
       "title": "Get incoming domain move list",
@@ -3138,7 +3138,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getOutgoingDomainMoveV1",
+    "name": "domains_move_outgoing",
     "title": "Get outgoing domain move",
     "annotations": {
       "title": "Get outgoing domain move",
@@ -3168,7 +3168,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_startOutgoingDomainMoveV1",
+    "name": "domains_move_start-outgoing",
     "title": "Start outgoing domain move",
     "annotations": {
       "title": "Start outgoing domain move",
@@ -3203,7 +3203,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_cancelOutgoingDomainMoveV1",
+    "name": "domains_move_cancel-outgoing",
     "title": "Cancel outgoing domain move",
     "annotations": {
       "title": "Cancel outgoing domain move",
@@ -3234,7 +3234,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getOutgoingDomainMoveListV1",
+    "name": "domains_move_outgoing-list",
     "title": "Get outgoing domain move list",
     "annotations": {
       "title": "Get outgoing domain move list",
@@ -3257,7 +3257,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainAuthorizationCodeV1",
+    "name": "domains_portfolio_authorization-code",
     "title": "Get domain authorization code",
     "annotations": {
       "title": "Get domain authorization code",
@@ -3287,7 +3287,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_claimFreeDomainV1",
+    "name": "domains_portfolio_claim-free",
     "title": "Claim free domain",
     "annotations": {
       "title": "Claim free domain",
@@ -3344,7 +3344,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_enableDomainLockV1",
+    "name": "domains_portfolio_enable-lock",
     "title": "Enable domain lock",
     "annotations": {
       "title": "Enable domain lock",
@@ -3375,7 +3375,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_disableDomainLockV1",
+    "name": "domains_portfolio_disable-lock",
     "title": "Disable domain lock",
     "annotations": {
       "title": "Disable domain lock",
@@ -3406,7 +3406,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainDetailsV1",
+    "name": "domains_portfolio_get",
     "title": "Get domain details",
     "annotations": {
       "title": "Get domain details",
@@ -3436,7 +3436,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainListV1",
+    "name": "domains_portfolio_list",
     "title": "Get domain list",
     "annotations": {
       "title": "Get domain list",
@@ -3459,7 +3459,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_purchaseNewDomainV1",
+    "name": "domains_portfolio_purchase",
     "title": "Purchase new domain",
     "annotations": {
       "title": "Purchase new domain",
@@ -3533,7 +3533,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_enablePrivacyProtectionV1",
+    "name": "domains_portfolio_enable-privacy-protection",
     "title": "Enable privacy protection",
     "annotations": {
       "title": "Enable privacy protection",
@@ -3564,7 +3564,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_disablePrivacyProtectionV1",
+    "name": "domains_portfolio_disable-privacy-protection",
     "title": "Disable privacy protection",
     "annotations": {
       "title": "Disable privacy protection",
@@ -3595,7 +3595,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getDomainRenewalInformationV1",
+    "name": "domains_portfolio_renewal-information",
     "title": "Get domain renewal information",
     "annotations": {
       "title": "Get domain renewal information",
@@ -3625,7 +3625,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_completeDomainSetupV1",
+    "name": "domains_portfolio_complete-setup",
     "title": "Complete domain setup",
     "annotations": {
       "title": "Complete domain setup",
@@ -3682,7 +3682,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_updateDomainNameserversV1",
+    "name": "domains_portfolio_update-nameservers",
     "title": "Update domain nameservers",
     "annotations": {
       "title": "Update domain nameservers",
@@ -3731,7 +3731,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_claimFreeDomainTransferV1",
+    "name": "domains_transfer_claim-free",
     "title": "Claim free domain transfer",
     "annotations": {
       "title": "Claim free domain transfer",
@@ -3792,7 +3792,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getTransferV1",
+    "name": "domains_transfer_get",
     "title": "Get transfer",
     "annotations": {
       "title": "Get transfer",
@@ -3822,7 +3822,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getTransferListV1",
+    "name": "domains_transfer_list",
     "title": "Get transfer list",
     "annotations": {
       "title": "Get transfer list",
@@ -3845,7 +3845,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_changeWHOISProfileForDomainV1",
+    "name": "domains_whois_change-for",
     "title": "Change WHOIS profile for domain",
     "annotations": {
       "title": "Change WHOIS profile for domain",
@@ -3896,7 +3896,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_setWHOISProfileAsDefaultV1",
+    "name": "domains_whois_set-as-default",
     "title": "Set WHOIS profile as default",
     "annotations": {
       "title": "Set WHOIS profile as default",
@@ -3927,7 +3927,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_unsetDefaultWHOISProfileV1",
+    "name": "domains_whois_unset-default",
     "title": "Unset default WHOIS profile",
     "annotations": {
       "title": "Unset default WHOIS profile",
@@ -3958,7 +3958,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getWHOISProfileV1",
+    "name": "domains_whois_get",
     "title": "Get WHOIS profile",
     "annotations": {
       "title": "Get WHOIS profile",
@@ -3988,7 +3988,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_deleteWHOISProfileV1",
+    "name": "domains_whois_delete",
     "title": "Delete WHOIS profile",
     "annotations": {
       "title": "Delete WHOIS profile",
@@ -4019,7 +4019,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getWHOISProfileListV1",
+    "name": "domains_whois_list",
     "title": "Get WHOIS profile list",
     "annotations": {
       "title": "Get WHOIS profile list",
@@ -4047,7 +4047,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_createWHOISProfileV1",
+    "name": "domains_whois_create",
     "title": "Create WHOIS profile",
     "annotations": {
       "title": "Create WHOIS profile",
@@ -4102,7 +4102,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "domains_getWHOISProfileUsageV1",
+    "name": "domains_whois_usage",
     "title": "Get WHOIS profile usage",
     "annotations": {
       "title": "Get WHOIS profile usage",
@@ -4132,7 +4132,7 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
-    "name": "ecommerce_listDiscountsV1",
+    "name": "ecommerce_discounts_list",
     "title": "List discounts",
     "annotations": {
       "title": "List discounts",
@@ -4178,7 +4178,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createADiscountV1",
+    "name": "ecommerce_discounts_create",
     "title": "Create a discount",
     "annotations": {
       "title": "Create a discount",
@@ -4260,7 +4260,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_getCustomStorefrontSetupInstructionsV1",
+    "name": "ecommerce_miscellaneous_custom-storefront-setup-instructions",
     "title": "Get custom storefront setup instructions",
     "annotations": {
       "title": "Get custom storefront setup instructions",
@@ -4283,7 +4283,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_cancelAnOrderV1",
+    "name": "ecommerce_orders_cancel",
     "title": "Cancel an order",
     "annotations": {
       "title": "Cancel an order",
@@ -4322,7 +4322,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_fulfilAnOrderV1",
+    "name": "ecommerce_orders_fulfil",
     "title": "Fulfil an order",
     "annotations": {
       "title": "Fulfil an order",
@@ -4391,7 +4391,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listStoreOrdersV1",
+    "name": "ecommerce_orders_list-store",
     "title": "List store orders",
     "annotations": {
       "title": "List store orders",
@@ -4497,7 +4497,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_retrieveAnOrderV1",
+    "name": "ecommerce_orders_retrieve",
     "title": "Retrieve an order",
     "annotations": {
       "title": "Retrieve an order",
@@ -4532,7 +4532,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_enableManualPaymentMethodV1",
+    "name": "ecommerce_payments_enable-manual-method",
     "title": "Enable manual payment method",
     "annotations": {
       "title": "Enable manual payment method",
@@ -4566,7 +4566,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createAPaymentProviderConnectLinkV1",
+    "name": "ecommerce_payments_create-provider-connect-link",
     "title": "Create a payment provider connect link",
     "annotations": {
       "title": "Create a payment provider connect link",
@@ -4601,7 +4601,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listStorePaymentProvidersV1",
+    "name": "ecommerce_payments_list-store-providers",
     "title": "List store payment providers",
     "annotations": {
       "title": "List store payment providers",
@@ -4635,7 +4635,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createAProductImageUploadURLV1",
+    "name": "ecommerce_products_create-image-upload-url",
     "title": "Create a product image upload URL",
     "annotations": {
       "title": "Create a product image upload URL",
@@ -4670,7 +4670,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_deleteAProductV1",
+    "name": "ecommerce_products_delete",
     "title": "Delete a product",
     "annotations": {
       "title": "Delete a product",
@@ -4706,7 +4706,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_updateAProductV1",
+    "name": "ecommerce_products_update",
     "title": "Update a product",
     "annotations": {
       "title": "Update a product",
@@ -4759,7 +4759,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createDigitalProductV1",
+    "name": "ecommerce_products_create-digital",
     "title": "Create digital product",
     "annotations": {
       "title": "Create digital product",
@@ -4811,7 +4811,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listProductsV1",
+    "name": "ecommerce_products_list",
     "title": "List products",
     "annotations": {
       "title": "List products",
@@ -4884,7 +4884,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createPhysicalProductV1",
+    "name": "ecommerce_products_create-physical",
     "title": "Create physical product",
     "annotations": {
       "title": "Create physical product",
@@ -4932,7 +4932,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_uploadAndAttachAProductImageV1",
+    "name": "ecommerce_products_upload-and-attach-image",
     "title": "Upload and attach a product image",
     "annotations": {
       "title": "Upload and attach a product image",
@@ -4979,7 +4979,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listSalesChannelsV1",
+    "name": "ecommerce_sales-channels_list",
     "title": "List sales channels",
     "annotations": {
       "title": "List sales channels",
@@ -5009,7 +5009,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createASalesChannelV1",
+    "name": "ecommerce_sales-channels_create",
     "title": "Create a sales channel",
     "annotations": {
       "title": "Create a sales channel",
@@ -5056,7 +5056,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_updateSalesChannelV1",
+    "name": "ecommerce_sales-channels_update",
     "title": "Update sales channel",
     "annotations": {
       "title": "Update sales channel",
@@ -5100,7 +5100,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_setStoreShippingV1",
+    "name": "ecommerce_shipping_set-store",
     "title": "Set store shipping",
     "annotations": {
       "title": "Set store shipping",
@@ -5135,7 +5135,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_deleteStoreV1",
+    "name": "ecommerce_stores_delete",
     "title": "Delete store",
     "annotations": {
       "title": "Delete store",
@@ -5166,7 +5166,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_getStoresV1",
+    "name": "ecommerce_stores_list",
     "title": "Get stores",
     "annotations": {
       "title": "Get stores",
@@ -5194,7 +5194,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createStoreV1",
+    "name": "ecommerce_stores_create",
     "title": "Create store",
     "annotations": {
       "title": "Create store",
@@ -5255,7 +5255,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_getStoreMetadataV1",
+    "name": "ecommerce_stores_metadata",
     "title": "Get store metadata",
     "annotations": {
       "title": "Get store metadata",
@@ -5285,7 +5285,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_updateProductVariantsInBatchV1",
+    "name": "ecommerce_product-variants_update-in-batch",
     "title": "Update product variants in batch",
     "annotations": {
       "title": "Update product variants in batch",
@@ -5376,7 +5376,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_deleteAProductVariantV1",
+    "name": "ecommerce_product-variants_delete",
     "title": "Delete a product variant",
     "annotations": {
       "title": "Delete a product variant",
@@ -5417,7 +5417,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_listProductVariantsV1",
+    "name": "ecommerce_product-variants_list",
     "title": "List product variants",
     "annotations": {
       "title": "List product variants",
@@ -5456,7 +5456,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "ecommerce_createAProductVariantV1",
+    "name": "ecommerce_product-variants_create",
     "title": "Create a product variant",
     "annotations": {
       "title": "Create a product variant",
@@ -5555,7 +5555,7 @@ const tools: OpenApiTool[] = [
     "group": "ecommerce"
   },
   {
-    "name": "horizons_cloneWebsiteV1",
+    "name": "horizons_websites_clone",
     "title": "Clone website",
     "annotations": {
       "title": "Clone website",
@@ -5585,7 +5585,7 @@ const tools: OpenApiTool[] = [
     "group": "horizons"
   },
   {
-    "name": "horizons_getWebsiteListV1",
+    "name": "horizons_websites_list",
     "title": "Get website list",
     "annotations": {
       "title": "Get website list",
@@ -5608,7 +5608,7 @@ const tools: OpenApiTool[] = [
     "group": "horizons"
   },
   {
-    "name": "horizons_createWebsiteV1",
+    "name": "horizons_websites_create",
     "title": "Create website",
     "annotations": {
       "title": "Create website",
@@ -5659,7 +5659,7 @@ const tools: OpenApiTool[] = [
     "group": "horizons"
   },
   {
-    "name": "horizons_editWebsiteV1",
+    "name": "horizons_websites_edit",
     "title": "Edit website",
     "annotations": {
       "title": "Edit website",
@@ -5715,7 +5715,7 @@ const tools: OpenApiTool[] = [
     "group": "horizons"
   },
   {
-    "name": "horizons_publishWebsiteV1",
+    "name": "horizons_websites_publish",
     "title": "Publish website",
     "annotations": {
       "title": "Publish website",
@@ -5745,7 +5745,7 @@ const tools: OpenApiTool[] = [
     "group": "horizons"
   },
   {
-    "name": "horizons_getWebsiteV1",
+    "name": "horizons_websites_get",
     "title": "Get website",
     "annotations": {
       "title": "Get website",
@@ -5775,7 +5775,7 @@ const tools: OpenApiTool[] = [
     "group": "horizons"
   },
   {
-    "name": "hosting_clearWebsiteCacheV1",
+    "name": "hosting_cache_clear-website",
     "title": "Clear website cache",
     "annotations": {
       "title": "Clear website cache",
@@ -5815,7 +5815,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_toggleCachelessModeV1",
+    "name": "hosting_cache_toggle-cacheless",
     "title": "Toggle cacheless mode",
     "annotations": {
       "title": "Toggle cacheless mode",
@@ -5856,7 +5856,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_toggleWebsiteCacheV1",
+    "name": "hosting_cache_toggle-website",
     "title": "Toggle website cache",
     "annotations": {
       "title": "Toggle website cache",
@@ -5897,7 +5897,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listAccountCronJobsV1",
+    "name": "hosting_cron-jobs_list",
     "title": "List account cron jobs",
     "annotations": {
       "title": "List account cron jobs",
@@ -5927,7 +5927,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_createAccountCronJobV1",
+    "name": "hosting_cron-jobs_create",
     "title": "Create account cron job",
     "annotations": {
       "title": "Create account cron job",
@@ -5967,7 +5967,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteAccountCronJobV1",
+    "name": "hosting_cron-jobs_delete",
     "title": "Delete account cron job",
     "annotations": {
       "title": "Delete account cron job",
@@ -6003,7 +6003,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getCronJobOutputV1",
+    "name": "hosting_cron-jobs_output",
     "title": "Get cron job output",
     "annotations": {
       "title": "Get cron job output",
@@ -6038,7 +6038,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_changeDatabasePasswordV1",
+    "name": "hosting_databases_change-password",
     "title": "Change database password",
     "annotations": {
       "title": "Change database password",
@@ -6079,7 +6079,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listAccountDatabasesV1",
+    "name": "hosting_databases_list",
     "title": "List account databases",
     "annotations": {
       "title": "List account databases",
@@ -6129,7 +6129,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_createAccountDatabaseV1",
+    "name": "hosting_databases_create",
     "title": "Create account database",
     "annotations": {
       "title": "Create account database",
@@ -6179,7 +6179,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteAccountDatabaseV1",
+    "name": "hosting_databases_delete",
     "title": "Delete account database",
     "annotations": {
       "title": "Delete account database",
@@ -6215,7 +6215,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_createDatabaseRemoteConnectionV1",
+    "name": "hosting_databases_create-remote-connection",
     "title": "Create database remote connection",
     "annotations": {
       "title": "Create database remote connection",
@@ -6255,7 +6255,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteDatabaseRemoteConnectionV1",
+    "name": "hosting_databases_delete-remote-connection",
     "title": "Delete database remote connection",
     "annotations": {
       "title": "Delete database remote connection",
@@ -6296,7 +6296,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listDatabaseRemoteConnectionsV1",
+    "name": "hosting_databases_list-remote-connections",
     "title": "List database remote connections",
     "annotations": {
       "title": "List database remote connections",
@@ -6330,7 +6330,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_repairDatabaseV1",
+    "name": "hosting_databases_repair",
     "title": "Repair database",
     "annotations": {
       "title": "Repair database",
@@ -6366,7 +6366,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_setupWebsiteDatabaseV1",
+    "name": "hosting_databases_setup-website",
     "title": "Setup website database",
     "annotations": {
       "title": "Setup website database",
@@ -6409,7 +6409,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getPhpMyAdminLinkV1",
+    "name": "hosting_databases_phpmyadmin-link",
     "title": "Get phpMyAdmin link",
     "annotations": {
       "title": "Get phpMyAdmin link",
@@ -6444,7 +6444,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listAvailableDatacentersV1",
+    "name": "hosting_datacenters_list",
     "title": "List available datacenters",
     "annotations": {
       "title": "List available datacenters",
@@ -6474,7 +6474,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_generateAFreeSubdomainV1",
+    "name": "hosting_domains_generate-free-subdomain",
     "title": "Generate a free subdomain",
     "annotations": {
       "title": "Generate a free subdomain",
@@ -6497,7 +6497,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsiteParkedDomainsV1",
+    "name": "hosting_domains_list-website-parked",
     "title": "List website parked domains",
     "annotations": {
       "title": "List website parked domains",
@@ -6532,7 +6532,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_createWebsiteParkedDomainV1",
+    "name": "hosting_domains_create-website-parked",
     "title": "Create website parked domain",
     "annotations": {
       "title": "Create website parked domain",
@@ -6572,7 +6572,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteWebsiteParkedDomainV1",
+    "name": "hosting_domains_delete-website-parked",
     "title": "Delete website parked domain",
     "annotations": {
       "title": "Delete website parked domain",
@@ -6613,7 +6613,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsiteSubdomainsV1",
+    "name": "hosting_domains_list-website-subdomains",
     "title": "List website subdomains",
     "annotations": {
       "title": "List website subdomains",
@@ -6648,7 +6648,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_createWebsiteSubdomainV1",
+    "name": "hosting_domains_create-website-subdomain",
     "title": "Create website subdomain",
     "annotations": {
       "title": "Create website subdomain",
@@ -6696,7 +6696,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteWebsiteSubdomainV1",
+    "name": "hosting_domains_delete-website-subdomain",
     "title": "Delete website subdomain",
     "annotations": {
       "title": "Delete website subdomain",
@@ -6737,7 +6737,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_verifyDomainOwnershipV1",
+    "name": "hosting_domains_verify-ownership",
     "title": "Verify domain ownership",
     "annotations": {
       "title": "Verify domain ownership",
@@ -6767,7 +6767,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_generateUploadURLV1",
+    "name": "hosting_files_generate-upload-url",
     "title": "Generate upload URL",
     "annotations": {
       "title": "Generate upload URL",
@@ -6802,7 +6802,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsiteFilesAndDirectoriesV1",
+    "name": "hosting_files_list-website-and-directories",
     "title": "List website files and directories",
     "annotations": {
       "title": "List website files and directories",
@@ -6867,7 +6867,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getWebsiteFileContentV1",
+    "name": "hosting_files_website-content",
     "title": "Get website file content",
     "annotations": {
       "title": "Get website file content",
@@ -6915,7 +6915,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getGitAutoDeploymentSettingsV1",
+    "name": "hosting_git_auto-deployment-settings",
     "title": "Get Git auto-deployment settings",
     "annotations": {
       "title": "Get Git auto-deployment settings",
@@ -6950,7 +6950,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_updateGitAutoDeploymentSettingsV1",
+    "name": "hosting_git_update-auto-deployment-settings",
     "title": "Update Git auto-deployment settings",
     "annotations": {
       "title": "Update Git auto-deployment settings",
@@ -7014,7 +7014,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteGitAutoDeploymentSettingsV1",
+    "name": "hosting_git_delete-auto-deployment-settings",
     "title": "Delete Git auto-deployment settings",
     "annotations": {
       "title": "Delete Git auto-deployment settings",
@@ -7050,7 +7050,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listGitInstallationsV1",
+    "name": "hosting_git_list-installations",
     "title": "List Git installations",
     "annotations": {
       "title": "List Git installations",
@@ -7092,7 +7092,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listGitInstallationRepositoriesV1",
+    "name": "hosting_git_list-installation-repositories",
     "title": "List Git installation repositories",
     "annotations": {
       "title": "List Git installation repositories",
@@ -7122,7 +7122,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listNodeJSBuildsV1",
+    "name": "hosting_nodejs_list-builds",
     "title": "List NodeJS builds",
     "annotations": {
       "title": "List NodeJS builds",
@@ -7179,7 +7179,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_startNode_jsBuildV1",
+    "name": "hosting_nodejs_start-build",
     "title": "Start Node.js build",
     "annotations": {
       "title": "Start Node.js build",
@@ -7315,7 +7315,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNode_jsBuildSettingsV1",
+    "name": "hosting_nodejs_build-settings",
     "title": "Get Node.js build settings",
     "annotations": {
       "title": "Get Node.js build settings",
@@ -7350,7 +7350,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_updateNode_jsBuildSettingsV1",
+    "name": "hosting_nodejs_update-build-settings",
     "title": "Update Node.js build settings",
     "annotations": {
       "title": "Update Node.js build settings",
@@ -7447,7 +7447,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNode_jsBuildSettingsFromArchiveV1",
+    "name": "hosting_nodejs_build-settings-from-archive",
     "title": "Get Node.js build settings from archive",
     "annotations": {
       "title": "Get Node.js build settings from archive",
@@ -7487,7 +7487,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listNode_jsEnvironmentVariablesV1",
+    "name": "hosting_nodejs_list-environment-variables",
     "title": "List Node.js environment variables",
     "annotations": {
       "title": "List Node.js environment variables",
@@ -7522,7 +7522,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_replaceNode_jsEnvironmentVariablesV1",
+    "name": "hosting_nodejs_replace-environment-variables",
     "title": "Replace Node.js environment variables",
     "annotations": {
       "title": "Replace Node.js environment variables",
@@ -7581,7 +7581,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_analyseFailedNode_jsBuildV1",
+    "name": "hosting_nodejs_analyse-failed-build",
     "title": "Analyse failed Node.js build",
     "annotations": {
       "title": "Analyse failed Node.js build",
@@ -7621,7 +7621,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNode_jsBuildDetailsV1",
+    "name": "hosting_nodejs_build",
     "title": "Get Node.js build details",
     "annotations": {
       "title": "Get Node.js build details",
@@ -7661,7 +7661,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNodeJSBuildLogsV1",
+    "name": "hosting_nodejs_build-logs",
     "title": "Get NodeJS build logs",
     "annotations": {
       "title": "Get NodeJS build logs",
@@ -7705,7 +7705,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getNode_jsRuntimeLogsV1",
+    "name": "hosting_nodejs_runtime-logs",
     "title": "Get Node.js runtime logs",
     "annotations": {
       "title": "Get Node.js runtime logs",
@@ -7774,7 +7774,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_clearNode_jsRuntimeLogsV1",
+    "name": "hosting_nodejs_clear-runtime-logs",
     "title": "Clear Node.js runtime logs",
     "annotations": {
       "title": "Clear Node.js runtime logs",
@@ -7810,7 +7810,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_restartNode_jsApplicationV1",
+    "name": "hosting_nodejs_restart-application",
     "title": "Restart Node.js application",
     "annotations": {
       "title": "Restart Node.js application",
@@ -7845,7 +7845,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listNode_jsVulnerabilitiesV1",
+    "name": "hosting_nodejs_list-vulnerabilities",
     "title": "List Node.js vulnerabilities",
     "annotations": {
       "title": "List Node.js vulnerabilities",
@@ -7895,7 +7895,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_patchNode_jsVulnerabilitiesV1",
+    "name": "hosting_nodejs_patch-vulnerabilities",
     "title": "Patch Node.js vulnerabilities",
     "annotations": {
       "title": "Patch Node.js vulnerabilities",
@@ -7939,7 +7939,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listOrdersV1",
+    "name": "hosting_orders_list",
     "title": "List orders",
     "annotations": {
       "title": "List orders",
@@ -7993,7 +7993,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_resetPHPExtensionsV1",
+    "name": "hosting_php_reset-extensions",
     "title": "Reset PHP extensions",
     "annotations": {
       "title": "Reset PHP extensions",
@@ -8029,7 +8029,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getPHPDetailsV1",
+    "name": "hosting_php_get",
     "title": "Get PHP details",
     "annotations": {
       "title": "Get PHP details",
@@ -8064,7 +8064,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getPHPInfoV1",
+    "name": "hosting_php_info",
     "title": "Get PHP info",
     "annotations": {
       "title": "Get PHP info",
@@ -8099,7 +8099,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_updatePHPExtensionsV1",
+    "name": "hosting_php_update-extensions",
     "title": "Update PHP extensions",
     "annotations": {
       "title": "Update PHP extensions",
@@ -8151,7 +8151,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_updatePHPOptionsV1",
+    "name": "hosting_php_update-options",
     "title": "Update PHP options",
     "annotations": {
       "title": "Update PHP options",
@@ -8193,7 +8193,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_updatePHPVersionV1",
+    "name": "hosting_php_update-version",
     "title": "Update PHP version",
     "annotations": {
       "title": "Update PHP version",
@@ -8234,7 +8234,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsiteRedirectsV1",
+    "name": "hosting_redirects_list-website",
     "title": "List website redirects",
     "annotations": {
       "title": "List website redirects",
@@ -8277,7 +8277,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_createWebsiteRedirectV1",
+    "name": "hosting_redirects_create-website",
     "title": "Create website redirect",
     "annotations": {
       "title": "Create website redirect",
@@ -8322,7 +8322,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteWebsiteRedirectV1",
+    "name": "hosting_redirects_delete-website",
     "title": "Delete website redirect",
     "annotations": {
       "title": "Delete website redirect",
@@ -8363,7 +8363,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_installSSLV1",
+    "name": "hosting_ssl_install",
     "title": "Install SSL",
     "annotations": {
       "title": "Install SSL",
@@ -8398,7 +8398,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_getSSLStatusV1",
+    "name": "hosting_ssl_status",
     "title": "Get SSL status",
     "annotations": {
       "title": "Get SSL status",
@@ -8433,7 +8433,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_toggleHTTPSRedirectV1",
+    "name": "hosting_ssl_toggle-https-redirect",
     "title": "Toggle HTTPS redirect",
     "annotations": {
       "title": "Toggle HTTPS redirect",
@@ -8474,7 +8474,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_uninstallSSLV1",
+    "name": "hosting_ssl_uninstall",
     "title": "Uninstall SSL",
     "annotations": {
       "title": "Uninstall SSL",
@@ -8510,7 +8510,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_listWebsitesV1",
+    "name": "hosting_websites_list",
     "title": "List websites",
     "annotations": {
       "title": "List websites",
@@ -8573,7 +8573,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_createWebsiteV1",
+    "name": "hosting_websites_create",
     "title": "Create website",
     "annotations": {
       "title": "Create website",
@@ -8612,7 +8612,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deployStaticSiteArchiveV1",
+    "name": "hosting_websites_deploy-static-site-archive",
     "title": "Deploy static site archive",
     "annotations": {
       "title": "Deploy static site archive",
@@ -8652,7 +8652,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_deleteWebsiteV1",
+    "name": "hosting_websites_delete",
     "title": "Delete website",
     "annotations": {
       "title": "Delete website",
@@ -8683,7 +8683,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "mail_createAliasV1",
+    "name": "mail_aliases_create-alias",
     "title": "Create alias",
     "annotations": {
       "title": "Create alias",
@@ -8718,7 +8718,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteAliasV1",
+    "name": "mail_aliases_delete-alias",
     "title": "Delete alias",
     "annotations": {
       "title": "Delete alias",
@@ -8749,7 +8749,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listAliasesV1",
+    "name": "mail_aliases_list",
     "title": "List aliases",
     "annotations": {
       "title": "List aliases",
@@ -8787,7 +8787,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createAPITokenV1",
+    "name": "mail_api-tokens_create",
     "title": "Create API token",
     "annotations": {
       "title": "Create API token",
@@ -8844,7 +8844,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_revokeAPITokenV1",
+    "name": "mail_api-tokens_revoke",
     "title": "Revoke API token",
     "annotations": {
       "title": "Revoke API token",
@@ -8875,7 +8875,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listAPITokensV1",
+    "name": "mail_api-tokens_list",
     "title": "List API tokens",
     "annotations": {
       "title": "List API tokens",
@@ -8911,7 +8911,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createAutoreplyV1",
+    "name": "mail_autoreplies_create",
     "title": "Create autoreply",
     "annotations": {
       "title": "Create autoreply",
@@ -8963,7 +8963,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_updateAutoreplyV1",
+    "name": "mail_autoreplies_update",
     "title": "Update autoreply",
     "annotations": {
       "title": "Update autoreply",
@@ -9016,7 +9016,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteAutoreplyV1",
+    "name": "mail_autoreplies_delete",
     "title": "Delete autoreply",
     "annotations": {
       "title": "Delete autoreply",
@@ -9047,7 +9047,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listAutorepliesV1",
+    "name": "mail_autoreplies_list",
     "title": "List autoreplies",
     "annotations": {
       "title": "List autoreplies",
@@ -9085,7 +9085,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createCatchAllV1",
+    "name": "mail_catchalls_create-catch-all",
     "title": "Create catch-all",
     "annotations": {
       "title": "Create catch-all",
@@ -9115,7 +9115,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteCatchAllV1",
+    "name": "mail_catchalls_delete-catch-all",
     "title": "Delete catch-all",
     "annotations": {
       "title": "Delete catch-all",
@@ -9146,7 +9146,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listCatchAllsV1",
+    "name": "mail_catchalls_list-catch-alls",
     "title": "List catch-alls",
     "annotations": {
       "title": "List catch-alls",
@@ -9184,7 +9184,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_resendCatchAllConfirmationV1",
+    "name": "mail_catchalls_resend-catch-all-confirmation",
     "title": "Resend catch-all confirmation",
     "annotations": {
       "title": "Resend catch-all confirmation",
@@ -9214,7 +9214,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createForwarderV1",
+    "name": "mail_forwarders_create",
     "title": "Create forwarder",
     "annotations": {
       "title": "Create forwarder",
@@ -9253,7 +9253,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteForwarderV1",
+    "name": "mail_forwarders_delete",
     "title": "Delete forwarder",
     "annotations": {
       "title": "Delete forwarder",
@@ -9284,7 +9284,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listForwardersV1",
+    "name": "mail_forwarders_list",
     "title": "List forwarders",
     "annotations": {
       "title": "List forwarders",
@@ -9322,7 +9322,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_resendForwarderConfirmationV1",
+    "name": "mail_forwarders_resend-confirmation",
     "title": "Resend forwarder confirmation",
     "annotations": {
       "title": "Resend forwarder confirmation",
@@ -9352,7 +9352,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_updateForwarderKeepCopySettingV1",
+    "name": "mail_forwarders_update-keep-copy-setting",
     "title": "Update forwarder keep-copy setting",
     "annotations": {
       "title": "Update forwarder keep-copy setting",
@@ -9388,7 +9388,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listAccessLogsV1",
+    "name": "mail_logs_list-access",
     "title": "List access logs",
     "annotations": {
       "title": "List access logs",
@@ -9463,7 +9463,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listActionLogsV1",
+    "name": "mail_logs_list-action",
     "title": "List action logs",
     "annotations": {
       "title": "List action logs",
@@ -9525,7 +9525,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listInboundLogsV1",
+    "name": "mail_logs_list-inbound",
     "title": "List inbound logs",
     "annotations": {
       "title": "List inbound logs",
@@ -9595,7 +9595,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listMailboxActionLogsV1",
+    "name": "mail_logs_list-mailbox-action",
     "title": "List mailbox action logs",
     "annotations": {
       "title": "List mailbox action logs",
@@ -9663,7 +9663,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listOutboundLogsV1",
+    "name": "mail_logs_list-outbound",
     "title": "List outbound logs",
     "annotations": {
       "title": "List outbound logs",
@@ -9733,7 +9733,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listMailboxesV1",
+    "name": "mail_mailboxes_list",
     "title": "List mailboxes",
     "annotations": {
       "title": "List mailboxes",
@@ -9783,7 +9783,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createMailboxV1",
+    "name": "mail_mailboxes_create-mailbox",
     "title": "Create mailbox",
     "annotations": {
       "title": "Create mailbox",
@@ -9823,7 +9823,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteMailboxV1",
+    "name": "mail_mailboxes_delete-mailbox",
     "title": "Delete mailbox",
     "annotations": {
       "title": "Delete mailbox",
@@ -9854,7 +9854,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_changeMailboxPasswordV1",
+    "name": "mail_mailboxes_change-mailbox-password",
     "title": "Change mailbox password",
     "annotations": {
       "title": "Change mailbox password",
@@ -9890,7 +9890,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listOrdersV1",
+    "name": "mail_orders_list",
     "title": "List orders",
     "annotations": {
       "title": "List orders",
@@ -9949,7 +9949,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_getOrderPlanV1",
+    "name": "mail_orders_plan",
     "title": "Get order plan",
     "annotations": {
       "title": "Get order plan",
@@ -9979,7 +9979,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_createWebhookV1",
+    "name": "mail_webhooks_create",
     "title": "Create webhook",
     "annotations": {
       "title": "Create webhook",
@@ -10044,7 +10044,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listWebhookDeliveryLogsV1",
+    "name": "mail_webhooks_list-delivery-logs",
     "title": "List webhook delivery logs",
     "annotations": {
       "title": "List webhook delivery logs",
@@ -10086,7 +10086,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_getWebhookV1",
+    "name": "mail_webhooks_get",
     "title": "Get webhook",
     "annotations": {
       "title": "Get webhook",
@@ -10116,7 +10116,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_deleteWebhookV1",
+    "name": "mail_webhooks_delete",
     "title": "Delete webhook",
     "annotations": {
       "title": "Delete webhook",
@@ -10147,7 +10147,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_updateWebhookV1",
+    "name": "mail_webhooks_update",
     "title": "Update webhook",
     "annotations": {
       "title": "Update webhook",
@@ -10210,7 +10210,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_listWebhooksV1",
+    "name": "mail_webhooks_list",
     "title": "List webhooks",
     "annotations": {
       "title": "List webhooks",
@@ -10261,7 +10261,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_regenerateWebhookSecretV1",
+    "name": "mail_webhooks_regenerate-secret",
     "title": "Regenerate webhook secret",
     "annotations": {
       "title": "Regenerate webhook secret",
@@ -10291,7 +10291,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "mail_testWebhookV1",
+    "name": "mail_webhooks_test",
     "title": "Test webhook",
     "annotations": {
       "title": "Test webhook",
@@ -10321,7 +10321,7 @@ const tools: OpenApiTool[] = [
     "group": "mail"
   },
   {
-    "name": "reach_getAutomationDetailsV1",
+    "name": "reach_automations_get",
     "title": "Get automation details",
     "annotations": {
       "title": "Get automation details",
@@ -10356,7 +10356,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listAutomationsV1",
+    "name": "reach_automations_list",
     "title": "List automations",
     "annotations": {
       "title": "List automations",
@@ -10411,7 +10411,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listAutomationStepsV1",
+    "name": "reach_automations_list-steps",
     "title": "List automation steps",
     "annotations": {
       "title": "List automation steps",
@@ -10446,7 +10446,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getCampaignDetailsV1",
+    "name": "reach_campaigns_get",
     "title": "Get campaign details",
     "annotations": {
       "title": "Get campaign details",
@@ -10481,7 +10481,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listCampaignsV1",
+    "name": "reach_campaigns_list",
     "title": "List campaigns",
     "annotations": {
       "title": "List campaigns",
@@ -10547,7 +10547,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createADraftCampaignV1",
+    "name": "reach_campaigns_create-draft",
     "title": "Create a draft campaign",
     "annotations": {
       "title": "Create a draft campaign",
@@ -10613,7 +10613,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getCampaignPerformanceV1",
+    "name": "reach_campaigns_performance",
     "title": "Get campaign performance",
     "annotations": {
       "title": "Get campaign performance",
@@ -10648,7 +10648,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteAContactV1",
+    "name": "reach_contacts_delete",
     "title": "Delete a contact",
     "annotations": {
       "title": "Delete a contact",
@@ -10679,7 +10679,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteAContactFieldV1",
+    "name": "reach_contact-fields_delete",
     "title": "Delete a contact field",
     "annotations": {
       "title": "Delete a contact field",
@@ -10715,7 +10715,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_updateAContactFieldV1",
+    "name": "reach_contact-fields_update",
     "title": "Update a contact field",
     "annotations": {
       "title": "Update a contact field",
@@ -10777,7 +10777,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listContactFieldsV1",
+    "name": "reach_contact-fields_list",
     "title": "List contact fields",
     "annotations": {
       "title": "List contact fields",
@@ -10807,7 +10807,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createAContactFieldV1",
+    "name": "reach_contact-fields_create",
     "title": "Create a contact field",
     "annotations": {
       "title": "Create a contact field",
@@ -10862,7 +10862,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listContactGroupsV1",
+    "name": "reach_contacts_list-groups",
     "title": "List contact groups",
     "annotations": {
       "title": "List contact groups",
@@ -10885,7 +10885,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listContactsV1",
+    "name": "reach_contacts_list",
     "title": "List contacts",
     "annotations": {
       "title": "List contacts",
@@ -10927,7 +10927,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createANewContactV1",
+    "name": "reach_contacts_create",
     "title": "Create a new contact",
     "annotations": {
       "title": "Create a new contact",
@@ -10981,7 +10981,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getContactDetailsV1",
+    "name": "reach_contacts_get",
     "title": "Get contact details",
     "annotations": {
       "title": "Get contact details",
@@ -11016,7 +11016,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteAProfileContactV1",
+    "name": "reach_contacts_delete-profile",
     "title": "Delete a profile contact",
     "annotations": {
       "title": "Delete a profile contact",
@@ -11052,7 +11052,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_updateAContactV1",
+    "name": "reach_contacts_update",
     "title": "Update a contact",
     "annotations": {
       "title": "Update a contact",
@@ -11147,7 +11147,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createContactsInBulkV1",
+    "name": "reach_contacts_create-in-bulk",
     "title": "Create contacts in bulk",
     "annotations": {
       "title": "Create contacts in bulk",
@@ -11219,7 +11219,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfileContactsV1",
+    "name": "reach_contacts_list-profile",
     "title": "List profile contacts",
     "annotations": {
       "title": "List profile contacts",
@@ -11275,7 +11275,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createNewContactsV1",
+    "name": "reach_contacts_create-bulk",
     "title": "Create new contacts",
     "annotations": {
       "title": "Create new contacts",
@@ -11334,7 +11334,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listSegmentsV1",
+    "name": "reach_segments_list",
     "title": "List segments",
     "annotations": {
       "title": "List segments",
@@ -11357,7 +11357,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createANewContactSegmentV1",
+    "name": "reach_segments_create",
     "title": "Create a new contact segment",
     "annotations": {
       "title": "Create a new contact segment",
@@ -11469,7 +11469,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_countProfileSegmentContactsV1",
+    "name": "reach_segments_count-profile-contacts",
     "title": "Count profile segment contacts",
     "annotations": {
       "title": "Count profile segment contacts",
@@ -11504,7 +11504,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfileSegmentContactsV1",
+    "name": "reach_segments_list-profile-contacts",
     "title": "List profile segment contacts",
     "annotations": {
       "title": "List profile segment contacts",
@@ -11547,7 +11547,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getProfileSegmentDetailsV1",
+    "name": "reach_segments_profile",
     "title": "Get profile segment details",
     "annotations": {
       "title": "Get profile segment details",
@@ -11582,7 +11582,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_updateAProfileSegmentV1",
+    "name": "reach_segments_update-profile",
     "title": "Update a profile segment",
     "annotations": {
       "title": "Update a profile segment",
@@ -11686,7 +11686,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteAProfileSegmentV1",
+    "name": "reach_segments_delete-profile",
     "title": "Delete a profile segment",
     "annotations": {
       "title": "Delete a profile segment",
@@ -11722,7 +11722,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listSegmentFilterAttributesV1",
+    "name": "reach_segments_list-filter-attributes",
     "title": "List segment filter attributes",
     "annotations": {
       "title": "List segment filter attributes",
@@ -11752,7 +11752,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_previewContactsMatchingConditionsV1",
+    "name": "reach_segments_preview-contacts-matching-conditions",
     "title": "Preview contacts matching conditions",
     "annotations": {
       "title": "Preview contacts matching conditions",
@@ -11878,7 +11878,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfileSegmentsV1",
+    "name": "reach_segments_list-profile",
     "title": "List profile segments",
     "annotations": {
       "title": "List profile segments",
@@ -11924,7 +11924,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createAProfileSegmentV1",
+    "name": "reach_segments_create-profile",
     "title": "Create a profile segment",
     "annotations": {
       "title": "Create a profile segment",
@@ -12024,7 +12024,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listSegmentContactsV1",
+    "name": "reach_segments_list-contacts",
     "title": "List segment contacts",
     "annotations": {
       "title": "List segment contacts",
@@ -12062,7 +12062,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getSegmentDetailsV1",
+    "name": "reach_segments_get",
     "title": "Get segment details",
     "annotations": {
       "title": "Get segment details",
@@ -12092,7 +12092,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_assignAContactToATagV1",
+    "name": "reach_tags_assign-contact-to",
     "title": "Assign a contact to a tag",
     "annotations": {
       "title": "Assign a contact to a tag",
@@ -12132,7 +12132,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_removeAContactFromATagV1",
+    "name": "reach_tags_remove-contact-from",
     "title": "Remove a contact from a tag",
     "annotations": {
       "title": "Remove a contact from a tag",
@@ -12173,7 +12173,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_assignContactsToATagV1",
+    "name": "reach_tags_assign-contacts-to",
     "title": "Assign contacts to a tag",
     "annotations": {
       "title": "Assign contacts to a tag",
@@ -12220,7 +12220,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_removeContactsFromATagV1",
+    "name": "reach_tags_remove-contacts-from",
     "title": "Remove contacts from a tag",
     "annotations": {
       "title": "Remove contacts from a tag",
@@ -12256,7 +12256,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteATagV1",
+    "name": "reach_tags_delete",
     "title": "Delete a tag",
     "annotations": {
       "title": "Delete a tag",
@@ -12292,7 +12292,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_renameATagV1",
+    "name": "reach_tags_rename",
     "title": "Rename a tag",
     "annotations": {
       "title": "Rename a tag",
@@ -12333,7 +12333,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfileTagsV1",
+    "name": "reach_tags_list-profile",
     "title": "List profile tags",
     "annotations": {
       "title": "List profile tags",
@@ -12363,7 +12363,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createOrFindTagsV1",
+    "name": "reach_tags_create-or-find",
     "title": "Create or find tags",
     "annotations": {
       "title": "Create or find tags",
@@ -12402,7 +12402,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getFormDetailsV1",
+    "name": "reach_forms_get",
     "title": "Get form details",
     "annotations": {
       "title": "Get form details",
@@ -12437,7 +12437,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_deleteFormV1",
+    "name": "reach_forms_delete",
     "title": "Delete form",
     "annotations": {
       "title": "Delete form",
@@ -12473,7 +12473,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listFormsV1",
+    "name": "reach_forms_list",
     "title": "List forms",
     "annotations": {
       "title": "List forms",
@@ -12511,7 +12511,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getProfileDomainDNSStatusV1",
+    "name": "reach_profiles_domain-dns-status",
     "title": "Get profile domain DNS status",
     "annotations": {
       "title": "Get profile domain DNS status",
@@ -12541,7 +12541,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getConnectedSendingDomainV1",
+    "name": "reach_profiles_connected-sending-domain",
     "title": "Get connected sending domain",
     "annotations": {
       "title": "Get connected sending domain",
@@ -12571,7 +12571,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listPlanFeatureAccessV1",
+    "name": "reach_profiles_list-plan-feature-access",
     "title": "List plan feature access",
     "annotations": {
       "title": "List plan feature access",
@@ -12601,7 +12601,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_getRemainingPlanLimitsV1",
+    "name": "reach_profiles_remaining-plan-limits",
     "title": "Get remaining plan limits",
     "annotations": {
       "title": "Get remaining plan limits",
@@ -12631,7 +12631,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listProfilesV1",
+    "name": "reach_profiles_list",
     "title": "List Profiles",
     "annotations": {
       "title": "List Profiles",
@@ -12654,7 +12654,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_listEmailTemplatesV1",
+    "name": "reach_templates_list-email",
     "title": "List email templates",
     "annotations": {
       "title": "List email templates",
@@ -12684,7 +12684,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "reach_createAnEmailTemplateV1",
+    "name": "reach_templates_create-email",
     "title": "Create an email template",
     "annotations": {
       "title": "Create an email template",
@@ -12723,7 +12723,7 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
-    "name": "VPS_getDataCenterListV1",
+    "name": "vps_data-centers_list",
     "title": "Get data center list",
     "annotations": {
       "title": "Get data center list",
@@ -12746,7 +12746,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getProjectContainersV1",
+    "name": "vps_docker_containers",
     "title": "Get project containers",
     "annotations": {
       "title": "Get project containers",
@@ -12781,7 +12781,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getProjectContentsV1",
+    "name": "vps_docker_get",
     "title": "Get project contents",
     "annotations": {
       "title": "Get project contents",
@@ -12816,7 +12816,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_deleteProjectV1",
+    "name": "vps_docker_delete",
     "title": "Delete project",
     "annotations": {
       "title": "Delete project",
@@ -12852,7 +12852,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getProjectListV1",
+    "name": "vps_docker_list",
     "title": "Get project list",
     "annotations": {
       "title": "Get project list",
@@ -12882,7 +12882,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_createNewProjectV1",
+    "name": "vps_docker_create",
     "title": "Create new project",
     "annotations": {
       "title": "Create new project",
@@ -12926,7 +12926,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getProjectLogsV1",
+    "name": "vps_docker_logs",
     "title": "Get project logs",
     "annotations": {
       "title": "Get project logs",
@@ -12961,7 +12961,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_restartProjectV1",
+    "name": "vps_docker_restart",
     "title": "Restart project",
     "annotations": {
       "title": "Restart project",
@@ -12996,7 +12996,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_startProjectV1",
+    "name": "vps_docker_start",
     "title": "Start project",
     "annotations": {
       "title": "Start project",
@@ -13031,7 +13031,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_stopProjectV1",
+    "name": "vps_docker_stop",
     "title": "Stop project",
     "annotations": {
       "title": "Stop project",
@@ -13066,7 +13066,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_updateProjectV1",
+    "name": "vps_docker_update",
     "title": "Update project",
     "annotations": {
       "title": "Update project",
@@ -13101,7 +13101,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_activateFirewallV1",
+    "name": "vps_firewall_activate",
     "title": "Activate firewall",
     "annotations": {
       "title": "Activate firewall",
@@ -13136,7 +13136,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_deactivateFirewallV1",
+    "name": "vps_firewall_deactivate",
     "title": "Deactivate firewall",
     "annotations": {
       "title": "Deactivate firewall",
@@ -13171,7 +13171,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getFirewallDetailsV1",
+    "name": "vps_firewall_get",
     "title": "Get firewall details",
     "annotations": {
       "title": "Get firewall details",
@@ -13201,7 +13201,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_deleteFirewallV1",
+    "name": "vps_firewall_delete",
     "title": "Delete firewall",
     "annotations": {
       "title": "Delete firewall",
@@ -13232,7 +13232,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getFirewallListV1",
+    "name": "vps_firewall_list",
     "title": "Get firewall list",
     "annotations": {
       "title": "Get firewall list",
@@ -13260,7 +13260,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_createNewFirewallV1",
+    "name": "vps_firewall_create",
     "title": "Create new firewall",
     "annotations": {
       "title": "Create new firewall",
@@ -13290,7 +13290,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_updateFirewallRuleV1",
+    "name": "vps_firewall_update-rule",
     "title": "Update firewall rule",
     "annotations": {
       "title": "Update firewall rule",
@@ -13365,7 +13365,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_deleteFirewallRuleV1",
+    "name": "vps_firewall_delete-rule",
     "title": "Delete firewall rule",
     "annotations": {
       "title": "Delete firewall rule",
@@ -13401,7 +13401,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_replaceAllFirewallRulesInGroupV1",
+    "name": "vps_firewall_replace-all-rules-in-group",
     "title": "Replace all firewall rules in group",
     "annotations": {
       "title": "Replace all firewall rules in group",
@@ -13445,7 +13445,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_createFirewallRuleV1",
+    "name": "vps_firewall_create-rule",
     "title": "Create firewall rule",
     "annotations": {
       "title": "Create firewall rule",
@@ -13514,7 +13514,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_syncFirewallToAllAssignedVMsV1",
+    "name": "vps_firewall_sync-to-all-assigned-v-ms",
     "title": "Sync firewall to all assigned VMs",
     "annotations": {
       "title": "Sync firewall to all assigned VMs",
@@ -13544,7 +13544,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_syncFirewallV1",
+    "name": "vps_firewall_sync",
     "title": "Sync firewall",
     "annotations": {
       "title": "Sync firewall",
@@ -13579,7 +13579,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getPostInstallScriptV1",
+    "name": "vps_post-install-scripts_get",
     "title": "Get post-install script",
     "annotations": {
       "title": "Get post-install script",
@@ -13609,7 +13609,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_updatePostInstallScriptV1",
+    "name": "vps_post-install-scripts_update",
     "title": "Update post-install script",
     "annotations": {
       "title": "Update post-install script",
@@ -13650,7 +13650,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_deletePostInstallScriptV1",
+    "name": "vps_post-install-scripts_delete",
     "title": "Delete post-install script",
     "annotations": {
       "title": "Delete post-install script",
@@ -13681,7 +13681,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getPostInstallScriptsV1",
+    "name": "vps_post-install-scripts_list",
     "title": "Get post-install scripts",
     "annotations": {
       "title": "Get post-install scripts",
@@ -13709,7 +13709,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_createPostInstallScriptV1",
+    "name": "vps_post-install-scripts_create",
     "title": "Create post-install script",
     "annotations": {
       "title": "Create post-install script",
@@ -13744,7 +13744,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_attachPublicKeyV1",
+    "name": "vps_public-keys_attach",
     "title": "Attach public key",
     "annotations": {
       "title": "Attach public key",
@@ -13783,7 +13783,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_deletePublicKeyV1",
+    "name": "vps_public-keys_delete",
     "title": "Delete public key",
     "annotations": {
       "title": "Delete public key",
@@ -13814,7 +13814,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getPublicKeysV1",
+    "name": "vps_public-keys_list",
     "title": "Get public keys",
     "annotations": {
       "title": "Get public keys",
@@ -13842,7 +13842,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_createPublicKeyV1",
+    "name": "vps_public-keys_create",
     "title": "Create public key",
     "annotations": {
       "title": "Create public key",
@@ -13877,7 +13877,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getTemplateDetailsV1",
+    "name": "vps_templates_get",
     "title": "Get template details",
     "annotations": {
       "title": "Get template details",
@@ -13907,7 +13907,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getTemplatesV1",
+    "name": "vps_templates_list",
     "title": "Get templates",
     "annotations": {
       "title": "Get templates",
@@ -13930,7 +13930,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getActionDetailsV1",
+    "name": "vps_actions_get",
     "title": "Get action details",
     "annotations": {
       "title": "Get action details",
@@ -13965,7 +13965,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getActionsV1",
+    "name": "vps_actions_list",
     "title": "Get actions",
     "annotations": {
       "title": "Get actions",
@@ -13999,7 +13999,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getAttachedPublicKeysV1",
+    "name": "vps_virtual-machines_attached-public-keys",
     "title": "Get attached public keys",
     "annotations": {
       "title": "Get attached public keys",
@@ -14033,7 +14033,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getBackupsV1",
+    "name": "vps_backups_list",
     "title": "Get backups",
     "annotations": {
       "title": "Get backups",
@@ -14067,7 +14067,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_restoreBackupV1",
+    "name": "vps_backups_restore",
     "title": "Restore backup",
     "annotations": {
       "title": "Restore backup",
@@ -14102,7 +14102,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_setHostnameV1",
+    "name": "vps_virtual-machines_set-hostname",
     "title": "Set hostname",
     "annotations": {
       "title": "Set hostname",
@@ -14138,7 +14138,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_resetHostnameV1",
+    "name": "vps_virtual-machines_reset-hostname",
     "title": "Reset hostname",
     "annotations": {
       "title": "Reset hostname",
@@ -14169,7 +14169,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getVirtualMachineDetailsV1",
+    "name": "vps_virtual-machines_get",
     "title": "Get virtual machine details",
     "annotations": {
       "title": "Get virtual machine details",
@@ -14199,7 +14199,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getVirtualMachinesV1",
+    "name": "vps_virtual-machines_list",
     "title": "Get virtual machines",
     "annotations": {
       "title": "Get virtual machines",
@@ -14222,7 +14222,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_purchaseNewVirtualMachineV1",
+    "name": "vps_virtual-machines_purchase",
     "title": "Purchase new virtual machine",
     "annotations": {
       "title": "Purchase new virtual machine",
@@ -14269,7 +14269,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getScanMetricsV1",
+    "name": "vps_monarx_scan-metrics",
     "title": "Get scan metrics",
     "annotations": {
       "title": "Get scan metrics",
@@ -14299,7 +14299,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_installMonarxV1",
+    "name": "vps_monarx_install",
     "title": "Install Monarx",
     "annotations": {
       "title": "Install Monarx",
@@ -14329,7 +14329,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_uninstallMonarxV1",
+    "name": "vps_monarx_uninstall",
     "title": "Uninstall Monarx",
     "annotations": {
       "title": "Uninstall Monarx",
@@ -14360,7 +14360,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getMetricsV1",
+    "name": "vps_virtual-machines_metrics",
     "title": "Get metrics",
     "annotations": {
       "title": "Get metrics",
@@ -14400,7 +14400,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_setNameserversV1",
+    "name": "vps_virtual-machines_set-nameservers",
     "title": "Set nameservers",
     "annotations": {
       "title": "Set nameservers",
@@ -14444,7 +14444,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_createPTRRecordV1",
+    "name": "vps_ptr_create",
     "title": "Create PTR record",
     "annotations": {
       "title": "Create PTR record",
@@ -14484,7 +14484,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_deletePTRRecordV1",
+    "name": "vps_ptr_delete",
     "title": "Delete PTR record",
     "annotations": {
       "title": "Delete PTR record",
@@ -14520,7 +14520,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_setPanelPasswordV1",
+    "name": "vps_virtual-machines_set-panel-password",
     "title": "Set panel password",
     "annotations": {
       "title": "Set panel password",
@@ -14556,7 +14556,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_startRecoveryModeV1",
+    "name": "vps_recovery_start",
     "title": "Start recovery mode",
     "annotations": {
       "title": "Start recovery mode",
@@ -14591,7 +14591,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_stopRecoveryModeV1",
+    "name": "vps_recovery_stop",
     "title": "Stop recovery mode",
     "annotations": {
       "title": "Stop recovery mode",
@@ -14622,7 +14622,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_recreateVirtualMachineV1",
+    "name": "vps_virtual-machines_recreate",
     "title": "Recreate virtual machine",
     "annotations": {
       "title": "Recreate virtual machine",
@@ -14669,7 +14669,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_restartVirtualMachineV1",
+    "name": "vps_virtual-machines_restart",
     "title": "Restart virtual machine",
     "annotations": {
       "title": "Restart virtual machine",
@@ -14699,7 +14699,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_setRootPasswordV1",
+    "name": "vps_virtual-machines_set-root-password",
     "title": "Set root password",
     "annotations": {
       "title": "Set root password",
@@ -14735,7 +14735,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_setupPurchasedVirtualMachineV1",
+    "name": "vps_virtual-machines_setup",
     "title": "Setup purchased virtual machine",
     "annotations": {
       "title": "Setup purchased virtual machine",
@@ -14817,7 +14817,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_getSnapshotV1",
+    "name": "vps_snapshots_get",
     "title": "Get snapshot",
     "annotations": {
       "title": "Get snapshot",
@@ -14847,7 +14847,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_createSnapshotV1",
+    "name": "vps_snapshots_create",
     "title": "Create snapshot",
     "annotations": {
       "title": "Create snapshot",
@@ -14877,7 +14877,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_deleteSnapshotV1",
+    "name": "vps_snapshots_delete",
     "title": "Delete snapshot",
     "annotations": {
       "title": "Delete snapshot",
@@ -14908,7 +14908,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_restoreSnapshotV1",
+    "name": "vps_snapshots_restore",
     "title": "Restore snapshot",
     "annotations": {
       "title": "Restore snapshot",
@@ -14938,7 +14938,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_startVirtualMachineV1",
+    "name": "vps_virtual-machines_start",
     "title": "Start virtual machine",
     "annotations": {
       "title": "Start virtual machine",
@@ -14968,7 +14968,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "VPS_stopVirtualMachineV1",
+    "name": "vps_virtual-machines_stop",
     "title": "Stop virtual machine",
     "annotations": {
       "title": "Stop virtual machine",
@@ -14998,7 +14998,7 @@ const tools: OpenApiTool[] = [
     "group": "vps"
   },
   {
-    "name": "hosting_showAIOptionStatusV1",
+    "name": "wordpress_ai-tools_show-option-status",
     "title": "Show AI option status",
     "annotations": {
       "title": "Show AI option status",
@@ -15041,7 +15041,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_setAIOptionStatusV1",
+    "name": "wordpress_ai-tools_set-option-status",
     "title": "Set AI option status",
     "annotations": {
       "title": "Set AI option status",
@@ -15091,7 +15091,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_checkIfWordPressInstallationsAreValidV1",
+    "name": "wordpress_installations_check-if-are-valid",
     "title": "Check if WordPress installations are valid",
     "annotations": {
       "title": "Check if WordPress installations are valid",
@@ -15134,7 +15134,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_deleteWordPressInstallationV1",
+    "name": "wordpress_installations_delete",
     "title": "Delete WordPress installation",
     "annotations": {
       "title": "Delete WordPress installation",
@@ -15170,7 +15170,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_detectWordPressInstallationsV1",
+    "name": "wordpress_installations_detect",
     "title": "Detect WordPress installations",
     "annotations": {
       "title": "Detect WordPress installations",
@@ -15200,7 +15200,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_importWordPressWebsiteV1",
+    "name": "wordpress_installations_import-website",
     "title": "Import WordPress website",
     "annotations": {
       "title": "Import WordPress website",
@@ -15245,7 +15245,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_installWordPressV1",
+    "name": "wordpress_installations_install",
     "title": "Install WordPress",
     "annotations": {
       "title": "Install WordPress",
@@ -15348,7 +15348,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listWordPressInstallationsV1",
+    "name": "wordpress_installations_list",
     "title": "List WordPress installations",
     "annotations": {
       "title": "List WordPress installations",
@@ -15389,7 +15389,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listAvailableWordPressCoreUpdatesV1",
+    "name": "wordpress_installations_list-core-updates",
     "title": "List available WordPress core updates",
     "annotations": {
       "title": "List available WordPress core updates",
@@ -15424,7 +15424,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_getInstallationJWTTokenV1",
+    "name": "wordpress_installations_jwt-token",
     "title": "Get installation JWT token",
     "annotations": {
       "title": "Get installation JWT token",
@@ -15459,7 +15459,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_showWordPressCoreVersionV1",
+    "name": "wordpress_installations_show-core-version",
     "title": "Show WordPress core version",
     "annotations": {
       "title": "Show WordPress core version",
@@ -15494,7 +15494,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_updateWordPressCoreV1",
+    "name": "wordpress_installations_update-core",
     "title": "Update WordPress core",
     "annotations": {
       "title": "Update WordPress core",
@@ -15537,7 +15537,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_purgeLiteSpeedCacheV1",
+    "name": "wordpress_litespeed-cache_purge-lite-speed",
     "title": "Purge LiteSpeed Cache",
     "annotations": {
       "title": "Purge LiteSpeed Cache",
@@ -15572,7 +15572,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_showLiteSpeedCacheStatusV1",
+    "name": "wordpress_litespeed-cache_show-lite-speed-status",
     "title": "Show LiteSpeed Cache status",
     "annotations": {
       "title": "Show LiteSpeed Cache status",
@@ -15607,7 +15607,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_createLoginLinksV1",
+    "name": "wordpress_login_create-links",
     "title": "Create login links",
     "annotations": {
       "title": "Create login links",
@@ -15642,7 +15642,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_showMaintenanceStatusV1",
+    "name": "wordpress_maintenance_show-status",
     "title": "Show maintenance status",
     "annotations": {
       "title": "Show maintenance status",
@@ -15677,7 +15677,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_toggleMaintenanceModeV1",
+    "name": "wordpress_maintenance_toggle",
     "title": "Toggle maintenance mode",
     "annotations": {
       "title": "Toggle maintenance mode",
@@ -15718,7 +15718,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_showMemcachedObjectCacheStatusV1",
+    "name": "wordpress_object-cache_show-memcached-status",
     "title": "Show Memcached object cache status",
     "annotations": {
       "title": "Show Memcached object cache status",
@@ -15753,7 +15753,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_toggleMemcachedObjectCacheV1",
+    "name": "wordpress_object-cache_toggle-memcached",
     "title": "Toggle Memcached object cache",
     "annotations": {
       "title": "Toggle Memcached object cache",
@@ -15794,7 +15794,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_activateWordPressPluginV1",
+    "name": "wordpress_plugins_activate",
     "title": "Activate WordPress plugin",
     "annotations": {
       "title": "Activate WordPress plugin",
@@ -15834,7 +15834,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_deactivateWordPressPluginV1",
+    "name": "wordpress_plugins_deactivate",
     "title": "Deactivate WordPress plugin",
     "annotations": {
       "title": "Deactivate WordPress plugin",
@@ -15874,7 +15874,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_deployWordPressPluginV1",
+    "name": "wordpress_plugins_deploy",
     "title": "Deploy WordPress plugin",
     "annotations": {
       "title": "Deploy WordPress plugin",
@@ -15919,7 +15919,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_installWordPressPluginsV1",
+    "name": "wordpress_plugins_install",
     "title": "Install WordPress plugins",
     "annotations": {
       "title": "Install WordPress plugins",
@@ -15963,7 +15963,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listAvailableWordPressPluginsV1",
+    "name": "wordpress_plugins_list",
     "title": "List available WordPress plugins",
     "annotations": {
       "title": "List available WordPress plugins",
@@ -15998,7 +15998,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listInstalledWordPressPluginsV1",
+    "name": "wordpress_plugins_list-installed",
     "title": "List installed WordPress plugins",
     "annotations": {
       "title": "List installed WordPress plugins",
@@ -16040,7 +16040,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_searchWordPressPluginsV1",
+    "name": "wordpress_plugins_search",
     "title": "Search WordPress plugins",
     "annotations": {
       "title": "Search WordPress plugins",
@@ -16070,7 +16070,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listSuggestedWordPressPluginsV1",
+    "name": "wordpress_plugins_list-suggested",
     "title": "List suggested WordPress plugins",
     "annotations": {
       "title": "List suggested WordPress plugins",
@@ -16098,7 +16098,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_checkIfWooCommerceIsInstalledV1",
+    "name": "wordpress_plugins_check-if-woo-commerce-is-installed",
     "title": "Check if WooCommerce is installed",
     "annotations": {
       "title": "Check if WooCommerce is installed",
@@ -16126,7 +16126,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_uninstallWordPressPluginsV1",
+    "name": "wordpress_plugins_uninstall",
     "title": "Uninstall WordPress plugins",
     "annotations": {
       "title": "Uninstall WordPress plugins",
@@ -16170,7 +16170,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_updateHostingerWordPressPluginV1",
+    "name": "wordpress_plugins_update-hostinger",
     "title": "Update Hostinger WordPress plugin",
     "annotations": {
       "title": "Update Hostinger WordPress plugin",
@@ -16217,7 +16217,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_updateWordPressPluginsV1",
+    "name": "wordpress_plugins_update",
     "title": "Update WordPress plugins",
     "annotations": {
       "title": "Update WordPress plugins",
@@ -16261,7 +16261,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_activateWordPressThemeV1",
+    "name": "wordpress_themes_activate",
     "title": "Activate WordPress theme",
     "annotations": {
       "title": "Activate WordPress theme",
@@ -16301,7 +16301,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_deployWordPressThemeV1",
+    "name": "wordpress_themes_deploy",
     "title": "Deploy WordPress theme",
     "annotations": {
       "title": "Deploy WordPress theme",
@@ -16350,7 +16350,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_installWordPressThemeV1",
+    "name": "wordpress_themes_install",
     "title": "Install WordPress theme",
     "annotations": {
       "title": "Install WordPress theme",
@@ -16410,7 +16410,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listInstalledWordPressThemesV1",
+    "name": "wordpress_themes_list-installed",
     "title": "List installed WordPress themes",
     "annotations": {
       "title": "List installed WordPress themes",
@@ -16445,7 +16445,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_listWordPressThemesV1",
+    "name": "wordpress_themes_list",
     "title": "List WordPress themes",
     "annotations": {
       "title": "List WordPress themes",
@@ -16477,7 +16477,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_uninstallWordPressThemesV1",
+    "name": "wordpress_themes_uninstall",
     "title": "Uninstall WordPress themes",
     "annotations": {
       "title": "Uninstall WordPress themes",
@@ -16521,7 +16521,7 @@ const tools: OpenApiTool[] = [
     "group": "wordpress"
   },
   {
-    "name": "hosting_updateWordPressThemesV1",
+    "name": "wordpress_themes_update",
     "title": "Update WordPress themes",
     "annotations": {
       "title": "Update WordPress themes",

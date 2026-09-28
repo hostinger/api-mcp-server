@@ -1,7 +1,7 @@
 // Auto-generated tool list for group: dns
 export default [
   {
-    "name": "DNS_getDNSSnapshotV1",
+    "name": "dns_snapshots_get",
     "title": "Get DNS snapshot",
     "annotations": {
       "title": "Get DNS snapshot",
@@ -36,7 +36,7 @@ export default [
     "group": "dns"
   },
   {
-    "name": "DNS_getDNSSnapshotListV1",
+    "name": "dns_snapshots_list",
     "title": "Get DNS snapshot list",
     "annotations": {
       "title": "Get DNS snapshot list",
@@ -66,7 +66,7 @@ export default [
     "group": "dns"
   },
   {
-    "name": "DNS_restoreDNSSnapshotV1",
+    "name": "dns_snapshots_restore",
     "title": "Restore DNS snapshot",
     "annotations": {
       "title": "Restore DNS snapshot",
@@ -101,7 +101,7 @@ export default [
     "group": "dns"
   },
   {
-    "name": "DNS_getDNSRecordsV1",
+    "name": "dns_records_list",
     "title": "Get DNS records",
     "annotations": {
       "title": "Get DNS records",
@@ -131,7 +131,7 @@ export default [
     "group": "dns"
   },
   {
-    "name": "DNS_updateDNSRecordsV1",
+    "name": "dns_records_update",
     "title": "Update DNS records",
     "annotations": {
       "title": "Update DNS records",
@@ -223,7 +223,7 @@ export default [
     "group": "dns"
   },
   {
-    "name": "DNS_deleteDNSRecordsV1",
+    "name": "dns_records_delete",
     "title": "Delete DNS records",
     "annotations": {
       "title": "Delete DNS records",
@@ -254,7 +254,7 @@ export default [
     "group": "dns"
   },
   {
-    "name": "DNS_resetDNSRecordsV1",
+    "name": "dns_records_reset",
     "title": "Reset DNS records",
     "annotations": {
       "title": "Reset DNS records",
@@ -300,7 +300,7 @@ export default [
     "group": "dns"
   },
   {
-    "name": "DNS_validateDNSRecordsV1",
+    "name": "dns_records_validate",
     "title": "Validate DNS records",
     "annotations": {
       "title": "Validate DNS records",

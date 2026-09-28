@@ -1,6 +1,6 @@
 {
   "name": "hostinger-api-mcp",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Hostinger API — manage domains, DNS, hosting, VPS, billing and more from Gemini CLI.",
   "mcpServers": {
     "hostinger": {

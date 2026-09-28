@@ -242,23 +242,23 @@ class MCPServer {
 
   private async executeCustomTool(tool: OpenApiTool, params: Record<string, any>): Promise<any> {
     switch (tool.name) {
-      case 'agency-hosting_deployNodeStaticWebsite':
+      case 'agency-hosting_deploy-node-static-website':
         return await this.handleNodeStaticDeploy(params);
-      case 'agency-hosting_deployPhpApplication':
+      case 'agency-hosting_deploy-php-application':
         return await this.handlePhpAppDeploy(params);
-      case 'hosting_importWordpressWebsite':
+      case 'hosting_import-wordpress-website':
         return await this.handleWordpressWebsiteImport(params);
-      case 'hosting_deployWordpressPlugin':
+      case 'hosting_deploy-wordpress-plugin':
         return await this.handleWordpressPluginDeploy(params);
-      case 'hosting_deployWordpressTheme':
+      case 'hosting_deploy-wordpress-theme':
         return await this.handleWordpressThemeDeploy(params);
-      case 'hosting_deployJsApplication':
+      case 'hosting_deploy-js-application':
         return await this.handleJavascriptApplicationDeploy(params);
-      case 'hosting_deployStaticWebsite':
+      case 'hosting_deploy-static-website':
         return await this.handleStaticWebsiteDeploy(params);
-      case 'hosting_listJsDeployments':
+      case 'hosting_list-js-deployments':
         return await this.handleListJavascriptDeployments(params);
-      case 'hosting_showJsDeploymentLogs':
+      case 'hosting_show-js-deployment-logs':
         return await this.handleShowJsDeploymentLogs(params);
       default:
         throw new Error(`Unknown custom tool: ${tool.name}`);

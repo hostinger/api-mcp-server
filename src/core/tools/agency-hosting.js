@@ -1,7 +1,7 @@
 // Auto-generated tool list for group: agency-hosting
 export default [
   {
-    "name": "agency-hosting_deployNodeStaticWebsite",
+    "name": "agency-hosting_deploy-node-static-website",
     "title": "Deploy node-static website",
     "annotations": {
       "title": "Deploy node-static website",
@@ -9,7 +9,7 @@ export default [
       "destructiveHint": true
     },
     "topic": "agency-hosting",
-    "description": "Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agencyHosting_deployPhpApplication instead. The website UID is automatically resolved from the domain.",
+    "description": "Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agency-hosting_deploy-php-application instead. The website UID is automatically resolved from the domain.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -41,7 +41,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deployPhpApplication",
+    "name": "agency-hosting_deploy-php-application",
     "title": "Deploy PHP application",
     "annotations": {
       "title": "Deploy PHP application",
@@ -49,7 +49,7 @@ export default [
       "destructiveHint": true
     },
     "topic": "agency-hosting",
-    "description": "Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For node-static websites that require a build step, use agencyHosting_deployNodeStaticWebsite instead. The website UID is automatically resolved from the domain.",
+    "description": "Deploy a PHP (or other non-build) Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites where the archive contents should be extracted and served as-is with no build step (e.g., PHP applications). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the import-archive process which overwrites the website contents with the archive contents. This operation is synchronous: the archive is extracted and deployed before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For node-static websites that require a build step, use agency-hosting_deploy-node-static-website instead. The website UID is automatically resolved from the domain.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -81,7 +81,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAvailableDatacentersV1",
+    "name": "agency-hosting_datacenters_list",
     "title": "List available datacenters",
     "annotations": {
       "title": "List available datacenters",
@@ -111,7 +111,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_changeWebsiteDomainV1",
+    "name": "agency-hosting_domains_change-website",
     "title": "Change website domain",
     "annotations": {
       "title": "Change website domain",
@@ -152,7 +152,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_linkDomainToWebsiteV1",
+    "name": "agency-hosting_domains_link-to-website",
     "title": "Link domain to website",
     "annotations": {
       "title": "Link domain to website",
@@ -187,7 +187,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listDomainsV1",
+    "name": "agency-hosting_domains_list",
     "title": "List domains",
     "annotations": {
       "title": "List domains",
@@ -227,7 +227,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_unlinkDomainFromWebsiteV1",
+    "name": "agency-hosting_domains_unlink-from-website",
     "title": "Unlink domain from website",
     "annotations": {
       "title": "Unlink domain from website",
@@ -263,7 +263,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_generateUploadURLV1",
+    "name": "agency-hosting_files_generate-upload-url",
     "title": "Generate upload URL",
     "annotations": {
       "title": "Generate upload URL",
@@ -293,7 +293,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_importWebsiteFromArchiveV1",
+    "name": "agency-hosting_files_import-website-from-archive",
     "title": "Import website from archive",
     "annotations": {
       "title": "Import website from archive",
@@ -328,7 +328,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAgencyPlanOrderDiskUsageMetricsV1",
+    "name": "agency-hosting_metrics_list-plan-order-disk-usage",
     "title": "List Agency Plan order disk usage metrics",
     "annotations": {
       "title": "List Agency Plan order disk usage metrics",
@@ -368,7 +368,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listOrdersV1",
+    "name": "agency-hosting_orders_list",
     "title": "List orders",
     "annotations": {
       "title": "List orders",
@@ -400,7 +400,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listOrderResourceUsageMetricsV1",
+    "name": "agency-hosting_metrics_list-order-resource-usage",
     "title": "List order resource usage metrics",
     "annotations": {
       "title": "List order resource usage metrics",
@@ -441,7 +441,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listPHPExtensionsForAWebsiteV1",
+    "name": "agency-hosting_php_list-extensions-for-website",
     "title": "List PHP extensions for a website",
     "annotations": {
       "title": "List PHP extensions for a website",
@@ -471,7 +471,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_replaceWebsitePHPExtensionsV1",
+    "name": "agency-hosting_php_replace-website-extensions",
     "title": "Replace website PHP extensions",
     "annotations": {
       "title": "Replace website PHP extensions",
@@ -511,7 +511,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listPHPOptionsForAWebsiteV1",
+    "name": "agency-hosting_php_list-options-for-website",
     "title": "List PHP options for a website",
     "annotations": {
       "title": "List PHP options for a website",
@@ -541,7 +541,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_replaceWebsitePHPOptionsV1",
+    "name": "agency-hosting_php_replace-website-options",
     "title": "Replace website PHP options",
     "annotations": {
       "title": "Replace website PHP options",
@@ -595,7 +595,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAvailablePHPVersionsForAnOrderV1",
+    "name": "agency-hosting_php_list-versions-for-order",
     "title": "List available PHP versions for an order",
     "annotations": {
       "title": "List available PHP versions for an order",
@@ -625,7 +625,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAvailablePHPVersionsForAWebsiteV1",
+    "name": "agency-hosting_php_list-versions-for-website",
     "title": "List available PHP versions for a website",
     "annotations": {
       "title": "List available PHP versions for a website",
@@ -655,7 +655,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_updateWebsitePHPVersionV1",
+    "name": "agency-hosting_php_update-website-version",
     "title": "Update website PHP version",
     "annotations": {
       "title": "Update website PHP version",
@@ -691,7 +691,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createANewWebsiteV1",
+    "name": "agency-hosting_website-setups_create",
     "title": "Create a new website",
     "annotations": {
       "title": "Create a new website",
@@ -807,7 +807,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getWebsiteSetupStatusV1",
+    "name": "agency-hosting_website-setups_status",
     "title": "Get website setup status",
     "annotations": {
       "title": "Get website setup status",
@@ -842,7 +842,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_reinstallWebsiteSSLV1",
+    "name": "agency-hosting_ssl_reinstall-website",
     "title": "Reinstall website SSL",
     "annotations": {
       "title": "Reinstall website SSL",
@@ -877,7 +877,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_installWebsiteSSLV1",
+    "name": "agency-hosting_ssl_install-website",
     "title": "Install website SSL",
     "annotations": {
       "title": "Install website SSL",
@@ -912,7 +912,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getWebsiteSSLStatusV1",
+    "name": "agency-hosting_ssl_website-status",
     "title": "Get website SSL status",
     "annotations": {
       "title": "Get website SSL status",
@@ -947,7 +947,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_uninstallWebsiteSSLV1",
+    "name": "agency-hosting_ssl_uninstall-website",
     "title": "Uninstall website SSL",
     "annotations": {
       "title": "Uninstall website SSL",
@@ -983,7 +983,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_buildWebsiteNodeJSAssetsV1",
+    "name": "agency-hosting_websites_build-nodejs-assets",
     "title": "Build website NodeJS assets",
     "annotations": {
       "title": "Build website NodeJS assets",
@@ -1018,7 +1018,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_clearWebsiteCacheV1",
+    "name": "agency-hosting_cache_clear-website",
     "title": "Clear website cache",
     "annotations": {
       "title": "Clear website cache",
@@ -1049,7 +1049,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listWebsiteCronJobsV1",
+    "name": "agency-hosting_cron-jobs_list-website",
     "title": "List website cron jobs",
     "annotations": {
       "title": "List website cron jobs",
@@ -1087,7 +1087,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createWebsiteCronJobV1",
+    "name": "agency-hosting_cron-jobs_create-website",
     "title": "Create website cron job",
     "annotations": {
       "title": "Create website cron job",
@@ -1127,7 +1127,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteWebsiteCronJobV1",
+    "name": "agency-hosting_cron-jobs_delete-website",
     "title": "Delete website cron job",
     "annotations": {
       "title": "Delete website cron job",
@@ -1163,7 +1163,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listWebsiteDatabasesV1",
+    "name": "agency-hosting_databases_list-website",
     "title": "List website databases",
     "annotations": {
       "title": "List website databases",
@@ -1201,7 +1201,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createWebsiteDatabaseV1",
+    "name": "agency-hosting_databases_create-website",
     "title": "Create website database",
     "annotations": {
       "title": "Create website database",
@@ -1246,7 +1246,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteWebsiteDatabaseV1",
+    "name": "agency-hosting_databases_delete-website",
     "title": "Delete website database",
     "annotations": {
       "title": "Delete website database",
@@ -1282,7 +1282,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_createWebsiteDatabaseUserV1",
+    "name": "agency-hosting_databases_create-website-user",
     "title": "Create website database user",
     "annotations": {
       "title": "Create website database user",
@@ -1331,7 +1331,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteWebsiteDatabaseUserV1",
+    "name": "agency-hosting_databases_delete-website-user",
     "title": "Delete website database user",
     "annotations": {
       "title": "Delete website database user",
@@ -1372,7 +1372,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getWebsiteDetailsV1",
+    "name": "agency-hosting_websites_get",
     "title": "Get website details",
     "annotations": {
       "title": "Get website details",
@@ -1402,7 +1402,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_deleteWebsiteV1",
+    "name": "agency-hosting_websites_delete",
     "title": "Delete website",
     "annotations": {
       "title": "Delete website",
@@ -1433,7 +1433,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAgencyPlanWebsitesV1",
+    "name": "agency-hosting_websites_list-plan",
     "title": "List Agency Plan websites",
     "annotations": {
       "title": "List Agency Plan websites",
@@ -1507,7 +1507,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listWebsiteProcessesV1",
+    "name": "agency-hosting_websites_list-processes",
     "title": "List website processes",
     "annotations": {
       "title": "List website processes",
@@ -1537,7 +1537,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_changeWordPressVersionV1",
+    "name": "agency-hosting_wordpress_change-version",
     "title": "Change WordPress version",
     "annotations": {
       "title": "Change WordPress version",
@@ -1573,7 +1573,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_getWordPressSettingsV1",
+    "name": "agency-hosting_wordpress_settings",
     "title": "Get WordPress settings",
     "annotations": {
       "title": "Get WordPress settings",
@@ -1603,7 +1603,7 @@ export default [
     "group": "agency-hosting"
   },
   {
-    "name": "agency-hosting_listAvailableWordPressVersionsV1",
+    "name": "agency-hosting_wordpress_list-versions",
     "title": "List available WordPress versions",
     "annotations": {
       "title": "List available WordPress versions",
