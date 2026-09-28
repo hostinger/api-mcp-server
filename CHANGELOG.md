@@ -4,6 +4,15 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.2.0 — 2026-09-28
+
+### Also in this release
+
+- Dependencies: `package-lock.json`, `package.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Server entry points: `src/servers/all.js`, `src/servers/all.ts`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v2.1.0 — 2026-09-28
 
 ### Operations

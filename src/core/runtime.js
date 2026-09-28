@@ -10,9 +10,13 @@ import { config as dotenvConfig } from "dotenv";
 import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
+  ListResourcesRequestSchema,
+  ListResourceTemplatesRequestSchema,
+  ReadResourceRequestSchema,
   ErrorCode,
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
 import { OAuthProvider, getEnvToken } from "./oauth.js";
 import * as tus from "tus-js-client";
 import fs from "fs";
@@ -43,17 +47,33 @@ const SECURITY_SCHEMES = {
   }
 };
 
+// MCP Skills extension (io.modelcontextprotocol/skills). The SDK has no built-in
+// support yet, so the two methods are registered as custom requests.
+const SKILLS_EXTENSION = "io.modelcontextprotocol/skills";
+const SKILLS_CACHE = { ttlMs: 300000, cacheScope: "public" };
+const ListSkillsRequestSchema = z.object({
+  method: z.literal("skills/list"),
+  params: z.object({ cursor: z.string().optional() }).passthrough().optional(),
+});
+const GetSkillRequestSchema = z.object({
+  method: z.literal("skills/get"),
+  // Lenient on purpose: a missing or non-string uri must surface as InvalidParams
+  // from the handler, not as a zod parse failure (InternalError).
+  params: z.object({ uri: z.unknown().optional() }).passthrough().optional(),
+});
+
 /**
  * MCP Server for Hostinger API
  * Generated from OpenAPI spec version 1.54.2
  */
 class MCPServer {
-  constructor({ name, version, tools, instructions }) {
+  constructor({ name, version, tools, instructions, skills = [] }) {
     // Initialize class properties
     this.name = name;
     this.version = version;
     this.toolList = tools;
     this.instructions = instructions;
+    this.skills = skills;
     this.server = null;
     this.operations = new Map();
     this.debug = process.env.DEBUG === "true";
@@ -73,6 +93,7 @@ class MCPServer {
       {
         capabilities: {
           tools: {}, // Enable tools capability
+          ...(this.skills.length > 0 ? { resources: {}, extensions: { [SKILLS_EXTENSION]: {} } } : {}),
         },
         instructions: this.instructions,
       }
@@ -185,6 +206,60 @@ class MCPServer {
         this.log('error', `Error executing ${name}: ${errorText}`);
         return { isError: true, content: [{ type: "text", text: errorText }] };
       }
+    });
+
+    if (this.skills.length > 0) {
+      this.setupSkillHandlers();
+    }
+  }
+
+  /**
+   * Serve the bundled agent skills over the MCP Skills extension: skills/list and
+   * skills/get return the manifest entries, and every listed file is a skill://
+   * resource readable with resources/read.
+   */
+  setupSkillHandlers() {
+    const entry = (skill) => ({
+      uri: skill.uri,
+      frontmatter: skill.frontmatter,
+      resources: skill.resources.map(({ uri, digest, size }) => ({ uri, digest, size })),
+    });
+    const skillsByUri = new Map(this.skills.map((skill) => [skill.uri, skill]));
+    const files = new Map(this.skills.flatMap((skill) => skill.resources.map((file) => [file.uri, file])));
+
+    this.server.setRequestHandler(ListSkillsRequestSchema, async () => ({
+      resultType: "complete",
+      skills: this.skills.map(entry),
+      ...SKILLS_CACHE,
+    }));
+
+    this.server.setRequestHandler(GetSkillRequestSchema, async (request) => {
+      const uri = request.params?.uri;
+      const skill = typeof uri === "string" ? skillsByUri.get(uri) : undefined;
+      if (!skill) {
+        throw new McpError(ErrorCode.InvalidParams, typeof uri === "string" ? `Unknown skill: ${uri}` : "Missing or invalid skill uri");
+      }
+      return { resultType: "complete", skill: entry(skill), ...SKILLS_CACHE };
+    });
+
+    this.server.setRequestHandler(ListResourcesRequestSchema, async () => ({
+      resources: Array.from(files.values()).map((file) => ({
+        uri: file.uri,
+        name: file.uri.slice("skill://".length),
+        mimeType: file.mimeType,
+        size: file.size,
+      })),
+    }));
+
+    // resources is advertised, so answer templates/list too (skills have none).
+    this.server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => ({ resourceTemplates: [] }));
+
+    this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+      const file = files.get(request.params.uri);
+      if (!file) {
+        throw new McpError(ErrorCode.InvalidParams, `Unknown resource: ${request.params.uri}`);
+      }
+      return { contents: [{ uri: file.uri, mimeType: file.mimeType, text: file.text }] };
     });
   }
 
@@ -2636,7 +2711,7 @@ class MCPServer {
   }
 }
 
-export async function startServer({ name, version, tools, instructions }) {
+export async function startServer({ name, version, tools, instructions, skills }) {
   const argv = minimist(process.argv.slice(2), {
     string: ['host'],
     boolean: ['stdio', 'http', 'help', 'version', 'login', 'logout'],
@@ -2694,7 +2769,7 @@ export async function startServer({ name, version, tools, instructions }) {
     }
   }
 
-  const server = new MCPServer({ name, version, tools, instructions });
+  const server = new MCPServer({ name, version, tools, instructions, skills });
   if (argv.http) {
     await server.startHttp(argv.host, argv.port);
   } else {
