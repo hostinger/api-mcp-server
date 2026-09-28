@@ -1,11 +1,11 @@
 # Database and runtime — MySQL hosts, env vars, and what to poll
 
-Use this when the app needs MySQL, or when a deploy "succeeded" but the app cannot reach its database. Everything here uses the **hosting** MCP tools; Agency Plan differences are at the end.
+Use this when the app needs MySQL, or when a deploy "succeeded" but the app cannot reach its database. Everything here uses the **hosting** MCP operations; Agency Plan differences are at the end.
 
 ## 1. Create the database
 
 1. `hosting_createAccountDatabaseV1` on the site's `username` with a database name, a user and a password you generate — name and user are prefixed with the account username automatically.
-2. Read the full, prefixed `name` and `user` back from `hosting_listAccountDatabasesV1`; every other database tool wants the full name.
+2. Read the full, prefixed `name` and `user` back from `hosting_listAccountDatabasesV1`; every other database operation wants the full name.
 3. Do not print the password to the user once it is stored, and never commit it.
 
 ## 2. Which host the app connects to

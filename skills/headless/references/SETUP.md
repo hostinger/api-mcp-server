@@ -1,6 +1,6 @@
 # Setup — plan check and website provisioning
 
-Everything here uses the **hosting** MCP tools. If they're missing, ask the user to enable the Websites product group in the Hostinger Connector (or use the `hostinger-hosting-mcp` scoped binary).
+Everything here uses the **hosting** MCP operations. If they're missing, ask the user to enable the Websites product group in the Hostinger Connector (or use the `hostinger-hosting-mcp` scoped binary).
 
 ## 1. Plan check (gate — run this first)
 
@@ -24,11 +24,11 @@ Generating a subdomain does **not** create a website — deploying straight to i
 
 1. `hosting_createWebsiteV1 { domain, order_id }` — `datacenter_code` is required only for the first website on a brand-new plan (pick the first entry from `hosting_listAvailableDatacentersV1`).
 2. **Poll** `hosting_listWebsitesV1` filtered by the domain until the site appears. Creation takes up to a few minutes — poll with backoff, don't fail fast.
-3. Note the site's `username` — deployment and database tools are keyed on it.
+3. Note the site's `username` — deployment and database operations are keyed on it.
 
 If the domain already has a website (an `iterate` run, or the user pointed at an existing site), skip creation entirely.
 
 ## 4. Optional extras (only when the run needs them)
 
 - **Database:** when the app needs MySQL, follow `DATABASE.md` — creating it, which host each runtime connects to (Node.js must use `127.0.0.1`), and handing the credentials to the app without hard-coding them.
-- **DNS records:** the DNS tools (`DNS_updateDNSRecordsV1` etc.) for custom-domain records; take a snapshot (`DNS_getDNSSnapshotListV1` context) before destructive changes.
+- **DNS records:** the DNS operations (`DNS_updateDNSRecordsV1` etc.) for custom-domain records; take a snapshot (`DNS_getDNSSnapshotListV1` context) before destructive changes.

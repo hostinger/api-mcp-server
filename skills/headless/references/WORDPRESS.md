@@ -4,7 +4,7 @@ Use WordPress when the site has **owner-managed content**: a blog, news, article
 
 **When NOT to use this:** static copy that rarely changes (an about page, a services list, a brochure site) — bake that into the frontend. Installing WordPress for content the owner will never edit adds a moving part for nothing. Any buy/sell intent is `STORE.md`, not this file.
 
-Everything in Setup uses the **hosting** and **wordpress** MCP tool groups; ask the user to enable them in the Hostinger Connector if tools are missing.
+Everything in Setup uses the **hosting** and **wordpress** MCP operation groups; ask the user to enable them in the Hostinger Connector if operations are missing.
 
 ## Mental model
 

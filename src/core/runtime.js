@@ -17,6 +17,7 @@ import { OAuthProvider, getEnvToken } from "./oauth.js";
 import * as tus from "tus-js-client";
 import fs from "fs";
 import path from "path";
+import { META_TOOLS, searchOperations, renderSearch, findOperation, runSteps } from "./catalog.js";
 
 // Load environment variables
 dotenvConfig({ quiet: true });
@@ -54,7 +55,7 @@ class MCPServer {
     this.toolList = tools;
     this.instructions = instructions;
     this.server = null;
-    this.tools = new Map();
+    this.operations = new Map();
     this.debug = process.env.DEBUG === "true";
     this.baseUrl = process.env.API_BASE_URL || "https://developers.hostinger.com";
     this.headers = this.parseHeaders(process.env.API_HEADERS || "");
@@ -115,20 +116,13 @@ class MCPServer {
    * This runs before the server is connected, so don't log here
    */
   initializeTools() {
-    // Initialize each tool in the tools map
+    // The operations are the catalog behind search/execute; they are not listed as tools.
     for (const tool of this.toolList) {
-      this.tools.set(tool.name, {
-        name: tool.name,
-        title: tool.title,
-        description: tool.description,
-        inputSchema: tool.inputSchema,
-        annotations: tool.annotations,
-        // Don't include security at the tool level
-      });
+      this.operations.set(tool.name, tool);
     }
 
     // Don't log here, we're not connected yet
-    console.error(`Initialized ${this.tools.size} tools`);
+    console.error(`Loaded ${this.operations.size} operations`);
   }
 
   /**
@@ -149,95 +143,77 @@ class MCPServer {
     // Handle tool listing requests
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
       this.log('debug', "Handling ListTools request");
-      // Return tools in the format expected by MCP SDK
-      return {
-        tools: Array.from(this.tools.entries()).map(([id, tool]) => ({
-          id,
-          ...tool,
-        })),
-      };
+      return { tools: META_TOOLS };
     });
 
-    // Handle tool execution requests
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      const { name, arguments: params } = request.params;
-      this.log('debug', "Handling CallTool request", { name, params });
-
-      let toolName;
-      let toolDetails;
-
-      // Find the requested tool
-      for (const [tid, tool] of this.tools.entries()) {
-        if (tool.name === name) {
-          toolName = name;
-          break;
-        }
-      }
+      const { name } = request.params;
+      const args = request.params.arguments ?? {};
+      this.log('debug', "Handling CallTool request", { name, args });
 
       // An unknown tool is a protocol error, not a tool execution error: the
       // model cannot self-correct its way out of a name the server does not
-      // have. -32602 is what the spec's example and the SDK's own McpServer
-      // use; a plain Error would go out as -32603 instead.
-      if (!toolName) {
+      // have. -32602 is what the spec's example and the SDK's own McpServer use.
+      if (!META_TOOLS.some(t => t.name === name)) {
         throw new McpError(ErrorCode.InvalidParams, `Tool not found: ${name}`);
       }
 
-      toolDetails = this.toolList.find(t => t.name === toolName);
-      if (!toolDetails) {
-        throw new McpError(ErrorCode.InternalError, `Tool details not found for ID: ${toolName}`);
-      }
-
+      // Everything below is a tool execution: failures (bad input, unknown
+      // operation, API errors) come back inside the result with isError: true.
       try {
-        this.log('info', `Executing tool: ${toolName}`);
-
-        let result;
-
-        if (toolDetails.custom) {
-          result = await this.executeCustomTool(toolDetails, params || {});
-        } else {
-          result = await this.executeApiCall(toolDetails, params || {});
+        if (name === 'search') {
+          const results = searchOperations(this.toolList, args.query, args.limit ?? undefined);
+          return { content: [{ type: "text", text: renderSearch(args.query, results) }] };
         }
 
-        // Return the result in the correct MCP format
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(result)
-            }
-          ]
-        };
+        if (name === 'execute') {
+          const result = await this.executeOperation(args.operation, args.params ?? {});
+          return { content: [{ type: "text", text: JSON.stringify(result) }] };
+        }
 
+        const batch = await runSteps(
+          args.steps,
+          (operation, params) => this.executeOperation(operation, params),
+          (error) => this.formatToolError(error),
+        );
+        return {
+          ...(batch.error ? { isError: true } : {}),
+          content: [{ type: "text", text: JSON.stringify(batch) }],
+        };
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        this.log('error', `Error executing tool ${name}: ${errorMessage}`);
-
-        // MCP reports tool execution failures (API errors, bad input, business
-        // logic) inside the result with isError: true. Throwing here would turn
-        // them into JSON-RPC protocol errors instead, which the spec reserves
-        // for unknown tools and malformed requests — those are still thrown,
-        // above, before this try. The status stays in the text so the model can
-        // tell a retryable 429/503 from a 403 it should not retry.
-        let errorText = errorMessage;
-        if (error instanceof ApiExecutionError) {
-          const payload = error.responseData;
-          const body = payload === null || payload === undefined || payload === ''
-            ? errorMessage
-            : typeof payload === 'object' ? JSON.stringify(payload) : String(payload);
-          errorText = error.status ? `HTTP ${error.status}: ${body}` : body;
-        }
-
-        return {
-          isError: true,
-          content: [
-            {
-              type: "text",
-              text: errorText
-            }
-          ]
-        };
+        const errorText = this.formatToolError(error);
+        this.log('error', `Error executing ${name}: ${errorText}`);
+        return { isError: true, content: [{ type: "text", text: errorText }] };
       }
     });
+  }
+
+  /**
+   * Look an operation up in the catalog, check its required params, and run it
+   * as either a custom tool or a plain API call.
+   */
+  async executeOperation(operation, params) {
+    const tool = findOperation(this.operations, operation, params);
+    this.log('info', `Executing operation: ${tool.name}`);
+    return tool.custom
+      ? this.executeCustomTool(tool, params)
+      : this.executeApiCall(tool, params);
+  }
+
+  /**
+   * Text for an isError result. The status stays in the text so the model can
+   * tell a retryable 429/503 from a 403 it should not retry.
+   */
+  formatToolError(error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (!(error instanceof ApiExecutionError)) {
+      return errorMessage;
+    }
+    const payload = error.responseData;
+    const body = payload === null || payload === undefined || payload === ''
+      ? errorMessage
+      : typeof payload === 'object' ? JSON.stringify(payload) : String(payload);
+    return error.status ? `HTTP ${error.status}: ${body}` : body;
   }
 
   async executeCustomTool(tool, params) {
@@ -2625,7 +2601,7 @@ class MCPServer {
 
       // Start the server
       const server = app.listen(port, host, () => {
-        this.log('info', `MCP Server with HTTP streaming transport started successfully with ${this.tools.size} tools`);
+        this.log('info', `MCP Server with HTTP streaming transport started successfully with ${META_TOOLS.length} tools`);
         this.log('info', `Listening on http://${host}:${port}`);
       });
 
@@ -2651,8 +2627,8 @@ class MCPServer {
       await this.server.connect(transport);
 
       // Now we can safely log via MCP
-      console.error(`Registered ${this.tools.size} tools`);
-      this.log('info', `MCP Server with stdio transport started successfully with ${this.tools.size} tools`);
+      console.error(`Registered ${META_TOOLS.length} tools`);
+      this.log('info', `MCP Server with stdio transport started successfully with ${META_TOOLS.length} tools`);
     } catch (error) {
       console.error("Failed to start MCP server:", error);
       process.exit(1);

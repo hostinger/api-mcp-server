@@ -16,7 +16,7 @@ https://mcp.hostinger.com
 claude mcp add --transport http hostinger https://mcp.hostinger.com
 ```
 
-This opens a browser window to authorize via OAuth. Once approved, all tools below are available in your session.
+This opens a browser window to authorize via OAuth. Once approved, the operations below are reachable through `execute` in your session.
 
 ### Other MCP-compatible clients
 
@@ -69,20 +69,20 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server with every tool (401 total)
-- `hostinger-agency-hosting-mcp` — 42 tools for agency-hosting
-- `hostinger-billing-mcp` — 9 tools for billing
-- `hostinger-dns-mcp` — 8 tools for dns
-- `hostinger-domains-mcp` — 41 tools for domains
-- `hostinger-ecommerce-mcp` — 29 tools for ecommerce
-- `hostinger-horizons-mcp` — 6 tools for horizons
-- `hostinger-hosting-mcp` — 74 tools for hosting
-- `hostinger-mail-mcp` — 38 tools for mail
-- `hostinger-reach-mcp` — 52 tools for reach
-- `hostinger-vps-mcp` — 64 tools for vps
-- `hostinger-wordpress-mcp` — 38 tools for wordpress
+- `hostinger-api-mcp` — unified server over every operation (401 total)
+- `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
+- `hostinger-billing-mcp` — 9 operations for billing
+- `hostinger-dns-mcp` — 8 operations for dns
+- `hostinger-domains-mcp` — 41 operations for domains
+- `hostinger-ecommerce-mcp` — 29 operations for ecommerce
+- `hostinger-horizons-mcp` — 6 operations for horizons
+- `hostinger-hosting-mcp` — 74 operations for hosting
+- `hostinger-mail-mcp` — 38 operations for mail
+- `hostinger-reach-mcp` — 52 operations for reach
+- `hostinger-vps-mcp` — 64 operations for vps
+- `hostinger-wordpress-mcp` — 38 operations for wordpress
 
-Pick the binary that matches your agent's scope. `hostinger-api-mcp` remains the backwards-compatible default.
+Every binary exposes the same three tools; a scoped binary only searches and executes its own group's operations. `hostinger-api-mcp` remains the backwards-compatible default.
 
 ## Configuration
 
@@ -210,17 +210,25 @@ await client.connect(transport);
 const { tools } = await client.listTools();
 console.log("Available tools:", tools);
 
-// Call a tool
+// Execute an operation
 const result = await client.callTool({
-  name: "billing_getCatalogItemListV1",
-  arguments: { category: "DOMAIN" }
+  name: "execute",
+  arguments: { operation: "billing_getCatalogItemListV1", params: { category: "DOMAIN" } }
 });
 console.log("Tool result:", result);
 ```
 
-## Available Tools
+## Tools
 
-This MCP server provides the following tools:
+Every server exposes three tools:
+
+- `search` — find operations by keyword; returns each match with its `inputSchema`.
+- `execute` — run one operation: `{ "operation": "<name>", "params": { ... } }`.
+- `multi-execute` — run up to 20 operations in order, stopping at the first failure. A params value that is exactly `"$steps.<i>.<path>"` is replaced by that value from an earlier step's result.
+
+## Operations
+
+The operations reachable through `execute`, by binary:
 
 ### `hostinger-agency-hosting-mcp`
 

@@ -4,6 +4,16 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.0.0 — 2026-09-28
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Bundled agent skills: 6 files
+- Server instructions: `src/core/instructions.js`, `src/core/instructions.ts`
+- Request handling and authentication: 4 files
+
 ## v1.63.4 — 2026-09-25
 
 ### Tools

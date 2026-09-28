@@ -12,7 +12,7 @@ The frontend is built ad-hoc to the user's intent — there is no template libra
 ## Preconditions
 
 1. An authenticated Hostinger MCP session — the entry skill's bootstrap handled this. If MCP tools fail with auth errors, send the user back through `entry/skill.md`.
-2. The Hostinger MCP tools for **hosting** (plus **ecommerce** when the run involves a store, and **wordpress** when it involves a content backend). Tool availability varies per user — product groups can be toggled in the Hostinger Connector, and some clients cap the number of exposed tools. When a needed tool is missing, ask the user to enable that product group (or configure the scoped binary, e.g. `hostinger-hosting-mcp`) rather than improvising around it.
+2. The Hostinger MCP operations for **hosting** (plus **ecommerce** when the run involves a store, and **wordpress** when it involves a content backend). Operation availability varies per user — product groups can be toggled in the Hostinger Connector. When search cannot find a needed operation, ask the user to enable that product group (or configure the scoped binary, e.g. `hostinger-hosting-mcp`) rather than improvising around it.
 3. An active hosting plan (checked in Setup §1). Hostinger hosting is a paid product: if the account has no usable plan, inform the user plainly that a subscription is required, link them to https://www.hostinger.com/web-hosting, and pause until they confirm the purchase. Do not treat this as an error — it is a normal step for new accounts. Everything that doesn't need hosting (planning, building the frontend locally) can proceed while they decide.
 
 ## Resolving the operation
@@ -32,7 +32,7 @@ If signals conflict, ask the user — don't guess.
 3. **Store** (`references/STORE.md`, only when commerce is needed) — resolve or create the store and its `custom` sales channel, seed products/shipping/payment, and note the `sales_channel_id` for the frontend.
 4. **Content backend** (`references/WORDPRESS.md`, only when owner-managed content is needed) — install WordPress on a dedicated subdomain, wait until it's ready, and hand the owner a wp-admin login link. The frontend reads it through the public WP REST API.
 5. **Build** — create or wire the frontend. For store runs, follow the frontend contract in `references/STORE.md` (catalog fetched at runtime from the public Storefront API, cart in `localStorage`, client-side checkout — never embed an API token in the site). For content runs, follow the frontend contract in `references/WORDPRESS.md` (posts fetched at runtime from the WP REST API, rendered HTML bodies, graceful empty states). When the app needs MySQL, follow `references/DATABASE.md` (which host each runtime connects to, credentials via env vars or a server-side config file, never in the frontend).
-6. **Deploy** (`references/DEPLOYMENT.md`) — archive and deploy via the matching hosting tool, polling build logs for Node.js runs.
+6. **Deploy** (`references/DEPLOYMENT.md`) — archive and deploy via the matching hosting operation, polling build logs for Node.js runs.
 7. **Verify** — curl the live URL for a 200 and a piece of real page copy; for store runs, confirm a checkout POST returns a redirect URL; for content runs, confirm the WP REST API returns 200 and the frontend renders posts. Show the user the live URL and where to manage things (hPanel: https://hpanel.hostinger.com, the store dashboard for commerce, wp-admin for content).
 8. **Record** — write `.hostinger/site.json` into the project: `{ "domain", "username", "type": "static"|"nodejs", "sales_channel_id"?, "store_id"?, "cms_domain"? }`. This is what makes future runs resolve as `iterate`.
 
@@ -50,7 +50,7 @@ Run non-interactively wherever possible. The exceptions that must involve the us
 
 ## Where the how comes from
 
-The MCP tool descriptions are authoritative for request shapes — read them before calling. Two live sources supersede anything written here when they disagree:
+The inputSchema returned by search is authoritative for request shapes — read it before calling. Two live sources supersede anything written here when they disagree:
 
-- The ecommerce MCP tool `ecommerce_getCustomStorefrontSetupInstructionsV1` returns the current storefront integration guide from the server — call it at the start of any store run.
-- The Hostinger API reference at https://developers.hostinger.com describes every endpoint behind the tools.
+- The ecommerce operation `ecommerce_getCustomStorefrontSetupInstructionsV1` returns the current storefront integration guide from the server — execute it at the start of any store run.
+- The Hostinger API reference at https://developers.hostinger.com describes every endpoint behind the operations.
