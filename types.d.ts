@@ -2139,6 +2139,44 @@ Use this endpoint to monitor incoming and outgoing registrar transfers across yo
   };
 
   /**
+   * Transfer a domain from another registrar to your account.
+
+The transfer runs on a domain transfer service you have already purchased.
+
+Before making request, unlock the domain at the current registrar and get its authorization
+code.
+
+A successful response means the transfer has been started. Completion depends on the current
+registrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).
+
+If no WHOIS information is provided, default contact information for that TLD will be used.
+Before making request, ensure WHOIS information for desired TLD exists in your account.
+
+Use this endpoint to bring domains registered elsewhere into your account.
+   */
+  "domains_transfer_start": {
+    params: {
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Authorization code from the current registrar
+       */
+      auth_code: string;
+      /**
+       * Domain contact information
+       */
+      domain_contacts?: object;
+      /**
+       * Keep the existing nameservers of the domain
+       */
+      should_keep_ns?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Change WHOIS contact profile for a domain.
 
 Repoints the given contact roles to a new WHOIS profile and submits the change to the registry.

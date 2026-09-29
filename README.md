@@ -69,11 +69,11 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (402 total)
+- `hostinger-api-mcp` — unified server over every operation (403 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-billing-mcp` — 9 operations for billing
 - `hostinger-dns-mcp` — 8 operations for dns
-- `hostinger-domains-mcp` — 41 operations for domains
+- `hostinger-domains-mcp` — 42 operations for domains
 - `hostinger-ecommerce-mcp` — 29 operations for ecommerce
 - `hostinger-horizons-mcp` — 6 operations for horizons
 - `hostinger-hosting-mcp` — 75 operations for hosting
@@ -1308,6 +1308,26 @@ Retrieve all domain transfers in your portfolio.
 Use this endpoint to monitor incoming and outgoing registrar transfers across your domains.
 
 - **Method**: `GET`
+- **Path**: `/api/domains/v1/transfers`
+
+#### domains_transfer_start
+
+Transfer a domain from another registrar to your account.
+
+The transfer runs on a domain transfer service you have already purchased.
+
+Before making request, unlock the domain at the current registrar and get its authorization
+code.
+
+A successful response means the transfer has been started. Completion depends on the current
+registrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).
+
+If no WHOIS information is provided, default contact information for that TLD will be used.
+Before making request, ensure WHOIS information for desired TLD exists in your account.
+
+Use this endpoint to bring domains registered elsewhere into your account.
+
+- **Method**: `POST`
 - **Path**: `/api/domains/v1/transfers`
 
 #### domains_whois_change-for

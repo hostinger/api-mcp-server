@@ -1217,6 +1217,67 @@ const tools: OpenApiTool[] = [
     "group": "domains"
   },
   {
+    "name": "domains_transfer_start",
+    "title": "Start domain transfer",
+    "annotations": {
+      "title": "Start domain transfer",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Transfer a domain from another registrar to your account.\n\nThe transfer runs on a domain transfer service you have already purchased.\n\nBefore making request, unlock the domain at the current registrar and get its authorization\ncode.\n\nA successful response means the transfer has been started. Completion depends on the current\nregistrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nUse this endpoint to bring domains registered elsewhere into your account.",
+    "method": "POST",
+    "path": "/api/domains/v1/transfers",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "auth_code": {
+          "type": "string",
+          "description": "Authorization code from the current registrar"
+        },
+        "domain_contacts": {
+          "type": "object",
+          "description": "Domain contact information",
+          "properties": {
+            "owner_id": {
+              "type": "integer",
+              "description": "Owner contact WHOIS record ID"
+            },
+            "admin_id": {
+              "type": "integer",
+              "description": "Administrative contact WHOIS record ID"
+            },
+            "billing_id": {
+              "type": "integer",
+              "description": "Billing contact WHOIS record ID"
+            },
+            "tech_id": {
+              "type": "integer",
+              "description": "Technical contact WHOIS record ID"
+            }
+          }
+        },
+        "should_keep_ns": {
+          "type": "boolean",
+          "description": "Keep the existing nameservers of the domain"
+        }
+      },
+      "required": [
+        "domain",
+        "auth_code"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "domains"
+  },
+  {
     "name": "domains_whois_change-for",
     "title": "Change WHOIS profile for domain",
     "annotations": {
