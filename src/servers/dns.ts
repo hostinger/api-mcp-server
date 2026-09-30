@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/dns.js';
 
-startServer({ name: 'hostinger-dns-mcp', version: '2.5.1', tools });
+startServer({ name: 'hostinger-dns-mcp', version: '2.6.0', tools });

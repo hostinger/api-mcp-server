@@ -20,7 +20,8 @@ export default [
           "enum": [
             "DOMAIN",
             "VPS",
-            "EMAIL"
+            "EMAIL",
+            "HOSTING"
           ]
         },
         "name": {

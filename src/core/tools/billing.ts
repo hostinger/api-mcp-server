@@ -34,7 +34,8 @@ const tools: OpenApiTool[] = [
           "enum": [
             "DOMAIN",
             "VPS",
-            "EMAIL"
+            "EMAIL",
+            "HOSTING"
           ]
         },
         "name": {

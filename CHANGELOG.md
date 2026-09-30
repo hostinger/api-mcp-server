@@ -4,6 +4,16 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.6.0 — 2026-09-30
+
+### Operations
+
+- Changed the input schema of `billing_catalog_list`
+
+### Also in this release
+
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+
 ## v2.5.1 — 2026-09-30
 
 ### Also in this release
