@@ -42,6 +42,31 @@ Archive rules (name archives `name_YYYYMMDD_HHMMSS.zip`):
 - **Node.js source:** no `node_modules/`, no build output (`dist/`, `.next/`, `build/`), no `.env*`, nothing matched by `.gitignore`; 50 MB at most. `git archive --format=zip -o app_20260101_120000.zip HEAD` produces exactly the committed files — mention that uncommitted changes are left out.
 - Agency deploys are synchronous: the site is live when the call returns.
 
+The operations in the table read the archive from this machine, so only the local `hostinger-api-mcp` server has them. On the hosted server (`mcp.hostinger.com`) `search` does not find them — upload the files yourself as below.
+
+### Without the local deploy operations
+
+1. Get upload credentials: `hosting_files_generate-upload-url` (`username`, `domain`); Agency: `agency-hosting_files_generate-upload-url` (`website_uid`). Both return `url`, `auth_key` and `rest_auth_key`, which authenticate the upload instead of the API token.
+2. Upload each file with TUS, where `DEST` is its path in the website's storage:
+
+```bash
+SIZE=$(wc -c < "$FILE" | tr -d ' ')
+curl -sS -X POST "$URL/$DEST?override=true" -H "X-Auth: $AUTH_KEY" -H "X-Auth-Rest: $REST_AUTH_KEY" -H "Tus-Resumable: 1.0.0" -H "Upload-Length: $SIZE" -H "Upload-Offset: 0"
+curl -sS -X PATCH "$URL/$DEST?override=true" -H "X-Auth: $AUTH_KEY" -H "X-Auth-Rest: $REST_AUTH_KEY" -H "Tus-Resumable: 1.0.0" -H "Content-Type: application/offset+octet-stream" -H "Upload-Offset: 0" --data-binary "@$FILE"
+```
+
+   The first call returns `201`, the second `204` with an `Upload-Offset` header equal to the file size. `override=true` makes a retry safe.
+3. Deploy from the uploaded files (`RANDOM8` is any fresh 8-character string, e.g. `$(LC_ALL=C tr -dc 'a-z0-9' < /dev/urandom | head -c 8)`):
+
+| Project | `DEST` | Then |
+| --- | --- | --- |
+| Static or PHP | `site.zip` | `hosting_websites_deploy-static-site-archive` with `archive_path: "site.zip"` |
+| Node.js | `app.zip` | `hosting_nodejs_build-settings-from-archive` with `archive_path: "app.zip"`, then `hosting_nodejs_start-build` with those settings, `source_type: "archive"` and `source_options.archive_path: "app.zip"` |
+| WordPress plugin | every file, as `wp-content/plugins/SLUG-RANDOM8/<path in the plugin>` | `wordpress_plugins_deploy` with `slug` and `plugin_path: "SLUG-RANDOM8"` |
+| WordPress theme | every file, as `wp-content/themes/SLUG-RANDOM8/<path in the theme>` | `wordpress_themes_deploy` with `slug`, `theme_path: "SLUG-RANDOM8"` and optional `is_activated` |
+| Agency, extracted as-is | `.h5g/site.zip` | `agency-hosting_files_import-website-from-archive` with `archive_name: "site.zip"` |
+| Agency `node-static` | `.h5g/RANDOM8/app.zip` | `agency-hosting_websites_build-nodejs-assets` with `archive_path: ".h5g/RANDOM8"` — the directory, not the file |
+
 ## 3. Node.js builds
 
 `hosting_deploy-js-application` uploads the archive to the document root, detects settings from `package.json` and starts a build. Track it with `hosting_nodejs_list-builds` and `hosting_nodejs_build` (by `uuid`), polling every 10–20 s — builds take minutes.

@@ -8,7 +8,8 @@ A website can only be created on an active hosting plan.
 
 1. `hosting_websites_list` — if it returns websites, the account has a working plan; note any existing `order_id` and `username` for step 2.
 2. Otherwise `hosting_orders_list` — look for an order in a usable state. A fresh order that has never hosted a website still works; note its `order_id`.
-3. If there is no usable order: **stop and tell the user** that an active Hostinger hosting plan is required to deploy, link https://www.hostinger.com/web-hosting, and offer to continue building the site locally in the meantime. When they confirm the purchase, re-run this check.
+3. Agency Plan orders are not in that list: check `agency-hosting_orders_list` too. An active Agency order is a usable plan — create the website with `agency-hosting_website-setups_create` and poll `agency-hosting_website-setups_status` until `completed` (it returns the `website_uid`), then deploy with the Agency operations in the `deploy-to-hosting` skill.
+4. If there is no usable order: **stop and tell the user** that an active Hostinger hosting plan is required to deploy, link https://www.hostinger.com/web-hosting, and offer to continue building the site locally in the meantime. When they confirm the purchase, re-run this check.
 
 Never purchase a plan, domain, or any paid item without the user explicitly approving that specific purchase.
 
@@ -23,7 +24,7 @@ Never purchase a plan, domain, or any paid item without the user explicitly appr
 Generating a subdomain does **not** create a website — deploying straight to it fails with `No website found for domain`. The working sequence:
 
 1. `hosting_websites_create { domain, order_id }` — `datacenter_code` is required only for the first website on a brand-new plan (pick the first entry from `hosting_datacenters_list`).
-2. **Poll** `hosting_websites_list` filtered by the domain until the site appears. Creation takes up to a few minutes — poll with backoff, don't fail fast.
+2. **Poll** `hosting_websites_list-setups` filtered by the domain every 10–15 s until `status` is `completed`. The site shows up in `hosting_websites_list` before its setup finishes, and uploads, deploys and database calls return 404 or 409 until then. Creation takes up to a few minutes — don't fail fast.
 3. Note the site's `username` — deployment and database operations are keyed on it.
 
 If the domain already has a website (an `iterate` run, or the user pointed at an existing site), skip creation entirely.

@@ -41,9 +41,11 @@ Create the Hostinger website on the domain being migrated, not on a free subdoma
 
 ## 3. Import
 
-**WordPress, Shared and Cloud:** `hosting_import-wordpress-website` with `domain`, `archivePath` and `databaseDump` uploads both, extracts the files and imports the database; large sites take several minutes. Then `wordpress_installations_detect` with `username` and poll `wordpress_installations_list` with `domain` until the install appears with `is_valid: true`.
+`hosting_import-wordpress-website`, `hosting_deploy-static-website` and `agency-hosting_deploy-php-application` read files from this machine and exist only in the local `hostinger-api-mcp` server. On the hosted server (`mcp.hostinger.com`), upload the files first as described in the `deploy-to-hosting` skill ("Without the local deploy operations") and use the operation named in brackets below.
 
-**Static, or PHP without a database:** `hosting_deploy-static-website` (Agency: `agency-hosting_deploy-php-application`).
+**WordPress, Shared and Cloud:** `hosting_import-wordpress-website` with `domain`, `archivePath` and `databaseDump` uploads both, extracts the files and imports the database; large sites take several minutes. [Upload `site.zip` and `dump.sql`, then `wordpress_installations_import-website` with `archive_path` and `sql_path`.] Then `wordpress_installations_detect` with `username` and poll `wordpress_installations_list` with `domain` until the install appears with `is_valid: true`.
+
+**Static, or PHP without a database:** `hosting_deploy-static-website` [upload, then `hosting_websites_deploy-static-site-archive`]; Agency: `agency-hosting_deploy-php-application` [upload to `.h5g/`, then `agency-hosting_files_import-website-from-archive`].
 
 **PHP with a database, Shared and Cloud:**
 
@@ -53,7 +55,7 @@ Create the Hostinger website on the domain being migrated, not on a free subdoma
 
 **Node.js:** deploy with the `deploy-to-hosting` skill. When a dump must be imported, create the database with `hosting_databases_create` rather than `hosting_databases_setup-website` — the latter never reveals the password needed for the import — and pass the credentials through environment variables.
 
-**Agency:** files with `agency-hosting_deploy-php-application`; the database with `agency-hosting_databases_create-website`, imported through phpMyAdmin in hPanel (no import operation exists). For WordPress, set the new credentials in `wp-config.php` before archiving.
+**Agency:** files with `agency-hosting_deploy-php-application` [or upload plus `agency-hosting_files_import-website-from-archive`]; the database with `agency-hosting_databases_create-website`, imported through phpMyAdmin in hPanel (no import operation exists). For WordPress, set the new credentials in `wp-config.php` before archiving.
 
 ## 4. Test before DNS moves
 

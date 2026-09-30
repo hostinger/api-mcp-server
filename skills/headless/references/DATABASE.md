@@ -28,7 +28,7 @@ Do not put the remote `host` into the deployed app — it has no grant for conne
 
 | You called | Poll this until | Typical wait |
 | --- | --- | --- |
-| `hosting_websites_create` | `hosting_websites_list` lists the domain | up to a few minutes |
+| `hosting_websites_create` | `hosting_websites_list-setups` with the domain reports `status: completed` | up to a few minutes |
 | `hosting_deploy-js-application` | `hosting_list-js-deployments` shows the build finished | minutes |
 | `hosting_nodejs_start-build` | `hosting_nodejs_build` state is `completed` or `failed` | minutes |
 | `wordpress_installations_install`, plugin/theme/core jobs | `wordpress_installations_list` lists the install | 1–2 minutes |

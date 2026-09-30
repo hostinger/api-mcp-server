@@ -2,6 +2,8 @@
 
 Match the deploy method to what the project actually is — this is the single most common failure point.
 
+The deploy operations below read the archive from this machine, so only the local `hostinger-api-mcp` server has them. On the hosted server (`mcp.hostinger.com`) `search` does not find them: upload the files and deploy from the upload as described in the `deploy-to-hosting` skill ("Without the local deploy operations"). Agency Plan sites deploy through the Agency operations listed there as well.
+
 ## Static site → `hosting_deploy-static-website`
 
 For pre-built files only: plain HTML/CSS/JS, or the **build output** of a framework (run the build locally first).
