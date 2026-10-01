@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.7.0 — 2026-10-01
+
+### Also in this release
+
+- Dependencies: `package-lock.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+
 ## v2.6.0 — 2026-09-30
 
 ### Operations
