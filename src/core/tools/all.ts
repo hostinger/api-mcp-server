@@ -8180,7 +8180,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve a paginated list of orders accessible to the authenticated client.\n\nThis endpoint returns orders of your hosting accounts as well as orders\nof other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by order statuses\nor specific order IDs for more targeted results.",
+    "description": "Retrieve a paginated list of orders accessible to the authenticated client.\n\nOnly Web and Cloud hosting orders are listed. Agency Plan orders are listed by\n`GET /api/agency-hosting/v1/orders`.\n\nThis endpoint returns orders of your hosting accounts as well as orders\nof other client hosting accounts that have shared access with you.\n\nUse the available query parameters to filter results by order statuses\nor specific order IDs for more targeted results.",
     "method": "GET",
     "path": "/api/hosting/v1/orders",
     "inputSchema": {
@@ -8814,7 +8814,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create a new website for the authenticated client.\n\nYou must choose which hosting order to create this website on. Pass that\norder as `order_id` together with the domain name. List orders to see\navailable IDs; the website is provisioned on that order's hosting plan.\n\nThe datacenter_code parameter is required when creating the first website\non a new hosting plan - this will set up and configure new hosting account\nin the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation is asynchronous and takes up to a few minutes. Poll the list website\nsetups endpoint with the `domain` filter every 10 to 15 seconds and wait for `status:\ncompleted` before uploading files, deploying or creating databases. While the setup is\n`running`, endpoints that operate on the website may respond with `404` or `409`.\n`is_enabled` on the websites list reflects suspension, not readiness.",
+    "description": "Create a new website for the authenticated client.\n\nYou must choose which hosting order to create this website on. Pass that\norder as `order_id` together with the domain name. List orders to see\navailable IDs; the website is provisioned on that order's hosting plan.\n\nOnly Web and Cloud hosting orders are accepted. To create a website on an Agency\nPlan order, use `POST /api/agency-hosting/v1/orders/{order_id}/websites/setups`.\n\nThe datacenter_code parameter is required when creating the first website\non a new hosting plan - this will set up and configure new hosting account\nin the selected datacenter.\n\nSubsequent websites will be hosted on the same datacenter automatically.\n\nWebsite creation is asynchronous and takes up to a few minutes. Poll the list website\nsetups endpoint with the `domain` filter every 10 to 15 seconds and wait for `status:\ncompleted` before uploading files, deploying or creating databases. While the setup is\n`running`, endpoints that operate on the website may respond with `404` or `409`.\n`is_enabled` on the websites list reflects suspension, not readiness.",
     "method": "POST",
     "path": "/api/hosting/v1/websites",
     "inputSchema": {

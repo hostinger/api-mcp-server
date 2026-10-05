@@ -2527,6 +2527,9 @@ over an hour. Setups older than 24 hours are not listed.
 
 Retrieve a paginated list of orders accessible to the authenticated client.
 
+Only Web and Cloud hosting orders are listed. Agency Plan orders are listed by
+`GET /api/agency-hosting/v1/orders`.
+
 This endpoint returns orders of your hosting accounts as well as orders
 of other client hosting accounts that have shared access with you.
 
@@ -2707,6 +2710,9 @@ Create a new website for the authenticated client.
 You must choose which hosting order to create this website on. Pass that
 order as `order_id` together with the domain name. List orders to see
 available IDs; the website is provisioned on that order's hosting plan.
+
+Only Web and Cloud hosting orders are accepted. To create a website on an Agency
+Plan order, use `POST /api/agency-hosting/v1/orders/{order_id}/websites/setups`.
 
 The datacenter_code parameter is required when creating the first website
 on a new hosting plan - this will set up and configure new hosting account
