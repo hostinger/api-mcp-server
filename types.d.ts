@@ -9045,6 +9045,9 @@ job has been queued, not that WordPress is ready. Installation typically
 takes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered
 by username and domain to track progress. When the installation appears in
 that list, WordPress is ready.
+
+Returns 422 when the account already uses all the databases its plan allows,
+unless `database.name` is an existing database on the account.
    */
   "wordpress_installations_install": {
     params: {
@@ -9085,7 +9088,7 @@ that list, WordPress is ready.
        */
       credentials: object;
       /**
-       * Optional. If the named database already exists, it will be used for this WordPress install. Otherwise a new database is created with a generated name and random credentials.
+       * Optional. If the named database already exists on the account, it is used for this WordPress install. Otherwise a new database is created with this name, or with a generated name when database is omitted or null. A new database gets a random database user and counts toward the plan's database limit.
        */
       database?: object;
     };

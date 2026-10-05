@@ -4534,6 +4534,9 @@ takes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered
 by username and domain to track progress. When the installation appears in
 that list, WordPress is ready.
 
+Returns 422 when the account already uses all the databases its plan allows,
+unless `database.name` is an existing database on the account.
+
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/installations`
 
