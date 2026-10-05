@@ -4106,6 +4106,101 @@ installation does not belong to the customer. Limited to 10 calls per minute per
   };
 
   /**
+   * Clones a Git repository into a directory of the website, or pulls it again. An empty or missing
+directory gets a clone of the branch. A directory that already holds this repository and branch is
+reset to its last commit and pulled: changes made on the server to files the repository tracks are
+discarded, files it does not track stay. A directory that holds other files, including another
+repository or another branch of this one, is rejected. `composer install` runs after the clone or
+pull when the repository has a `composer.json`.
+
+The call waits for the deployment and returns its log. `is_success` false means Git or composer
+failed and the log says why. A second call for the same directory is rejected while the first is
+still waiting for the server. If the request times out, the deployment may still finish on the
+server; calling again later with the same repository and branch pulls.
+
+Private repositories need an SSH URL and the account's Git SSH key from `Generate Git SSH key`,
+added to the repository as a deploy key.
+   */
+  "hosting_git_deploy-website-repository": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Clone URL of the repository on any Git host, SSH or HTTPS. Private repositories need an SSH URL
+and the account's Git SSH key added to the repository as a deploy key. An HTTP or HTTPS URL with
+a username or token, or any URL with a password, is rejected.
+       */
+      repository_url: string;
+      /**
+       * Branch to clone and pull
+       */
+      branch: string;
+      /**
+       * Directory under the website document root, exactly as `List website Git repositories` returns
+it for an existing repository. Empty, null or omitted means the document root.
+       */
+      directory?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Lists the Git repositories linked to directories of the website, with
+`Deploy website Git repository` or in the Git section of hPanel: clone URL, branch and directory of
+each one. A repository whose clone failed stays listed; deploying it again retries the clone. GitHub
+and GitLab auto-deployments are not listed here; see `Get Git auto-deployment settings`.
+   */
+  "hosting_git_list-website-repositories": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Returns the public SSH key of the hosting account. `Deploy website Git repository` uses this key to
+clone and pull over SSH, so a private repository works once the key is added to it as a deploy key
+on the Git host. `public_key` is null when the account has no key yet.
+   */
+  "hosting_git_ssh-public-key": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Creates the SSH key pair of the hosting account and returns the public key. When the account already
+has a key, returns that key unchanged. One key serves every website of the account; add the public
+key to a private repository as a deploy key before deploying it.
+   */
+  "hosting_git_generate-ssh-key": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of Node.js build processes for a specific website.
 
 Each build represents a single run of the Node.js build pipeline. Use the `states`

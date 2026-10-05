@@ -4,6 +4,22 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.7.1 — 2026-10-05
+
+### Operations
+
+- Added `hosting_git_deploy-website-repository` — Deploy website Git repository
+- Added `hosting_git_list-website-repositories` — List website Git repositories
+- Added `hosting_git_ssh-public-key` — Get Git SSH public key
+- Added `hosting_git_generate-ssh-key` — Generate Git SSH key
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v2.7.0 — 2026-10-01
 
 ### Also in this release

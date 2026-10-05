@@ -69,14 +69,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (403 total)
+- `hostinger-api-mcp` — unified server over every operation (407 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-billing-mcp` — 9 operations for billing
 - `hostinger-dns-mcp` — 8 operations for dns
 - `hostinger-domains-mcp` — 42 operations for domains
 - `hostinger-ecommerce-mcp` — 29 operations for ecommerce
 - `hostinger-horizons-mcp` — 6 operations for horizons
-- `hostinger-hosting-mcp` — 75 operations for hosting
+- `hostinger-hosting-mcp` — 79 operations for hosting
 - `hostinger-mail-mcp` — 38 operations for mail
 - `hostinger-reach-mcp` — 52 operations for reach
 - `hostinger-vps-mcp` — 64 operations for vps
@@ -2226,6 +2226,54 @@ installation does not belong to the customer. Limited to 10 calls per minute per
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/git/installations/{uuid}/repositories`
+
+#### hosting_git_deploy-website-repository
+
+Clones a Git repository into a directory of the website, or pulls it again. An empty or missing
+directory gets a clone of the branch. A directory that already holds this repository and branch is
+reset to its last commit and pulled: changes made on the server to files the repository tracks are
+discarded, files it does not track stay. A directory that holds other files, including another
+repository or another branch of this one, is rejected. `composer install` runs after the clone or
+pull when the repository has a `composer.json`.
+
+The call waits for the deployment and returns its log. `is_success` false means Git or composer
+failed and the log says why. A second call for the same directory is rejected while the first is
+still waiting for the server. If the request times out, the deployment may still finish on the
+server; calling again later with the same repository and branch pulls.
+
+Private repositories need an SSH URL and the account's Git SSH key from `Generate Git SSH key`,
+added to the repository as a deploy key.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/git/repositories/deploy`
+
+#### hosting_git_list-website-repositories
+
+Lists the Git repositories linked to directories of the website, with
+`Deploy website Git repository` or in the Git section of hPanel: clone URL, branch and directory of
+each one. A repository whose clone failed stays listed; deploying it again retries the clone. GitHub
+and GitLab auto-deployments are not listed here; see `Get Git auto-deployment settings`.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/git/repositories`
+
+#### hosting_git_ssh-public-key
+
+Returns the public SSH key of the hosting account. `Deploy website Git repository` uses this key to
+clone and pull over SSH, so a private repository works once the key is added to it as a deploy key
+on the Git host. `public_key` is null when the account has no key yet.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/git/ssh-key`
+
+#### hosting_git_generate-ssh-key
+
+Creates the SSH key pair of the hosting account and returns the public key. When the account already
+has a key, returns that key unchanged. One key serves every website of the account; add the public
+key to a private repository as a deploy key before deploying it.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/git/ssh-key`
 
 #### hosting_nodejs_list-builds
 

@@ -7170,6 +7170,150 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "hosting_git_deploy-website-repository",
+    "title": "Deploy website Git repository",
+    "annotations": {
+      "title": "Deploy website Git repository",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "description": "Clones a Git repository into a directory of the website, or pulls it again. An empty or missing\ndirectory gets a clone of the branch. A directory that already holds this repository and branch is\nreset to its last commit and pulled: changes made on the server to files the repository tracks are\ndiscarded, files it does not track stay. A directory that holds other files, including another\nrepository or another branch of this one, is rejected. `composer install` runs after the clone or\npull when the repository has a `composer.json`.\n\nThe call waits for the deployment and returns its log. `is_success` false means Git or composer\nfailed and the log says why. A second call for the same directory is rejected while the first is\nstill waiting for the server. If the request times out, the deployment may still finish on the\nserver; calling again later with the same repository and branch pulls.\n\nPrivate repositories need an SSH URL and the account's Git SSH key from `Generate Git SSH key`,\nadded to the repository as a deploy key.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/git/repositories/deploy",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "repository_url": {
+          "type": "string",
+          "description": "Clone URL of the repository on any Git host, SSH or HTTPS. Private repositories need an SSH URL\nand the account's Git SSH key added to the repository as a deploy key. An HTTP or HTTPS URL with\na username or token, or any URL with a password, is rejected."
+        },
+        "branch": {
+          "type": "string",
+          "description": "Branch to clone and pull"
+        },
+        "directory": {
+          "type": "string",
+          "description": "Directory under the website document root, exactly as `List website Git repositories` returns\nit for an existing repository. Empty, null or omitted means the document root."
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "repository_url",
+        "branch"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_git_list-website-repositories",
+    "title": "List website Git repositories",
+    "annotations": {
+      "title": "List website Git repositories",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Lists the Git repositories linked to directories of the website, with\n`Deploy website Git repository` or in the Git section of hPanel: clone URL, branch and directory of\neach one. A repository whose clone failed stays listed; deploying it again retries the clone. GitHub\nand GitLab auto-deployments are not listed here; see `Get Git auto-deployment settings`.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/git/repositories",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_git_ssh-public-key",
+    "title": "Get Git SSH public key",
+    "annotations": {
+      "title": "Get Git SSH public key",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns the public SSH key of the hosting account. `Deploy website Git repository` uses this key to\nclone and pull over SSH, so a private repository works once the key is added to it as a deploy key\non the Git host. `public_key` is null when the account has no key yet.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/git/ssh-key",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        }
+      },
+      "required": [
+        "username"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_git_generate-ssh-key",
+    "title": "Generate Git SSH key",
+    "annotations": {
+      "title": "Generate Git SSH key",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Creates the SSH key pair of the hosting account and returns the public key. When the account already\nhas a key, returns that key unchanged. One key serves every website of the account; add the public\nkey to a private repository as a deploy key before deploying it.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/git/ssh-key",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        }
+      },
+      "required": [
+        "username"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_nodejs_list-builds",
     "title": "List NodeJS builds",
     "annotations": {
