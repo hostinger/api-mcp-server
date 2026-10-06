@@ -69,14 +69,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (407 total)
+- `hostinger-api-mcp` — unified server over every operation (408 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-billing-mcp` — 9 operations for billing
 - `hostinger-dns-mcp` — 8 operations for dns
 - `hostinger-domains-mcp` — 42 operations for domains
 - `hostinger-ecommerce-mcp` — 29 operations for ecommerce
 - `hostinger-horizons-mcp` — 6 operations for horizons
-- `hostinger-hosting-mcp` — 79 operations for hosting
+- `hostinger-hosting-mcp` — 80 operations for hosting
 - `hostinger-mail-mcp` — 38 operations for mail
 - `hostinger-reach-mcp` — 52 operations for reach
 - `hostinger-vps-mcp` — 64 operations for vps
@@ -2510,18 +2510,47 @@ close or merge it before patching again. Available on Business and Cloud Hosting
 #### hosting_websites_list-setups
 
 Returns the website setups started in the last 24 hours for the hosting accounts
-accessible to the authenticated client, newest first.
+accessible to the authenticated client, newest first. Narrow the list with the
+`order_id`, `subscription_id` or `domain` filters.
 
-Meant for polling right after creating a website: the website shows up in the
-websites list before its server-side setup has finished, and while the setup is
-`running` endpoints that operate on that website may respond with `404` or `409`.
-Poll this endpoint with the `domain` filter every 10 to 15 seconds and wait for
-`status: completed` before uploading files, deploying or creating databases.
+Meant for polling right after creating a website or starting a website setup: the
+website shows up in the websites list before its server-side setup has finished, and
+while the setup is `running` endpoints that operate on that website may respond with
+`404` or `409`. Poll this endpoint with the `domain` filter every 10 to 15 seconds and
+wait for `status: completed` before uploading files, deploying or creating databases.
 `failed` means the setup stopped before finishing or has not reported progress for
 over an hour. Setups older than 24 hours are not listed.
 
+`type` is the website type the setup was started with (`wordpress`, `headless_wordpress`,
+`headless_ecommerce`, `headless_pocketbase`), or `null` for an empty website.
+
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/onboardings`
+
+#### hosting_websites_start-setup
+
+Starts a website setup on a Web or Cloud hosting order and returns the created setup
+right away; the website itself is provisioned asynchronously. Poll the list website
+setups endpoint with the `domain` filter every 10 to 15 seconds and wait for
+`status: completed` before uploading files, deploying or creating databases.
+
+Omit `type` for an empty website. `type: wordpress` installs WordPress in the website
+root with the admin user, email and password from `wordpress`, the domain as the site
+title, and `en_US` when `wordpress.language` is omitted. The headless types
+(`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless
+website; `headless_wordpress` additionally installs WordPress into the `cms` directory
+of the website root with generated credentials.
+
+Omit `domain` to set the website up on a generated temporary free subdomain.
+
+The order must already have a hosting account: to create the first website on a new
+hosting plan use the create website endpoint, which takes the `datacenter_code`.
+Returns 404 when the order does not exist or is not accessible to the authenticated
+client, and 409 with a `Retry-After` header while a setup for the same domain is still
+running.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/orders/{order_id}/onboardings`
 
 #### hosting_orders_list
 

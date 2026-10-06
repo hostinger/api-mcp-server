@@ -8138,18 +8138,110 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Returns the website setups started in the last 24 hours for the hosting accounts\naccessible to the authenticated client, newest first.\n\nMeant for polling right after creating a website: the website shows up in the\nwebsites list before its server-side setup has finished, and while the setup is\n`running` endpoints that operate on that website may respond with `404` or `409`.\nPoll this endpoint with the `domain` filter every 10 to 15 seconds and wait for\n`status: completed` before uploading files, deploying or creating databases.\n`failed` means the setup stopped before finishing or has not reported progress for\nover an hour. Setups older than 24 hours are not listed.",
+    "description": "Returns the website setups started in the last 24 hours for the hosting accounts\naccessible to the authenticated client, newest first. Narrow the list with the\n`order_id`, `subscription_id` or `domain` filters.\n\nMeant for polling right after creating a website or starting a website setup: the\nwebsite shows up in the websites list before its server-side setup has finished, and\nwhile the setup is `running` endpoints that operate on that website may respond with\n`404` or `409`. Poll this endpoint with the `domain` filter every 10 to 15 seconds and\nwait for `status: completed` before uploading files, deploying or creating databases.\n`failed` means the setup stopped before finishing or has not reported progress for\nover an hour. Setups older than 24 hours are not listed.\n\n`type` is the website type the setup was started with (`wordpress`, `headless_wordpress`,\n`headless_ecommerce`, `headless_pocketbase`), or `null` for an empty website.",
     "method": "GET",
     "path": "/api/hosting/v1/onboardings",
     "inputSchema": {
       "type": "object",
       "properties": {
+        "order_id": {
+          "type": "integer",
+          "description": "Order ID"
+        },
+        "subscription_id": {
+          "type": "string",
+          "description": "Filter by hosting order subscription ID"
+        },
         "domain": {
           "type": "string",
           "description": "Filter by domain name (exact match)"
         }
       },
       "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_websites_start-setup",
+    "title": "Start website setup",
+    "annotations": {
+      "title": "Start website setup",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Starts a website setup on a Web or Cloud hosting order and returns the created setup\nright away; the website itself is provisioned asynchronously. Poll the list website\nsetups endpoint with the `domain` filter every 10 to 15 seconds and wait for\n`status: completed` before uploading files, deploying or creating databases.\n\nOmit `type` for an empty website. `type: wordpress` installs WordPress in the website\nroot with the admin user, email and password from `wordpress`, the domain as the site\ntitle, and `en_US` when `wordpress.language` is omitted. The headless types\n(`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless\nwebsite; `headless_wordpress` additionally installs WordPress into the `cms` directory\nof the website root with generated credentials.\n\nOmit `domain` to set the website up on a generated temporary free subdomain.\n\nThe order must already have a hosting account: to create the first website on a new\nhosting plan use the create website endpoint, which takes the `datacenter_code`.\nReturns 404 when the order does not exist or is not accessible to the authenticated\nclient, and 409 with a `Retry-After` header while a setup for the same domain is still\nrunning.",
+    "method": "POST",
+    "path": "/api/hosting/v1/orders/{order_id}/onboardings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer",
+          "description": "Hosting order ID. List orders to find available IDs."
+        },
+        "type": {
+          "type": "string",
+          "description": "Website type. Omit or `null` for an empty website. `wordpress` installs WordPress in the website root and requires `wordpress`. The headless types (`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless website; `headless_wordpress` additionally installs WordPress into the `cms` directory with generated credentials.",
+          "enum": [
+            "wordpress",
+            "headless_wordpress",
+            "headless_ecommerce",
+            "headless_pocketbase"
+          ]
+        },
+        "domain": {
+          "type": "string",
+          "description": "Customer-owned domain. Cannot start with \"www.\". Omit or `null` to set the website up on a generated temporary free subdomain."
+        },
+        "wordpress": {
+          "type": "object",
+          "description": "WordPress install settings. Required when `type` is `wordpress`, not allowed otherwise. The site title is the domain.",
+          "properties": {
+            "language": {
+              "type": "string",
+              "description": "WordPress locale, for example `en_US` or `lt_LT`. Defaults to `en_US` when omitted."
+            },
+            "is_ai_builder": {
+              "type": "boolean",
+              "description": "When `true`, installs the Hostinger AI theme (`hostinger-ai-theme`). Defaults to `false` when omitted."
+            },
+            "admin": {
+              "type": "object",
+              "description": "WordPress administrator account",
+              "properties": {
+                "user": {
+                  "type": "string",
+                  "description": "WordPress admin username (letters, numbers, and underscore)"
+                },
+                "password": {
+                  "type": "string",
+                  "description": "WordPress admin password (8-50 characters, mixed case, a digit, and not compromised)"
+                },
+                "email": {
+                  "type": "string",
+                  "description": "WordPress admin email address"
+                }
+              },
+              "required": [
+                "user",
+                "password",
+                "email"
+              ]
+            }
+          },
+          "required": [
+            "admin"
+          ]
+        }
+      },
+      "required": [
+        "order_id"
+      ]
     },
     "security": [
       {

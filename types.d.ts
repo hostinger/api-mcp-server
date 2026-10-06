@@ -4717,22 +4717,77 @@ close or merge it before patching again. Available on Business and Cloud Hosting
 
   /**
    * Returns the website setups started in the last 24 hours for the hosting accounts
-accessible to the authenticated client, newest first.
+accessible to the authenticated client, newest first. Narrow the list with the
+`order_id`, `subscription_id` or `domain` filters.
 
-Meant for polling right after creating a website: the website shows up in the
-websites list before its server-side setup has finished, and while the setup is
-`running` endpoints that operate on that website may respond with `404` or `409`.
-Poll this endpoint with the `domain` filter every 10 to 15 seconds and wait for
-`status: completed` before uploading files, deploying or creating databases.
+Meant for polling right after creating a website or starting a website setup: the
+website shows up in the websites list before its server-side setup has finished, and
+while the setup is `running` endpoints that operate on that website may respond with
+`404` or `409`. Poll this endpoint with the `domain` filter every 10 to 15 seconds and
+wait for `status: completed` before uploading files, deploying or creating databases.
 `failed` means the setup stopped before finishing or has not reported progress for
 over an hour. Setups older than 24 hours are not listed.
+
+`type` is the website type the setup was started with (`wordpress`, `headless_wordpress`,
+`headless_ecommerce`, `headless_pocketbase`), or `null` for an empty website.
    */
   "hosting_websites_list-setups": {
     params: {
       /**
+       * Order ID
+       */
+      order_id?: number;
+      /**
+       * Filter by hosting order subscription ID
+       */
+      subscription_id?: string;
+      /**
        * Filter by domain name (exact match)
        */
       domain?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Starts a website setup on a Web or Cloud hosting order and returns the created setup
+right away; the website itself is provisioned asynchronously. Poll the list website
+setups endpoint with the `domain` filter every 10 to 15 seconds and wait for
+`status: completed` before uploading files, deploying or creating databases.
+
+Omit `type` for an empty website. `type: wordpress` installs WordPress in the website
+root with the admin user, email and password from `wordpress`, the domain as the site
+title, and `en_US` when `wordpress.language` is omitted. The headless types
+(`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless
+website; `headless_wordpress` additionally installs WordPress into the `cms` directory
+of the website root with generated credentials.
+
+Omit `domain` to set the website up on a generated temporary free subdomain.
+
+The order must already have a hosting account: to create the first website on a new
+hosting plan use the create website endpoint, which takes the `datacenter_code`.
+Returns 404 when the order does not exist or is not accessible to the authenticated
+client, and 409 with a `Retry-After` header while a setup for the same domain is still
+running.
+   */
+  "hosting_websites_start-setup": {
+    params: {
+      /**
+       * Hosting order ID. List orders to find available IDs.
+       */
+      order_id: number;
+      /**
+       * Website type. Omit or `null` for an empty website. `wordpress` installs WordPress in the website root and requires `wordpress`. The headless types (`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless website; `headless_wordpress` additionally installs WordPress into the `cms` directory with generated credentials.
+       */
+      type?: string;
+      /**
+       * Customer-owned domain. Cannot start with "www.". Omit or `null` to set the website up on a generated temporary free subdomain.
+       */
+      domain?: string;
+      /**
+       * WordPress install settings. Required when `type` is `wordpress`, not allowed otherwise. The site title is the domain.
+       */
+      wordpress?: object;
     };
     response: any; // Response structure will depend on the API
   };
