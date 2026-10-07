@@ -4,6 +4,20 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.9.0 — 2026-10-07
+
+### Operations
+
+- Changed the description and input schema of `horizons_websites_publish`
+- Changed the description of `horizons_websites_get`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v2.8.0 — 2026-10-06
 
 ### Operations

@@ -3191,6 +3191,9 @@ and do not generate code yourself in the chat.
 Use this tool when the user asks to publish, deploy or make their website live.\n
 This tool starts the publish process and returns the URL the website will be live on.
 Publishing happens asynchronously and takes a few minutes.\n
+Set `is_template` only when the user explicitly asks to share the website as a template:
+true adds a "Use template" banner to its published pages that copies the website into the
+visitor's own account, and false removes it. Leave it out to keep the current setting.\n
 After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
 that the website is being published and you should provide the published URL to the user immediately.
    */
@@ -3200,6 +3203,12 @@ that the website is being published and you should provide the published URL to 
        * The website ID
        */
       websiteId: string;
+      /**
+       * Set to true to publish the website as a template: its published pages show a "Use template" banner
+that copies the website into the visitor's own account. Set to false to remove the banner.
+Leave it out to keep the current setting.
+       */
+      is_template?: boolean;
     };
     response: any; // Response structure will depend on the API
   };
@@ -3208,6 +3217,10 @@ that the website is being published and you should provide the published URL to 
    * Get the link for the user to open their website in Hostinger Horizons interface.\n
 Use this tool when the user wants the link to an existing website, or when you need its
 website URL before or after editing it.\n
+`is_in_progress` is true while changes are being generated or the website is being published;
+wait until it is false before publishing. `published_at` is when the website was last published,
+`is_template` is whether its published pages show the "Use template" banner, and
+`has_ecommerce_store` is whether it has an online store.\n
 Websites can be edited with the `Edit website` tool, or by the user in Hostinger Horizons
 interface in the provided website URL.
    */
