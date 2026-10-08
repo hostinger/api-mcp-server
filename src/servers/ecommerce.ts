@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/ecommerce.js';
 
-startServer({ name: 'hostinger-ecommerce-mcp', version: '2.9.0', tools });
+startServer({ name: 'hostinger-ecommerce-mcp', version: '2.9.1', tools });
