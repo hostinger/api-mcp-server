@@ -4,6 +4,25 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.10.0 — 2026-10-09
+
+### Operations
+
+- Added `vps_ssh-keys_list-virtual-machine` — List virtual machine SSH keys
+- Added `vps_ssh-keys_add-virtual-machine` — Add virtual machine SSH keys
+- Added `vps_ssh-keys_remove-virtual-machine` — Remove virtual machine SSH keys
+- Changed the description of `vps_public-keys_attach`
+- Changed the description of `vps_public-keys_delete`
+- Changed the description of `vps_public-keys_list`
+- Changed the description of `vps_public-keys_create`
+- Changed the description of `vps_virtual-machines_attached-public-keys`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v2.9.1 — 2026-10-08
 
 ### Also in this release

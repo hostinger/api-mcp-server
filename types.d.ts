@@ -8162,7 +8162,9 @@ Use this endpoint to create automation scripts for VPS setup tasks.
   };
 
   /**
-   * Attach existing public keys from your account to a specified virtual machine.
+   * Deprecated: use `POST /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.
+
+Attach existing public keys from your account to a specified virtual machine.
 
 Multiple keys can be attached to a single virtual machine.
 
@@ -8183,7 +8185,10 @@ Use this endpoint to enable SSH key authentication for VPS instances.
   };
 
   /**
-   * Delete a public key from your account. 
+   * Deprecated: account-level public keys have no direct replacement. Root SSH keys are now managed per
+virtual machine via `DELETE /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys`.
+
+Delete a public key from your account. 
 
 **Deleting public key from account does not remove it from virtual machine** 
        
@@ -8200,7 +8205,10 @@ Use this endpoint to remove unused SSH keys from account.
   };
 
   /**
-   * Retrieve public keys associated with your account.
+   * Deprecated: account-level public keys have no direct replacement. Root SSH keys are now managed per
+virtual machine via `GET /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys`.
+
+Retrieve public keys associated with your account.
 
 Use this endpoint to view available SSH keys for VPS authentication.
    */
@@ -8215,7 +8223,10 @@ Use this endpoint to view available SSH keys for VPS authentication.
   };
 
   /**
-   * Add a new public key to your account.
+   * Deprecated: account-level public keys have no direct replacement. Root SSH keys are now managed per
+virtual machine via `POST /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys`.
+
+Add a new public key to your account.
 
 Use this endpoint to register SSH keys for VPS authentication.
    */
@@ -8229,6 +8240,63 @@ Use this endpoint to register SSH keys for VPS authentication.
        * key parameter
        */
       key: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve SSH public keys currently configured on a specified virtual machine.
+
+Only keys of the `root` user are listed.
+
+Use this endpoint to view SSH keys that can be used for authentication on VPS instances.
+   */
+  "vps_ssh-keys_list-virtual-machine": {
+    params: {
+      /**
+       * Virtual Machine ID
+       */
+      virtualMachineId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Add one or more SSH public keys to a specified virtual machine.
+
+Keys are added to the `root` user and can be used for passwordless SSH authentication.
+Returns the complete list of SSH keys currently configured on the virtual machine.
+
+Use this endpoint to enable SSH key authentication for VPS instances.
+   */
+  "vps_ssh-keys_add-virtual-machine": {
+    params: {
+      /**
+       * Virtual Machine ID
+       */
+      virtualMachineId: number;
+      /**
+       * SSH public keys in OpenSSH format to add
+       */
+      keys: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Remove one or more SSH public keys from a specified virtual machine.
+
+Removed keys can no longer be used to authenticate via SSH as the `root` user.
+Returns the remaining list of SSH keys configured on the virtual machine.
+
+Use this endpoint to revoke SSH key access to VPS instances.
+   */
+  "vps_ssh-keys_remove-virtual-machine": {
+    params: {
+      /**
+       * Virtual Machine ID
+       */
+      virtualMachineId: number;
     };
     response: any; // Response structure will depend on the API
   };
@@ -8304,7 +8372,9 @@ Use this endpoint to view VPS operation history and troubleshoot issues.
   };
 
   /**
-   * Retrieve public keys attached to a specified virtual machine.
+   * Deprecated: use `GET /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.
+
+Retrieve public keys attached to a specified virtual machine.
 
 Use this endpoint to view SSH keys configured for specific VPS instances.
    */

@@ -14067,7 +14067,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Attach existing public keys from your account to a specified virtual machine.\n\nMultiple keys can be attached to a single virtual machine.\n\nUse this endpoint to enable SSH key authentication for VPS instances.",
+    "description": "Deprecated: use `POST /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.\n\nAttach existing public keys from your account to a specified virtual machine.\n\nMultiple keys can be attached to a single virtual machine.\n\nUse this endpoint to enable SSH key authentication for VPS instances.",
     "method": "POST",
     "path": "/api/vps/v1/public-keys/attach/{virtualMachineId}",
     "inputSchema": {
@@ -14107,7 +14107,7 @@ export default [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Delete a public key from your account. \n\n**Deleting public key from account does not remove it from virtual machine** \n       \nUse this endpoint to remove unused SSH keys from account.",
+    "description": "Deprecated: account-level public keys have no direct replacement. Root SSH keys are now managed per\nvirtual machine via `DELETE /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys`.\n\nDelete a public key from your account. \n\n**Deleting public key from account does not remove it from virtual machine** \n       \nUse this endpoint to remove unused SSH keys from account.",
     "method": "DELETE",
     "path": "/api/vps/v1/public-keys/{publicKeyId}",
     "inputSchema": {
@@ -14137,7 +14137,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve public keys associated with your account.\n\nUse this endpoint to view available SSH keys for VPS authentication.",
+    "description": "Deprecated: account-level public keys have no direct replacement. Root SSH keys are now managed per\nvirtual machine via `GET /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys`.\n\nRetrieve public keys associated with your account.\n\nUse this endpoint to view available SSH keys for VPS authentication.",
     "method": "GET",
     "path": "/api/vps/v1/public-keys",
     "inputSchema": {
@@ -14165,7 +14165,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Add a new public key to your account.\n\nUse this endpoint to register SSH keys for VPS authentication.",
+    "description": "Deprecated: account-level public keys have no direct replacement. Root SSH keys are now managed per\nvirtual machine via `POST /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys`.\n\nAdd a new public key to your account.\n\nUse this endpoint to register SSH keys for VPS authentication.",
     "method": "POST",
     "path": "/api/vps/v1/public-keys",
     "inputSchema": {
@@ -14183,6 +14183,106 @@ export default [
       "required": [
         "name",
         "key"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "vps"
+  },
+  {
+    "name": "vps_ssh-keys_list-virtual-machine",
+    "title": "List virtual machine SSH keys",
+    "annotations": {
+      "title": "List virtual machine SSH keys",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Retrieve SSH public keys currently configured on a specified virtual machine.\n\nOnly keys of the `root` user are listed.\n\nUse this endpoint to view SSH keys that can be used for authentication on VPS instances.",
+    "method": "GET",
+    "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "virtualMachineId": {
+          "type": "integer",
+          "description": "Virtual Machine ID"
+        }
+      },
+      "required": [
+        "virtualMachineId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "vps"
+  },
+  {
+    "name": "vps_ssh-keys_add-virtual-machine",
+    "title": "Add virtual machine SSH keys",
+    "annotations": {
+      "title": "Add virtual machine SSH keys",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Add one or more SSH public keys to a specified virtual machine.\n\nKeys are added to the `root` user and can be used for passwordless SSH authentication.\nReturns the complete list of SSH keys currently configured on the virtual machine.\n\nUse this endpoint to enable SSH key authentication for VPS instances.",
+    "method": "POST",
+    "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "virtualMachineId": {
+          "type": "integer",
+          "description": "Virtual Machine ID"
+        },
+        "keys": {
+          "type": "array",
+          "description": "SSH public keys in OpenSSH format to add",
+          "items": {
+            "type": "string",
+            "description": "keys parameter"
+          }
+        }
+      },
+      "required": [
+        "virtualMachineId",
+        "keys"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "vps"
+  },
+  {
+    "name": "vps_ssh-keys_remove-virtual-machine",
+    "title": "Remove virtual machine SSH keys",
+    "annotations": {
+      "title": "Remove virtual machine SSH keys",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Remove one or more SSH public keys from a specified virtual machine.\n\nRemoved keys can no longer be used to authenticate via SSH as the `root` user.\nReturns the remaining list of SSH keys configured on the virtual machine.\n\nUse this endpoint to revoke SSH key access to VPS instances.",
+    "method": "DELETE",
+    "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "virtualMachineId": {
+          "type": "integer",
+          "description": "Virtual Machine ID"
+        }
+      },
+      "required": [
+        "virtualMachineId"
       ]
     },
     "security": [
@@ -14322,7 +14422,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve public keys attached to a specified virtual machine.\n\nUse this endpoint to view SSH keys configured for specific VPS instances.",
+    "description": "Deprecated: use `GET /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.\n\nRetrieve public keys attached to a specified virtual machine.\n\nUse this endpoint to view SSH keys configured for specific VPS instances.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/public-keys",
     "inputSchema": {
