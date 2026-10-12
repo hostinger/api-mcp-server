@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (411 total)
+- `hostinger-api-mcp` — unified server over every operation (415 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-billing-mcp` — 9 operations for billing
 - `hostinger-dns-mcp` — 8 operations for dns
@@ -78,7 +78,7 @@ This package installs the following MCP server commands:
 - `hostinger-horizons-mcp` — 6 operations for horizons
 - `hostinger-hosting-mcp` — 80 operations for hosting
 - `hostinger-mail-mcp` — 38 operations for mail
-- `hostinger-reach-mcp` — 52 operations for reach
+- `hostinger-reach-mcp` — 56 operations for reach
 - `hostinger-vps-mcp` — 67 operations for vps
 - `hostinger-wordpress-mcp` — 38 operations for wordpress
 
@@ -3654,16 +3654,6 @@ directly usable template URL and for the tags the form puts on the contacts it c
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/forms`
 
-#### reach_profiles_domain-dns-status
-
-Retrieve the DNS configuration status for a profile's domain.
-
-This endpoint reports the state of MX, SPF, DKIM and DMARC records, including the
-actual records found and the suggested records required for correct email delivery.
-
-- **Method**: `GET`
-- **Path**: `/api/reach/v1/profiles/{profileUuid}/domains/dns-status`
-
 #### reach_profiles_connected-sending-domain
 
 Get the sending domain connected to the profile, its verification status and any suspended
@@ -3676,6 +3666,49 @@ behind the status, use the DNS status endpoint.
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/domains`
+
+#### reach_profiles_connect-sending-domain
+
+Connect a sending domain to the profile so emails can be sent from addresses on it.
+
+Connecting does not make the domain ready to send: check the DNS status endpoint next for
+records that are still missing. A domain the account owns or has already verified connects
+immediately. Any other domain starts a TXT ownership verification and returns `409`;
+complete the verification in Reach, then retry. Returns `422` when the profile or another
+profile already has the domain, the domain is blocked, or its ownership cannot be verified.
+An already connected domain is never replaced.
+
+On success the sender address of draft and scheduled campaigns, and of published automation
+and double opt-in emails, moves onto the new domain in the background, keeping the part
+before the `@`.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/domains`
+
+#### reach_profiles_delete-sending-domain
+
+Disconnect the sending domain from the profile.
+
+The domain record is removed, so the profile has no sending domain afterwards and campaigns
+cannot be sent until a domain is connected again. Sender addresses already stored on
+campaigns, automations and settings are left untouched and keep pointing at the removed
+domain. A domain that is not connected to the profile also succeeds, so success is not proof
+that anything was deleted. DNS records at the DNS provider are not removed. To switch
+domains, delete this one and connect the new one. Confirm the domain with the customer
+before calling.
+
+- **Method**: `DELETE`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/domains`
+
+#### reach_profiles_domain-dns-status
+
+Retrieve the DNS configuration status for a profile's domain.
+
+This endpoint reports the state of MX, SPF, DKIM and DMARC records, including the
+actual records found and the suggested records required for correct email delivery.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/domains/dns-status`
 
 #### reach_profiles_list-plan-feature-access
 
@@ -3710,6 +3743,32 @@ This endpoint returns all profiles available to the client, including their basi
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles`
+
+#### reach_profiles_settings
+
+Get the profile's saved sender identity and brand details.
+
+Read the default sender before creating a campaign instead of asking the customer, and
+reuse the brand fields when generating email content. Any field can be `null` for a profile
+that never filled its settings in. This does not check that the sending domain is
+verified, use the connected sending domain endpoint for that.
+
+- **Method**: `GET`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/settings`
+
+#### reach_profiles_update-settings
+
+Change the profile's default sender and brand details.
+
+Send only the fields to change: every omitted field keeps its value, and `null` or an empty
+string clears a text field. The default sender is what campaigns created afterwards start
+from; existing campaigns keep their own sender. `sender_email` is only the part before the
+`@`, because Reach combines it with the profile's connected sending domain, so an address
+outside that domain cannot be set. Connecting a sending domain is a separate endpoint and
+a connected domain cannot be changed here. Returns the settings after the change.
+
+- **Method**: `PATCH`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/settings`
 
 #### reach_templates_list-email
 

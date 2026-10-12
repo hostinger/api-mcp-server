@@ -64,7 +64,7 @@ const GetSkillRequestSchema = z.object({
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 1.63.0
+ * Generated from OpenAPI spec version 1.64.0
  */
 class MCPServer {
   constructor({ name, version, tools, instructions, skills = [] }) {

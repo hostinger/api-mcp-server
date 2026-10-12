@@ -4,6 +4,21 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.13.0 — 2026-10-12
+
+### Operations
+
+- Added `reach_profiles_connect-sending-domain` — Connect sending domain
+- Added `reach_profiles_delete-sending-domain` — Delete sending domain
+- Added `reach_profiles_settings` — Get profile settings
+- Added `reach_profiles_update-settings` — Update profile settings
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v2.12.0 — 2026-10-12
 
 ### Also in this release

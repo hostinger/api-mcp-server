@@ -7436,12 +7436,15 @@ directly usable template URL and for the tags the form puts on the contacts it c
   };
 
   /**
-   * Retrieve the DNS configuration status for a profile's domain.
+   * Get the sending domain connected to the profile, its verification status and any suspended
+sender addresses.
 
-This endpoint reports the state of MX, SPF, DKIM and DMARC records, including the
-actual records found and the suggested records required for correct email delivery.
+Campaigns only go out once a domain is connected and active, so this is the cheapest way to
+check that precondition before building one. A profile with no domain connected returns the
+same shape with every field set to `null`. For the individual MX, SPF, DKIM and DMARC records
+behind the status, use the DNS status endpoint.
    */
-  "reach_profiles_domain-dns-status": {
+  "reach_profiles_connected-sending-domain": {
     params: {
       /**
        * Profile uuid parameter
@@ -7452,15 +7455,61 @@ actual records found and the suggested records required for correct email delive
   };
 
   /**
-   * Get the sending domain connected to the profile, its verification status and any suspended
-sender addresses.
+   * Connect a sending domain to the profile so emails can be sent from addresses on it.
 
-Campaigns only go out once a domain is connected and active, so this is the cheapest way to
-check that precondition before building one. A profile with no domain connected returns the
-same shape with every field set to `null`. For the individual MX, SPF, DKIM and DMARC records
-behind the status, use the DNS status endpoint.
+Connecting does not make the domain ready to send: check the DNS status endpoint next for
+records that are still missing. A domain the account owns or has already verified connects
+immediately. Any other domain starts a TXT ownership verification and returns `409`;
+complete the verification in Reach, then retry. Returns `422` when the profile or another
+profile already has the domain, the domain is blocked, or its ownership cannot be verified.
+An already connected domain is never replaced.
+
+On success the sender address of draft and scheduled campaigns, and of published automation
+and double opt-in emails, moves onto the new domain in the background, keeping the part
+before the `@`.
    */
-  "reach_profiles_connected-sending-domain": {
+  "reach_profiles_connect-sending-domain": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * domain parameter
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Disconnect the sending domain from the profile.
+
+The domain record is removed, so the profile has no sending domain afterwards and campaigns
+cannot be sent until a domain is connected again. Sender addresses already stored on
+campaigns, automations and settings are left untouched and keep pointing at the removed
+domain. A domain that is not connected to the profile also succeeds, so success is not proof
+that anything was deleted. DNS records at the DNS provider are not removed. To switch
+domains, delete this one and connect the new one. Confirm the domain with the customer
+before calling.
+   */
+  "reach_profiles_delete-sending-domain": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve the DNS configuration status for a profile's domain.
+
+This endpoint reports the state of MX, SPF, DKIM and DMARC records, including the
+actual records found and the suggested records required for correct email delivery.
+   */
+  "reach_profiles_domain-dns-status": {
     params: {
       /**
        * Profile uuid parameter
@@ -7515,6 +7564,133 @@ not kept.
   "reach_profiles_list": {
     params: {
 
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get the profile's saved sender identity and brand details.
+
+Read the default sender before creating a campaign instead of asking the customer, and
+reuse the brand fields when generating email content. Any field can be `null` for a profile
+that never filled its settings in. This does not check that the sending domain is
+verified, use the connected sending domain endpoint for that.
+   */
+  "reach_profiles_settings": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Change the profile's default sender and brand details.
+
+Send only the fields to change: every omitted field keeps its value, and `null` or an empty
+string clears a text field. The default sender is what campaigns created afterwards start
+from; existing campaigns keep their own sender. `sender_email` is only the part before the
+`@`, because Reach combines it with the profile's connected sending domain, so an address
+outside that domain cannot be set. Connecting a sending domain is a separate endpoint and
+a connected domain cannot be changed here. Returns the settings after the change.
+   */
+  "reach_profiles_update-settings": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * brand_name parameter
+       */
+      brand_name?: string;
+      /**
+       * website_url parameter
+       */
+      website_url?: string;
+      /**
+       * business_address parameter
+       */
+      business_address?: string;
+      /**
+       * privacy_policy_url parameter
+       */
+      privacy_policy_url?: string;
+      /**
+       * accent_color parameter
+       */
+      accent_color?: string;
+      /**
+       * button_color parameter
+       */
+      button_color?: string;
+      /**
+       * background_color parameter
+       */
+      background_color?: string;
+      /**
+       * text_color parameter
+       */
+      text_color?: string;
+      /**
+       * links_color parameter
+       */
+      links_color?: string;
+      /**
+       * Button text colour.
+       */
+      button_text?: string;
+      /**
+       * button_corners parameter
+       */
+      button_corners?: number;
+      /**
+       * font_family parameter
+       */
+      font_family?: string;
+      /**
+       * heading_font_family parameter
+       */
+      heading_font_family?: string;
+      /**
+       * Public image URL. Logo uploads are not supported.
+       */
+      logo_url?: string;
+      /**
+       * social_links parameter
+       */
+      social_links?: array;
+      /**
+       * Social profile links keyed by platform.
+       */
+      socials?: object;
+      /**
+       * about parameter
+       */
+      about?: string;
+      /**
+       * keywords parameter
+       */
+      keywords?: array;
+      /**
+       * topics parameter
+       */
+      topics?: array;
+      /**
+       * selling_points parameter
+       */
+      selling_points?: array;
+      /**
+       * Default sender name. Letters, numbers and spaces only.
+       */
+      sender_name?: string;
+      /**
+       * Part of the default sender address before the `@`, for example `hello`. Never send a
+full address: Reach adds the profile's connected sending domain itself.
+       */
+      sender_email?: string;
     };
     response: any; // Response structure will depend on the API
   };

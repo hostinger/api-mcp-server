@@ -12827,16 +12827,16 @@ export default [
     "group": "reach"
   },
   {
-    "name": "reach_profiles_domain-dns-status",
-    "title": "Get profile domain DNS status",
+    "name": "reach_profiles_connected-sending-domain",
+    "title": "Get connected sending domain",
     "annotations": {
-      "title": "Get profile domain DNS status",
+      "title": "Get connected sending domain",
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve the DNS configuration status for a profile's domain.\n\nThis endpoint reports the state of MX, SPF, DKIM and DMARC records, including the\nactual records found and the suggested records required for correct email delivery.",
+    "description": "Get the sending domain connected to the profile, its verification status and any suspended\nsender addresses.\n\nCampaigns only go out once a domain is connected and active, so this is the cheapest way to\ncheck that precondition before building one. A profile with no domain connected returns the\nsame shape with every field set to `null`. For the individual MX, SPF, DKIM and DMARC records\nbehind the status, use the DNS status endpoint.",
     "method": "GET",
-    "path": "/api/reach/v1/profiles/{profileUuid}/domains/dns-status",
+    "path": "/api/reach/v1/profiles/{profileUuid}/domains",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -12857,16 +12857,82 @@ export default [
     "group": "reach"
   },
   {
-    "name": "reach_profiles_connected-sending-domain",
-    "title": "Get connected sending domain",
+    "name": "reach_profiles_connect-sending-domain",
+    "title": "Connect sending domain",
     "annotations": {
-      "title": "Get connected sending domain",
+      "title": "Connect sending domain",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Connect a sending domain to the profile so emails can be sent from addresses on it.\n\nConnecting does not make the domain ready to send: check the DNS status endpoint next for\nrecords that are still missing. A domain the account owns or has already verified connects\nimmediately. Any other domain starts a TXT ownership verification and returns `409`;\ncomplete the verification in Reach, then retry. Returns `422` when the profile or another\nprofile already has the domain, the domain is blocked, or its ownership cannot be verified.\nAn already connected domain is never replaced.\n\nOn success the sender address of draft and scheduled campaigns, and of published automation\nand double opt-in emails, moves onto the new domain in the background, keeping the part\nbefore the `@`.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/domains",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_profiles_delete-sending-domain",
+    "title": "Delete sending domain",
+    "annotations": {
+      "title": "Delete sending domain",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Disconnect the sending domain from the profile.\n\nThe domain record is removed, so the profile has no sending domain afterwards and campaigns\ncannot be sent until a domain is connected again. Sender addresses already stored on\ncampaigns, automations and settings are left untouched and keep pointing at the removed\ndomain. A domain that is not connected to the profile also succeeds, so success is not proof\nthat anything was deleted. DNS records at the DNS provider are not removed. To switch\ndomains, delete this one and connect the new one. Confirm the domain with the customer\nbefore calling.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/domains",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_profiles_domain-dns-status",
+    "title": "Get profile domain DNS status",
+    "annotations": {
+      "title": "Get profile domain DNS status",
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Get the sending domain connected to the profile, its verification status and any suspended\nsender addresses.\n\nCampaigns only go out once a domain is connected and active, so this is the cheapest way to\ncheck that precondition before building one. A profile with no domain connected returns the\nsame shape with every field set to `null`. For the individual MX, SPF, DKIM and DMARC records\nbehind the status, use the DNS status endpoint.",
+    "description": "Retrieve the DNS configuration status for a profile's domain.\n\nThis endpoint reports the state of MX, SPF, DKIM and DMARC records, including the\nactual records found and the suggested records required for correct email delivery.",
     "method": "GET",
-    "path": "/api/reach/v1/profiles/{profileUuid}/domains",
+    "path": "/api/reach/v1/profiles/{profileUuid}/domains/dns-status",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -12961,6 +13027,172 @@ export default [
       "type": "object",
       "properties": {},
       "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_profiles_settings",
+    "title": "Get profile settings",
+    "annotations": {
+      "title": "Get profile settings",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Get the profile's saved sender identity and brand details.\n\nRead the default sender before creating a campaign instead of asking the customer, and\nreuse the brand fields when generating email content. Any field can be `null` for a profile\nthat never filled its settings in. This does not check that the sending domain is\nverified, use the connected sending domain endpoint for that.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/settings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_profiles_update-settings",
+    "title": "Update profile settings",
+    "annotations": {
+      "title": "Update profile settings",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Change the profile's default sender and brand details.\n\nSend only the fields to change: every omitted field keeps its value, and `null` or an empty\nstring clears a text field. The default sender is what campaigns created afterwards start\nfrom; existing campaigns keep their own sender. `sender_email` is only the part before the\n`@`, because Reach combines it with the profile's connected sending domain, so an address\noutside that domain cannot be set. Connecting a sending domain is a separate endpoint and\na connected domain cannot be changed here. Returns the settings after the change.",
+    "method": "PATCH",
+    "path": "/api/reach/v1/profiles/{profileUuid}/settings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "brand_name": {
+          "type": "string",
+          "description": "brand_name parameter"
+        },
+        "website_url": {
+          "type": "string",
+          "description": "website_url parameter"
+        },
+        "business_address": {
+          "type": "string",
+          "description": "business_address parameter"
+        },
+        "privacy_policy_url": {
+          "type": "string",
+          "description": "privacy_policy_url parameter"
+        },
+        "accent_color": {
+          "type": "string",
+          "description": "accent_color parameter"
+        },
+        "button_color": {
+          "type": "string",
+          "description": "button_color parameter"
+        },
+        "background_color": {
+          "type": "string",
+          "description": "background_color parameter"
+        },
+        "text_color": {
+          "type": "string",
+          "description": "text_color parameter"
+        },
+        "links_color": {
+          "type": "string",
+          "description": "links_color parameter"
+        },
+        "button_text": {
+          "type": "string",
+          "description": "Button text colour."
+        },
+        "button_corners": {
+          "type": "integer",
+          "description": "button_corners parameter"
+        },
+        "font_family": {
+          "type": "string",
+          "description": "font_family parameter"
+        },
+        "heading_font_family": {
+          "type": "string",
+          "description": "heading_font_family parameter"
+        },
+        "logo_url": {
+          "type": "string",
+          "description": "Public image URL. Logo uploads are not supported."
+        },
+        "social_links": {
+          "type": "array",
+          "description": "social_links parameter",
+          "items": {
+            "type": "string",
+            "description": "social_links parameter"
+          }
+        },
+        "socials": {
+          "type": "object",
+          "description": "Social profile links keyed by platform.",
+          "properties": {}
+        },
+        "about": {
+          "type": "string",
+          "description": "about parameter"
+        },
+        "keywords": {
+          "type": "array",
+          "description": "keywords parameter",
+          "items": {
+            "type": "string",
+            "description": "keywords parameter"
+          }
+        },
+        "topics": {
+          "type": "array",
+          "description": "topics parameter",
+          "items": {
+            "type": "string",
+            "description": "topics parameter"
+          }
+        },
+        "selling_points": {
+          "type": "array",
+          "description": "selling_points parameter",
+          "items": {
+            "type": "string",
+            "description": "selling_points parameter"
+          }
+        },
+        "sender_name": {
+          "type": "string",
+          "description": "Default sender name. Letters, numbers and spaces only."
+        },
+        "sender_email": {
+          "type": "string",
+          "description": "Part of the default sender address before the `@`, for example `hello`. Never send a\nfull address: Reach adds the profile's connected sending domain itself."
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
     },
     "security": [
       {
