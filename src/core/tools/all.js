@@ -15646,6 +15646,79 @@ export default [
     "group": "vps"
   },
   {
+    "name": "wordpress_ai-content_generate-images",
+    "title": "Generate images",
+    "annotations": {
+      "title": "Generate images",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Generate one or more images from a prompt and an image type for the specified\nWordPress installation. Images are returned inline as base64-encoded PNGs. They match\nthe requested aspect ratio and are never smaller than the requested size; logos are\ntransparent PNGs cropped to the mark.\n\nGeneration is synchronous and can take up to a minute. The endpoint is limited to\n10 requests per minute.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/content/images/generate",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "prompt": {
+          "type": "string",
+          "description": "What the image should show. For the logo type, the wordmark and mark to render."
+        },
+        "image_type": {
+          "type": "string",
+          "description": "Kind of image to generate. It sets the default size and cropping.",
+          "enum": [
+            "hero",
+            "background",
+            "inline",
+            "gallery",
+            "product",
+            "logo"
+          ]
+        },
+        "num_of_images": {
+          "type": "integer",
+          "description": "How many images to generate"
+        },
+        "width": {
+          "type": "integer",
+          "description": "Output width in pixels. Defaults per image type and is ignored for the logo type."
+        },
+        "height": {
+          "type": "integer",
+          "description": "Output height in pixels. Defaults per image type and is ignored for the logo type."
+        },
+        "style": {
+          "type": "string",
+          "description": "Style tokens appended to photographic prompts. Ignored for the logo type."
+        },
+        "color_guidance": {
+          "type": "string",
+          "description": "Colour direction for the logo type only. It is not rendered as text."
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "prompt",
+        "image_type"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
     "name": "wordpress_ai-tools_show-option-status",
     "title": "Show AI option status",
     "annotations": {

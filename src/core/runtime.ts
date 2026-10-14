@@ -94,7 +94,7 @@ interface Skill { uri: string; frontmatter: Record<string, unknown>; resources: 
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 1.64.1
+ * Generated from OpenAPI spec version 1.65.0
  */
 class MCPServer {
   private readonly name: string;

@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (415 total)
+- `hostinger-api-mcp` — unified server over every operation (416 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-billing-mcp` — 9 operations for billing
 - `hostinger-dns-mcp` — 8 operations for dns
@@ -80,7 +80,7 @@ This package installs the following MCP server commands:
 - `hostinger-mail-mcp` — 38 operations for mail
 - `hostinger-reach-mcp` — 56 operations for reach
 - `hostinger-vps-mcp` — 67 operations for vps
-- `hostinger-wordpress-mcp` — 38 operations for wordpress
+- `hostinger-wordpress-mcp` — 39 operations for wordpress
 
 Every binary exposes the same three tools; a scoped binary only searches and executes its own group's operations. `hostinger-api-mcp` remains the backwards-compatible default.
 
@@ -4585,6 +4585,22 @@ Use this endpoint to power off running VPS instances.
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/stop`
 
 ### `hostinger-wordpress-mcp`
+
+#### wordpress_ai-content_generate-images
+
+Generate one or more images from a prompt and an image type for the specified
+WordPress installation. Images are returned inline as base64-encoded PNGs. They match
+the requested aspect ratio and are never smaller than the requested size; logos are
+transparent PNGs cropped to the mark.
+
+Generation is synchronous and can take up to a minute. The endpoint is limited to
+10 requests per minute.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/content/images/generate`
 
 #### wordpress_ai-tools_show-option-status
 

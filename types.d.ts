@@ -9191,6 +9191,60 @@ Use this endpoint to power off running VPS instances.
   };
 
   /**
+   * Generate one or more images from a prompt and an image type for the specified
+WordPress installation. Images are returned inline as base64-encoded PNGs. They match
+the requested aspect ratio and are never smaller than the requested size; logos are
+transparent PNGs cropped to the mark.
+
+Generation is synchronous and can take up to a minute. The endpoint is limited to
+10 requests per minute.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "wordpress_ai-content_generate-images": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * What the image should show. For the logo type, the wordmark and mark to render.
+       */
+      prompt: string;
+      /**
+       * Kind of image to generate. It sets the default size and cropping.
+       */
+      image_type: string;
+      /**
+       * How many images to generate
+       */
+      num_of_images?: number;
+      /**
+       * Output width in pixels. Defaults per image type and is ignored for the logo type.
+       */
+      width?: number;
+      /**
+       * Output height in pixels. Defaults per image type and is ignored for the logo type.
+       */
+      height?: number;
+      /**
+       * Style tokens appended to photographic prompts. Ignored for the logo type.
+       */
+      style?: string;
+      /**
+       * Colour direction for the logo type only. It is not rendered as text.
+       */
+      color_guidance?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Show the current AI option status for the Hostinger Tools plugin on the
 specified WordPress installation. Filter by `option` to return a single
 option, or omit it to return all options.
