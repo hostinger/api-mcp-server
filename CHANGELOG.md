@@ -4,6 +4,18 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.15.0 — 2026-10-14
+
+### Operations
+
+- Added `hosting_headless_submit-build-report` — Submit headless build report
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v2.14.0 — 2026-10-14
 
 ### Operations

@@ -1805,6 +1805,229 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_headless_submit-build-report",
+    "title": "Submit headless build report",
+    "annotations": {
+      "title": "Submit headless build report",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Submits the build report the headless skill writes at the end of a run (including early\nstops), so Hostinger can learn where builds get stuck. Send one report per call, with the\nreport JSON as the request body, unchanged. Only send a report when the user agreed to it.\n\nThe report must match report.schema.json v1; an invalid report returns 422 and is not\nstored. The report is linked to the authenticated account, so do not add account details\nto it.",
+    "method": "POST",
+    "path": "/api/hosting/v1/headless/agent-reports",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "description": "Report schema version",
+          "enum": [
+            "1"
+          ]
+        },
+        "generated_at": {
+          "type": "string",
+          "description": "When the report was written"
+        },
+        "consent": {
+          "type": "object",
+          "description": "Upload status of the report, as written by the headless skill",
+          "properties": {
+            "sent": {
+              "type": "boolean",
+              "description": "sent parameter"
+            },
+            "note": {
+              "type": "string",
+              "description": "note parameter"
+            }
+          },
+          "required": [
+            "sent"
+          ]
+        },
+        "run": {
+          "type": "object",
+          "description": "The run the report is for",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "id parameter"
+            },
+            "kind": {
+              "type": "string",
+              "description": "kind parameter",
+              "enum": [
+                "build",
+                "resume",
+                "redesign",
+                "iterate"
+              ]
+            },
+            "skill": {
+              "type": "string",
+              "description": "skill parameter"
+            },
+            "follow_ups": {
+              "type": "array",
+              "description": "follow_ups parameter",
+              "items": {
+                "type": "object",
+                "description": "follow_ups parameter",
+                "properties": {}
+              }
+            }
+          },
+          "required": [
+            "id",
+            "kind"
+          ]
+        },
+        "info": {
+          "type": "object",
+          "description": "Website, tool and outcome of the run",
+          "properties": {
+            "domain": {
+              "type": "string",
+              "description": "domain parameter"
+            },
+            "tool": {
+              "type": "string",
+              "description": "tool parameter"
+            },
+            "outcome": {
+              "type": "string",
+              "description": "outcome parameter",
+              "enum": [
+                "live",
+                "stopped",
+                "failed",
+                "abandoned"
+              ]
+            }
+          },
+          "required": [
+            "domain",
+            "tool",
+            "outcome"
+          ]
+        },
+        "timing": {
+          "type": "object",
+          "description": "Run start and end times and per-stage timings",
+          "properties": {
+            "started_at": {
+              "type": "string",
+              "description": "started_at parameter"
+            },
+            "ended_at": {
+              "type": "string",
+              "description": "ended_at parameter"
+            },
+            "minutes_total": {
+              "type": "number",
+              "description": "minutes_total parameter"
+            },
+            "stages": {
+              "type": "array",
+              "description": "stages parameter",
+              "items": {
+                "type": "object",
+                "description": "stages parameter",
+                "properties": {}
+              }
+            }
+          },
+          "required": [
+            "started_at",
+            "ended_at",
+            "minutes_total",
+            "stages"
+          ]
+        },
+        "tokens": {
+          "type": "object",
+          "description": "Token usage, only when the tool reports its own usage",
+          "properties": {}
+        },
+        "issues": {
+          "type": "array",
+          "description": "Problems hit during the run",
+          "items": {
+            "type": "object",
+            "description": "issues parameter",
+            "properties": {}
+          }
+        },
+        "user_feedback": {
+          "type": "array",
+          "description": "Feedback the user gave during the run",
+          "items": {
+            "type": "object",
+            "description": "user_feedback parameter",
+            "properties": {}
+          }
+        },
+        "skill_gaps": {
+          "type": "array",
+          "description": "Places where the skill instructions were missing or wrong",
+          "items": {
+            "type": "object",
+            "description": "skill_gaps parameter",
+            "properties": {}
+          }
+        },
+        "what_went_well": {
+          "type": "array",
+          "description": "Things that worked well during the run",
+          "items": {
+            "type": "object",
+            "description": "what_went_well parameter",
+            "properties": {}
+          }
+        },
+        "logging_gaps": {
+          "type": "array",
+          "description": "Where the run log is missing or unsure",
+          "items": {
+            "type": "object",
+            "description": "logging_gaps parameter",
+            "properties": {}
+          }
+        },
+        "previous_runs": {
+          "type": "array",
+          "description": "Earlier runs for the same website",
+          "items": {
+            "type": "object",
+            "description": "previous_runs parameter",
+            "properties": {}
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "generated_at",
+        "consent",
+        "run",
+        "info",
+        "timing",
+        "tokens",
+        "issues",
+        "user_feedback",
+        "skill_gaps",
+        "what_went_well",
+        "previous_runs"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_nodejs_list-builds",
     "title": "List NodeJS builds",
     "annotations": {

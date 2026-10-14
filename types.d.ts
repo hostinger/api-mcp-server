@@ -4214,6 +4214,73 @@ key to a private repository as a deploy key before deploying it.
   };
 
   /**
+   * Submits the build report the headless skill writes at the end of a run (including early
+stops), so Hostinger can learn where builds get stuck. Send one report per call, with the
+report JSON as the request body, unchanged. Only send a report when the user agreed to it.
+
+The report must match report.schema.json v1; an invalid report returns 422 and is not
+stored. The report is linked to the authenticated account, so do not add account details
+to it.
+   */
+  "hosting_headless_submit-build-report": {
+    params: {
+      /**
+       * Report schema version
+       */
+      schema_version: string;
+      /**
+       * When the report was written
+       */
+      generated_at: string;
+      /**
+       * Upload status of the report, as written by the headless skill
+       */
+      consent: object;
+      /**
+       * The run the report is for
+       */
+      run: object;
+      /**
+       * Website, tool and outcome of the run
+       */
+      info: object;
+      /**
+       * Run start and end times and per-stage timings
+       */
+      timing: object;
+      /**
+       * Token usage, only when the tool reports its own usage
+       */
+      tokens: object;
+      /**
+       * Problems hit during the run
+       */
+      issues: array;
+      /**
+       * Feedback the user gave during the run
+       */
+      user_feedback: array;
+      /**
+       * Places where the skill instructions were missing or wrong
+       */
+      skill_gaps: array;
+      /**
+       * Things that worked well during the run
+       */
+      what_went_well: array;
+      /**
+       * Where the run log is missing or unsure
+       */
+      logging_gaps?: array;
+      /**
+       * Earlier runs for the same website
+       */
+      previous_runs: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve a paginated list of Node.js build processes for a specific website.
 
 Each build represents a single run of the Node.js build pipeline. Use the `states`

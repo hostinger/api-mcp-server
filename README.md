@@ -69,14 +69,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (416 total)
+- `hostinger-api-mcp` — unified server over every operation (417 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-billing-mcp` — 9 operations for billing
 - `hostinger-dns-mcp` — 8 operations for dns
 - `hostinger-domains-mcp` — 42 operations for domains
 - `hostinger-ecommerce-mcp` — 29 operations for ecommerce
 - `hostinger-horizons-mcp` — 6 operations for horizons
-- `hostinger-hosting-mcp` — 80 operations for hosting
+- `hostinger-hosting-mcp` — 81 operations for hosting
 - `hostinger-mail-mcp` — 38 operations for mail
 - `hostinger-reach-mcp` — 56 operations for reach
 - `hostinger-vps-mcp` — 67 operations for vps
@@ -2281,6 +2281,19 @@ key to a private repository as a deploy key before deploying it.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/git/ssh-key`
+
+#### hosting_headless_submit-build-report
+
+Submits the build report the headless skill writes at the end of a run (including early
+stops), so Hostinger can learn where builds get stuck. Send one report per call, with the
+report JSON as the request body, unchanged. Only send a report when the user agreed to it.
+
+The report must match report.schema.json v1; an invalid report returns 422 and is not
+stored. The report is linked to the authenticated account, so do not add account details
+to it.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/headless/agent-reports`
 
 #### hosting_nodejs_list-builds
 
