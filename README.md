@@ -4685,7 +4685,15 @@ unless `database.name` is an existing database on the account.
 
 #### wordpress_installations_list
 
-List WordPress installations accessible to the authenticated client.
+List WordPress installations on shared and cloud web hosting accounts (the
+`/api/hosting/v1` family, identified by `username`) accessible to the
+authenticated client.
+
+Agency Plan websites are not included. To work with WordPress on an Agency Plan
+website, list them with GET /api/agency-hosting/v1/websites?website_types=wordpress
+and read their details with
+GET /api/agency-hosting/v1/websites/{website_uid}/wordpress/settings. An account
+that only has Agency Plan websites receives an empty list from this endpoint.
 
 Use this endpoint to discover existing WordPress installations and to poll
 for installation status after calling the install endpoint. When a newly
