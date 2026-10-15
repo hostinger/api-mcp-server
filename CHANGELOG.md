@@ -4,6 +4,19 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.0.0 — 2026-10-15
+
+### Operations
+
+- Added `wordpress_ai-content_generation-result` — Get generation result
+- Changed the description of `wordpress_ai-content_generate-images`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v2.18.0 — 2026-10-15
 
 ### Operations

@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (420 total)
+- `hostinger-api-mcp` — unified server over every operation (421 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 3 operations for agent-readiness
 - `hostinger-billing-mcp` — 9 operations for billing
@@ -81,7 +81,7 @@ This package installs the following MCP server commands:
 - `hostinger-mail-mcp` — 38 operations for mail
 - `hostinger-reach-mcp` — 56 operations for reach
 - `hostinger-vps-mcp` — 67 operations for vps
-- `hostinger-wordpress-mcp` — 39 operations for wordpress
+- `hostinger-wordpress-mcp` — 40 operations for wordpress
 
 Every binary exposes the same three tools; a scoped binary only searches and executes its own group's operations. `hostinger-api-mcp` remains the backwards-compatible default.
 
@@ -4640,19 +4640,45 @@ Use this endpoint to power off running VPS instances.
 
 #### wordpress_ai-content_generate-images
 
-Generate one or more images from a prompt and an image type for the specified
-WordPress installation. Images are returned inline as base64-encoded PNGs. They match
-the requested aspect ratio and are never smaller than the requested size; logos are
-transparent PNGs cropped to the mark.
+Start generating one or more images from a prompt and an image type for the specified
+WordPress installation. The generation runs asynchronously: the response is returned
+right away with `status: in-progress` and a `generation_id`. Poll
+GET /api/hosting/v1/accounts/{username}/wordpress/{software}/content/generations/{generation_id}
+every few seconds until `status` is `completed` or `failed`.
 
-Generation is synchronous and can take up to a minute. The endpoint is limited to
-10 requests per minute.
+A completed generation returns temporary image URLs together with the time they expire;
+download the images before then. Images match the requested aspect ratio and are never
+smaller than the requested size; logos are transparent images cropped to the mark.
+
+Only one image generation can run per installation at a time: while one is still in
+progress the endpoint returns 409 without the ID of the running generation, so a caller
+that did not receive the `202` has to wait for it to finish (up to a few minutes) before
+starting a new one. The endpoint is limited to 10 requests per minute.
 
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/content/images/generate`
+
+#### wordpress_ai-content_generation-result
+
+Get the result of an AI content generation started for the specified WordPress
+installation, such as an image generation started with
+POST /api/hosting/v1/accounts/{username}/wordpress/{software}/content/images/generate.
+
+While the generation is still running only `status: in-progress` is returned; poll every
+few seconds. Once `completed`, `result` holds the generated content shaped according to
+`type`: temporary image URLs together with the time they expire for `image-generation`, or
+the generated website document for `website-generation` (started from the Hostinger
+WordPress plugin). A `failed` generation has no `result`. Unknown or expired generation
+IDs return 404.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/wordpress/{software}/content/generations/{generation_id}`
 
 #### wordpress_ai-tools_show-option-status
 

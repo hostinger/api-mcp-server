@@ -9313,13 +9313,20 @@ Use this endpoint to power off running VPS instances.
   };
 
   /**
-   * Generate one or more images from a prompt and an image type for the specified
-WordPress installation. Images are returned inline as base64-encoded PNGs. They match
-the requested aspect ratio and are never smaller than the requested size; logos are
-transparent PNGs cropped to the mark.
+   * Start generating one or more images from a prompt and an image type for the specified
+WordPress installation. The generation runs asynchronously: the response is returned
+right away with `status: in-progress` and a `generation_id`. Poll
+GET /api/hosting/v1/accounts/{username}/wordpress/{software}/content/generations/{generation_id}
+every few seconds until `status` is `completed` or `failed`.
 
-Generation is synchronous and can take up to a minute. The endpoint is limited to
-10 requests per minute.
+A completed generation returns temporary image URLs together with the time they expire;
+download the images before then. Images match the requested aspect ratio and are never
+smaller than the requested size; logos are transparent images cropped to the mark.
+
+Only one image generation can run per installation at a time: while one is still in
+progress the endpoint returns 409 without the ID of the running generation, so a caller
+that did not receive the `202` has to wait for it to finish (up to a few minutes) before
+starting a new one. The endpoint is limited to 10 requests per minute.
 
 Provide the WordPress installation (software) identifier in the path. It can
 be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
@@ -9362,6 +9369,43 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
        * Colour direction for the logo type only. It is not rendered as text.
        */
       color_guidance?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get the result of an AI content generation started for the specified WordPress
+installation, such as an image generation started with
+POST /api/hosting/v1/accounts/{username}/wordpress/{software}/content/images/generate.
+
+While the generation is still running only `status: in-progress` is returned; poll every
+few seconds. Once `completed`, `result` holds the generated content shaped according to
+`type`: temporary image URLs together with the time they expire for `image-generation`, or
+the generated website document for `website-generation` (started from the Hostinger
+WordPress plugin). A `failed` generation has no `result`. Unknown or expired generation
+IDs return 404.
+
+Provide the WordPress installation (software) identifier in the path. It can
+be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
+   */
+  "wordpress_ai-content_generation-result": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * WordPress installation (software) identifier
+       */
+      software: string;
+      /**
+       * Generation ID returned when the generation was started
+       */
+      generation_id: string;
+      /**
+       * Generation type to look up. When omitted, every generation type is checked.
+       */
+      type?: string;
     };
     response: any; // Response structure will depend on the API
   };

@@ -15977,7 +15977,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Generate one or more images from a prompt and an image type for the specified\nWordPress installation. Images are returned inline as base64-encoded PNGs. They match\nthe requested aspect ratio and are never smaller than the requested size; logos are\ntransparent PNGs cropped to the mark.\n\nGeneration is synchronous and can take up to a minute. The endpoint is limited to\n10 requests per minute.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "description": "Start generating one or more images from a prompt and an image type for the specified\nWordPress installation. The generation runs asynchronously: the response is returned\nright away with `status: in-progress` and a `generation_id`. Poll\nGET /api/hosting/v1/accounts/{username}/wordpress/{software}/content/generations/{generation_id}\nevery few seconds until `status` is `completed` or `failed`.\n\nA completed generation returns temporary image URLs together with the time they expire;\ndownload the images before then. Images match the requested aspect ratio and are never\nsmaller than the requested size; logos are transparent images cropped to the mark.\n\nOnly one image generation can run per installation at a time: while one is still in\nprogress the endpoint returns 409 without the ID of the running generation, so a caller\nthat did not receive the `202` has to wait for it to finish (up to a few minutes) before\nstarting a new one. The endpoint is limited to 10 requests per minute.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/content/images/generate",
     "inputSchema": {
@@ -16033,6 +16033,54 @@ const tools: OpenApiTool[] = [
         "software",
         "prompt",
         "image_type"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "wordpress"
+  },
+  {
+    "name": "wordpress_ai-content_generation-result",
+    "title": "Get generation result",
+    "annotations": {
+      "title": "Get generation result",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Get the result of an AI content generation started for the specified WordPress\ninstallation, such as an image generation started with\nPOST /api/hosting/v1/accounts/{username}/wordpress/{software}/content/images/generate.\n\nWhile the generation is still running only `status: in-progress` is returned; poll every\nfew seconds. Once `completed`, `result` holds the generated content shaped according to\n`type`: temporary image URLs together with the time they expire for `image-generation`, or\nthe generated website document for `website-generation` (started from the Hostinger\nWordPress plugin). A `failed` generation has no `result`. Unknown or expired generation\nIDs return 404.\n\nProvide the WordPress installation (software) identifier in the path. It can\nbe obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/wordpress/{software}/content/generations/{generation_id}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "software": {
+          "type": "string",
+          "description": "WordPress installation (software) identifier"
+        },
+        "generation_id": {
+          "type": "string",
+          "description": "Generation ID returned when the generation was started"
+        },
+        "type": {
+          "type": "string",
+          "description": "Generation type to look up. When omitted, every generation type is checked.",
+          "enum": [
+            "website-generation",
+            "image-generation"
+          ]
+        }
+      },
+      "required": [
+        "username",
+        "software",
+        "generation_id"
       ]
     },
     "security": [
