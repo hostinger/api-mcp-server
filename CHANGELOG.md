@@ -4,6 +4,19 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.17.1 — 2026-10-15
+
+### Operations
+
+- Renamed `agent-readiness_scans_run-website` → `agent-readiness_scans_run`
+- Renamed `agent-readiness_scans_website` → `agent-readiness_scans_get`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v2.17.0 — 2026-10-15
 
 ### Operations
