@@ -4893,8 +4893,8 @@ of the website root with generated credentials.
 
 Omit `domain` to set the website up on a generated temporary free subdomain.
 
-The order must already have a hosting account: to create the first website on a new
-hosting plan use the create website endpoint, which takes the `datacenter_code`.
+When the order has no hosting account yet, the setup creates one first, in the datacenter
+given by `datacenter_code` or the order's default datacenter when it is omitted.
 Returns 404 when the order does not exist or is not accessible to the authenticated
 client, and 409 with a `Retry-After` header while a setup for the same domain is still
 running.
@@ -4910,9 +4910,13 @@ running.
        */
       type?: string;
       /**
-       * Customer-owned domain. Cannot start with "www.". Omit or `null` to set the website up on a generated temporary free subdomain.
+       * Customer-owned domain. Cannot start with "www." and can have at most one subdomain level, e.g. `blog.example.com`. Omit or `null` to set the website up on a generated temporary free subdomain.
        */
       domain?: string;
+      /**
+       * Datacenter for the hosting account when the order does not have one yet. Omit to use the order's default datacenter. Ignored when the order already has a hosting account. List available datacenters to find valid codes.
+       */
+      datacenter_code?: string;
       /**
        * WordPress install settings. Required when `type` is `wordpress`, not allowed otherwise. The site title is the domain.
        */
@@ -5320,7 +5324,11 @@ endpoint instead.
   };
 
   /**
-   * Create a new website for the authenticated client.
+   * Deprecated: use `POST /api/hosting/v1/orders/{order_id}/onboardings` (start website setup)
+instead. It takes the same `domain` and `datacenter_code`, can also install WordPress, and
+returns the created setup.
+
+Create a new website for the authenticated client.
 
 You must choose which hosting order to create this website on. Pass that
 order as `order_id` together with the domain name. List orders to see
@@ -5329,10 +5337,8 @@ available IDs; the website is provisioned on that order's hosting plan.
 Only Web and Cloud hosting orders are accepted. To create a website on an Agency
 Plan order, use `POST /api/agency-hosting/v1/orders/{order_id}/websites/setups`.
 
-The datacenter_code parameter is required when creating the first website
-on a new hosting plan - this will set up and configure new hosting account
-in the selected datacenter.
-
+When the order has no hosting account yet, a new hosting account is set up first, in the
+datacenter given by `datacenter_code` or the order's default datacenter when it is omitted.
 Subsequent websites will be hosted on the same datacenter automatically.
 
 Website creation is asynchronous and takes up to a few minutes. Poll the list website
@@ -5344,7 +5350,7 @@ completed` before uploading files, deploying or creating databases. While the se
   "hosting_websites_create": {
     params: {
       /**
-       * Domain name for the website. Cannot start with "www."
+       * Domain name for the website. Cannot start with "www." and can have at most one subdomain level, e.g. `blog.example.com`.
        */
       domain: string;
       /**
@@ -5352,7 +5358,7 @@ completed` before uploading files, deploying or creating databases. While the se
        */
       order_id: number;
       /**
-       * Datacenter code. This parameter is required when creating the first website on a new hosting plan.
+       * Datacenter for the hosting account when the order does not have one yet. Omit to use the order's default datacenter. Ignored when the order already has a hosting account. Must be an available datacenter; list available datacenters to find valid codes.
        */
       datacenter_code?: string;
     };
