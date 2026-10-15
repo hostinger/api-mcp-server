@@ -4,6 +4,22 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v2.17.0 — 2026-10-15
+
+### Operations
+
+- Added `agent-readiness_checks_list` — List checks
+- Added `agent-readiness_scans_run-website` — Run website scan
+- Added `agent-readiness_scans_website` — Get website scan
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`, `package.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+- Server entry points: `src/servers/agent-readiness.js`, `src/servers/agent-readiness.ts`
+
 ## v2.16.0 — 2026-10-14
 
 No changes to the published artifact.

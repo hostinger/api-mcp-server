@@ -69,8 +69,9 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (417 total)
+- `hostinger-api-mcp` — unified server over every operation (420 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
+- `hostinger-agent-readiness-mcp` — 3 operations for agent-readiness
 - `hostinger-billing-mcp` — 9 operations for billing
 - `hostinger-dns-mcp` — 8 operations for dns
 - `hostinger-domains-mcp` — 42 operations for domains
@@ -679,6 +680,42 @@ Lists the WordPress core versions available for installation on an Agency Plan w
 
 - **Method**: `GET`
 - **Path**: `/api/agency-hosting/v1/websites/{website_uid}/wordpress/settings/versions`
+
+### `hostinger-agent-readiness-mcp`
+
+#### agent-readiness_checks_list
+
+List every check an agent readiness scan runs, with its name, category and weight.\n
+Use it to show the human-readable name of each `check_id` in a scan's results.
+
+- **Method**: `GET`
+- **Path**: `/api/agent-readiness/v1/checks`
+
+#### agent-readiness_scans_run-website
+
+Start a scan of how ready a public website is for AI agents to discover, read and act on.\n
+Scanning is asynchronous: this operation only starts the scan, and the returned scan is usually `pending`
+with no results yet. To get the results, poll the `Get website scan` operation with the same domain every
+few seconds until its status is `completed` or `failed`. The scan itself is limited to 60 seconds,
+plus any time it waits in the queue. A `failed` scan is not retried; run this operation again.\n
+Starting a scan for a domain that already has a pending scan from the last 5 minutes
+returns that scan instead of starting a new one.
+
+- **Method**: `POST`
+- **Path**: `/api/agent-readiness/v1/scans`
+
+#### agent-readiness_scans_website
+
+Get the latest agent readiness scan of a website.\n
+Scans started with the `Run website scan` operation are asynchronous. While the status is `pending`,
+the result fields are null; wait a few seconds and call this operation again until the status is
+`completed` or `failed`. A `failed` scan is not retried; run the scan again.\n
+A completed scan has a 0-100 score, a letter grade, a score per category, and the result of every
+check with the evidence found and how to fix it. Check names are listed by the `List checks` operation.\n
+Returns 404 when the domain has never been scanned; use the `Run website scan` operation first.
+
+- **Method**: `GET`
+- **Path**: `/api/agent-readiness/v1/scans/{domain}`
 
 ### `hostinger-billing-mcp`
 
