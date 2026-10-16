@@ -4859,7 +4859,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Update a product's name, description or status. Set status to published to make it buyable,\ndraft to hide it, or archived to retire it. Variants, prices and inventory are managed\nthrough the variant endpoints, not here. Returns the updated product summary.",
+    "description": "Update a product's name, description, status, SEO settings or collections. Set status to\npublished to make it buyable, draft to hide it, or archived to retire it. SEO settings (title,\ndescription, slug) left out keep their values. collection_changes adds or removes collections\nwithout touching the others. Variants, prices and inventory are managed through the variant\nendpoints, not here. Returns the updated product summary.",
     "method": "PATCH",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}",
     "inputSchema": {
@@ -4889,6 +4889,64 @@ const tools: OpenApiTool[] = [
             "published",
             "archived"
           ]
+        },
+        "seo_settings": {
+          "type": "object",
+          "description": "Search-engine settings to change. Send at least one field; omitted fields keep their current values.",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Search-engine title for the product page."
+            },
+            "description": {
+              "type": "string",
+              "description": "Search-engine description for the product page."
+            },
+            "slug": {
+              "type": "string",
+              "description": "URL slug of the product page. Lowercase letters, digits and dashes."
+            }
+          }
+        },
+        "collection_changes": {
+          "type": "object",
+          "description": "Adds the product to or removes it from collections without touching its other collections. Send at least one collection in add or remove.",
+          "properties": {
+            "add": {
+              "type": "array",
+              "description": "Collections to add the product to. Every id must exist in the store.",
+              "items": {
+                "type": "object",
+                "description": "add parameter",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The collection id."
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            },
+            "remove": {
+              "type": "array",
+              "description": "Collections to take the product out of. Ids the product is not in are ignored.",
+              "items": {
+                "type": "object",
+                "description": "remove parameter",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The collection id."
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            }
+          }
         }
       },
       "required": [
@@ -5061,6 +5119,24 @@ const tools: OpenApiTool[] = [
         "currency": {
           "type": "string",
           "description": "ISO 4217 currency code. Defaults to the store's default currency when omitted."
+        },
+        "seo_settings": {
+          "type": "object",
+          "description": "Search-engine settings. Omitted fields are generated from the name and description; a slug already in use gets a numeric suffix. Send at least one field.",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Search-engine title for the product page."
+            },
+            "description": {
+              "type": "string",
+              "description": "Search-engine description for the product page."
+            },
+            "slug": {
+              "type": "string",
+              "description": "URL slug of the product page. Lowercase letters, digits and dashes."
+            }
+          }
         }
       },
       "required": [
@@ -5438,7 +5514,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Update up to 100 existing variants in place by id — title, inventory, stock tracking and\nprices. Variants omitted from the request are left untouched. Prices replace the variant's\nexisting prices in full. Returns the updated variants.",
+    "description": "Update up to 100 existing variants in place by id — title, SKU, inventory, stock tracking\nand prices. Variants omitted from the request are left untouched. Prices replace the variant's\nexisting prices in full. Returns the updated variants.",
     "method": "PATCH",
     "path": "/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants/batch",
     "inputSchema": {
@@ -5466,6 +5542,10 @@ const tools: OpenApiTool[] = [
               "title": {
                 "type": "string",
                 "description": "The variant title."
+              },
+              "sku": {
+                "type": "string",
+                "description": "The variant SKU."
               },
               "inventory_quantity": {
                 "type": "integer",

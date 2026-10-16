@@ -4,6 +4,20 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.1.0 — 2026-10-16
+
+### Operations
+
+- Changed the description and input schema of `ecommerce_products_update`
+- Changed the input schema of `ecommerce_products_create-physical`
+- Changed the description and input schema of `ecommerce_product-variants_update-in-batch`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.0.0 — 2026-10-15
 
 ### Operations

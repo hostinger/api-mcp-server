@@ -1554,9 +1554,11 @@ subscribers is archived instead of deleted so its data stays available.
 
 #### ecommerce_products_update
 
-Update a product's name, description or status. Set status to published to make it buyable,
-draft to hide it, or archived to retire it. Variants, prices and inventory are managed
-through the variant endpoints, not here. Returns the updated product summary.
+Update a product's name, description, status, SEO settings or collections. Set status to
+published to make it buyable, draft to hide it, or archived to retire it. SEO settings (title,
+description, slug) left out keep their values. collection_changes adds or removes collections
+without touching the others. Variants, prices and inventory are managed through the variant
+endpoints, not here. Returns the updated product summary.
 
 - **Method**: `PATCH`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}`
@@ -1662,8 +1664,8 @@ plus its default currency. Useful to verify prerequisites before building a stor
 
 #### ecommerce_product-variants_update-in-batch
 
-Update up to 100 existing variants in place by id — title, inventory, stock tracking and
-prices. Variants omitted from the request are left untouched. Prices replace the variant's
+Update up to 100 existing variants in place by id — title, SKU, inventory, stock tracking
+and prices. Variants omitted from the request are left untouched. Prices replace the variant's
 existing prices in full. Returns the updated variants.
 
 - **Method**: `PATCH`

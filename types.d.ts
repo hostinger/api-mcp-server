@@ -2690,9 +2690,11 @@ subscribers is archived instead of deleted so its data stays available.
   };
 
   /**
-   * Update a product's name, description or status. Set status to published to make it buyable,
-draft to hide it, or archived to retire it. Variants, prices and inventory are managed
-through the variant endpoints, not here. Returns the updated product summary.
+   * Update a product's name, description, status, SEO settings or collections. Set status to
+published to make it buyable, draft to hide it, or archived to retire it. SEO settings (title,
+description, slug) left out keep their values. collection_changes adds or removes collections
+without touching the others. Variants, prices and inventory are managed through the variant
+endpoints, not here. Returns the updated product summary.
    */
   "ecommerce_products_update": {
     params: {
@@ -2716,6 +2718,14 @@ through the variant endpoints, not here. Returns the updated product summary.
        * Set "published" to make the product buyable, "draft" to hide it, or "archived" to retire it.
        */
       status?: string;
+      /**
+       * Search-engine settings to change. Send at least one field; omitted fields keep their current values.
+       */
+      seo_settings?: object;
+      /**
+       * Adds the product to or removes it from collections without touching its other collections. Send at least one collection in add or remove.
+       */
+      collection_changes?: object;
     };
     response: any; // Response structure will depend on the API
   };
@@ -2814,6 +2824,10 @@ embed each product's variants with prices and inventory, and include=media to em
        * ISO 4217 currency code. Defaults to the store's default currency when omitted.
        */
       currency?: string;
+      /**
+       * Search-engine settings. Omitted fields are generated from the name and description; a slug already in use gets a numeric suffix. Send at least one field.
+       */
+      seo_settings?: object;
     };
     response: any; // Response structure will depend on the API
   };
@@ -3019,8 +3033,8 @@ plus its default currency. Useful to verify prerequisites before building a stor
   };
 
   /**
-   * Update up to 100 existing variants in place by id — title, inventory, stock tracking and
-prices. Variants omitted from the request are left untouched. Prices replace the variant's
+   * Update up to 100 existing variants in place by id — title, SKU, inventory, stock tracking
+and prices. Variants omitted from the request are left untouched. Prices replace the variant's
 existing prices in full. Returns the updated variants.
    */
   "ecommerce_product-variants_update-in-batch": {
