@@ -8724,7 +8724,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Returns the website setups started in the last 24 hours for the hosting accounts\naccessible to the authenticated client, newest first. Narrow the list with the\n`order_id`, `subscription_id` or `domain` filters.\n\nMeant for polling right after creating a website or starting a website setup: the\nwebsite shows up in the websites list before its server-side setup has finished, and\nwhile the setup is `running` endpoints that operate on that website may respond with\n`404` or `409`. Poll this endpoint with the `domain` filter every 10 to 15 seconds and\nwait for `status: completed` before uploading files, deploying or creating databases.\n`failed` means the setup stopped before finishing or has not reported progress for\nover an hour. Setups older than 24 hours are not listed.\n\n`type` is the website type the setup was started with (`wordpress`, `headless_wordpress`,\n`headless_ecommerce`, `headless_pocketbase`), or `null` for an empty website.",
+    "description": "Returns the website setups started in the last 24 hours for the hosting accounts\naccessible to the authenticated client, newest first. Narrow the list with the\n`order_id`, `subscription_id` or `domain` filters.\n\nMeant for polling right after creating a website or starting a website setup: the\nwebsite shows up in the websites list before its server-side setup has finished, and\nwhile the setup is `running` endpoints that operate on that website may respond with\n`404` or `409`. Poll this endpoint with the `domain` filter every 10 to 15 seconds and\nwait for `status: completed` before uploading files, deploying or creating databases.\n`failed` means the setup stopped before finishing or has not reported progress for\nover an hour. Setups older than 24 hours are not listed.\n\n`type` is the website type the setup was started with (`wordpress`, `headless_empty`,\n`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`), or `null` for an empty\nwebsite.",
     "method": "GET",
     "path": "/api/hosting/v1/onboardings",
     "inputSchema": {
@@ -8760,7 +8760,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Starts a website setup on a Web or Cloud hosting order and returns the created setup\nright away; the website itself is provisioned asynchronously. Poll the list website\nsetups endpoint with the `domain` filter every 10 to 15 seconds and wait for\n`status: completed` before uploading files, deploying or creating databases.\n\nOmit `type` for an empty website. `type: wordpress` installs WordPress in the website\nroot with the admin user, email and password from `wordpress`, the domain as the site\ntitle, and `en_US` when `wordpress.language` is omitted. The headless types\n(`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless\nwebsite; `headless_wordpress` additionally installs WordPress into the `cms` directory\nof the website root with generated credentials.\n\nOmit `domain` to set the website up on a generated temporary free subdomain.\n\nWhen the order has no hosting account yet, the setup creates one first, in the datacenter\ngiven by `datacenter_code` or the order's default datacenter when it is omitted.\nReturns 404 when the order does not exist or is not accessible to the authenticated\nclient, and 409 with a `Retry-After` header while a setup for the same domain is still\nrunning.",
+    "description": "Starts a website setup on a Web or Cloud hosting order and returns the created setup\nright away; the website itself is provisioned asynchronously. Poll the list website\nsetups endpoint (`hosting_websites_list-setups`) with the `domain` filter every 10 to 15\nseconds and wait for `status: completed` before uploading files, deploying or creating\ndatabases.\n\nOmit `type` for an empty website. `type: wordpress` installs WordPress in the website\nroot with the admin user, email and password from `wordpress`, the domain as the site\ntitle, and `en_US` when `wordpress.language` is omitted. The headless types\n(`headless_empty`, `headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`)\ncreate a headless website; `headless_wordpress` additionally installs WordPress into the\n`cms` directory of the website root with generated credentials. `headless_empty` installs\nnothing: WordPress can be added later through\n`POST /api/hosting/v1/accounts/{username}/wordpress/installations`\n(`wordpress_installations_install`) with `type: headless`.\n\nOmit `domain` to set the website up on a generated temporary free subdomain. To know the\nfree subdomain before the call, so a timed-out call can be looked up and retried on the\nsame domain, generate one through `POST /api/hosting/v1/domains/free-subdomains`\n(`hosting_domains_generate-free-subdomain`) and send it as `domain`. It is accepted for\n24 hours, only from the client that generated it.\n\nWhen the order has no hosting account yet, the setup creates one first, in the datacenter\ngiven by `datacenter_code` or the order's default datacenter when it is omitted.\nReturns 404 when the order does not exist or is not accessible to the authenticated\nclient, and 409 with a `Retry-After` header while a setup for the same domain is still\nrunning.",
     "method": "POST",
     "path": "/api/hosting/v1/orders/{order_id}/onboardings",
     "inputSchema": {
@@ -8772,9 +8772,10 @@ const tools: OpenApiTool[] = [
         },
         "type": {
           "type": "string",
-          "description": "Website type. Omit or `null` for an empty website. `wordpress` installs WordPress in the website root and requires `wordpress`. The headless types (`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless website; `headless_wordpress` additionally installs WordPress into the `cms` directory with generated credentials.",
+          "description": "Website type. Omit or `null` for an empty website. `wordpress` installs WordPress in the website root and requires `wordpress`. The headless types (`headless_empty`, `headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless website; `headless_wordpress` additionally installs WordPress into the `cms` directory with generated credentials. `headless_empty` installs nothing, so WordPress can be added later through `POST /api/hosting/v1/accounts/{username}/wordpress/installations` (`wordpress_installations_install`) with `type: headless`.",
           "enum": [
             "wordpress",
+            "headless_empty",
             "headless_wordpress",
             "headless_ecommerce",
             "headless_pocketbase"
@@ -8782,7 +8783,7 @@ const tools: OpenApiTool[] = [
         },
         "domain": {
           "type": "string",
-          "description": "Customer-owned domain. Cannot start with \"www.\" and can have at most one subdomain level, e.g. `blog.example.com`. Omit or `null` to set the website up on a generated temporary free subdomain."
+          "description": "Customer-owned domain, or a free subdomain you generated through `POST /api/hosting/v1/domains/free-subdomains` (`hosting_domains_generate-free-subdomain`) in the last 24 hours. Cannot start with \"www.\" and can have at most one subdomain level, e.g. `blog.example.com`. Omit or `null` to set the website up on a generated temporary free subdomain."
         },
         "datacenter_code": {
           "type": "string",
@@ -16609,7 +16610,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Install WordPress on an existing website.\n\nThe website must already exist before calling this endpoint. To create a new\nwebsite first, use POST /api/hosting/v1/websites and poll\nGET /api/hosting/v1/websites until it appears.\n\nCall GET /api/hosting/v1/wordpress/installations filtered by username and\ndomain before proceeding to check whether WordPress is already installed on\nthe target domain/path. If WordPress already exists and `overwrite` is false\n(the default), the async job will fail.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that WordPress is ready. Installation typically\ntakes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered\nby username and domain to track progress. When the installation appears in\nthat list, WordPress is ready.\n\nReturns 422 when the account already uses all the databases its plan allows,\nunless `database.name` is an existing database on the account.",
+    "description": "Install WordPress on an existing website.\n\nThe website must already exist before calling this endpoint. To create a new\nwebsite first, use POST /api/hosting/v1/orders/{order_id}/onboardings\n(`hosting_websites_start-setup`) and poll GET /api/hosting/v1/onboardings\n(`hosting_websites_list-setups`) with the `domain` filter until its `status` is\n`completed`.\n\nSend `type: headless` to turn a headless website (for example one created by\n`hosting_websites_start-setup` with `type: headless_empty`) into a headless WordPress\nwebsite: WordPress is installed into the `cms` directory with the Hostinger headless\nMU plugin and the website is marked as a headless WordPress website. `directory` is\nnot allowed with it. The target website must already be headless: the headless\ninstall rewrites the root `.htaccess`, so on any other website the request is\nrejected with 422.\n\nCall GET /api/hosting/v1/wordpress/installations (`wordpress_installations_list`)\nfiltered by username and domain before proceeding to check whether WordPress is\nalready installed on the target domain/path. If WordPress already exists and\n`overwrite` is false (the default), the async job will fail.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that WordPress is ready. Installation typically\ntakes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations\n(`wordpress_installations_list`) filtered by username and domain to track\nprogress. When the installation appears in that list, WordPress is ready.\n\nReturns 422 when the account already uses all the databases its plan allows,\nunless `database.name` is an existing database on the account.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/installations",
     "inputSchema": {
@@ -16631,9 +16632,17 @@ const tools: OpenApiTool[] = [
           "type": "string",
           "description": "WordPress locale. Defaults to en_US when omitted."
         },
+        "type": {
+          "type": "string",
+          "description": "Installation kind; `default` when omitted. `headless` installs WordPress into the `cms` directory with the Hostinger headless MU plugin and marks the website as a headless WordPress website. Accepted only for a website that is already headless, e.g. one created by `POST /api/hosting/v1/orders/{order_id}/onboardings` (`hosting_websites_start-setup`) with `type: headless_empty`; any other website is rejected with 422.",
+          "enum": [
+            "default",
+            "headless"
+          ]
+        },
         "directory": {
           "type": "string",
-          "description": "Relative directory to install WordPress into. Defaults to the website root when omitted."
+          "description": "Installation subdirectory relative to the document root; omit for the root. Not allowed with `type: headless`, which always installs into `cms`."
         },
         "overwrite": {
           "type": "boolean",

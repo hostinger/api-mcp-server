@@ -4957,8 +4957,9 @@ wait for `status: completed` before uploading files, deploying or creating datab
 `failed` means the setup stopped before finishing or has not reported progress for
 over an hour. Setups older than 24 hours are not listed.
 
-`type` is the website type the setup was started with (`wordpress`, `headless_wordpress`,
-`headless_ecommerce`, `headless_pocketbase`), or `null` for an empty website.
+`type` is the website type the setup was started with (`wordpress`, `headless_empty`,
+`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`), or `null` for an empty
+website.
    */
   "hosting_websites_list-setups": {
     params: {
@@ -4981,17 +4982,25 @@ over an hour. Setups older than 24 hours are not listed.
   /**
    * Starts a website setup on a Web or Cloud hosting order and returns the created setup
 right away; the website itself is provisioned asynchronously. Poll the list website
-setups endpoint with the `domain` filter every 10 to 15 seconds and wait for
-`status: completed` before uploading files, deploying or creating databases.
+setups endpoint (`hosting_websites_list-setups`) with the `domain` filter every 10 to 15
+seconds and wait for `status: completed` before uploading files, deploying or creating
+databases.
 
 Omit `type` for an empty website. `type: wordpress` installs WordPress in the website
 root with the admin user, email and password from `wordpress`, the domain as the site
 title, and `en_US` when `wordpress.language` is omitted. The headless types
-(`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless
-website; `headless_wordpress` additionally installs WordPress into the `cms` directory
-of the website root with generated credentials.
+(`headless_empty`, `headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`)
+create a headless website; `headless_wordpress` additionally installs WordPress into the
+`cms` directory of the website root with generated credentials. `headless_empty` installs
+nothing: WordPress can be added later through
+`POST /api/hosting/v1/accounts/{username}/wordpress/installations`
+(`wordpress_installations_install`) with `type: headless`.
 
-Omit `domain` to set the website up on a generated temporary free subdomain.
+Omit `domain` to set the website up on a generated temporary free subdomain. To know the
+free subdomain before the call, so a timed-out call can be looked up and retried on the
+same domain, generate one through `POST /api/hosting/v1/domains/free-subdomains`
+(`hosting_domains_generate-free-subdomain`) and send it as `domain`. It is accepted for
+24 hours, only from the client that generated it.
 
 When the order has no hosting account yet, the setup creates one first, in the datacenter
 given by `datacenter_code` or the order's default datacenter when it is omitted.
@@ -5006,11 +5015,11 @@ running.
        */
       order_id: number;
       /**
-       * Website type. Omit or `null` for an empty website. `wordpress` installs WordPress in the website root and requires `wordpress`. The headless types (`headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless website; `headless_wordpress` additionally installs WordPress into the `cms` directory with generated credentials.
+       * Website type. Omit or `null` for an empty website. `wordpress` installs WordPress in the website root and requires `wordpress`. The headless types (`headless_empty`, `headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless website; `headless_wordpress` additionally installs WordPress into the `cms` directory with generated credentials. `headless_empty` installs nothing, so WordPress can be added later through `POST /api/hosting/v1/accounts/{username}/wordpress/installations` (`wordpress_installations_install`) with `type: headless`.
        */
       type?: string;
       /**
-       * Customer-owned domain. Cannot start with "www." and can have at most one subdomain level, e.g. `blog.example.com`. Omit or `null` to set the website up on a generated temporary free subdomain.
+       * Customer-owned domain, or a free subdomain you generated through `POST /api/hosting/v1/domains/free-subdomains` (`hosting_domains_generate-free-subdomain`) in the last 24 hours. Cannot start with "www." and can have at most one subdomain level, e.g. `blog.example.com`. Omit or `null` to set the website up on a generated temporary free subdomain.
        */
       domain?: string;
       /**
@@ -9666,19 +9675,29 @@ database files that have been uploaded to the website's directory.
    * Install WordPress on an existing website.
 
 The website must already exist before calling this endpoint. To create a new
-website first, use POST /api/hosting/v1/websites and poll
-GET /api/hosting/v1/websites until it appears.
+website first, use POST /api/hosting/v1/orders/{order_id}/onboardings
+(`hosting_websites_start-setup`) and poll GET /api/hosting/v1/onboardings
+(`hosting_websites_list-setups`) with the `domain` filter until its `status` is
+`completed`.
 
-Call GET /api/hosting/v1/wordpress/installations filtered by username and
-domain before proceeding to check whether WordPress is already installed on
-the target domain/path. If WordPress already exists and `overwrite` is false
-(the default), the async job will fail.
+Send `type: headless` to turn a headless website (for example one created by
+`hosting_websites_start-setup` with `type: headless_empty`) into a headless WordPress
+website: WordPress is installed into the `cms` directory with the Hostinger headless
+MU plugin and the website is marked as a headless WordPress website. `directory` is
+not allowed with it. The target website must already be headless: the headless
+install rewrites the root `.htaccess`, so on any other website the request is
+rejected with 422.
+
+Call GET /api/hosting/v1/wordpress/installations (`wordpress_installations_list`)
+filtered by username and domain before proceeding to check whether WordPress is
+already installed on the target domain/path. If WordPress already exists and
+`overwrite` is false (the default), the async job will fail.
 
 This operation is asynchronous: a successful response only means the install
 job has been queued, not that WordPress is ready. Installation typically
-takes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered
-by username and domain to track progress. When the installation appears in
-that list, WordPress is ready.
+takes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations
+(`wordpress_installations_list`) filtered by username and domain to track
+progress. When the installation appears in that list, WordPress is ready.
 
 Returns 422 when the account already uses all the databases its plan allows,
 unless `database.name` is an existing database on the account.
@@ -9702,7 +9721,11 @@ unless `database.name` is an existing database on the account.
        */
       language?: string;
       /**
-       * Relative directory to install WordPress into. Defaults to the website root when omitted.
+       * Installation kind; `default` when omitted. `headless` installs WordPress into the `cms` directory with the Hostinger headless MU plugin and marks the website as a headless WordPress website. Accepted only for a website that is already headless, e.g. one created by `POST /api/hosting/v1/orders/{order_id}/onboardings` (`hosting_websites_start-setup`) with `type: headless_empty`; any other website is rejected with 422.
+       */
+      type?: string;
+      /**
+       * Installation subdirectory relative to the document root; omit for the root. Not allowed with `type: headless`, which always installs into `cms`.
        */
       directory?: string;
       /**

@@ -376,7 +376,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Install WordPress on an existing website.\n\nThe website must already exist before calling this endpoint. To create a new\nwebsite first, use POST /api/hosting/v1/websites and poll\nGET /api/hosting/v1/websites until it appears.\n\nCall GET /api/hosting/v1/wordpress/installations filtered by username and\ndomain before proceeding to check whether WordPress is already installed on\nthe target domain/path. If WordPress already exists and `overwrite` is false\n(the default), the async job will fail.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that WordPress is ready. Installation typically\ntakes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations filtered\nby username and domain to track progress. When the installation appears in\nthat list, WordPress is ready.\n\nReturns 422 when the account already uses all the databases its plan allows,\nunless `database.name` is an existing database on the account.",
+    "description": "Install WordPress on an existing website.\n\nThe website must already exist before calling this endpoint. To create a new\nwebsite first, use POST /api/hosting/v1/orders/{order_id}/onboardings\n(`hosting_websites_start-setup`) and poll GET /api/hosting/v1/onboardings\n(`hosting_websites_list-setups`) with the `domain` filter until its `status` is\n`completed`.\n\nSend `type: headless` to turn a headless website (for example one created by\n`hosting_websites_start-setup` with `type: headless_empty`) into a headless WordPress\nwebsite: WordPress is installed into the `cms` directory with the Hostinger headless\nMU plugin and the website is marked as a headless WordPress website. `directory` is\nnot allowed with it. The target website must already be headless: the headless\ninstall rewrites the root `.htaccess`, so on any other website the request is\nrejected with 422.\n\nCall GET /api/hosting/v1/wordpress/installations (`wordpress_installations_list`)\nfiltered by username and domain before proceeding to check whether WordPress is\nalready installed on the target domain/path. If WordPress already exists and\n`overwrite` is false (the default), the async job will fail.\n\nThis operation is asynchronous: a successful response only means the install\njob has been queued, not that WordPress is ready. Installation typically\ntakes 1-2 minutes. Poll GET /api/hosting/v1/wordpress/installations\n(`wordpress_installations_list`) filtered by username and domain to track\nprogress. When the installation appears in that list, WordPress is ready.\n\nReturns 422 when the account already uses all the databases its plan allows,\nunless `database.name` is an existing database on the account.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/wordpress/installations",
     "inputSchema": {
@@ -398,9 +398,17 @@ export default [
           "type": "string",
           "description": "WordPress locale. Defaults to en_US when omitted."
         },
+        "type": {
+          "type": "string",
+          "description": "Installation kind; `default` when omitted. `headless` installs WordPress into the `cms` directory with the Hostinger headless MU plugin and marks the website as a headless WordPress website. Accepted only for a website that is already headless, e.g. one created by `POST /api/hosting/v1/orders/{order_id}/onboardings` (`hosting_websites_start-setup`) with `type: headless_empty`; any other website is rejected with 422.",
+          "enum": [
+            "default",
+            "headless"
+          ]
+        },
         "directory": {
           "type": "string",
-          "description": "Relative directory to install WordPress into. Defaults to the website root when omitted."
+          "description": "Installation subdirectory relative to the document root; omit for the root. Not allowed with `type: headless`, which always installs into `cms`."
         },
         "overwrite": {
           "type": "boolean",

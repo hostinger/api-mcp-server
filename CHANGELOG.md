@@ -4,6 +4,20 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.2.1 — 2026-10-19
+
+### Operations
+
+- Changed the description of `hosting_websites_list-setups`
+- Changed the description and input schema of `hosting_websites_start-setup`
+- Changed the description and input schema of `wordpress_installations_install`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.2.0 — 2026-10-19
 
 ### Operations
