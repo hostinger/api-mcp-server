@@ -29,8 +29,8 @@ Do not put the remote `host` into the deployed app — it has no grant for conne
 | You called | Poll this until | Typical wait |
 | --- | --- | --- |
 | `hosting_websites_create` | `hosting_websites_list-setups` with the domain reports `status: completed` | up to a few minutes |
-| `hosting_deploy-js-application` | `hosting_list-js-deployments` shows the build finished | minutes |
-| `hosting_nodejs_start-build` | `hosting_nodejs_build` state is `completed` or `failed` | minutes |
+| `hosting_deploy` of a Node.js app | `hosting_get-deployment` reports a `completed` or `failed` build | minutes |
+| `hosting_nodejs_start-build` (hosted server, which has no `hosting_deploy`) | `hosting_nodejs_build` state is `completed` or `failed` | minutes |
 | `wordpress_installations_install`, plugin/theme/core jobs | `wordpress_installations_list` lists the install | 1–2 minutes |
 | `hosting_databases_repair`, `hosting_websites_delete` | nothing to poll — runs in the background | minutes |
 | `agency-hosting_website-setups_create` | `agency-hosting_website-setups_status` with `setup_uuid` is `completed` | minutes |
@@ -39,7 +39,7 @@ Poll with backoff (a few seconds, then tens of seconds). A queued response is no
 
 ## 5. When the app is up but broken
 
-- Build failed: `hosting_nodejs_build-logs` for the raw log, `hosting_nodejs_analyse-failed-build` for a diagnosis.
+- Build failed: `hosting_get-deployment` returns the logs and a diagnosis together (hosted server: `hosting_nodejs_build-logs` for the raw log, `hosting_nodejs_analyse-failed-build` for a diagnosis).
 - Build passed, app errors: `hosting_nodejs_runtime-logs` with a `period` such as `1h`; entries before `last_deployed_at` belong to the previous deploy.
 - `Access denied for user 'x'@'::1'`: the app used `localhost` from Node.js — set `DB_HOST` to `127.0.0.1`.
 - PHP limits (memory, upload size): `hosting_php_get`, then `hosting_php_update-options`.

@@ -1,5 +1,6 @@
 // Typed mirror of catalog.js. Keep both files, and api-remote-mcp's PHP
-// implementation, behaviourally identical.
+// implementation, behaviourally identical. `hidden` is stdio-only: the hosted server hides
+// nothing, so the PHP side has no such flag.
 
 export const DEFAULT_SEARCH_LIMIT = 5;
 export const MAX_SEARCH_LIMIT = 20;
@@ -12,6 +13,7 @@ export interface CatalogOperation {
   title?: string;
   description?: string;
   group?: string;
+  hidden?: boolean;
   annotations?: { readOnlyHint?: boolean; destructiveHint?: boolean; [key: string]: unknown };
   inputSchema: { type: 'object'; properties?: Record<string, unknown>; required?: string[]; [key: string]: unknown };
 }
@@ -113,7 +115,10 @@ export function searchOperations(operations: CatalogOperation[], query: unknown,
     throw new ToolInputError(`limit must be an integer from 1 to ${MAX_SEARCH_LIMIT}`);
   }
 
+  // Hidden operations stay executable (findOperation does not look at the flag) but are
+  // never offered, so the model is steered to their replacement.
   return operations
+    .filter(op => !op.hidden)
     .map(op => {
       const name = op.name.toLowerCase();
       const group = (op.group ?? '').toLowerCase();

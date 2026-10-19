@@ -4,6 +4,25 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.2.0 — 2026-10-19
+
+### Operations
+
+- Added `hosting_deploy` — Deploy website, nodejs app, WordPress plugin or theme
+- Added `hosting_get-deployment` — Get deployment status, build status, build logs and failure analysis
+- Hid 24 operations from search (they still run through `execute`): `hosting_import-wordpress-website`, `hosting_deploy-wordpress-plugin`, `hosting_deploy-wordpress-theme`, `hosting_deploy-js-application`, `hosting_deploy-static-website`, `hosting_list-js-deployments`, `hosting_show-js-deployment-logs`, `hosting_files_generate-upload-url`, `hosting_git_auto-deployment-settings`, `hosting_git_update-auto-deployment-settings`, `hosting_git_list-installations`, `hosting_git_list-installation-repositories`, `hosting_nodejs_list-builds`, `hosting_nodejs_start-build`, `hosting_nodejs_build-settings`, `hosting_nodejs_update-build-settings`, `hosting_nodejs_build-settings-from-archive`, `hosting_nodejs_analyse-failed-build`, `hosting_nodejs_build`, `hosting_nodejs_build-logs`, `hosting_websites_deploy-static-site-archive`, `wordpress_installations_import-website`, `wordpress_plugins_deploy`, `wordpress_themes_deploy`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`, `package.json`
+- Bundled agent skills: 6 files
+- Request handling and authentication: 4 files
+- Server instructions: 4 files
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+- Server entry points: `src/servers/agency-hosting.js`, `src/servers/agency-hosting.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.1.0 — 2026-10-16
 
 ### Operations

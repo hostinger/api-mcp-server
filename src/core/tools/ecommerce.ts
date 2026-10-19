@@ -6,6 +6,8 @@ export interface OpenApiTool extends Tool {
   path: string;
   security: unknown[];
   custom?: boolean;
+  hidden?: boolean;
+  replacesHidden?: boolean;
   group?: string;
   topic?: string;
   handlerMethod?: string;

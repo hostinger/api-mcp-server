@@ -6,6 +6,8 @@ export interface OpenApiTool extends Tool {
   path: string;
   security: unknown[];
   custom?: boolean;
+  hidden?: boolean;
+  replacesHidden?: boolean;
   group?: string;
   topic?: string;
   handlerMethod?: string;
@@ -14,6 +16,166 @@ export interface OpenApiTool extends Tool {
 }
 
 const tools: OpenApiTool[] = [
+  {
+    "name": "hosting_deploy",
+    "title": "Deploy website, nodejs app, WordPress plugin or theme",
+    "annotations": {
+      "title": "Deploy website, nodejs app, WordPress plugin or theme",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "topic": "hosting",
+    "description": "Deploy, publish or upload a website to Hostinger web hosting (Shared, Cloud): static HTML, PHP, a nodejs (Node.js) app, a whole WordPress site, or a WordPress plugin or theme, from a local directory, an archive or a GitHub or GitLab repository. It detects what the project is and does the upload, build and Git setup itself: do not call upload or build operations, and do not archive the directory yourself. WARNING: it overwrites the website's contents and cannot be undone; confirm the domain with the user before deploying to a site that already has content. A Node.js build runs on the server: this returns a buildUuid at once, then call hosting_get-deployment until the build state is completed or failed. Static, PHP, plugin and theme deploys are done when this returns; a WordPress site import only starts, and its files are extracted a few minutes later. From Git, pass type (static or nodejs) unless the site already runs a Node.js app or you pass Node.js settings; a static or PHP site deploys the branch now and again on every push; a Node.js site builds the branch now and on every later push, with the settings stored for the site (when none are stored, pass appType and nodeVersion from the project's engines, plus outputDirectory and buildScript if the app has a build step). Git needs GitHub or GitLab connected once in hPanel.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website to deploy to (e.g., example.com)"
+        },
+        "path": {
+          "type": "string",
+          "description": "Local directory (preferred; it is archived for you, skipping node_modules, .git and .env files, but not reading .gitignore, so keep build output out) or archive (zip, tar, tar.gz, tgz, 7z, gz, gzip). Not together with git."
+        },
+        "git": {
+          "type": "object",
+          "description": "Deploy a repository branch instead of local files. Not together with path.",
+          "properties": {
+            "repository": {
+              "type": "string",
+              "description": "owner/name, e.g. hostinger/my-site (GitLab group paths may have more slashes)"
+            },
+            "branch": {
+              "type": "string",
+              "description": "Branch to deploy, e.g. main"
+            },
+            "directory": {
+              "type": "string",
+              "description": "Folder under the website's document root to deploy into (static deploys only; default the document root), e.g. my-api"
+            }
+          },
+          "required": [
+            "repository",
+            "branch"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "static",
+            "nodejs",
+            "wordpress-site",
+            "wordpress-plugin",
+            "wordpress-theme"
+          ],
+          "description": "What is deployed. Detected for a directory (a Plugin Name: or Theme Name: header, wp-config.php or wp-content, a package.json with a build or start script); required for an archive, when detection reports ambiguity, and for a Git deploy unless the site already runs a Node.js app or Node.js settings are passed. static also covers PHP."
+        },
+        "slug": {
+          "type": "string",
+          "description": "WordPress plugin or theme slug: lower-case letters, digits, - and _ (default: the directory name)"
+        },
+        "activate": {
+          "type": "boolean",
+          "description": "Activate the theme after deployment (WordPress themes only, default: false)"
+        },
+        "databaseDump": {
+          "type": "string",
+          "description": "Path to a .sql dump; required for a WordPress site import"
+        },
+        "nodeVersion": {
+          "type": "integer",
+          "enum": [
+            18,
+            20,
+            22,
+            24
+          ],
+          "description": "Node.js major version (default: detected from an archive, or stored for the site, else 22; set it from the project's engines for a Git deploy)"
+        },
+        "appType": {
+          "type": "string",
+          "description": "Node.js framework, e.g. next, nuxt, vite, express, react, vue, astro; overrides detection or stored settings"
+        },
+        "rootDirectory": {
+          "type": "string",
+          "description": "Directory with the package.json, relative to the site root (default .)"
+        },
+        "outputDirectory": {
+          "type": "string",
+          "description": "Build output directory relative to the root directory, e.g. dist"
+        },
+        "buildScript": {
+          "type": "string",
+          "description": "The package.json script that builds the app, e.g. build"
+        },
+        "entryFile": {
+          "type": "string",
+          "description": "Entry file of a server app. Relative to the root directory for express, fastify, hono, react-router and other; for a compiled (TypeScript) app give the built file, e.g. dist/server.js, because detection guesses a root-level file. Relative to the output directory for nest, nuxt, nitro, astro and svelte-kit (main.js, not dist/main.js). Ignored for next."
+        },
+        "packageManager": {
+          "type": "string",
+          "enum": [
+            "npm",
+            "yarn",
+            "pnpm"
+          ],
+          "description": "Package manager used to install dependencies"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "replacesHidden": true,
+    "templateFile": "deploy.template.js",
+    "templateFileTS": "deploy.template.ts",
+    "handlerMethod": "handleHostingDeploy",
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_get-deployment",
+    "title": "Get deployment status, build status, build logs and failure analysis",
+    "annotations": {
+      "title": "Get deployment status, build status, build logs and failure analysis",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "topic": "hosting",
+    "description": "Check deployment status, build status, build logs and why a build failed (failure analysis) for a website's nodejs (Node.js) deployment: the state of its latest build (or of buildUuid), the end of the build log, the failure analysis when the build failed, and the build settings and Git auto-deployment settings stored for the site. Use it after hosting_deploy starts a Node.js build, and to find out why a deployment failed. Poll until the build state is completed or failed, with growing pauses. The log comes back in full; pass fromLine (the lines count from the previous call) to read only new output. A website without Node.js builds returns build: null with an explanation, because static, PHP, plugin and theme deploys are complete when hosting_deploy returns, and a WordPress site import is ready a few minutes after it starts.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website (e.g., example.com)"
+        },
+        "buildUuid": {
+          "type": "string",
+          "description": "Build to inspect, as returned by hosting_deploy (default: the latest build)"
+        },
+        "fromLine": {
+          "type": "integer",
+          "description": "Read the build log from this line on (default 0, the whole log). Pass the lines count returned by the previous call to get only new output."
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "replacesHidden": true,
+    "templateFile": "get-deployment.template.js",
+    "templateFileTS": "get-deployment.template.ts",
+    "handlerMethod": "handleHostingGetDeployment",
+    "group": "hosting"
+  },
   {
     "name": "agency-hosting_deploy-node-static-website",
     "title": "Deploy node-static website",
@@ -133,7 +295,8 @@ const tools: OpenApiTool[] = [
     "templateFile": "import-wordpress.template.js",
     "templateFileTS": "import-wordpress.template.ts",
     "handlerMethod": "handleWordpressWebsiteImport",
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_deploy-wordpress-plugin",
@@ -174,7 +337,8 @@ const tools: OpenApiTool[] = [
     "templateFile": "deploy-wordpress-plugin.template.js",
     "templateFileTS": "deploy-wordpress-plugin.template.ts",
     "handlerMethod": "handleWordpressPluginDeploy",
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_deploy-wordpress-theme",
@@ -219,7 +383,8 @@ const tools: OpenApiTool[] = [
     "templateFile": "deploy-wordpress-theme.template.js",
     "templateFileTS": "deploy-wordpress-theme.template.ts",
     "handlerMethod": "handleWordpressThemeDeploy",
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_deploy-js-application",
@@ -259,7 +424,8 @@ const tools: OpenApiTool[] = [
     "templateFile": "deploy-javascript-app.template.js",
     "templateFileTS": "deploy-javascript-app.template.ts",
     "handlerMethod": "handleJavascriptApplicationDeploy",
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_deploy-static-website",
@@ -299,7 +465,8 @@ const tools: OpenApiTool[] = [
     "templateFile": "deploy-static-website.template.js",
     "templateFileTS": "deploy-static-website.template.ts",
     "handlerMethod": "handleStaticWebsiteDeploy",
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_list-js-deployments",
@@ -351,7 +518,8 @@ const tools: OpenApiTool[] = [
     "templateFile": "list-javascript-deployments.template.js",
     "templateFileTS": "list-javascript-deployments.template.ts",
     "handlerMethod": "handleListJavascriptDeployments",
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_show-js-deployment-logs",
@@ -391,7 +559,8 @@ const tools: OpenApiTool[] = [
     "templateFile": "show-javascript-deployment-logs.template.js",
     "templateFileTS": "show-javascript-deployment-logs.template.ts",
     "handlerMethod": "handleShowJsDeploymentLogs",
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "agency-hosting_datacenters_list",
@@ -7028,7 +7197,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_files_list-website-and-directories",
@@ -7176,7 +7346,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_git_update-auto-deployment-settings",
@@ -7240,7 +7411,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_git_delete-auto-deployment-settings",
@@ -7318,7 +7490,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_git_list-installation-repositories",
@@ -7348,7 +7521,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_git_deploy-website-repository",
@@ -7772,7 +7946,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_nodejs_start-build",
@@ -7908,7 +8083,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_nodejs_build-settings",
@@ -7943,7 +8119,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_nodejs_update-build-settings",
@@ -8040,7 +8217,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_nodejs_build-settings-from-archive",
@@ -8080,7 +8258,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_nodejs_list-environment-variables",
@@ -8214,7 +8393,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_nodejs_build",
@@ -8254,7 +8434,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_nodejs_build-logs",
@@ -8298,7 +8479,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_nodejs_runtime-logs",
@@ -9369,7 +9551,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_websites_delete",
@@ -16415,7 +16598,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "hidden": true
   },
   {
     "name": "wordpress_installations_install",
@@ -17089,7 +17273,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "hidden": true
   },
   {
     "name": "wordpress_plugins_install",
@@ -17520,7 +17705,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "hidden": true
   },
   {
     "name": "wordpress_themes_install",

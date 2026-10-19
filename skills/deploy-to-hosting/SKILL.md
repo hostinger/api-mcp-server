@@ -24,27 +24,30 @@ Ship a project that already exists — on disk or in a Git repository — to a H
 
 ## 2. Choose the deploy
 
-Wrong method is the most common failure. Decide from the project on disk:
+**Shared and Cloud, on the local `hostinger-api-mcp` server:** one operation does every deploy — `hosting_deploy` with `domain` and either `path` (a directory on this machine) or `git: { repository: "owner/name", branch }`. Given a directory it detects what the project is, packs it itself (it skips `node_modules`, `.git` and `.env` files, listing the `.env` ones as `skippedFiles` so you can set their values with `hosting_nodejs_replace-environment-variables`; it does not read `.gitignore`, so keep build output out of the directory) and does the upload, build and Git setup. Do not archive the directory or call upload and build operations by hand.
 
-| Project | Shared / Cloud |
+| Project | `hosting_deploy` treats it as |
 | --- | --- |
-| Plain HTML/CSS/JS, or a framework's static build output | `hosting_deploy-static-website` |
-| `package.json` with a build or a server (Next.js, Nuxt, Express, Vite…) | `hosting_deploy-js-application` |
-| PHP code, no build step | `hosting_deploy-static-website` (extracts the archive as-is) |
-| WordPress plugin or theme folder | `hosting_deploy-wordpress-plugin` / `hosting_deploy-wordpress-theme` (`activate` optional) |
-| A whole WordPress site from elsewhere | the `migrate-to-hosting` skill |
+| Plain HTML/CSS/JS, or a framework's static build output | `static` — extracts as-is |
+| `package.json` with a build script, a start script or a server dependency (Next.js, Nuxt, Express, Vite…) | `nodejs` — starts a build, returns `buildUuid` |
+| PHP code, no build step | `static` |
+| WordPress plugin folder (a `Plugin Name:` header) or theme folder (`Theme Name:` in `style.css`) | `wordpress-plugin` / `wordpress-theme`; `activate: true` activates a theme |
+| A whole WordPress site from elsewhere | `wordpress-site`, with `databaseDump` — see the `migrate-to-hosting` skill |
 
-On Agency the website's type decides (`agency-hosting_websites_get`): sites created as `node-static` take `agency-hosting_deploy-node-static-website`, which runs the build when the project has one; every other site takes `agency-hosting_deploy-php-application`, which extracts the archive as-is. WordPress plugins and themes on Agency sites are installed from wp-admin.
+- Pass `type` to override detection. It is required for an archive (an archive cannot be inspected) and when a directory matches more than one WordPress type, which `hosting_deploy` rejects as ambiguous.
+- Node.js build settings come from the project; detection covers the framework and the build script. Set `appType`, `outputDirectory`, `buildScript`, `entryFile`, `nodeVersion` (default 22), `rootDirectory` or `packageManager` when it is wrong. A TypeScript or other compiled server app always needs `entryFile` set to the built file (for example `dist/server.js`): detection only guesses a root-level file, and the build fails with "Entry file not found". The entry file is relative to the root directory for express, fastify, hono, react-router and other, and to the output directory for nest, nuxt, nitro, astro and svelte-kit (`main.js`, not `dist/main.js`); Next.js ignores it. Per-framework values are in the Hostinger docs under Node.js (Supported Frameworks, Build Settings).
+- Static, PHP, plugin and theme deploys are live when the call returns. A WordPress site import only starts (`status: import_started`) and finishes extracting a few minutes later; do not report it complete or verify it before then. Node.js builds run on the server: see step 3.
 
-Archive rules (name archives `name_YYYYMMDD_HHMMSS.zip`):
+**Agency:** the website's type decides (`agency-hosting_websites_get`): sites created as `node-static` take `agency-hosting_deploy-node-static-website`, which runs the build when the project has one; every other site takes `agency-hosting_deploy-php-application`, which extracts the archive as-is. They deploy archives, synchronously: the site is live when the call returns. WordPress plugins and themes on Agency sites are installed from wp-admin.
+
+Archive rules for Agency (name archives `name_YYYYMMDD_HHMMSS.zip`) and for archives you build yourself:
 
 - **Static:** build locally first. `index.html` must be at the archive root, not inside a folder: `cd dist && zip -r ../site_20260101_120000.zip .`
 - **Node.js source:** no `node_modules/`, no build output (`dist/`, `.next/`, `build/`), no `.env*`, nothing matched by `.gitignore`; 50 MB at most. `git archive --format=zip -o app_20260101_120000.zip HEAD` produces exactly the committed files — mention that uncommitted changes are left out.
-- Agency deploys are synchronous: the site is live when the call returns.
 
-The operations in the table read the archive from this machine, so only the local `hostinger-api-mcp` server has them. On the hosted server (`mcp.hostinger.com`) `search` does not find them — upload the files yourself as below.
+`hosting_deploy` and the `agency-hosting_deploy-*` operations read files from this machine, so only the local server has them. On the hosted server (`mcp.hostinger.com`) `search` does not find them — upload the files yourself as below.
 
-### Without the local deploy operations
+### Without the local deploy operations (hosted server; on the local server only for Agency)
 
 1. Get upload credentials: `hosting_files_generate-upload-url` (`username`, `domain`); Agency: `agency-hosting_files_generate-upload-url` (`website_uid`). Both return `url`, `auth_key` and `rest_auth_key`, which authenticate the upload instead of the API token.
 2. Upload each file with TUS, where `DEST` is its path in the website's storage:
@@ -69,15 +72,29 @@ curl -sS -X PATCH "$URL/$DEST?override=true" -H "X-Auth: $AUTH_KEY" -H "X-Auth-R
 
 ## 3. Node.js builds
 
-`hosting_deploy-js-application` uploads the archive to the document root, detects settings from `package.json` and starts a build. Track it with `hosting_nodejs_list-builds` and `hosting_nodejs_build` (by `uuid`), polling every 10–20 s — builds take minutes.
+`hosting_deploy` returns a `buildUuid` at once; the build runs on the server and takes minutes. Track it with `hosting_get-deployment` (`domain`, optionally `buildUuid`; the latest build by default), polling every 10–20 s until `build.state` is `completed` or `failed`. It returns the build, its log and the stored build settings; pass the previous `logs.lines` as `fromLine` to read only new output.
 
+- Failed build: the response already carries `analysis` (fetched once per build; the API allows 5 a minute).
+- Wrong detection (framework, `output_directory`, or an entry file inside the build output, such as `dist/server.js` for a compiled app): deploy again with `appType`, `outputDirectory`, `buildScript` or `entryFile` set. An archive deploy sends its settings with the request and leaves the stored ones alone; a Git deploy also stores these values, so later pushes build with them.
+
+On the hosted server, which has no `hosting_deploy` or `hosting_get-deployment`:
+
+- After the upload steps below, start the build and track it with `hosting_nodejs_list-builds` and `hosting_nodejs_build` (by `uuid`), polling every 10–20 s.
 - Failed build: `hosting_nodejs_analyse-failed-build` once per build (5 calls a minute), then `hosting_nodejs_build-logs` if the analysis is empty.
-- Wrong detection (framework, `output_directory`, or a missing `entry_file` for express, fastify, nest, nuxt and hono): run `hosting_nodejs_start-build` with explicit values, `source_type: "archive"` and `source_options.archive_path` set to the archive's file name in the document root (check it is there with `hosting_files_list-website-and-directories`). Store the same values with `hosting_nodejs_update-build-settings`.
+- Wrong detection: run `hosting_nodejs_start-build` with explicit values, `source_type: "archive"` and `source_options.archive_path` set to the archive's file name in the document root (check it is there with `hosting_files_list-website-and-directories`). Store the same values with `hosting_nodejs_update-build-settings`.
 - To review detected settings before any build: upload the archive with `hosting_files_generate-upload-url` (the TUS steps are in its description), then `hosting_nodejs_build-settings-from-archive`.
 
 ## 4. Auto-deploy from Git
 
-1. `hosting_git_list-installations`. With no `active` installation (check `status: "pending"` and `"suspended"` too), the user connects GitHub or GitLab once in hPanel under Websites → Manage → Advanced → Git; there is no API for that step.
+On the local server, `hosting_deploy` with `git: { repository: "owner/name", branch }` does all of it: it finds the Git installation that can reach the repository and deploys it as the `type` you give. Always pass `type: "static"` or `"nodejs"` unless the site already runs a Node.js app (or you pass Node.js settings such as `appType`): a new site is not detected as Node.js, and a Node.js repository deployed as static would publish its source. Then:
+- **PHP and static sites:** saves the auto-deployment settings, which deploys the branch immediately and again on every push;
+- **Node.js sites:** starts a build of the branch with the stored build settings; later pushes build the same way. A Git deploy has nothing to detect from, so when none are stored pass `appType` and `nodeVersion` (from `engines` in `package.json`), plus `outputDirectory` and `buildScript` if the app has a build step; they are stored for those pushes.
+
+With no active installation it stops and says so: the user connects GitHub or GitLab once in hPanel under Websites → Manage → Advanced → Git; there is no API for that step. Confirm with `hosting_get-deployment`, which returns the stored `gitAutoDeployment`.
+
+On the hosted server, by hand:
+
+1. `hosting_git_list-installations`. With no `active` installation (check `status: "pending"` and `"suspended"` too), the user connects GitHub or GitLab once in hPanel, as above.
 2. `hosting_git_list-installation-repositories` with the installation `uuid` gives `owner`, `name` and `default_branch` (10 calls a minute).
 3. `hosting_git_update-auto-deployment-settings` with `installation_uuid`, `owner`, `repository`, `branch` and optional `directory`.
    - PHP and static sites deploy the branch immediately and again on every push.

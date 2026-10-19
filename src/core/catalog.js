@@ -2,6 +2,7 @@
 // multi-execute over a catalog of API operations. Pure functions only; the
 // runtime supplies the catalog and the function that performs a call.
 // Keep in sync with catalog.ts and with api-remote-mcp's PHP implementation.
+// `hidden` is stdio-only: the hosted server hides nothing, so the PHP side has no such flag.
 
 export const DEFAULT_SEARCH_LIMIT = 5;
 export const MAX_SEARCH_LIMIT = 20;
@@ -94,7 +95,10 @@ export function searchOperations(operations, query, limit = DEFAULT_SEARCH_LIMIT
         throw new ToolInputError(`limit must be an integer from 1 to ${MAX_SEARCH_LIMIT}`);
     }
 
+    // Hidden operations stay executable (findOperation does not look at the flag) but are
+    // never offered, so the model is steered to their replacement.
     return operations
+        .filter(op => !op.hidden)
         .map(op => {
             const name = op.name.toLowerCase();
             const group = (op.group ?? '').toLowerCase();

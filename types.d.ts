@@ -5,6 +5,92 @@
 
 export interface APITools {
   /**
+   * Deploy, publish or upload a website to Hostinger web hosting (Shared, Cloud): static HTML, PHP, a nodejs (Node.js) app, a whole WordPress site, or a WordPress plugin or theme, from a local directory, an archive or a GitHub or GitLab repository. It detects what the project is and does the upload, build and Git setup itself: do not call upload or build operations, and do not archive the directory yourself. WARNING: it overwrites the website's contents and cannot be undone; confirm the domain with the user before deploying to a site that already has content. A Node.js build runs on the server: this returns a buildUuid at once, then call hosting_get-deployment until the build state is completed or failed. Static, PHP, plugin and theme deploys are done when this returns; a WordPress site import only starts, and its files are extracted a few minutes later. From Git, pass type (static or nodejs) unless the site already runs a Node.js app or you pass Node.js settings; a static or PHP site deploys the branch now and again on every push; a Node.js site builds the branch now and on every later push, with the settings stored for the site (when none are stored, pass appType and nodeVersion from the project's engines, plus outputDirectory and buildScript if the app has a build step). Git needs GitHub or GitLab connected once in hPanel.
+   */
+  "hosting_deploy": {
+    params: {
+      /**
+       * Domain name of the website to deploy to (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * Local directory (preferred; it is archived for you, skipping node_modules, .git and .env files, but not reading .gitignore, so keep build output out) or archive (zip, tar, tar.gz, tgz, 7z, gz, gzip). Not together with git.
+       */
+      path?: string;
+      /**
+       * Deploy a repository branch instead of local files. Not together with path.
+       */
+      git?: object;
+      /**
+       * What is deployed. Detected for a directory (a Plugin Name: or Theme Name: header, wp-config.php or wp-content, a package.json with a build or start script); required for an archive, when detection reports ambiguity, and for a Git deploy unless the site already runs a Node.js app or Node.js settings are passed. static also covers PHP.
+       */
+      type?: string;
+      /**
+       * WordPress plugin or theme slug: lower-case letters, digits, - and _ (default: the directory name)
+       */
+      slug?: string;
+      /**
+       * Activate the theme after deployment (WordPress themes only, default: false)
+       */
+      activate?: boolean;
+      /**
+       * Path to a .sql dump; required for a WordPress site import
+       */
+      databaseDump?: string;
+      /**
+       * Node.js major version (default: detected from an archive, or stored for the site, else 22; set it from the project's engines for a Git deploy)
+       */
+      nodeVersion?: number;
+      /**
+       * Node.js framework, e.g. next, nuxt, vite, express, react, vue, astro; overrides detection or stored settings
+       */
+      appType?: string;
+      /**
+       * Directory with the package.json, relative to the site root (default .)
+       */
+      rootDirectory?: string;
+      /**
+       * Build output directory relative to the root directory, e.g. dist
+       */
+      outputDirectory?: string;
+      /**
+       * The package.json script that builds the app, e.g. build
+       */
+      buildScript?: string;
+      /**
+       * Entry file of a server app. Relative to the root directory for express, fastify, hono, react-router and other; for a compiled (TypeScript) app give the built file, e.g. dist/server.js, because detection guesses a root-level file. Relative to the output directory for nest, nuxt, nitro, astro and svelte-kit (main.js, not dist/main.js). Ignored for next.
+       */
+      entryFile?: string;
+      /**
+       * Package manager used to install dependencies
+       */
+      packageManager?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Check deployment status, build status, build logs and why a build failed (failure analysis) for a website's nodejs (Node.js) deployment: the state of its latest build (or of buildUuid), the end of the build log, the failure analysis when the build failed, and the build settings and Git auto-deployment settings stored for the site. Use it after hosting_deploy starts a Node.js build, and to find out why a deployment failed. Poll until the build state is completed or failed, with growing pauses. The log comes back in full; pass fromLine (the lines count from the previous call) to read only new output. A website without Node.js builds returns build: null with an explanation, because static, PHP, plugin and theme deploys are complete when hosting_deploy returns, and a WordPress site import is ready a few minutes after it starts.
+   */
+  "hosting_get-deployment": {
+    params: {
+      /**
+       * Domain name of the website (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * Build to inspect, as returned by hosting_deploy (default: the latest build)
+       */
+      buildUuid?: string;
+      /**
+       * Read the build log from this line on (default 0, the whole log). Pass the lines count returned by the previous call to get only new output.
+       */
+      fromLine?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agency-hosting_deploy-php-application instead. The website UID is automatically resolved from the domain.
    */
   "agency-hosting_deploy-node-static-website": {
