@@ -11,6 +11,18 @@ is where it becomes real code. There's no per-framework recipe — use good judg
 as the contract, and ask only for the clarifications you genuinely need. **Out:** source in the site
 workspace `~/.hostinger/<domain>/src/`.
 
+> ## ⚠️ Build mode: "Bring your own frontend"? Read this first (any backend)
+> Read `brief.md` → **Build mode**. When it is **Bring your own frontend**, the user already has a
+> frontend (the project in the folder the command was run in) and this step **wires it to the backend
+> from `site.json` — it does not scaffold a new project and there is usually no `design.md` to
+> implement** (the design step deferred to the user). **Use their project as the source**: copy or
+> point `~/.hostinger/<domain>/src/` at it, keep its framework and UI, and collaborate on changes at
+> the user's direction (vibe-code with them). Your job is to connect it to the live backend (WordPress
+> `wp/v2` reads, the WooCommerce/Ecommerce Store API, env/keys) and make it deployable (set
+> `engines.node` to `22`, remove any `.htaccess`), then hand off to deploy. This generalises the Webapp
+> "existing app" case below to WordPress and Ecommerce too. When **Build mode is "Agent designs and
+> builds"**, ignore this box and proceed normally (scaffold + implement `design.md`).
+
 > ## ⚠️ Webapp backend? Read this first
 > A `webapp` brief has **no CMS/store and no `content-model.md`** — the app owns its own data (its own
 > API, or the MySQL database recorded in `site.json → database`). It comes in two shapes, decided back in
@@ -27,7 +39,7 @@ workspace `~/.hostinger/<domain>/src/`.
 >   there is still **no `content-model.md`** to bind against.
 >
 > Framework choice (Step 1), the build, and hand-off (Step 4) apply to both. The per-backend bullets in
-> Step 3 are **WordPress/Ecommerce only** — for a webapp follow the Webapp bullet there.
+> Step 3 are **WordPress / WooCommerce / Ecommerce only** — for a webapp follow the Webapp bullet there.
 
 ## Step 1 — Pick the framework (guess → default → confirm)
 
@@ -36,6 +48,7 @@ it, and the backend constraint:
 
 - **Ecommerce → SSR required** (carts/search need per-request rendering). Any SSR framework works —
   Next.js is the default, not a requirement (Express, Nuxt, SvelteKit, etc. are all fine).
+- **WordPress + WooCommerce → SSR required** (same reason — cart/checkout need per-request rendering).
 - **WordPress → SSG (Astro)** when the brief says SSG, otherwise **SSR (Next.js default)**.
 - **Webapp → the app's own stack.** An **existing app** keeps its current framework (don't impose one); a
   **new app** uses whatever fits the brief (SSR or SPA). Either way it deploys as a Node.js app (Step 8) —
@@ -87,7 +100,23 @@ Read the backend from `site.json`:
 
 - **WordPress** → `urls.rest_api` (`wp/v2`), public read. Content is in the posts/pages/categories/media
   the content-model push created; nav/plan come from `content-model.md`. Map each item's **SEO** from its
-  `yoast_head_json` into the page `<head>` (title, description, Open Graph, JSON-LD schema).
+  `yoast_head_json` into the page `<head>` (title, description, Open Graph, JSON-LD schema) — Yoast is
+  installed by default at provision (`site.json → seo.enabled: true`). If `seo.enabled` is `false`
+  (Yoast absent), fall back to generating per-page title/description/OG tags from each item's content.
+- **WordPress + WooCommerce** (`site.json → woocommerce.enabled: true`) → the WordPress bullet above **plus**
+  the store. Read the catalog over the **public WooCommerce Store API** (`site.json → urls.store_api`,
+  `/cms/wp-json/wc/store/v1`, no auth, open CORS): `GET /products` (prices are **integer minor units** on
+  `prices.price` with `prices.currency_minor_unit` — divide to display), `GET /products/categories`. Cart,
+  coupons and checkout are **client-side** against the Store API with the `Nonce` + `Cart-Token` headers
+  (`GET /cart`, `POST /cart/add-item`, `/cart/apply-coupon`, `POST /checkout`) — see
+  `../04-content-model/wordpress/woocommerce.md`. **Never embed a consumer key client-side**; the
+  storefront is fully public. Blog/pages on the same site still come from `urls.rest_api` (`wp/v2`) + Yoast.
+  - **Honour `site.json → woocommerce.payment_enabled`.** It is `false` until the owner enables a payment
+    gateway + shipping in wp-admin (that config isn't reachable headlessly — see the provision note). While
+    `false`, build the full catalog, product pages and the client-side cart as normal, but render a
+    graceful disabled-checkout state (e.g. a disabled "Checkout" with "Checkout isn't set up yet"), **don't
+    call `/checkout`**, and don't treat it as a build error. When `true`, wire checkout (`payment_method`
+    `"cod"` works out of the box).
 - **Ecommerce** → the **public Hostinger Storefront Core V2 API** (`https://api-ecommerce.hostinger.com/v2`,
   no auth, open CORS), keyed on the **custom sales channel** (`site.json → ecommerce.sales_channel.id`):
   `GET /channels/<scha_*>/products` (prices are **minor units** on variants), `POST /channels/<scha_*>/checkout`

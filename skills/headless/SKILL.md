@@ -9,7 +9,7 @@ description: "Orchestrator for the Hostinger Headless build flow — build and d
 
 You are an AI coding agent. The user pasted a short prompt that points you here — something like:
 
-> Build a Headless site for `example.com` using hostinger.com/ai/skill.md
+> Build a Headless site for `example.com` using hostinger.com/headless/skill.md
 
 Your job is to build and deploy a real website on the user's Hostinger account by following this
 recipe and the recipes it links to — nothing more, nothing less.
@@ -21,7 +21,7 @@ holds the flow, the state contract, the failure policy and the guardrails.
 
 The pasted prompt contains exactly two things that matter:
 
-- **This URL** — `hostinger.com/ai/skill.md`, the stable entry point.
+- **This URL** — `hostinger.com/headless/skill.md`, the stable entry point.
 - **A domain** — e.g. `coral-pottery-1847.hostingersite.com` (a temporary Hostinger subdomain) or
   the user's own purchased domain. This is the single site you may touch.
 
@@ -37,47 +37,48 @@ Hostinger connector's OAuth token. **This recipe is not a security boundary.**
 ## The flow stages - STEPS TO FOLLOW
 
 Work through the steps in the order below, each reading its recipe and writing its artifact into the
-site workspace `~/.hostinger/<domain>/`. The order is a **dependency order, not a strict lockstep**:
-**provision runs as a background task** and the prepare work of the stages around it overlaps the wait
-(see *Background provision & the instance barrier* below). Never skip a stage — **except validate**
-(optional) **and content model for a `webapp` brief** (there is no CMS or store to seed — see step 4):
-every other stage self-verifies and deploy verifies the live result, so validate is a
-quick instance+API confirmation and its rebuild/preview/approval run only when a person is signing off
-(see its recipe). State files are only hints; the truth is what the Hostinger connector reports, so
+site workspace `~/.hostinger/<domain>/`. 
+
+
+The order is sequencial run and check the whole headless flow:
+
+| # | Stage                                                                                                              | Skill / source                                                        | Writes | Instance? |
+|---|--------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|---|---|
+| — | **connect** — connect the Hostinger connector, auth, get active plan                                               | `connect/SKILL.md` → `connect/tools/<tool>.md` | `connect.json` | no |
+| 1 | **check state** — where does this domain stand? resume / switch / start over                                       | `steps/01-check-state/SKILL.md`                                       | `state.json` | no |
+| 2 | **refine** — discover what the user wants, in conversation                                                         | `steps/02-refine/SKILL.md`                                            | `brief.md` | no |
+| 3 | **provision** — choose the backend from the brief, then provision it                                               | `steps/03-provision/<backend>/SKILL.md`                               | `site.json` | **bg** — fire, then poll in the background |
+| 4 | **content model** — define + create content/images, then push to the backend                                       | `steps/04-content-model/<backend>/SKILL.md`                           | `content-model.md` | prepare: no · **push: yes** |
+| 5 | **design** — derive design directions from the brief, pick one, write the `design.md` contract + logo              | `steps/05-design/SKILL.md`                                            | `design.md`, `brand/` | no |
+| 6 | **frontend** — pick/confirm the framework (default Next.js SSR), implement `design.md` against the backend         | `steps/06-frontend/SKILL.md`                                          | source in `<workspace>/src/` | shell: no · **data: yes** |
+| 7 | **validate** *(optional)* — quick instance+API confirmation; rebuild/preview/approval only when a person signs off | `steps/07-validate/SKILL.md`                                          | — | no (local) |
+| 8 | **deploy** — upload source, trigger the build                                                                      | `steps/08-deploy/SKILL.md`                                            | `deploy.json` | **yes** |
+| 9 | **done** — hand over URLs, dashboard, summary, next steps (the **final report**)                                   | `steps/09-done/SKILL.md`                                              | — | no |
+
+**The most important is that connect stage runs first and always**
+It's fetched from the public URL and runs *before* the Hostinger MCP Server
+is loaded, the main goal of this is to have the Hostinger MCP Server.
+
+You can find those connect skills under `connect/`.
+The main skill lives in `connect/SKILL.md`.
+There are also specific tools under `connect/tools/`.
+
+The other 9 numbered steps live under `steps/` and are read from the installed skill folder (this will be guided in connect step).
+
+**One concurrency rule:** two *independent* stages in a single session may run at once, but never
+two writers of the same artifact, and never two agents/windows on the same domain — the `.lock`
+(Step 1) guards that. Parallelism is always *optional*: an agent that can't interleave work runs the
+steps serially and is still correct. Saying this, Always that you consider, you can run the steps
+in parallel using different threads or processes to save time, but always ensure the right output.
+
+Steps can generate **State files** those files are only hints; the truth is what the Hostinger connector reports, so
 verify a "done" marker against reality before acting on it. If a step's `SKILL.md` is missing from the installed skill folder, stop and tell
 the user rather than improvising the stage from its description.
 
-**The one concurrency rule:** two *independent* stages in a single session may run at once, but never
-two writers of the same artifact, and never two agents/windows on the same domain — the `.lock`
-(Step 1) guards that. Parallelism is always *optional*: an agent that can't interleave work runs the
-steps serially and is still correct.
-
-The **Instance?** column says whether a stage touches the live backend: `no` = pure prepare work that
-can run during the provision wait; `push`/`data`/`yes` = a commit phase that joins the instance
-barrier; `bg` = provision itself, the background task.
-
-| # | Stage | Skill / source | Writes | Instance? |
-|---|---|---|---|---|
-| — | **connect** — connect the Hostinger connector, auth, active plan | `connect/SKILL.md` → `connect/tools/<tool>.md` | `connect.json` | no |
-| 1 | **check state** — where does this domain stand? resume / switch / start over | `steps/01-check-state/SKILL.md` | `state.json` | no |
-| 2 | **refine** — discover what the user wants, in conversation | `steps/02-refine/SKILL.md` | `brief.md` | no |
-| 3 | **provision** — choose the backend from the brief, then provision it | `steps/03-provision/<backend>/SKILL.md` | `site.json` | **bg** — fire, then poll in the background |
-| 4 | **content model** — define + create content/images, then push to the backend | `steps/04-content-model/<backend>/SKILL.md` | `content-model.md` | prepare: no · **push: yes** |
-| 5 | **design** — derive design directions from the brief, pick one, write the `design.md` contract + logo | `steps/05-design/SKILL.md` | `design.md`, `brand/` | no |
-| 6 | **frontend** — pick/confirm the framework (default Next.js SSR), implement `design.md` against the backend | `steps/06-frontend/SKILL.md` | source in `<workspace>/src/` | shell: no · **data: yes** |
-| 7 | **validate** *(optional)* — quick instance+API confirmation; rebuild/preview/approval only when a person signs off | `steps/07-validate/SKILL.md` | — | no (local) |
-| 8 | **deploy** — upload source, trigger the build | `steps/08-deploy/SKILL.md` | `deploy.json` | **yes** |
-| 9 | **done** — hand over URLs, dashboard, summary, next steps (the **final report**) | `steps/09-done/SKILL.md` | — | no |
-
-**connect** runs first — it's fetched from the public URL and runs *before* the Hostinger connector
-exists. The nine numbered steps live under `steps/` and are read from the installed skill folder.
-**provision** and **content model** route to a per-backend subfolder (`<backend>` = `wordpress` |
-`ecommerce` | `webapp`), chosen from the brief. **`webapp`** is a plain Node.js app host (an empty
-website — no CMS, no store, no `/cms`) for any app/SPA that brings its own code and data; it **skips the
-content-model stage entirely** (there is nothing to seed — the app owns its own data) and never installs
-WordPress. **design** turns the brief into a chosen look and writes the `design.md` contract;
-**frontend** is a single generic step that picks the framework (guess → default Next.js SSR → confirm)
-and implements `design.md`.
+The **Instance?** column says whether a stage touches the live backend:
+`no` = pure prepare work that can run during the provision wait;
+`push`/`data`/`yes` = a commit phase that joins the instance barrier;
+`bg` = provision itself, the background task.
 
 **Always end with the final report.** Whenever a run ends, give the user the final report defined
 in `steps/09-done/SKILL.md`: an outcome paragraph, a *Steps completed* table (one row per stage that
@@ -97,38 +98,35 @@ Validation before deploy, always — nothing reaches the live domain unseen.
 
 ### Background provision & the instance barrier
 
-Provisioning is mostly *waiting*: `hosting_websites_create` returns "queued" immediately, then it's a
-`hosting_websites_list-setups` poll every ~15 s for a few minutes. Don't block on that poll. The
+**Provision always runs — what it does depends on what the domain already has.** Often onboarding on
+hostinger.com has already created the website before you run, so the domain *has* a headless instance;
+but an instance existing does **not** mean provision is done or can be skipped. `check_state` works out
+which of these cases applies and records it, then provision takes the matching path:
+
+1. **An empty headless shell already exists for the domain (the common onboarding case).** Onboarding
+   creates the website first — an **empty headless shell** (`hosting_websites_start-setup { type:
+   "headless_empty" }`): `website_type` is `headless`, but **no backend is installed** (no WordPress at
+   `/cms`, no store). This still goes through provision, which **adopts the shell and swaps it to the
+   chosen backend** (the backend is picked in refine first): WordPress is installed into the shell's
+   `/cms` with `wordpress_installations_install { type: "headless" }`, or the shell is adopted as the
+   Ecommerce storefront host. **Never skip provision for a shell, and never create a second site.** See
+   the provision router's *Onboarding handoff*.
+2. **No instance exists at all** (the user ran the headless flow without onboarding provisioning
+   anything). Provision creates a fresh headless instance with `hosting_websites_start-setup` using the
+   chosen backend's own `type`.
+3. **User wants a webapp.** Provision is a plain Node.js app host, not headless — `webapp` ignores
+   headless shells entirely and is only reached by experimental actions, never the onboarding flow.
+
+Either way the create/install is asynchronous and returns `queued` immediately, then it's polled
+every ~15 s for a few minutes — **what you poll depends on the path**: a fresh
+`hosting_websites_start-setup` is polled with `hosting_websites_list-setups` until `completed`, while a
+shell swap (`wordpress_installations_install`) creates no new setup, so it's polled with
+`wordpress_installations_list` until the `/cms` row is `is_valid`. Don't block on that poll. The
 single rule that makes the overlap safe:
 
 > **Fire provision as a background task, then do every stage's prepare work while it settles. The
-> moment a step must write to the live instance, it waits for provision to report `completed`
-> (verified against `hosting_websites_list-setups`). That wait is the *instance barrier*.**
-
-Once `brief.md` exists (it already fixes the backend choice), the lanes are:
-
-```
-refine ──▶ brief.md
-             ├─▶ provision: FIRE create, record provision.in_progress ─────────┐  (bg poll)
-             ├─▶ content-model PREPARE: define entities, write copy,           │
-             │             generate images                                      │
-             ├─▶ design: directions → design.md + logo (from the brief)        │
-             └─▶ frontend SHELL: pick framework, scaffold, implement design.md │
-                                                                                │
-   ══════════════════════ instance barrier: provision.status == completed ═════╪═════
-                                                                                ▼
-             ├─▶ content-model PUSH: send content/media via the connector (needs the instance)
-             └─▶ frontend DATA: wire fetch/bind against the backend API URL from site.json
-                           │
-                           ▼
-                        validate ──▶ deploy (needs the provisioned target) ──▶ done
-```
-
-Nothing before the barrier touches the backend, so it's safe to run in any order the agent can manage
-— sequentially if it can't interleave. Nothing after the barrier may start until provision is
-verifiably `completed`. If provision **fails** at the barrier (quota, `422`, a changed free
-subdomain), the prepare artifacts (drafted content, generated images, the `src/` shell) stay valid —
-only the commit phases wait or retry; re-run provision, then cross the barrier.
+> moment a step must write to the live instance, it waits for provision to report ready (via the
+> backend step's readiness poll — see above). That wait is the *instance barrier*.**
 
 ---
 

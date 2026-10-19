@@ -5,7 +5,7 @@ description: "First build step of the Hostinger Headless flow, run right after c
 
 # headless-step-check-state
 
-The first build step of the Hostinger Headless flow (orchestrated by `hostinger.com/ai/skill.md`),
+The first build step of the Hostinger Headless flow (orchestrated by `hostinger.com/headless/skill.md`),
 run right after connect. Connect has already connected the Hostinger connector and confirmed the
 account can build. Your job here is to
 **figure out where this domain stands and agree the route with the user** before any new work begins.
@@ -116,6 +116,17 @@ Query the Hostinger connector — the local files are never trusted on their own
   - `status: completed` → provisioned; then, depending on backend, check whether a build has succeeded.
   - `status: running` → still provisioning (see Step 1).
   - `status: failed` → provisioning stopped before finishing → route to **provision** to self-heal.
+- **Is it an empty headless shell from onboarding?** A `headless` site whose setup is `completed` is
+  **not necessarily finished** — onboarding now creates the website *before* the build runs, as an
+  **empty headless shell** (`hosting_websites_start-setup { type: "headless_empty" }`): `website_type`
+  is `headless` but **no backend is installed** (no WordPress at `/cms`, no store). Tell a shell from a
+  real backend the same way provision does: within 24 h the setup `type` is `headless_empty`; otherwise
+  `wordpress_installations_list { username, domain, ownership: "all" }` returns **no** `/cms` row and
+  there is no `site.json` recording a backend. An empty shell means **provision has not chosen or
+  installed a backend yet** — this is a **new build** that happens to already own its website, not a
+  finished or resumable one. Route it to **refine** (choose the backend), then **provision** adopts the
+  shell and swaps it to that backend (see the provision router's *Onboarding handoff*). Never create a
+  second site, and never skip provision for it.
 
 Reconcile with the local state. **When they disagree, reality wins** and the local `stage` is
 corrected.
@@ -132,7 +143,8 @@ yet** (`brief.md`, `site.json`, …).
 | Local state | Reality (domain) | Position |
 |---|---|---|
 | none (connect only) | free | **new build** — start from refine |
-| none (connect only) | site exists | **adopt / resume** — never create a second site; route to the first unfinished stage |
+| none (connect only) | empty headless shell (onboarding) | **new build on an existing shell** — start from refine; provision adopts the shell and swaps it to the chosen backend. Never create a second site, never skip provision |
+| none (connect only) | site exists with a real backend | **adopt / resume** — never create a second site; route to the first unfinished stage |
 | build artifacts present, incomplete | matches | **resume** at `state.json`'s `stage` |
 | build artifacts present | disagrees | **reality wins** — recompute the stage from what actually exists |
 | build artifacts present, all done | live site exists | **finished** — this is now an *iterate* request, not a build |
@@ -145,12 +157,16 @@ The question to ask depends on whether there is actually **something to resume**
 artifacts** (`brief.md`, `site.json`, …) or a **live site** for this domain. A stray `.lock` or
 connect-only files are *not* something to resume.
 
-- **New build** (no build artifacts and the domain is free) → just proceed to refine. **Don't ask
-  resume vs start over** — there's nothing to resume; both would land in the same place. If a leftover
-  `.lock` is lying around, silently take it over and continue (optionally mention it in one line).
-- **Something to resume** (build artifacts exist, or a site exists for the domain) → tell the user
-  plainly what's there and **ask them to choose**, regardless of how old it is (don't guess from
-  timestamps):
+- **New build** (no build artifacts and either the domain is free **or** it holds only an empty
+  headless shell from onboarding) → just proceed to refine. **Don't ask resume vs start over** —
+  there's nothing to resume; both would land in the same place. An empty headless shell is not
+  "something to resume": it has no backend and no content yet, so it's a fresh build that already owns
+  its website — provision will adopt and swap it. Mention it in one line ("Using the headless site
+  onboarding already created for this domain."). If a leftover `.lock` is lying around, silently take
+  it over and continue (optionally mention it in one line).
+- **Something to resume** (build artifacts exist, or a site exists for the domain **with a real backend
+  installed** — WordPress at `/cms`, a store, or a deployed app) → tell the user plainly what's there
+  and **ask them to choose**, regardless of how old it is (don't guess from timestamps):
 
 - **Resume** — pick up at the computed stage. (If a `.lock` is present in this case, also confirm no
   other window is actively building this domain right now.)

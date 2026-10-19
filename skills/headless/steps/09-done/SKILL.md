@@ -17,8 +17,9 @@ already checked this — this is a quick re-confirm, not a full re-run):
 - **Main site:** `GET https://<domain>/` → 200 (Next.js SSR: `x-powered-by: Next.js`; Astro SSG: static
   HTML with real content).
 - **WordPress admin:** `GET {urls.wp_admin}` → reachable (a login page, 200/302), not 404.
-- **Backend API:** `GET {urls.rest_api}/posts?per_page=1` → 200 (WordPress); or the storefront API for
-  the sales channel → 200 (Ecommerce).
+- **Backend API:** `GET {urls.rest_api}/posts?per_page=1` → 200 (WordPress); for a **WooCommerce** store
+  (`site.json → woocommerce.enabled`) also `GET {urls.store_api}/products?per_page=1` → 200; or the
+  storefront API for the sales channel → 200 (Ecommerce).
 
 If a check fails, say so in the outcome paragraph and don't claim the site is live.
 
@@ -61,8 +62,13 @@ Write it in this order:
      auto-login redirect URL** — `wordpress_login_create-links { username, software: <site.json
      wordpress.install_id> }` returns a temporary link that logs the user straight into wp-admin. Give
      that URL as the admin link (it lands on `/cms/wp-admin`), so the user never needs a password. Also
-     note the plain `urls.wp_admin` as a fallback. **Never print or store a password.** For an
-     Ecommerce store, link the store admin from `urls.store_admin` instead.
+     note the plain `urls.wp_admin` as a fallback. **Never print or store a password.** For a
+     **WordPress + WooCommerce** store, this *same* wp-admin login is the store admin (wp-admin →
+     WooCommerce → Products/Orders) — do **not** use the Ecommerce `store_admin` path. **Call out the one
+     setup step under *Gaps / follow-ups*:** when `site.json → woocommerce.payment_enabled` is `false`,
+     the owner must enable a payment method + a shipping zone in WooCommerce → Settings before checkout
+     works (the catalog and cart already work). For a Hostinger **Ecommerce** store, link the store admin
+     from `urls.store_admin` instead.
    - **hPanel site dashboard:** `https://hpanel.hostinger.com/websites/<domain>` (the headless website
      is installed by now).
    - **Onboarding (resume):** `https://hpanel.hostinger.com/headless-onboarding/<order_id>/<username>/`

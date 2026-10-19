@@ -29,9 +29,17 @@ authenticated; the admin user context (`wp_set_current_user`) exists only *insid
 | **Per-site WP MCP** | `urls.wp_mcp` (`mcp_url`) | **all writes** — create content through its ability tools |
 | **WP REST API** `wp/v2` | `urls.rest_api` | **public reads only** (no auth needed) — what the Step 6 frontend consumes; do not write to it with the JWT |
 
-> **The WordPress content model is posts, pages and categories** (plus media). For **SEO**, install
-> **Yoast** through the connector so meta + schema come from a maintained plugin; the frontend reads each
-> item's `yoast_head_json` (Step 4.7 below).
+> **The WordPress content model is posts, pages and categories** (plus media). For **SEO**, **Yoast**
+> is already installed + activated at provision (every headless WordPress site — see provision Step 4),
+> so meta + schema come from a maintained plugin and the frontend reads each item's `yoast_head_json`.
+> This push only sets per-item Yoast meta (Step 4.7 below).
+
+> **A store on this site? See [`woocommerce.md`](woocommerce.md).** When the brief's **Suggested
+> backend** is `**WordPress + WooCommerce**` (`site.json → woocommerce.enabled: true`), this push also
+> seeds the WooCommerce catalog — products, categories and coupons — through the **same per-site WP MCP
+> session**, which exposes native `wc-products-*`, `wc-product-categories-*` and `wc-coupons-*` abilities
+> (no custom plugin, no consumer key). Do the WordPress content below as normal, then run the **WooCommerce
+> catalog** section before you hand off.
 
 ## Step 1 — Open the authenticated MCP session
 
@@ -76,7 +84,10 @@ Seen on a live install (Hostinger AI Assistant, discovery mode): the meta-tools 
 `hostinger-ai-execute-ability { name, parameters }`. The abilities are named
 `hostinger-ai/<thing>-<action>`, e.g. `posts-create`, `posts-update`, `media-upload-from-url`,
 `media-delete`. Call `get-ability-info` for each schema before using it. Results come back as
-`{ ability, result: { data, … } }` for lists and `{ ability, result: {…} }` for single objects.
+`{ ability, result: { data, … } }` for lists and `{ ability, result: {…} }` for single objects — so a
+create answers **`200`** (not `201`) and the new object's `id` is **inside** `result` (`result.id`, or
+`result.data.id`), never at the top level. A missing top-level `id` is not a failure; read it from
+`result`.
 
 ## Step 3 — Idempotency rule (makes resume safe)
 
@@ -96,29 +107,41 @@ reuse its `id`; empty → create. Capture each returned `id` and record the id m
 1. **Site Title & Description** (the helper's global part) → the Settings ability.
 2. **Categories / tags** — one per term in the helper → Categories / Tags abilities. Keep `name → id`.
 3. **Media.** Upload every image in the helper, set `alt_text`, and keep `filename → id`. See
-   *Media upload* below for both sources: a generated file in `media/`, or an Unsplash URL.
-4. **Pages** — each static/index page → Pages ability (`title`, `slug`, block/HTML `content`,
-   `status: publish`). Keep `slug → id`.
-5. **Posts (articles)** — each → Posts ability (`title`, `slug`, `content`, `status: publish`,
-   `categories: [id]`, `tags: [id…]`, `featured_media: <id>`, `date`). (The plugin block-converts post
-   content on insert via `rest_pre_insert_post`, so HTML bodies are fine.)
+   *Media upload* below for all sources: a Hostinger-AI image URL, an Unsplash URL, or a generated
+   file in `media/`. For a Hostinger-AI image, generate it now (its URL is temporary — see the
+   content-model `SKILL.md`, *Images* Option A) and upload straight away, before `expires_at`.
+4. **Pages** — each static/index page → Pages ability. Pass `title`, `content` and `excerpt` as
+   **`{ "raw": "…" }` objects** (see the note below), plus `slug`, `status: publish`. Keep `slug → id`.
+5. **Posts (articles)** — each → Posts ability: `title`, `content` and `excerpt` as **`{ "raw": "…" }`**
+   (note below), plus `slug`, `status: publish`, `categories: [id]`, `tags: [id…]`,
+   `featured_media: <id>`, `date`. (The plugin block-converts post content on insert via
+   `rest_pre_insert_post`, so HTML bodies in `content.raw` are fine.)
+
+   > **Create payload gotcha (`pages-create` / `posts-create`).** These abilities take `title`,
+   > `content` and `excerpt` as WordPress's core **`{ "raw": "…" }` objects**, not bare strings. Pass a
+   > bare string and the field is silently dropped — the create still answers `200`, so you get a
+   > *published-but-empty* page or post with nothing to key off. Always send `{ "raw": "…" }` and
+   > read the new `id` from `result` (see Step 2). Confirm the exact field shape with
+   > `get-ability-info` if a schema differs.
 6. **Navigation** — Menus / Navigation abilities: create the menu, then an item per nav entry
    referencing a page `id` (or a custom URL for listing routes). **Headless note:** the Step 6
    frontend renders nav from `content-model.md`, so the WP menu is for owners editing in wp-admin, not
    what the live site reads — create it, but it isn't the source of truth.
-7. **SEO** — prefer **Yoast SEO**, installed through the connector:
-   `wordpress_plugins_install { username, software, plugins: ["wordpress-seo"] }` (async), poll
-   `wordpress_plugins_list-installed { username, software }` until `wordpress-seo` appears, then
-   `wordpress_plugins_activate { username, software, plugin: "wordpress-seo" }`. It generates meta +
-   schema, and the frontend reads `yoast_head_json` per post/page. Set each post's Yoast
-   title/description if an ability exposes it; otherwise the excerpt + title are a fine fallback. Don't
-   fail the push over SEO fields.
+7. **SEO** — **Yoast SEO** (`wordpress-seo`) is already installed + activated at provision (Step 4 of
+   the WordPress provision recipe), so it generates meta + schema and the frontend reads
+   `yoast_head_json` per post/page. Here, just set each post's Yoast title/description if an ability
+   exposes it; otherwise the excerpt + title are a fine fallback. Don't fail the push over SEO fields.
+   If `site.json → seo.enabled` is `false` (the owner declined Yoast, or provision couldn't confirm the
+   install), skip this and let the frontend generate tags from content — don't try to install the
+   plugin from the content stage.
 
 ### Media upload
 
-**From a URL (Unsplash or any direct file URL).** Use `hostinger-ai/media-upload-from-url`.
-WordPress downloads the file and stores its own copy, so the site never depends on the external URL
-staying up:
+**From a URL (a Hostinger-AI image, Unsplash, or any direct file URL).** Use
+`hostinger-ai/media-upload-from-url`. WordPress downloads the file and stores its own copy, so the
+site never depends on the external URL staying up — which is exactly why a **Hostinger-AI** image
+(whose `url` from `wordpress_ai-content_generation-result` is temporary) must be uploaded here, while
+it is still valid; drop the Unsplash-only `caption`/`description` for AI images:
 
 ```json
 { "name": "hostinger-ai/media-upload-from-url",
@@ -171,8 +194,30 @@ duplicates with `media-delete { id, force: true }`.
   → id) so the frontend data phase and any re-run resolve references directly. Include one row per
   media item: filename, credit and source page, the post it's featured on, and its id.
 
+## WooCommerce catalog *(only for a `WordPress + WooCommerce` brief — skip otherwise)*
+
+When `site.json → woocommerce.enabled` is `true`, also seed the store **in this same authenticated MCP
+session**, using WooCommerce abilities the Assistant exposes alongside the content ones. Full recipe (incl.
+the storefront Store API and the checkout gate): [`woocommerce.md`](woocommerce.md). In short:
+
+1. **Product categories** — `wc-product-categories-list` (reuse by slug/name) else
+   `wc-product-categories-create { name, slug }`. Keep `name → id`.
+2. **Products** — **idempotent by SKU**: `wc-products-search { sku }` → reuse, else
+   `wc-products-create { name, type:"simple", sku, regular_price:"<decimal>", description, status:"publish",
+   categories:[{id}] }`. For images, `media-upload-from-url` then `wc-products-update { id, images:[{id}] }`.
+3. **Coupons** — **idempotent by code**: `wc-coupons-search { code }` → reuse, else
+   `wc-coupons-create { code, discount_type, amount }`.
+4. **Verify over the public Store API** (no auth): `GET {urls.store_api}/products?per_page=100` count +
+   `prices` (minor units), `GET {urls.store_api}/products/categories`. Record the SKU→id map, category ids
+   and coupon codes into `content-model.md` under `## Created in WooCommerce`.
+
+> **Don't seed or test checkout here.** A fresh WooCommerce install has no payment gateway/shipping and
+> that config isn't reachable headlessly (`site.json → woocommerce.payment_enabled` is `false` — the owner
+> finishes it in wp-admin). Seeding + verifying the catalog over the Store API is the whole job; never call
+> `/checkout` or block on it. See the cookbook §4.
+
 ## Step 6 — Hand off
 
 Update `state.json` (`provision` stays `completed`; advance `stage` toward the frontend **data**
 phase) with a fresh `updated_at`. The backend now holds the content; Step 6's data wiring points the
-frontend at `urls.rest_api`.
+frontend at `urls.rest_api` (and, for a store, `urls.store_api`).

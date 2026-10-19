@@ -116,9 +116,15 @@ hangs, `hosting_nodejs_restart-application { username, domain }` recovers the se
 | SSR is live *(server frameworks)* | response headers | `x-powered-by` present, `cache-control: no-store` |
 | Static serves *(static frameworks)* | `GET https://<domain>/` | 200 HTML with real home content |
 | Key routes | a couple of planned routes + one deep route | 200, real content |
-| **Backend survived** *(WordPress only)* | `GET https://<domain>/cms/wp-json/wp/v2/posts?per_page=1` | 200 |
+| **Backend survived** *(WordPress / WooCommerce)* | `GET https://<domain>/cms/wp-json/wp/v2/posts?per_page=1` | 200 |
 
-> **Only WordPress has a `/cms` on the domain**, so the *Backend survived* check is WordPress-only.
+> **Only WordPress (including WordPress + WooCommerce) has a `/cms` on the domain**, so the *Backend
+> survived* check is WordPress-only.
+> - **WordPress + WooCommerce:** also confirm the store survived the deploy —
+>   `GET https://<domain>/cms/wp-json/wc/store/v1/products?per_page=1` → 200. There is nothing external to
+>   link (no sales-channel step — that's Ecommerce only). **Checkout** stays owner-completed: when
+>   `site.json → woocommerce.payment_enabled` is `false`, don't test `/checkout`; a catalog that serves 200
+>   is a passing, complete deploy.
 > - **Ecommerce:** the backend is the **Hostinger Ecommerce store**, read over the external Storefront API
 >   (`api-ecommerce.hostinger.com`) — nothing a deploy touches lives on this domain. There is no `/cms`;
 >   confirm the storefront still fetches products as a frontend check if you like. **Only check that
@@ -153,6 +159,8 @@ No secrets in `deploy.json`. The `urls.cms` field and the `backend_preserved` ch
 **WordPress-only** — adjust the record to the backend:
 
 - **WordPress:** keep `urls.cms` and `checks.backend_preserved` as shown.
+- **WordPress + WooCommerce:** keep `urls.cms` + `checks.backend_preserved` (it *is* WordPress), and add
+  `urls.store_api` from `site.json`; no external link step.
 - **Ecommerce:** omit `urls.cms`/`backend_preserved`; record the store URLs instead (`urls.storefront_api`,
   `urls.store_admin` from `site.json`) and link the custom sales channel to the live domain —
   `ecommerce_sales-channels_update { store_id, sales_channel_id, url }` (see the ecommerce provision step).

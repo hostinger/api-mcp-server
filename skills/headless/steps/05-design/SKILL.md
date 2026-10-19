@@ -13,6 +13,15 @@ not a conversation: the frontend step implements `design.md`, not the chat.
 user gave. **Out:** `~/.hostinger/<domain>/design.md` and the logo files in
 `~/.hostinger/<domain>/brand/`.
 
+> ## ⚠️ Build mode: "Bring your own frontend"? This step defers to the user
+> Read `brief.md` → **Build mode** first. When it is **Bring your own frontend**, the user drives the
+> design — **do not generate three directions or write a prescriptive `design.md` over their project.**
+> The frontend already exists (or the user vibe-codes it with you); your job is to follow *their*
+> direction, not impose one. Skip Steps 1–7 below: either write nothing, or capture only what the user
+> explicitly asks for (a short note of their stated colours/vibe) so the frontend step has it. The logo
+> and token work here apply only when **Build mode is "Agent designs and builds"**. (This mirrors the
+> frontend step's existing "existing app the user brought" handling, now generalised to any backend.)
+
 This is **prepare work**: it runs while provision settles (see *Background provision & the instance
 barrier* in the top-level `SKILL.md`). Nothing here calls the Hostinger connector or the backend.
 

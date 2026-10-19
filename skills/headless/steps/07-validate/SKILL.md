@@ -20,7 +20,7 @@ description: "Step 7 (validate) of the Hostinger Headless flow. OPTIONAL quick g
 `hosting_websites_list-setups { "domain": "<domain>" }`, exact-match the row → `completed`. Anything
 else → not ready; return to the instance barrier, don't deploy.
 
-## 2 — Backend API status (WordPress or Ecommerce, always, quick)
+## 2 — Backend API status (WordPress / WooCommerce / Ecommerce, always, quick)
 
 Hit the live API from `site.json` and confirm it answers **with the content the push created** — a 200
 with an empty catalog means the push didn't land:
@@ -28,6 +28,9 @@ with an empty catalog means the push didn't land:
 - **WordPress:** `GET {urls.rest_api}/posts?per_page=1` → 200 JSON array; check `X-WP-Total` against the
   planned post count, and `GET {urls.rest_api}/media?per_page=1` → `X-WP-Total` matches the planned
   image count (more = duplicates).
+- **WordPress + WooCommerce** (`site.json → woocommerce.enabled`): the WordPress check above **plus**
+  `GET {urls.store_api}/products?per_page=100` → 200 with the seeded products and `prices` (minor units);
+  count matches the plan. Don't test checkout while `woocommerce.payment_enabled` is `false`.
 - **Ecommerce:** query `urls.storefront_api` for the sales channel → 200 with the seeded products and
   prices *(confirm against the store)*.
 

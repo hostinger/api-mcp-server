@@ -53,15 +53,18 @@ and tone:
 ## Articles (optional)
 > Generate <N> articles across the brief's categories (<list them>). For each: title, slug,
 > body in the brief's tone, category, any relationship (e.g. destination), published date, SEO,
-> and a featured image (generated into media/, or sourced from Unsplash — see *Images* below) with
+> and a featured image (see *Images* below — Hostinger AI generation or Unsplash stock) with
 > alt text. Omit if the brief has no article-like content.
 
 ## Products (optional — required for a commerce brief)
 > Skip for a non-commerce brief. For a commerce brief, generate the catalog content here (prepare
 > work, no instance): for each product — name, slug, SKU, short + long description in the brief's
-> tone, price, the collection it belongs to, variants if any, and a product image (generated into
-> media/, or sourced from Unsplash — see *Images*) with alt text. Group products into the collections
-> the brief implies. The `ecommerce` push phase creates these on the store's sales channel.
+> tone, price, the collection it belongs to, variants if any, and a product image (see *Images* —
+> Hostinger AI generation or Unsplash stock) with alt text. Group products into the collections
+> the brief implies, and generate any **coupons** the brief calls for (code, type, amount). The
+> `ecommerce` push phase creates these on the store's sales channel; a **WordPress + WooCommerce** brief
+> seeds them into WooCommerce instead (see `wordpress/SKILL.md` + `wordpress/woocommerce.md`) — there
+> the **SKU is the idempotency key** and coupons + product categories are part of the catalog.
 ```
 
 Guidance:
@@ -69,10 +72,12 @@ Guidance:
 - **Fixed vs. prompt.** Title and Description are concrete values. Navigation, Pages and Articles are
   prompts because their volume/wording is generated — keep them as prompts so the push phase (or a
   rerun) can regenerate consistently.
-- **Run the prompts now.** Generate the actual page copy, article drafts and images during the wait —
-  this is the slowest work and the whole reason it runs in parallel. Put generated media in
-  `~/.hostinger/<domain>/media/` and reference it by filename. Record Unsplash images by URL (see
-  *Images* below). Record alt text for every image.
+- **Run the prompts now.** Generate the actual page copy and article drafts during the wait — this is
+  the slowest work and the whole reason it runs in parallel. Images depend on the chosen source (see
+  *Images* below): Unsplash photos and your own generated files can be produced now; Hostinger AI
+  images only generate once the instance exists, so write their brief now and generate at the barrier.
+  Put any generated/own media in `~/.hostinger/<domain>/media/` and reference it by filename. Record
+  alt text for every image.
 - **Optional sections.** Drop **Articles** if the brief has no article-like content. Drop **Products**
   for a non-commerce brief; for a commerce brief, generate the product catalog here (names, prices,
   descriptions, collections, images) — that's prepare work, and the `ecommerce` push phase then creates
@@ -81,12 +86,82 @@ Guidance:
   provision wait, so never wait for it here. If `design.md` already exists when you source images,
   follow its **Imagery** section; otherwise generate neutral, on-topic imagery from the brief.
 
-### Images — source from Unsplash when you can't generate them
+### Images — generate with Hostinger AI, or source stock from Unsplash
 
-Every article needs a featured image. If you can generate images, put them in `media/`. If you
-can't (most coding agents can't), source real photos from Unsplash. This is still prepare work and
-needs no live backend: you only pick the photos and record their URLs here. The push phase uploads
-them.
+Every article (and every product) needs an image. There are two sources, and **you MUST offer the user
+both and let them choose — never pick silently.** State the default for this backend in one line, name
+the other option, and proceed on their answer (a skipped answer / "you decide" = use the default):
+
+| Option | Tool | Backends | Needs the live instance? |
+|---|---|---|---|
+| **A — Hostinger AI image generation** *(default for WordPress / WooCommerce)* | `wordpress_ai-content_generate-images` | WordPress, WordPress + WooCommerce | **yes** — runs at the instance barrier |
+| **B — Unsplash stock photos** *(default for Ecommerce / Webapp; the fallback everywhere)* | Unsplash API / web search | any | no — pure prepare work |
+
+> **Do not silently fall back to stock on a WordPress site.** On WordPress / WooCommerce the default is
+> **Hostinger AI (Option A)** — on-brand, generated from `design.md`. Using Unsplash on a WordPress build
+> is only correct when **the user chose it**, or when **AI generation actually failed** (and then you say
+> so). Taking stock because it is faster, synchronous, or avoids the async poll is a **defect**, not a
+> shortcut: the async start → poll → upload-before-expiry flow (Option A below) is the expected work, not
+> an optional extra. If you are tempted to skip it "for speed", stop and offer the user the choice instead.
+
+If you can generate images yourself (some agents can), that's a third path: put the files in `media/`
+and record alt text — no tool needed. **Record alt text for every image whichever source you use.**
+
+**During the prepare wait, write an image brief for each image** into `content-model.md` no matter the
+option (subject, `image_type`, aspect, and the alt text you expect). Option B can also *fetch* the
+photo now (below); Option A only generates once the instance exists, so its briefs wait for the barrier.
+
+#### Option A — Hostinger AI image generation (WordPress backends)
+
+`wordpress_ai-content_generate-images` generates on-brand images for a live WordPress install, so it
+runs **at the instance barrier** (after `provision.status == "completed"`), using the install from
+`site.json` (`username`, and `wordpress.install_id` → the `software` path param). Follow `design.md`'s
+**Imagery** section for look and palette. It is **asynchronous**:
+
+1. **Start** one generation per image:
+
+   ```json
+   { "operation": "wordpress_ai-content_generate-images",
+     "params": {
+       "username": "<site.json username>",
+       "software": "<site.json wordpress.install_id>",
+       "prompt": "<what the image shows; for a logo, the wordmark + mark to render>",
+       "image_type": "hero|background|inline|gallery|product|logo",
+       "num_of_images": 1,
+       "style": "<photographic style tokens from design.md; ignored for logo>",
+       "color_guidance": "<logo only — colour direction, not rendered as text>" } }
+   ```
+
+   `prompt` (3–2500 chars) and `image_type` are required; `width`/`height` (128–2048) default per type
+   and are ignored for `logo`. Returns `202` with a `generation_id` and `status: in-progress`.
+   **Only one generation runs per install at a time** — a `409` means one is already running (and it
+   returns no id), so wait for it to finish before starting the next. The endpoint allows 10
+   requests/minute.
+
+2. **Poll** `wordpress_ai-content_generation-result` with `{ username, software, generation_id }`
+   every few seconds until `status` is `completed` (or `failed`). A completed result carries
+   `result.images[]` — each with a **temporary** `url`, plus `width`, `height`, `content_type` — and
+   `result.expires_at`.
+
+3. **Use the images before they expire.** The URLs are short-lived, so in the push phase hand each
+   `url` straight to WordPress with `media-upload-from-url`, which downloads and stores WP's own copy
+   (see the wordpress push `SKILL.md`). Don't persist the temporary URL as the live image. There is no
+   photographer to credit — leave `caption` empty or a short on-brand one. Record under the
+   article/product in `content-model.md`:
+
+   ```markdown
+   Image: Hostinger AI (image_type: <type>, generation_id: <uuid>)
+   Image alt: <what the image shows>
+   Image file: <site>-<subject>.jpg
+   ```
+
+   On `failed`, retry once with a tightened prompt; if it fails again, fall back to Option B and note
+   the gap. Never block the whole push on a single image.
+
+#### Option B — stock photos from Unsplash (any backend, no instance)
+
+This is still prepare work and needs no live backend: you pick the photos and record their URLs here,
+and the push phase uploads them.
 
 1. **Find candidates.** Use one photo per article, matching its subject and destination.
    - With an `UNSPLASH_ACCESS_KEY` in the environment, use the official API:
@@ -134,13 +209,16 @@ token) to create the menu, pages, posts, categories and media:
 | Suggested backend | Follow |
 |---|---|
 | WordPress | `wordpress/SKILL.md` |
+| WordPress + WooCommerce | `wordpress/SKILL.md` — pushes WP content **and** seeds the WooCommerce catalog (its WooCommerce section + `wordpress/woocommerce.md`) |
 | Ecommerce | `ecommerce/SKILL.md` |
 | Webapp | — (no push; skip to frontend) |
 
-> **Supported backends: `wordpress`, `ecommerce`, and `webapp`** — where `webapp` is "supported" by
-> **skipping this whole stage** (it has no content backend; see the note below). PocketBase is not
-> available in this version. Push to whichever single backend provision set up (see the provision
-> router) — don't try to push to two backends here.
+> **Supported backends: `wordpress` (optionally with a WooCommerce store), `ecommerce`, and `webapp`** —
+> where `webapp` is "supported" by **skipping this whole stage** (it has no content backend; see the note
+> below). A **WordPress + WooCommerce** brief routes to `wordpress/SKILL.md`, which pushes the WP content
+> **and** seeds the WooCommerce catalog in the same push. PocketBase is not available in this version.
+> Push to whichever single backend provision set up (see the provision router) — don't try to push to two
+> backends here.
 >
 > **Webapp has no content backend.** There is no CMS or store to seed, so a `webapp` brief **skips this
 > whole stage** — both prepare and push. The app owns its own data (its own API or database). Leave

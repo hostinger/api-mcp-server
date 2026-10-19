@@ -1,6 +1,6 @@
 ---
 name: headless-step-refine
-description: "Step 2 (refine) of the Hostinger Headless flow. Turns the user's seed — often just a domain — into a brief through conversation: asks what they want to build (purpose, audience, tone, pages, products, must-haves; images, local files, links all welcome), recommends the backend that fits (WordPress, Ecommerce, WordPress + Ecommerce, or Webapp for a custom app/SPA), lets the user confirm it, then writes brief.md."
+description: "Step 2 (refine) of the Hostinger Headless flow. Turns the user's seed — often just a domain — into a brief through conversation: asks what they want to build (purpose, audience, tone, pages, products, must-haves; images, local files, links all welcome), then *infers* the backend that fits (WordPress, Ecommerce, WordPress + Ecommerce, WordPress + WooCommerce for a one-site content+store, or Webapp for a custom app/SPA) — it never asks the user to pick a backend or a technology; the user confirms the plan in plain language, then it writes brief.md. Hostinger Ecommerce stays the default for selling; WooCommerce is chosen only when the user explicitly asks for it or wants content and a store on one WordPress site."
 ---
 
 # headless-step-refine
@@ -12,6 +12,14 @@ the site comes from talking to the user.
 **Keep it short.** The only thing you must know is *what they are building* — enough to guess the
 backend. Every other question is skippable: the more the user gives, the better the site, but never
 hold the build hostage to refinement. Fill gaps with sensible defaults and say so in the brief.
+
+> **Never ask the user to choose a backend or a technology.** Don't ask "WordPress or Ecommerce?",
+> don't present WordPress/Ecommerce/WooCommerce/Webapp as options, and don't surface the backend in a
+> multiple-choice UI. Open with **"What do you want to build?"** and infer the backend yourself in
+> Step 4 from what they describe (and whether they sell). The backend is a technical decision the flow
+> makes *for* the user — they confirm the **plan** (what the site is and does), not the plumbing. The
+> only exception is when the user *volunteers* a backend ("build it on WordPress", "use WooCommerce"):
+> then honour their choice and note it in the brief.
 
 **In:** the domain (the workspace directory name), plus anything the user already shared.
 **Out:** `~/.hostinger/<domain>/brief.md`.
@@ -36,21 +44,38 @@ Suggested backend on a provisioned site. Explain that switching backends means a
 
 Before asking anything, collect what the user has already given you, so you don't ask for it again:
 
+- **Inspect the directory the command was run in** — this is the biggest signal for the build mode
+  (Step 3). Look for an existing **frontend / webapp / commerce project**: a `package.json`, a
+  framework config (`next.config.*`, `astro.config.*`, `vite.config.*`, `svelte.config.*`, `nuxt.*`),
+  a `src/` or `app/` tree, `index.html`, a storefront/cart, etc. A real project here usually means the
+  user **already has their own frontend** and mainly needs a Hostinger backend to wire it to — lean
+  toward "bring your own frontend" in Step 3. If the folder has nothing site-like, assume they don't
+  and lean toward "agent builds it".
 - Anything in the pasted prompt beyond the domain (a sentence, a link, a screenshot).
 - Files in the current project that look like site material (copy, logos, product lists, images).
-- What the agent already knows about the user from local memory or this conversation.
+- What the agent already knows about the user from local memory or this conversation (a prior build,
+  stack preferences, a frontend they always use).
 - The domain name itself — a hint only (`coral-pottery.com` suggests pottery), never a conclusion.
 
 ## Step 3 — Ask
 
-If Step 2 already answers *what are you building* and *will they sell*, skip straight to Step 4.
+If Step 2 already answers *what are you building* and *will they sell*, skip the Round 1–3 questions
+below, but still ask **Build mode** before moving on.
 
-Otherwise open with one line: *"Tell me what you want to build — a sentence is enough. Links,
-screenshots or files help too. Skip anything you don't want to answer."*
+Otherwise open with one line and **wait for the user's answer**: *"Tell me what you want to build — a
+sentence is enough. Links, screenshots or files help too. Skip anything you don't want to answer."*
+
+> **"What do you want to build?" is an OPEN question — ask it in plain prose and wait.** Never turn it
+> into a multiple-choice list of pre-baked site ideas ("Coffee shop / Travel blog / Portfolio …"):
+> that puts words in the user's mouth and defeats the point of asking. Let them describe it in their
+> own words. The structured question UI is only for genuinely *choice-shaped* follow-ups (selling
+> yes/no, which pages, tone adjectives, the build mode) — not for the opening question, and never for
+> the backend.
 
 Ask in **short rounds of 2–3 questions**, and adapt each round to the previous answers. If your tool
 has a structured question UI (multiple choice with an "other" field), use it for the choice-shaped
-questions. **At most 3 rounds**, and stop early as soon as you can guess the backend and the user
+follow-up questions (pages, selling yes/no, tone) — **never for the opening "what do you want to
+build?" and never for the backend** (that's your decision, not theirs). **At most 3 rounds**, and stop early as soon as you can guess the backend and the user
 seems done — "just build it", "you decide", or a skipped question means *use defaults*, not *ask
 again*.
 
@@ -84,15 +109,38 @@ If the user asks for something outside the scope (user accounts, member areas, b
 calendar backend, user-generated content), say plainly that the headless flow doesn't support it yet
 and record it under **Out of scope** — don't promise it.
 
-## Step 4 — Recommend the backend
+### Build mode — ask once (this one *is* a user choice)
 
-Pick the backend that fits what the user told you:
+The backend is your call, but **how the frontend gets built is the user's** — because most of the time
+the user already has their own frontend and just needs a Hostinger backend to wire it to. After the
+folder + memory inspection (Step 2), ask **one** question (a structured choice is ideal here), seeding
+the default from what you found:
+
+- **Bring your own frontend** *(default when Step 2 found a real project in the folder)* — "I already
+  have a frontend / I'll drive the design and we vibe-code it together." The agent **uses the user's
+  existing project in the current folder as the source**, collaborates on design/code at the user's
+  direction, and wires it to the provisioned backend. There is **no agent-generated design** — the
+  design step defers to the user (see the Build mode box at the top of the design step), and the frontend step builds on their project
+  rather than scaffolding a new one.
+- **Agent designs and builds it** *(default when the folder has nothing site-like)* — "Give me ideas
+  — you design and code it." Today's flow: the design step proposes directions and the frontend step
+  scaffolds and implements them.
+
+Record the answer as the brief's **Build mode**. This is the one frontend/technology question you *do*
+put to the user; everything else about the stack (framework, SSR/SSG) is still inferred. The deliverable
+is the same either way — a working site on the backend; only *who drives the frontend* changes.
+
+## Step 4 — Decide the backend (your call, from the brief — not a question)
+
+From what the user described, **you** pick the backend that fits — this is an internal decision, never
+a question put back to the user. Pick the backend that fits what the user told you:
 
 | Backend | Choose when | What it gives the owner |
 |---|---|---|
 | **WordPress** | No selling. The owner publishes and edits content: pages, blog, articles, portfolio. | Headless WordPress at `/cms` — write and edit content in wp-admin. |
 | **Ecommerce** | Selling is the point, and the rest is a few static pages (About, Contact, FAQ, policies). No ongoing blog. | Hostinger Ecommerce store — products, collections, checkout, payments, shipping, orders. |
-| **WordPress + Ecommerce** | Selling **and** regular editorial content (a blog, guides, lookbooks, recipes) the owner keeps adding to. | Both: WordPress for content, the Ecommerce store for products and checkout. |
+| **WordPress + Ecommerce** | Selling **and** regular editorial content (a blog, guides, lookbooks, recipes) the owner keeps adding to, run as **two** backends (WordPress site + separate Hostinger Ecommerce store). | Both: WordPress for content, the Ecommerce store for products and checkout. |
+| **WordPress + WooCommerce** | **Only** when the user explicitly names WooCommerce, or explicitly wants content **and** a store on **one** WordPress site (one admin, one domain). The one-site alternative to WordPress + Ecommerce. | A single headless WordPress at `/cms` with the WooCommerce plugin — products, cart, coupons and checkout (Cash on Delivery) over the WooCommerce Store API, plus WP posts/pages on the same site. |
 | **Webapp** | A custom **app, SPA or web application** that brings its own code and data — a dashboard, tool, calculator, booking app, a project the user is deploying — **not** a content site or a store. No CMS and no store engine. | A plain Node.js app host (an empty website, no `/cms`), with a MySQL database when the app needs one. The app owns all its routes and data. |
 
 Rules of thumb:
@@ -104,6 +152,12 @@ Rules of thumb:
   WordPress + Ecommerce.
 - **Then the content.** Selling plus only a few fixed pages → Ecommerce. Selling plus content the
   owner will keep publishing → WordPress + Ecommerce.
+- **Hostinger Ecommerce is the default for selling — WooCommerce is never the default and is never
+  recommended on its own.** Choose **WordPress + WooCommerce** only when the user explicitly names
+  WooCommerce, or explicitly wants content **and** a store on one WordPress site (one admin, one
+  domain — the one-site alternative to WordPress + Ecommerce). For every other selling case, keep
+  Hostinger Ecommerce. If the user wants both content and a store but hasn't said "one site" or
+  "WooCommerce", offer it as an option — don't switch to it silently.
 - **Don't add WordPress "just in case".** A second backend is a second admin to learn. Recommend the
   combination only when the user described ongoing content.
 - Selling a single service by enquiry (no checkout, no cart) is **not** commerce → WordPress with a
@@ -114,22 +168,26 @@ Rules of thumb:
 
 **Then set rendering** (write it in the brief's **Rendering** section): **Ecommerce → SSR required**
 (carts/search need per-request rendering — any SSR framework works; Next.js is the default, not a
-requirement); **WordPress → SSG (Astro)** if the site is mostly static and the owner is fine rebuilding
+requirement); **WordPress + WooCommerce → SSR required** (same reason — cart/checkout need per-request
+rendering); **WordPress → SSG (Astro)** if the site is mostly static and the owner is fine rebuilding
 to publish, otherwise **SSR**; **Webapp → whatever the app is** (SSR for a server app, SPA for a
 client-only app) — it deploys as a Node.js app either way. When unsure, default to **Next.js SSR**.
 
-## Step 5 — Confirm in one message
+## Step 5 — Confirm the plan in one message
 
-Send **one** message that carries both the recommendation and the brief summary:
+Send **one** message that confirms **what you'll build** — the plan, not the plumbing. Lead with the
+site, not the backend:
 
-- **Backend** — the choice, the one-line reason, and what it means day to day (where they'll edit
-  content and products). Name the alternative if it was a close call.
-- **Brief** — what it is, audience, pages, products (if any), tone. Mark anything you defaulted
+- **The plan** — what it is, audience, pages, products (if any), tone. Mark anything you defaulted
   (*"assumed: warm, minimal look"*) so the user sees what they skipped.
+- **How it's built** — state the backend as a *consequence* in one plain line, focused on what it
+  means for them day to day ("I'll build this on WordPress, so you edit pages and posts in a normal
+  WordPress admin"), **not** as a choice you're asking them to make. Don't ask "is WordPress OK?" or
+  offer alternatives unless it was a genuine close call *and* the difference matters to the user.
 
 End with *"Good to go, or anything to change?"* A yes (or silence-equivalent like "go") → write
-`brief.md`. Changes → apply them and write it; don't loop back into questions. If they pick a
-different backend, use theirs and note it in the brief.
+`brief.md`. Changes → apply them and write it; don't loop back into questions. If the user
+*volunteers* a different backend, use theirs and note it in the brief.
 
 ## Step 6 — Write `brief.md` and hand off
 
@@ -139,8 +197,10 @@ user's own words where you can. Then update `state.json`:
 `"stage": "provision"`, fresh `updated_at`.
 
 The **Suggested backend** section is the contract with `03-provision/SKILL.md`, which routes on it.
-Its first line must be exactly one of `**WordPress**`, `**Ecommerce**`, `**WordPress + Ecommerce**` or
-`**Webapp**`, followed by an em dash and the one-line reason.
+Its first line must be exactly one of `**WordPress**`, `**Ecommerce**`, `**WordPress + Ecommerce**`,
+`**WordPress + WooCommerce**` or `**Webapp**`, followed by an em dash and the one-line reason.
+`**WordPress + WooCommerce**` is the WordPress backend with the WooCommerce store turned on — provision
+routes it to the `wordpress` subfolder with the store enabled (it is **not** a separate backend).
 
 ## `brief.md` template
 
@@ -184,14 +244,21 @@ user didn't specify.>
 <logo, colours, photos, copy the user provided and where they are; "None yet" if none>
 
 ## Suggested backend
-**<WordPress | Ecommerce | WordPress + Ecommerce | Webapp>** — <one-line reason>.
+**<WordPress | Ecommerce | WordPress + Ecommerce | WordPress + WooCommerce | Webapp>** — <one-line reason>.
 <"Confirmed by the user." or "User chose this over the recommended <X> because <reason>.">
 
+## Build mode
+**<Bring your own frontend | Agent designs and builds>** — <one line>. <When "Bring your own frontend":
+the path to the user's existing project in the current folder (the frontend source), and how they want
+to drive design/code. When "Agent designs and builds": leave the design + frontend steps to run as
+normal.> The design step and the frontend step both read this: **Bring your own frontend** → design
+defers to the user and frontend builds on their project; **Agent designs and builds** → both run as normal.
+
 ## Rendering
-**<SSR | SSG>** — <reason>. Rules: **Ecommerce requires SSR** (carts/search need per-request
-rendering — any SSR framework works; Next.js is the default, not a requirement); **WordPress may be
-SSG (Astro)** when the site is mostly static and rarely changes, otherwise **SSR**. Default when
-unsure: **Next.js SSR**.
+**<SSR | SSG>** — <reason>. Rules: **Ecommerce requires SSR** and **WordPress + WooCommerce requires
+SSR** (carts/checkout need per-request rendering — any SSR framework works; Next.js is the default, not
+a requirement); **WordPress may be SSG (Astro)** when the site is mostly static and rarely changes,
+otherwise **SSR**. Default when unsure: **Next.js SSR**.
 ```
 
 ## Example — WordPress + Ecommerce

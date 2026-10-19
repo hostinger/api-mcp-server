@@ -89,13 +89,8 @@ for that tool, or drive `npx --yes --package=@hostinger/mcp@latest hostinger-api
 
 ## Phase 3 - Continue to Headless Hosting steps
 
-After evrything is verified then you can go back to `headless/SKILL.md` and follow the steps section to start the process.
+After evrything is verified and you have access to the Hostinger MCP Server and the skills then you can go back to `headless/SKILL.md` and follow the steps section to start the process.
 
-> **Backend-specific MCP groups.** The base connector covers hosting + WordPress. An **Ecommerce** build
-> also needs the separate **`hostinger-ecommerce`** MCP group (`ecommerce_*` ops) — it is not loaded by
-> default. The provision step adds it when the brief chooses Ecommerce (see
-> `steps/03-provision/ecommerce/SKILL.md`); adding an MCP server needs a session restart/reconnect to
-> take effect.
 
 ## Reference Sources
 

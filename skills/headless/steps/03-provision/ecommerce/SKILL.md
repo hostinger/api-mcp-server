@@ -48,12 +48,21 @@ All website-lifecycle calls go through the `hosting` connector (`execute`); all 
 Same lifecycle as `../wordpress/SKILL.md` Steps 1–2, but `type: "headless_ecommerce"`:
 
 1. Detect: `hosting_websites_list` / `hosting_websites_list-setups` (exact-match the domain). `completed`
-   → adopt. `running` → poll. `failed` → stop, point at hPanel.
-2. Create (only if absent): `hosting_websites_start-setup { order_id, type: "headless_ecommerce", domain }`
+   → adopt. `running` → poll. `failed` → stop, point at hPanel. If `website_type` is not `headless`
+   (plain WordPress, Node.js, …), stop and tell the user — don't overwrite another kind of site.
+2. Create (only if **no** site exists): `hosting_websites_start-setup { order_id, type: "headless_ecommerce", domain }`
    — **omit `domain`** for a temporary subdomain: the setup generates one itself (don't call a separate
    subdomain op first — passing a generated free subdomain back as `domain` 422s). The response carries
    the generated domain; if it differs from the workspace dir, move `~/.hostinger/<old>/` → `<new>/` and
    update `brief.md`. Poll `list-setups` to `completed`. `website_type` will be `headless`.
+
+> **Onboarding handoff — an empty headless shell needs no new website.** If the domain already has an
+> empty headless shell (`website_type: headless`, setup `type: headless_empty`, nothing installed —
+> typically created in onboarding), **adopt it as the storefront host and skip the create.** A
+> `headless_ecommerce` website installs no store engine either, so an empty headless shell *is* the host
+> you need — there is no backend to "swap" on the website side. Record its `username`/`order_id` and go
+> straight to Step 2 (store + custom sales channel). Never call `start-setup` on a domain that already
+> has a site.
 
 > Don't expect `/cms` or any API on this domain — it serves the storefront you build (Step 6) and
 > deploy (Step 8).
