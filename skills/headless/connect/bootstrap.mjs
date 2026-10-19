@@ -21,10 +21,15 @@ const fail = (event, extra = {}) => {
 const isWin = process.platform === 'win32';
 const bin = (name) => (isWin ? `${name}.cmd` : name);
 // Run the MCP via npx — no global install, always the latest published version.
-const MCP = [bin('npx'), '-y', '@hostinger/mcp@latest'];
+// Use --package so npx resolves the published package, then invoke the unified binary.
+const MCP = [bin('npx'), '-y', '--package=@hostinger/mcp@latest', 'hostinger-api-mcp'];
+// Node >= 18.20.2 / 20.12.2 refuses to spawn a .cmd/.bat without a shell
+// (CVE-2024-27980), so npx.cmd needs shell:true on Windows. Our args are all
+// fixed literals, so enabling the shell introduces no injection risk.
+const spawnShell = isWin;
 
 function capture(cmd, args) {
-  const r = spawnSync(cmd, args, { encoding: 'utf8', shell: false });
+  const r = spawnSync(cmd, args, { encoding: 'utf8', shell: spawnShell });
   return { status: r.status ?? 1, out: `${r.stdout || ''}${r.stderr || ''}`, error: r.error };
 }
 
@@ -67,7 +72,7 @@ function existingAuth() {
 // prefix — forward it so the agent can show it if the browser didn't open.
 function login() {
   return new Promise((resolve) => {
-    const child = spawn(MCP[0], [...MCP.slice(1), '--login'], { shell: false });
+    const child = spawn(MCP[0], [...MCP.slice(1), '--login'], { shell: spawnShell });
     let diag = '';
     let urlSent = false;
     const collect = (chunk) => {
