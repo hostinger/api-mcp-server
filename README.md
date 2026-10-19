@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (399 total)
+- `hostinger-api-mcp` — unified server over every operation (403 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 3 operations for agent-readiness
 - `hostinger-billing-mcp` — 9 operations for billing
@@ -77,7 +77,7 @@ This package installs the following MCP server commands:
 - `hostinger-domains-mcp` — 42 operations for domains
 - `hostinger-ecommerce-mcp` — 29 operations for ecommerce
 - `hostinger-horizons-mcp` — 6 operations for horizons
-- `hostinger-hosting-mcp` — 62 operations for hosting
+- `hostinger-hosting-mcp` — 66 operations for hosting
 - `hostinger-mail-mcp` — 38 operations for mail
 - `hostinger-reach-mcp` — 56 operations for reach
 - `hostinger-vps-mcp` — 67 operations for vps
@@ -1833,7 +1833,8 @@ Check deployment status, build status, build logs and why a build failed (failur
 Permanently clears all server-side cache for the website at once. Use it when content was
 updated and needs to be visible immediately, or after making major changes.
 
-Also purges the Hostinger CDN cache when CDN is enabled on the website. For a WordPress
+Also purges the Hostinger CDN cache when CDN is enabled on the website. To purge only the CDN
+cache and leave the server cache untouched, use `Purge CDN cache`. For a WordPress
 installation living in a subdirectory, pass the directory query parameter to clear its cache.
 
 - **Method**: `DELETE`
@@ -1860,6 +1861,61 @@ Does nothing if caching is already in the requested state.
 
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/toggle`
+
+#### hosting_cdn_disable
+
+Turns off the Hostinger CDN for the website domain. Once DNS propagation completes, the
+website content is served directly from the origin server. Repeating the call is safe; when
+CDN is already disabled, it applies the DNS change again.
+
+Returns 422 for platform-managed domains (for example `*.hostingersite.com` and
+`*.app-preview.com`), where CDN cannot be disabled, even when CDN is already off. Also returns
+422 while the account is being moved to another server (retry after the move finishes), or
+when the CDN provider rejects the change. Returns 404 when the domain is not a website on the
+account.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cdn/disable`
+
+#### hosting_cdn_enable
+
+Turns on the Hostinger CDN for the website domain, which speeds up page loads and reduces the
+load on the server. Works for the main domain, parked domains and subdomains of the account.
+
+Enabling changes the domain's DNS records and usually takes a few seconds. After that, DNS
+propagation can take a few more minutes before visitors are served through the CDN.
+
+Repeating the call is safe, for example after a timeout. When CDN is already enabled, it
+applies the DNS change again and refreshes the CDN SSL certificate.
+
+Returns 422 when the account is disabled, while the account is being moved to another
+server (retry after the move finishes), or when the CDN provider rejects the change.
+Returns 404 when the domain is not a website on the account.
+
+- **Method**: `POST`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cdn/enable`
+
+#### hosting_cdn_purge-cache
+
+Purges the website's content from the Hostinger CDN edge cache only. The origin server cache
+is not touched; to clear both, use `Clear website cache`.
+
+Returns 422 when CDN is not enabled on the website. Returns 404 when the domain is not a
+website on the account.
+
+- **Method**: `DELETE`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cdn/purge`
+
+#### hosting_cdn_status
+
+Returns whether the Hostinger CDN is enabled for the website domain. Works for the main
+domain, parked domains and subdomains of the account.
+
+The domain must be the exact website name as listed on the account, without a `www.` prefix.
+Returns 404 when the domain is not a website on the account.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cdn/status`
 
 #### hosting_cron-jobs_list
 

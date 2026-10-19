@@ -4,6 +4,22 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.2.2 — 2026-10-19
+
+### Operations
+
+- Added `hosting_cdn_disable` — Disable CDN
+- Added `hosting_cdn_enable` — Enable CDN
+- Added `hosting_cdn_purge-cache` — Purge CDN cache
+- Added `hosting_cdn_status` — Get CDN status
+- Changed the description of `hosting_cache_clear-website`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.2.1 — 2026-10-19
 
 ### Operations
