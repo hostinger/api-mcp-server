@@ -643,6 +643,9 @@ class MCPServer {
     if (resolved === 'wordpress-site' && !databaseDump) {
       throw new Error('databaseDump (path to a .sql file) is required to import a WordPress site');
     }
+    if (params.headless === true && resolved !== 'wordpress-plugin' && resolved !== 'wordpress-theme') {
+      throw new Error('headless is for wordpress-plugin and wordpress-theme deploys only, not ' + resolved);
+    }
     return resolved;
   }
 
@@ -823,6 +826,12 @@ class MCPServer {
     if (params.slug !== undefined && !(typeof params.slug === 'string' && /^[a-z0-9_-]+$/.test(params.slug))) {
       throw new Error('slug must contain only lower-case letters, digits, "-" and "_"');
     }
+    if (params.headless !== undefined && typeof params.headless !== 'boolean') {
+      throw new Error('headless must be a boolean');
+    }
+    if (params.headless === true && git !== undefined) {
+      throw new Error('headless is for wordpress-plugin and wordpress-theme deploys only, which need a local directory, not git');
+    }
     if (git !== undefined && (typeof git !== 'object' || git === null || typeof git.repository !== 'string' || typeof git.branch !== 'string' || git.branch === '')) {
       throw new Error('git must be an object with repository (owner/name) and branch');
     }
@@ -845,6 +854,9 @@ class MCPServer {
     plugin: '/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/plugins/deploy',
     theme: '/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/themes/deploy',
   };
+
+  // A headless WordPress is installed in this folder of the document root, not at the root itself.
+  hosting_deploy_headlessDirectory = 'cms';
 
   async hosting_deploy_callWordpress(kind, params) {
     return this.executeApiCall({ name: 'wordpress_' + kind, method: 'POST', path: this.hosting_deploy_wordpressEndpoints[kind] }, params);
@@ -915,6 +927,7 @@ class MCPServer {
 
   async hosting_deploy_wordpressExtension(username, domain, type, params) {
     const isPlugin = type === 'wordpress-plugin';
+    const headless = params.headless === true;
     const directory = path.resolve(params.path);
     const slug = params.slug !== undefined ? params.slug : this.hosting_deploy_slug(directory);
     const { files, skipped } = this.hosting_deploy_listFiles(directory);
@@ -924,7 +937,7 @@ class MCPServer {
 
     // The files land in a fresh directory; the deploy call then installs from it.
     const uploadDirName = slug + '-' + this.hosting_deploy_randomSuffix();
-    const remoteRoot = (isPlugin ? 'wp-content/plugins/' : 'wp-content/themes/') + uploadDirName;
+    const remoteRoot = (headless ? this.hosting_deploy_headlessDirectory + '/' : '') + (isPlugin ? 'wp-content/plugins/' : 'wp-content/themes/') + uploadDirName;
     await this.hosting_deploy_upload(username, domain, files.map((relativePath) => ({
       absolutePath: path.join(directory, relativePath),
       relativePath: remoteRoot + '/' + relativePath,
@@ -944,6 +957,7 @@ class MCPServer {
       slug,
       files: files.length,
       ...(isPlugin ? {} : { activated: params.activate === true }),
+      ...(headless ? { headless: true } : {}),
     }, skipped);
   }
 

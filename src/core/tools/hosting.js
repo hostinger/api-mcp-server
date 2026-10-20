@@ -9,7 +9,7 @@ export default [
       "destructiveHint": true
     },
     "topic": "hosting",
-    "description": "Deploy, publish or upload a website to Hostinger web hosting (Shared, Cloud): static HTML, PHP, a nodejs (Node.js) app, a whole WordPress site, or a WordPress plugin or theme, from a local directory, an archive or a GitHub or GitLab repository. It detects what the project is and does the upload, build and Git setup itself: do not call upload or build operations, and do not archive the directory yourself. WARNING: it overwrites the website's contents and cannot be undone; confirm the domain with the user before deploying to a site that already has content. A Node.js build runs on the server: this returns a buildUuid at once, then call hosting_get-deployment until the build state is completed or failed. Static, PHP, plugin and theme deploys are done when this returns; a WordPress site import only starts, and its files are extracted a few minutes later. From Git, pass type (static or nodejs) unless the site already runs a Node.js app or you pass Node.js settings; a static or PHP site deploys the branch now and again on every push; a Node.js site builds the branch now and on every later push, with the settings stored for the site (when none are stored, pass appType and nodeVersion from the project's engines, plus outputDirectory and buildScript if the app has a build step). Git needs GitHub or GitLab connected once in hPanel.",
+    "description": "Deploy, publish or upload a website to Hostinger web hosting (Shared, Cloud): static HTML, PHP, a nodejs (Node.js) app, a whole WordPress site, or a WordPress plugin or theme, from a local directory, an archive or a GitHub or GitLab repository. It detects what the project is and does the upload, build and Git setup itself: do not call upload or build operations, and do not archive the directory yourself. WARNING: it overwrites the website's contents and cannot be undone; confirm the domain with the user before deploying to a site that already has content. A Node.js build runs on the server: this returns a buildUuid at once, then call hosting_get-deployment until the build state is completed or failed. For a plugin or theme on a headless WordPress (installed in the cms folder), pass headless: true. Static, PHP, plugin and theme deploys are done when this returns; a WordPress site import only starts, and its files are extracted a few minutes later. From Git, pass type (static or nodejs) unless the site already runs a Node.js app or you pass Node.js settings; a static or PHP site deploys the branch now and again on every push; a Node.js site builds the branch now and on every later push, with the settings stored for the site (when none are stored, pass appType and nodeVersion from the project's engines, plus outputDirectory and buildScript if the app has a build step). Git needs GitHub or GitLab connected once in hPanel.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -63,6 +63,10 @@ export default [
         "activate": {
           "type": "boolean",
           "description": "Activate the theme after deployment (WordPress themes only, default: false)"
+        },
+        "headless": {
+          "type": "boolean",
+          "description": "The site runs headless WordPress, installed in the cms folder of the document root: the plugin or theme is uploaded to cms/wp-content/plugins or cms/wp-content/themes and installed there (wordpress-plugin and wordpress-theme only, default: false)"
         },
         "databaseDump": {
           "type": "string",
