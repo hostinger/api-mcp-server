@@ -4,6 +4,25 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.4.1 — 2026-10-21
+
+### Operations
+
+- Added `reach_forms_update` — Update form
+- Added `reach_forms_duplicate` — Duplicate form
+- Added `reach_forms_create` — Create form
+- Added `reach_forms_add-submitter-tags` — Add form submitter tags
+- Added `reach_forms_remove-submitter-tag` — Remove form submitter tag
+- Added `reach_forms_update-template` — Update form template
+- Changed the input schema of `reach_forms_list`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.4.0 — 2026-10-20
 
 ### Operations

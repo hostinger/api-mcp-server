@@ -13506,6 +13506,90 @@ export default [
     "group": "reach"
   },
   {
+    "name": "reach_forms_update",
+    "title": "Update form",
+    "annotations": {
+      "title": "Update form",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Rename a form and/or change its status.\n\nSetting a `draft` or `paused` form to `active` takes it live: its latest saved design is published\nand visitors can submit it. `paused` and `draft` stop the form from accepting submissions. A form is\nnot reachable by visitors until it is taken live. Design changes saved while the form is already\n`active` stay unpublished until the form is paused and set to `active` again. Renaming does not rename\nthe automatic `form:{name}` tag.",
+    "method": "PATCH",
+    "path": "/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "formUuid": {
+          "type": "string",
+          "description": "Form uuid parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "Form name. Letters, digits, spaces and - . ' _ only."
+        },
+        "status": {
+          "type": "string",
+          "description": "`active` takes the form live, `paused` and `draft` stop it accepting submissions.",
+          "enum": [
+            "active",
+            "paused",
+            "draft"
+          ]
+        }
+      },
+      "required": [
+        "profileUuid",
+        "formUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_forms_duplicate",
+    "title": "Duplicate form",
+    "annotations": {
+      "title": "Duplicate form",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Copy a form into a new draft form with the same name and design.\n\nThe copy shares the source's automatic `form:{name}` tag; other submitter tags are not copied. The\ncopy is not live until its status is set to `active`.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}/duplicate",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "formUuid": {
+          "type": "string",
+          "description": "Form uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "formUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_forms_list",
     "title": "List forms",
     "annotations": {
@@ -13530,10 +13614,175 @@ export default [
         "per_page": {
           "type": "integer",
           "description": "Number of items per page"
+        },
+        "status": {
+          "type": "string",
+          "description": "Return only forms with this status.",
+          "enum": [
+            "active",
+            "paused",
+            "draft"
+          ]
         }
       },
       "required": [
         "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_forms_create",
+    "title": "Create form",
+    "annotations": {
+      "title": "Create form",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Create an empty draft form.\n\nReach also adds an automatic `form:{name}` tag that every submitter receives. A draft has no design\nand is not reachable by visitors: save a design with the update form template operation, then take\nthe form live by setting its status to `active`. Creating a form does not consume AI credits.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/forms",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "name": {
+          "type": "string",
+          "description": "Form name. Letters, digits, spaces and - . ' _ only."
+        }
+      },
+      "required": [
+        "profileUuid",
+        "name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_forms_add-submitter-tags",
+    "title": "Add form submitter tags",
+    "annotations": {
+      "title": "Add form submitter tags",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Add tags to a form so that every contact who submits it from now on receives them.\n\nA tag the form already has is skipped; an unknown tag is rejected. Contacts who submitted earlier are\nnot tagged.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}/tags",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "formUuid": {
+          "type": "string",
+          "description": "Form uuid parameter"
+        },
+        "tag_uuids": {
+          "type": "array",
+          "description": "tag_uuids parameter",
+          "items": {
+            "type": "string",
+            "description": "tag_uuids parameter"
+          }
+        }
+      },
+      "required": [
+        "profileUuid",
+        "formUuid",
+        "tag_uuids"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_forms_remove-submitter-tag",
+    "title": "Remove form submitter tag",
+    "annotations": {
+      "title": "Remove form submitter tag",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Stop a form from applying a tag to its future submitters.\n\nSucceeds also when the form did not have the tag. Contacts who already received the tag keep it, and\nthe tag itself is not deleted. The automatic `form:{name}` tag cannot be removed and is rejected with\na conflict.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}/tags",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "formUuid": {
+          "type": "string",
+          "description": "Form uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "formUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_forms_update-template",
+    "title": "Update form template",
+    "annotations": {
+      "title": "Update form template",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Save `content` as the latest design of a form and return the stored version.\n\nThe HTML is sanitized and, unless the plan allows removing it, the Reach signature is added. Visitors\nsubmit the form with an `email` field (required) and optional `name`, `surname` and `phone`. After\nsanitizing, the design must contain a form container (`data-reach-form`), an email input\n(`data-reach-field=\"email\"`) and a submit button (`data-reach-submit`); otherwise the request fails\nwith `422` and `errors.content` lists `missing_form_container`, `missing_email_field` and/or\n`missing_submit_button`.\n\nA `draft` or `paused` form stays unreachable until its status is set to `active`, which publishes this\ndesign. On a form that is already `active` the saved design is not public until the form is paused and\nset to `active` again. Saving a design does not consume AI credits.",
+    "method": "PATCH",
+    "path": "/api/reach/v1/profiles/{profileUuid}/forms/{formUuid}/template",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "formUuid": {
+          "type": "string",
+          "description": "Form uuid parameter"
+        },
+        "content": {
+          "type": "string",
+          "description": "HTML of the form design. After sanitizing it must still contain a form container\n(`data-reach-form`), an email input (`data-reach-field=\"email\"`) and a submit button\n(`data-reach-submit`)."
+        }
+      },
+      "required": [
+        "profileUuid",
+        "formUuid",
+        "content"
       ]
     },
     "security": [
