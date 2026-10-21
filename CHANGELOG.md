@@ -4,6 +4,10 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.4.2 — 2026-10-21
+
+No changes to the published artifact.
+
 ## v3.4.1 — 2026-10-21
 
 ### Operations
