@@ -20,6 +20,11 @@ already checked this — this is a quick re-confirm, not a full re-run):
 - **Backend API:** `GET {urls.rest_api}/posts?per_page=1` → 200 (WordPress); for a **WooCommerce** store
   (`site.json → woocommerce.enabled`) also `GET {urls.store_api}/products?per_page=1` → 200; or the
   storefront API for the sales channel → 200 (Ecommerce).
+- **Contact form** (`site.json → contact_form.enabled`): validate already sent a test submission, so
+  don't send another here. In the handover, tell the owner the contact page is live and enquiries email
+  the **WordPress admin address** (via `wp_mail`) — and that for the most reliable delivery that address
+  should be a Hostinger mailbox on the domain. If validate reported `mail_failed`, say so plainly instead
+  of claiming the form sends.
 
 If a check fails, say so in the outcome paragraph and don't claim the site is live.
 

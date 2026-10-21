@@ -190,6 +190,46 @@ it once `provision.status == "completed"`. The authoritative data-layer referenc
 > user for payment credentials. Store currency and address (`woocommerce_*` options) likewise aren't
 > settable headlessly — they follow the install default and the owner can change them in wp-admin.
 
+## Step 5b — Contact form (Contact Form 7) *(only when the brief's Must-haves include a contact form — skip otherwise)*
+
+Run this only when the brief's **Must-haves** include a contact form. It installs **Contact Form 7**
+(`contact-form-7`) on this same `/cms` install, so the frontend can render a contact page whose form
+emails the site owner through WordPress's built-in `wp_mail()` — no third-party service and no API keys.
+Like Yoast/WooCommerce this is **join-half** work: run it once `provision.status == "completed"`. The form
+itself (id + fields + recipient) — and a tiny **spam-guard plugin** that makes a honeypot work headlessly —
+are resolved/deployed in the content-model push — see
+[`../../04-content-model/wordpress/contact-form.md`](../../04-content-model/wordpress/contact-form.md).
+
+> **Why CF7 and not a bespoke mailer.** A contact form is maintained, spam-hardened functionality worth
+> reusing rather than reinventing (you *can* deploy a custom plugin to a headless `/cms` — see the
+> content-model cookbook — but you needn't write your own mailer). CF7 is a wordpress.org-slug plugin,
+> installs through the same management MCP as Yoast, and ships a **public, unauthenticated** submit
+> endpoint (`POST /cms/wp-json/contact-form-7/v1/contact-forms/<id>/feedback`). The frontend and `/cms`
+> are same-origin, so the browser posts to it directly — no proxy, no CORS, no secret on the client.
+
+1. **Install + activate CF7** (management MCP, async — poll, never blind-retry):
+   - `wordpress_plugins_install { username, software: <install_id>, plugins: ["contact-form-7"] }`
+   - Poll `wordpress_plugins_list-installed { username, software }` until `contact-form-7` shows `active`
+     (install + activate can complete together), or activate it with
+     `wordpress_plugins_activate { username, software, plugin: "contact-form-7" }`.
+   - **Don't install the `contact-form-7-honeypot` add-on.** It only acts when a `[honeypot]` form-tag is
+     present in the form — a wp-admin edit the headless agent can't make — so on the default form it does
+     nothing. Headless spam protection instead comes from a small **spam-guard plugin deployed in the
+     content-model push** (it hooks `wpcf7_spam`); see the cookbook.
+   - **Known quirk:** the `hostinger-wordpress` MCP sometimes returns **HTTP 500 even though the job
+     succeeded**. Treat a 500 as "verify, don't assume": poll `list-installed` before retrying, and
+     never fire a second install blindly.
+2. **Verify** `GET https://<domain>/cms/wp-json/` lists the **`contact-form-7/v1`** namespace, then
+   record `contact_form.enabled: true` in `site.json` (Step 6). If the install can't be confirmed after
+   one retry, record `contact_form.enabled: false`, tell the user in one line, and let the frontend
+   render the contact page without a form (graceful — not a build failure). Don't fail provision over it.
+
+The owner's email is **CF7's default recipient** (`[_site_admin_email]`, the admin address from
+install) — fine out of the box, so "does Hostinger set up the email?" is **yes** for basic delivery via
+`wp_mail`. Deliverability (SPF/DKIM) is most reliable when that address is a mailbox **on the same
+domain**; the content-model push keeps the default recipient and validate sends a test submission to
+confirm mail actually leaves. Never ask the user for mail credentials.
+
 ## Step 6 — Record `site.json`
 
 ```json
@@ -240,6 +280,29 @@ No passwords or tokens in `site.json`. When the user needs wp-admin, mint a one-
   }
 }
 ```
+
+**For a brief with a contact form (CF7 installed in Step 5b), also add a `contact_form` block.**
+Provision records only `enabled` + `plugin` here; the content-model push fills `form_id`,
+`feedback_url`, `fields` and `honeypot_field` once it resolves the form and deploys the spam guard:
+
+```json
+{
+  "contact_form": {
+    "enabled": true,
+    "plugin": "contact-form-7",
+    "form_id": null,
+    "feedback_url": null,
+    "fields": [],
+    "honeypot_field": null,
+    "recipient": "site-admin-email"
+  }
+}
+```
+
+`form_id` / `feedback_url` / `fields` / `honeypot_field` stay `null` / `[]` until content-model resolves the form (the
+submit URL is `https://<domain>/cms/wp-json/contact-form-7/v1/contact-forms/<form_id>/feedback`).
+`recipient` is informational — CF7's `To` is `[_site_admin_email]`; no address, token or secret is
+stored in `site.json`.
 
 `rest_api` stays `wp/v2` (the WordPress content contract, for the blog/pages on the same site);
 `store_api` is the public storefront surface (browse/cart/coupons/checkout, no auth). `wc_rest_api`

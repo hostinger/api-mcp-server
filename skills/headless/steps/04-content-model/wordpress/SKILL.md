@@ -41,6 +41,20 @@ authenticated; the admin user context (`wp_set_current_user`) exists only *insid
 > (no custom plugin, no consumer key). Do the WordPress content below as normal, then run the **WooCommerce
 > catalog** section before you hand off.
 
+> **Needs more than posts and pages? See [`custom-plugins.md`](custom-plugins.md).** The per-site MCP can
+> create content *data* but can't register a **custom post type**, a **custom taxonomy**, or a **global
+> settings page** (footer text, phone, social links the frontend reads). When the content model calls for
+> those, author a small custom plugin and deploy it into the headless `/cms` with
+> `hosting_deploy { type: "wordpress-plugin", headless: true }`, exposing everything over REST for the
+> frontend. **Deploy the plugin first** (the schema — the deploy activates it), then the steps below populate
+> its entries through the MCP's native `cpt-create` ability (custom-taxonomy terms are seeded in the plugin — see the cookbook).
+
+> **A contact form on this site? See [`contact-form.md`](contact-form.md).** When the brief's
+> **Must-haves** include a contact form (`site.json → contact_form.enabled: true`), provision installed
+> **Contact Form 7**; this push resolves the form's numeric id + field names (in the **same session**)
+> and records them into `site.json` so the Step 6 frontend can submit to CF7's public feedback endpoint.
+> Run the **Contact form** section after the WordPress content below.
+
 ## Step 1 — Open the authenticated MCP session
 
 Mint a short-lived token through the Hostinger connector:
@@ -75,9 +89,10 @@ what's there; with discovery, list abilities, then execute by ability name. The 
 cover this step (exact names come from discovery — don't hardcode them):
 
 `SettingsTools` · `CategoriesTools` · `TagsTools` · `MediaUploadTools` / `MediaTools` · `PagesTools` ·
-`PostsTools` · `MenusTools` / `NavigationTools` · `SeoTools`. A generic
-`RestEndpointTool` can reach any `wp/v2` route *through the authenticated session* if no dedicated tool
-fits.
+`PostsTools` · `MenusTools` / `NavigationTools` · `SeoTools`, plus **`cpt-*`** for custom post types. There
+is **no** generic `wp/v2` passthrough tool — every write goes through a dedicated ability, so a `wp/v2`
+route with no matching ability (e.g. the terms of a *custom* taxonomy) isn't reachable from the MCP;
+register and seed those in a custom plugin instead (see the backend's custom-plugins cookbook).
 
 Seen on a live install (Hostinger AI Assistant, discovery mode): the meta-tools are
 `hostinger-ai-discover-abilities`, `hostinger-ai-get-ability-info { name }` and
@@ -92,11 +107,17 @@ create answers **`200`** (not `201`) and the new object's `id` is **inside** `re
 ## Step 3 — Idempotency rule (makes resume safe)
 
 Every create is **list/get-by-slug first, then create only if absent** — a re-run must not duplicate.
-Use the matching read ability (or `RestEndpointTool` → `GET /wp/v2/posts?slug=…&status=any`): a hit →
-reuse its `id`; empty → create. Capture each returned `id` and record the id map back into
+Use the matching read ability (`posts-search`, `pages-search`, `categories-list`, `tags-list`,
+`cpt-search`, `media-search`, …): a hit → reuse its `id`; empty → create. Capture each returned `id` and record the id map back into
 `content-model.md` so later references resolve without re-querying.
 
 ## Step 4 — Create in dependency order
+
+> **Custom types/settings? Deploy the plugin before this list.** If the content model needs a custom post
+> type, taxonomy or global settings page, deploy that plugin **first** (the deploy activates it — see
+> [`custom-plugins.md`](custom-plugins.md)) so its REST routes exist — then the steps below populate its
+> entries through the MCP's native `cpt-create` ability, as they do core posts and pages (custom-taxonomy
+> terms are seeded in the plugin — the MCP has no taxonomy-term path; see the cookbook).
 
 0. **Remove WordPress's default content first.** A fresh install ships a **"Hello world!" post**
    (id 1), a **"Sample Page"**, and a default comment — they will otherwise show up on the live site.
@@ -215,6 +236,38 @@ the storefront Store API and the checkout gate): [`woocommerce.md`](woocommerce.
 > that config isn't reachable headlessly (`site.json → woocommerce.payment_enabled` is `false` — the owner
 > finishes it in wp-admin). Seeding + verifying the catalog over the Store API is the whole job; never call
 > `/checkout` or block on it. See the cookbook §4.
+
+## Contact form (Contact Form 7) *(only when `site.json → contact_form.enabled` is true — skip otherwise)*
+
+Provision installed Contact Form 7. Here, resolve the form the frontend submits to, deploy a tiny
+spam-guard plugin (a headless honeypot), and record both into `site.json`. Full recipe:
+[`contact-form.md`](contact-form.md). In short:
+
+1. **Find the form id (idempotent).** The per-site MCP has **no generic REST ability** and
+   `wpcf7_contact_form` is not a public CPT, so read the id by **probing the public feedback endpoint**:
+   a **`multipart/form-data`** `POST {urls.cms}/wp-json/contact-form-7/v1/contact-forms/<id>/feedback` with
+   `_wpcf7_unit_tag=wpcf7-f<id>-o1`, for `id` in `1`‒`30`. The hit is the id whose `200` JSON reply carries
+   `"contact_form_id": <id>` (plus a CF7 `"status"`) — the default **"Contact form 1"** (fields `your-name`,
+   `your-email`, `your-subject`, `your-message`); `404`/`wpcf7_not_found` is a miss, and anything else
+   (`415`, `403`, `429`, `5xx`) is inconclusive, never a hit. **The content type matters:** CF7 answers
+   `415` to a non-multipart body *before* it looks up the id, so a bare POST would wrongly pick id 1. Reuse
+   it on re-run. CF7's default mail already sends to `[_site_admin_email]`, so no recipient change is needed.
+   *(Fallback if nothing answers: hand the owner the one-click wp-admin login — `wordpress_login_create-links`
+   — to read the id from Contact → Contact Forms, the WooCommerce-checkout-gate owner-handoff pattern.)* See
+   the cookbook for the full method.
+2. **Deploy the spam guard (honeypot).** The `contact-form-7-honeypot` add-on can't work headlessly (it
+   needs a `[honeypot]` form-tag only an owner can add), so deploy a ~15-line `wpcf7_spam` plugin to `/cms`
+   with `hosting_deploy { type: "wordpress-plugin", slug: "cf7-headless-spamguard", headless: true }` — it
+   flags a submission as `spam` (no mail) when a fixed decoy field (`your_website`) is filled. Cookbook §2b.
+3. **Record into `site.json`** — fill the `contact_form` block provision started: `form_id`,
+   `feedback_url` (`{urls.cms}/wp-json/contact-form-7/v1/contact-forms/<form_id>/feedback`), `fields`
+   (the form's input names, e.g. `["your-name","your-email","your-subject","your-message"]`) and
+   `honeypot_field` (`"your_website"`, the decoy the frontend renders empty). Note the form id in
+   `content-model.md` under `## Created in WordPress`.
+
+> **Don't send a real test here.** Resolving the form id + fields is the whole job for this stage; the
+> throwaway `mail_sent` test belongs to **validate** (Step 7), so one dummy email reaches the owner, not
+> several. See the cookbook for the feedback contract and the hidden `_wpcf7*` fields the frontend needs.
 
 ## Step 6 — Hand off
 

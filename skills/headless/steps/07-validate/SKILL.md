@@ -33,6 +33,19 @@ with an empty catalog means the push didn't land:
   count matches the plan. Don't test checkout while `woocommerce.payment_enabled` is `false`.
 - **Ecommerce:** query `urls.storefront_api` for the sales channel → 200 with the seeded products and
   prices *(confirm against the store)*.
+- **Contact form** (`site.json → contact_form.enabled`): POST one throwaway test submission (dummy
+  name/email/subject/message + CF7's hidden `_wpcf7*` fields — see
+  `../04-content-model/wordpress/contact-form.md` §3) to `contact_form.feedback_url` and assert the JSON
+  `status` is **`mail_sent`**. This is the one place a real send happens, so one test email reaches the
+  owner — not several. `mail_failed` is a real finding: surface it to the user (CF7 is wired, but
+  `wp_mail` delivery/SPF needs attention — a Hostinger mailbox on the domain is the most reliable
+  recipient) and log it as an issue. A `validation_failed` means the test payload didn't match the form's
+  fields — fix the field names in `site.json`, not the plugin.
+  **Then check the honeypot:** POST a **second** throwaway submission with the same valid fields **plus**
+  `contact_form.honeypot_field` **filled**, and assert the `status` is **`spam`** (no mail sent). Keep the
+  real fields valid — CF7 validates **before** running the spam filter, so an invalid payload would return
+  `validation_failed` and never reach the honeypot check. A `mail_sent` here means the
+  `cf7-headless-spamguard` plugin isn't active — surface it and re-check its deploy.
 
 Fail or counts off → fix content-model push before building against live data.
 

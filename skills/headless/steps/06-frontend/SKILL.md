@@ -103,6 +103,21 @@ Read the backend from `site.json`:
   `yoast_head_json` into the page `<head>` (title, description, Open Graph, JSON-LD schema) — Yoast is
   installed by default at provision (`site.json → seo.enabled: true`). If `seo.enabled` is `false`
   (Yoast absent), fall back to generating per-page title/description/OG tags from each item's content.
+  - **Contact form** (`site.json → contact_form.enabled: true`, any WordPress backend) → render the
+    contact page's form and submit it **client-side** to Contact Form 7's public feedback endpoint. Put a
+    `submitContactForm(data)` helper in the one data module: build a `FormData` with the field names from
+    `contact_form.fields` (e.g. `your-name`, `your-email`, `your-subject`, `your-message`) **plus CF7's
+    hidden fields** — `_wpcf7` = `contact_form.form_id`, `_wpcf7_version`, `_wpcf7_locale` (e.g. `en_US`),
+    `_wpcf7_unit_tag` (any stable string), `_wpcf7_container_post` = `0` — and `POST` it to
+    `contact_form.feedback_url` **without setting `Content-Type`** (let the browser add the multipart
+    boundary). `/cms` is same-origin, so no CORS and no secret. Branch on the JSON `status`: `mail_sent`
+    → success state; `validation_failed` → map `invalid_fields[].field` to per-input errors;
+    `spam`/`aborted`/`mail_failed` → a generic "couldn't send, try again" message. Include the honeypot
+    decoy field named in `contact_form.honeypot_field` (e.g. `your_website`), rendered hidden/off-screen,
+    **empty**, `autocomplete="off"`, `tabindex="-1"` — the deployed spam guard rejects it if filled. A user
+    validation error is a **normal UI state, not a build error**. When `contact_form.enabled` is `false` or absent, render the contact page with
+    plain contact details and **no form** — graceful, like disabled checkout; never half-build. Full
+    contract: `../04-content-model/wordpress/contact-form.md` §3.
 - **WordPress + WooCommerce** (`site.json → woocommerce.enabled: true`) → the WordPress bullet above **plus**
   the store. Read the catalog over the **public WooCommerce Store API** (`site.json → urls.store_api`,
   `/cms/wp-json/wc/store/v1`, no auth, open CORS): `GET /products` (prices are **integer minor units** on

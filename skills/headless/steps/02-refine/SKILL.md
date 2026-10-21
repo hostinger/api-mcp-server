@@ -109,6 +109,13 @@ If the user asks for something outside the scope (user accounts, member areas, b
 calendar backend, user-generated content), say plainly that the headless flow doesn't support it yet
 and record it under **Out of scope** — don't promise it.
 
+> **A contact form *is* supported (WordPress backends).** If the user wants one, keep it in
+> **Must-haves** and name it "Contact form". Provision installs **Contact Form 7** on `/cms` and the
+> frontend wires a contact page whose form emails the site owner through WordPress's built-in
+> `wp_mail()` — no third-party service and no API keys. It's **opt-in**: built only when the brief asks
+> for it. (A form that needs accounts, payments or a booking calendar is still out of scope — this is a
+> plain name/email/message enquiry form.)
+
 ### Build mode — ask once (this one *is* a user choice)
 
 The backend is your call, but **how the frontend gets built is the user's** — because most of the time
