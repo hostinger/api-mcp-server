@@ -643,9 +643,6 @@ class MCPServer {
     if (resolved === 'wordpress-site' && !databaseDump) {
       throw new Error('databaseDump (path to a .sql file) is required to import a WordPress site');
     }
-    if (params.headless === true && resolved !== 'wordpress-plugin' && resolved !== 'wordpress-theme') {
-      throw new Error('headless is for wordpress-plugin and wordpress-theme deploys only, not ' + resolved);
-    }
     return resolved;
   }
 
@@ -826,12 +823,6 @@ class MCPServer {
     if (params.slug !== undefined && !(typeof params.slug === 'string' && /^[a-z0-9_-]+$/.test(params.slug))) {
       throw new Error('slug must contain only lower-case letters, digits, "-" and "_"');
     }
-    if (params.headless !== undefined && typeof params.headless !== 'boolean') {
-      throw new Error('headless must be a boolean');
-    }
-    if (params.headless === true && git !== undefined) {
-      throw new Error('headless is for wordpress-plugin and wordpress-theme deploys only, which need a local directory, not git');
-    }
     if (git !== undefined && (typeof git !== 'object' || git === null || typeof git.repository !== 'string' || typeof git.branch !== 'string' || git.branch === '')) {
       throw new Error('git must be an object with repository (owner/name) and branch');
     }
@@ -855,11 +846,37 @@ class MCPServer {
     theme: '/api/hosting/v1/accounts/{username}/websites/{domain}/wordpress/themes/deploy',
   };
 
-  // A headless WordPress is installed in this folder of the document root, not at the root itself.
-  hosting_deploy_headlessDirectory = 'cms';
-
   async hosting_deploy_callWordpress(kind, params) {
     return this.executeApiCall({ name: 'wordpress_' + kind, method: 'POST', path: this.hosting_deploy_wordpressEndpoints[kind] }, params);
+  }
+
+  // The folder of the document root WordPress is installed in ('' for the root, e.g. 'cms' on a headless
+  // site), from the installation directory wordpress_installations_list reports (public_html or '' for the root,
+  // public_html/<folder> or a bare <folder> otherwise). Absolute paths and .. segments are refused.
+  async hosting_deploy_wordpressDirectory(username, domain) {
+    const response = await this.executeApiCall({ name: 'wordpress_installations_list', method: 'GET', path: '/api/hosting/v1/wordpress/installations' }, { username, domain, ownership: 'all' });
+    const list = Array.isArray(response) ? response : (response && Array.isArray(response.data) ? response.data : []);
+    const installations = list.filter((installation) => typeof installation.domain === 'string' && installation.domain.toLowerCase() === domain.toLowerCase());
+    if (installations.length === 0) {
+      return '';
+    }
+    if (installations.length > 1) {
+      throw new Error('Several WordPress installations found for ' + domain + ' (' + installations.map((installation) => installation.directory).join(', ') + '); cannot tell which one to deploy to');
+    }
+    let directory = typeof installations[0].directory === 'string' ? installations[0].directory : '';
+    if (directory.startsWith('/') || directory.split('/').includes('..')) {
+      throw new Error('Unrecognized WordPress installation directory for ' + domain + ': ' + String(installations[0].directory));
+    }
+    while (directory.endsWith('/')) {
+      directory = directory.slice(0, -1);
+    }
+    if (directory === 'public_html') {
+      return '';
+    }
+    if (directory.startsWith('public_html/')) {
+      return directory.slice('public_html/'.length);
+    }
+    return directory;
   }
 
   hosting_deploy_randomSuffix() {
@@ -927,7 +944,6 @@ class MCPServer {
 
   async hosting_deploy_wordpressExtension(username, domain, type, params) {
     const isPlugin = type === 'wordpress-plugin';
-    const headless = params.headless === true;
     const directory = path.resolve(params.path);
     const slug = params.slug !== undefined ? params.slug : this.hosting_deploy_slug(directory);
     const { files, skipped } = this.hosting_deploy_listFiles(directory);
@@ -935,9 +951,10 @@ class MCPServer {
       throw new Error('No files found in directory: ' + directory);
     }
 
+    const wordpressDirectory = await this.hosting_deploy_wordpressDirectory(username, domain);
     // The files land in a fresh directory; the deploy call then installs from it.
     const uploadDirName = slug + '-' + this.hosting_deploy_randomSuffix();
-    const remoteRoot = (headless ? this.hosting_deploy_headlessDirectory + '/' : '') + (isPlugin ? 'wp-content/plugins/' : 'wp-content/themes/') + uploadDirName;
+    const remoteRoot = (wordpressDirectory ? wordpressDirectory + '/' : '') + (isPlugin ? 'wp-content/plugins/' : 'wp-content/themes/') + uploadDirName;
     await this.hosting_deploy_upload(username, domain, files.map((relativePath) => ({
       absolutePath: path.join(directory, relativePath),
       relativePath: remoteRoot + '/' + relativePath,
@@ -957,7 +974,7 @@ class MCPServer {
       slug,
       files: files.length,
       ...(isPlugin ? {} : { activated: params.activate === true }),
-      ...(headless ? { headless: true } : {}),
+      ...(wordpressDirectory ? { wordpressDirectory } : {}),
     }, skipped);
   }
 
