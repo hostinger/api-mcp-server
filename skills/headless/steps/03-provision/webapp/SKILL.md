@@ -45,9 +45,10 @@ All website/database operations below go through the Hostinger connector (`execu
    ```
 
    `domain` must be a **customer-owned** domain. For a temporary `*.hostingersite.com` subdomain,
-   **omit `domain`** — the setup generates one itself. Don't call a separate subdomain op to make one
-   first: there's no need, and passing a generated free subdomain back as `domain` fails with
-   `422 … Free subdomains cannot be provided`. The response then carries the generated domain: if it
+   **omit `domain`** — the setup generates one itself and returns it in the response. Don't call a
+   separate subdomain op to make one first: there's no need in this flow. (The API would also accept a
+   subdomain you generated via `hosting_domains_generate-free-subdomain`, valid for 24 h from the client
+   that made it — this flow just doesn't use that.) The response then carries the generated domain: if it
    differs from the workspace directory name, move `~/.hostinger/<old>/` to `~/.hostinger/<new>/`,
    update the domain in `brief.md`, and tell the user the new domain.
 3. Poll `hosting_websites_list-setups { "domain": "<domain>" }` every ~15 s until `completed`

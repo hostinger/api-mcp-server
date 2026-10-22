@@ -51,9 +51,10 @@ Same lifecycle as `../wordpress/SKILL.md` Steps 1–2, but `type: "headless_ecom
    → adopt. `running` → poll. `failed` → stop, point at hPanel. If `website_type` is not `headless`
    (plain WordPress, Node.js, …), stop and tell the user — don't overwrite another kind of site.
 2. Create (only if **no** site exists): `hosting_websites_start-setup { order_id, type: "headless_ecommerce", domain }`
-   — **omit `domain`** for a temporary subdomain: the setup generates one itself (don't call a separate
-   subdomain op first — passing a generated free subdomain back as `domain` 422s). The response carries
-   the generated domain; if it differs from the workspace dir, move `~/.hostinger/<old>/` → `<new>/` and
+   — **omit `domain`** for a temporary subdomain: the setup generates one itself and returns it (don't
+   call a separate subdomain op first — there's no need in this flow; the API would also accept one you
+   generated via `hosting_domains_generate-free-subdomain`, valid 24 h from the client that made it). The
+   response carries the generated domain; if it differs from the workspace dir, move `~/.hostinger/<old>/` → `<new>/` and
    update `brief.md`. Poll `list-setups` to `completed`. `website_type` will be `headless`.
 
 > **Onboarding handoff — an empty headless shell needs no new website.** If the domain already has an
