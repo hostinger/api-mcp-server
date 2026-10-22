@@ -4,6 +4,12 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.7.1 — 2026-10-22
+
+### Also in this release
+
+- Dependencies: `package-lock.json`
+
 ## v3.7.0 — 2026-10-22
 
 ### Operations
