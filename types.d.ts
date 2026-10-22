@@ -4739,6 +4739,47 @@ The archive must already be present on the website's file storage. Use the
   };
 
   /**
+   * Determine the build settings for a Node.js application from the package.json file of a branch
+in a Git repository. Use before starting a Git-source build to find out the auto-detected
+settings instead of guessing them.
+
+The repository is read through a Git installation: take `installation_uuid` from
+`List Git installations` and `owner` and `repository` from `List Git installation repositories`.
+
+Returns 422 when the installation is not found, the repository or branch is not found, or
+the branch has no package.json.
+   */
+  "hosting_nodejs_build-settings-from-repository": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+      /**
+       * Repository owner login. GitLab group paths use slashes.
+       */
+      owner: string;
+      /**
+       * Repository name without the .git suffix
+       */
+      repository: string;
+      /**
+       * Branch whose package.json is inspected
+       */
+      branch: string;
+      /**
+       * Git installation used to access the repository, taken from `List Git installations`
+       */
+      installation_uuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Lists the Node.js environment variables currently set for the website. Values are always
 masked as `********` and cannot be read back through this API. Use this endpoint to see
 which keys are configured or to verify a change, not to read values.

@@ -8403,6 +8403,61 @@ const tools: OpenApiTool[] = [
     "hidden": true
   },
   {
+    "name": "hosting_nodejs_build-settings-from-repository",
+    "title": "Get Node.js build settings from repository",
+    "annotations": {
+      "title": "Get Node.js build settings from repository",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Determine the build settings for a Node.js application from the package.json file of a branch\nin a Git repository. Use before starting a Git-source build to find out the auto-detected\nsettings instead of guessing them.\n\nThe repository is read through a Git installation: take `installation_uuid` from\n`List Git installations` and `owner` and `repository` from `List Git installation repositories`.\n\nReturns 422 when the installation is not found, the repository or branch is not found, or\nthe branch has no package.json.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/from-repository",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Repository owner login. GitLab group paths use slashes."
+        },
+        "repository": {
+          "type": "string",
+          "description": "Repository name without the .git suffix"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Branch whose package.json is inspected"
+        },
+        "installation_uuid": {
+          "type": "string",
+          "description": "Git installation used to access the repository, taken from `List Git installations`"
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "owner",
+        "repository",
+        "branch",
+        "installation_uuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_nodejs_list-environment-variables",
     "title": "List Node.js environment variables",
     "annotations": {

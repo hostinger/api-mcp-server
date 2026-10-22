@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (409 total)
+- `hostinger-api-mcp` — unified server over every operation (410 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 3 operations for agent-readiness
 - `hostinger-billing-mcp` — 9 operations for billing
@@ -77,7 +77,7 @@ This package installs the following MCP server commands:
 - `hostinger-domains-mcp` — 42 operations for domains
 - `hostinger-ecommerce-mcp` — 29 operations for ecommerce
 - `hostinger-horizons-mcp` — 6 operations for horizons
-- `hostinger-hosting-mcp` — 66 operations for hosting
+- `hostinger-hosting-mcp` — 67 operations for hosting
 - `hostinger-mail-mcp` — 38 operations for mail
 - `hostinger-reach-mcp` — 62 operations for reach
 - `hostinger-vps-mcp` — 67 operations for vps
@@ -2247,6 +2247,21 @@ to it.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/headless/agent-reports`
+
+#### hosting_nodejs_build-settings-from-repository
+
+Determine the build settings for a Node.js application from the package.json file of a branch
+in a Git repository. Use before starting a Git-source build to find out the auto-detected
+settings instead of guessing them.
+
+The repository is read through a Git installation: take `installation_uuid` from
+`List Git installations` and `owner` and `repository` from `List Git installation repositories`.
+
+Returns 422 when the installation is not found, the repository or branch is not found, or
+the branch has no package.json.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds/settings/from-repository`
 
 #### hosting_nodejs_list-environment-variables
 
