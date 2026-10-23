@@ -229,7 +229,9 @@ routes it to the `wordpress` subfolder with the store enabled (it is **not** a s
 <look & feel in a few adjectives; **reference site(s)** the user named (URLs) and what to take from them
 (layout, structure, mood); colours / brand palette; any screenshots. This is where ALL design questions
 land — the frontend step reads this and does not re-ask. Write "Agent's choice: <short style>" when the
-user didn't specify.>
+user didn't specify. Record in the user's own words a request to keep their current look ("Keep the look
+we have: <site URL | screenshots | brand guide>") and any logo idea they describe; the design step acts
+on both.>
 
 ## Pages
 - **<Page>** — <one-line purpose>

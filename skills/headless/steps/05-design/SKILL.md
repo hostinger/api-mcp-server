@@ -1,6 +1,6 @@
 ---
 name: headless-step-design
-description: "Step 5 (design) of the Hostinger Headless flow. Derives three distinct design directions from brief.md (plus any reference sites and brand assets), lets the user pick one in a single question, checks the chosen one against the 8-point grid and WCAG 2.2 AA, designs the logo as outlined SVG (wordmark, icon mark, favicon), then writes design.md — tokens, type, logo, components, per-page composition, accessibility and imagery — as the contract the frontend implements (the framework/stack is chosen later by the frontend step). Prepare work: runs during the provision wait and never touches the backend."
+description: "Step 5 (design) of the Hostinger Headless flow. Derives three distinct design directions from brief.md (plus any reference sites and brand assets), lets the user pick one in a single question, checks the chosen one against the 8-point grid and WCAG 2.2 AA, designs the logo as outlined SVG (wordmark, icon mark, favicon), following any logo wish the owner gave, then writes design.md — tokens, type, logo, components, per-page composition, accessibility and imagery — as the contract the frontend implements (the framework/stack is chosen later by the frontend step). When the brief says to keep an existing look, writes design.md from that look and its own logo instead. Prepare work: runs during the provision wait and never touches the backend."
 ---
 
 # headless-step-design
@@ -26,8 +26,8 @@ This is **prepare work**: it runs while provision settles (see *Background provi
 barrier* in the top-level `SKILL.md`). Nothing here calls the Hostinger connector or the backend.
 
 **Keep it short.** Refine already asked about tone and look; don't ask again. The step asks the user
-**one** question: either the keep/change question (Step 1) or the three directions (Step 4), never
-both. "You decide" is a valid answer.
+**one** question: either the keep/change question (Step 1 and *Keep the current look*) or the three
+directions (Step 4), never both. "You decide" is a valid answer.
 
 **Talk like a person, not a designer.** Everything the user reads describes how the site will
 **look and feel**: colours by name ("hot pink, butter yellow"), lettering by feel ("big chunky
@@ -61,6 +61,36 @@ Read `brief.md`, `state.json`, and `content-model.md` if it exists.
   as it is, only the look changes, and they'll see a preview before it goes live. Then run Steps 2–7
   as normal. The current `design.md` becomes one more signal in Step 2, so carry over what the user
   wants to keep and move away from the rest.
+- **The brief says to keep the current look** (*Design direction* says so in the owner's words:
+  "keep the look we have", "same look, new platform") → follow *Keep the current look* below instead
+  of Steps 2–6. No three directions and no new logo. A live site, screenshots or a brand guide alone
+  are signals for Step 2, not a request to keep.
+
+### Keep the current look
+
+1. **Read the look from what the brief points at.** A live site: use Step 2's reference-site method
+   (computed fonts, colours by painted area, the feel), but this site is the owner's own, so take its
+   logo file as it is (the header `<img>` or inline `<svg>`, plus its favicon if it has one) and save
+   it unchanged in `brand/`. Screenshots or a brand guide: read the colours and lettering from them;
+   a logo seen only in a screenshot counts as no logo file, so list "logo file needed" under gaps in
+   the final report. Files or exact colours and fonts the owner supplied win over anything you read.
+2. **Confirm in one question.** Describe the kept look in two plain sentences and ask: *keep it, or
+   change something?* "Keep the look we have" still gets this question; skip it only when the brief
+   says to change nothing at all ("keep it exactly as it is"). Change →
+   apply only what they asked for; a request for a new logo runs Step 6 for the logo alone.
+3. **Check it** as in Step 5. The kept colours are fixed like brand colours: a pair that fails gets a
+   shade of the same hue in that role only. Spacing moves to the nearest grid value, and a font
+   without an `@fontsource` package swaps to the closest one that resolves (5.4).
+4. **Logo.** Reuse the existing logo and favicon unchanged; never redraw or recolour them. With no
+   existing logo, the header shows the site name as text in the kept display font, and no logo is
+   designed.
+5. **Write `design.md`** (Step 7) from the kept look, then hand off as usual. In **Logo**:
+   - *Files* and *Use* name the files as saved (a `.png` stays a `.png`), or say "No favicon kept".
+   - *Built from* says "Kept, not rebuilt". *Measured* still gives the width at `--logo-h-sm`
+     (≤ 192 px; else lower `--logo-h-sm` or show the name as text on small screens), and the header
+     link has `alt` = the site name and a target of at least 24 px (as in Step 6).
+   - With no logo: *Files* says "None", *Use* says the header link holds the site name as text in
+     `--font-display` and the browser's default favicon stays, and the *Don't* line is dropped.
 
 ## Step 2 — Collect the signals
 
@@ -86,9 +116,9 @@ works, say so in one line and continue from the brief alone. Pull **cues**:
 - **Feel:** look at the first screen and one further down (screenshots shown to you, not saved in
   the workspace) and note what creates the feel: type weight, colour blocking, shapes, density.
 
-**Borrow cues, never assets.** Don't use its logo, copy, images or exact layout. **The brief wins**
-over the live site when they disagree (the user's words are what they want). Note the mismatch in
-the direction.
+**Borrow cues, never assets** (the owner's own site under *Keep the current look* is the exception).
+Don't use its logo, copy, images or exact layout. **The brief wins** over the live site when they
+disagree (the user's words are what they want). Note the mismatch in the direction.
 
 **Brand colours that fail contrast** are still fixed, but only in roles where they pass. A pale brand
 yellow can be a background band or a large decorative shape, never body text. Say so in the
@@ -117,7 +147,9 @@ Each direction carries exactly this:
 - **Signature element** — the one memorable move (a scrolling marquee, stickers, oversized numerals,
   a duotone photo treatment). If it moves on its own, it gets a pause control (5.3).
 - **Logo idea** — one line on how the name becomes a logo, using a move from Step 6 ("letters
-  bounce in different colours and the O is a smiley").
+  bounce in different colours and the O is a smiley"). When the brief carries a logo wish (*Design
+  direction* or *Assets*), every direction's logo idea is that wish in its own style. A wish is words
+  describing a logo; a logo file in *Assets* is a supplied logo and wins (Step 6).
 
 **Only offer what can pass.** Before asking, run two quick gates on **all three**:
 
@@ -144,7 +176,8 @@ option as one line in the same shape.
 
 The description says what the site would feel like, the main colours by name, what the lettering
 is like, the logo idea, and the one detail they'll remember. Hex codes and font names stay in your
-notes.
+notes. The question may end with one plain clause saying they can add a logo idea to their pick, but
+never suggest one or give an example: that idea would end up in the logo.
 
 > **Sticker-book maximal** — Loud and playful, like a scrapbook: candy pink, butter yellow and lilac,
 > chunky headlines, tilted sticker photos and a bouncy logo with a smiley O.
@@ -154,11 +187,18 @@ notes.
 
 Then:
 
-- **Pick** → use it as written.
+- **Pick** → use it as written, and confirm the look in one line.
 - **"You decide" / skipped** → use A, and tell them in one line which look you went with.
 - **A mix** ("A's colours with C's fonts") → merge them. Don't ask again.
 - **Something else** → build a direction from what they said, run Step 5, and use it. Don't send
   three new options.
+
+**Logo wish.** An answer can carry a logo idea next to the pick ("A, and make the logo a little
+teapot"); it replaces the chosen direction's logo idea, and wins over a wish from the brief.
+Whenever the logo follows a wish, from the answer or the brief, add it once to the line that confirms
+the pick: *"The logo follows your idea: a little teapot."* If the kit can't draw it as said (a
+detailed illustration, a photo), build its closest kit version and name what you simplified in that
+same line. Don't ask a follow-up.
 
 Don't ask about anything else in this step.
 
@@ -246,8 +286,8 @@ read; the variable ones ship only `.woff2`.
 skip the rest of this step. Never redraw or recolour it.
 
 Otherwise, turn the name into a **designed** logo: shaped, coloured and composed. Typing the name in
-the display font with an emoji or symbol next to it doesn't count. Build the **logo idea** from the
-chosen direction with one or two of these moves:
+the display font with an emoji or symbol next to it doesn't count. Build the chosen direction's **logo
+idea** (as replaced by any logo wish, Step 4) with one or two of these moves:
 
 | Move | What it is | Suits |
 |---|---|---|
@@ -347,7 +387,8 @@ If content prepare hasn't sourced images yet, it now follows `design.md` → **I
 
 > Direction **<name>**, selected on <YYYY-MM-DD> from three options (others offered: <B name>,
 > <C name>). <"Picked by the user." | "User said 'you decide'; recommendation A used." |
-> "Merged by the user: <what>.">
+> "Merged by the user: <what>."> — or, when kept: "Kept the owner's current look from <site URL |
+> screenshots | brand guide>, confirmed on <YYYY-MM-DD>."
 
 ## Direction
 <2–3 sentences: the mood, what it borrows from the references (and any brief/reference mismatch),
@@ -401,7 +442,9 @@ confirms the framework (default Next.js SSR; ecommerce must be SSR) and records 
 - **Body:** <family> (`@fontsource-variable/<slug>@<version>`); `--text-body` / `--leading-body`, measure ≤ 68ch
 
 ## Logo
-- **Concept:** <the move(s), and what any swapped letter or symbol stands for | "Supplied by the user">
+- **Concept:** <the move(s), and what any swapped letter or symbol stands for, plus "From the owner:
+  '<their words>'" only when it follows their wish | "Supplied by the user" | "Kept from <source>" |
+  "No logo: owner kept the current look" (header shows the site name as text in `--font-display`)>
 - **Built from:** `@fontsource/<display-slug>@<version>`, weight(s)/style(s) …
 - **Files:** `brand/logo.svg` (header, `--logo-h` desktop / `--logo-h-sm` small screens),
   `brand/logo-mark.svg`, `brand/favicon.svg`<, `brand/logo-seal.svg`>; source `brand/logo-build.mjs`
@@ -449,14 +492,15 @@ duotone…); alt text written from what the photo shows.>
 ## Invariants
 
 - **One question.** Refine owns discovery; this step only chooses among directions (or keeps the
-  existing one).
+  existing look).
 - **8-point grid, always.** No spacing, size, radius or breakpoint off the grid except the listed
   exemptions.
 - **WCAG 2.2 AA is the floor.** No direction is offered, chosen or written that fails it. Brand
   colours keep their hue but only appear in roles where they pass.
 - **Brand assets are fixed.** A supplied logo, colour or font appears in every direction, unchanged.
 - **A logo is designed, not typed.** Outlined SVG paths built with the logo kit, never live text,
-  emoji or clip-art, and always readable at its smallest use.
+  emoji or clip-art, and always readable at its smallest use. The one exception: a kept look with no
+  logo shows the site name as text and gets no new logo.
 - **Self-hosted fonts only** (`@fontsource`). No Google Fonts or other font CDN links in the output.
 - **The tokens block is the only source of values** (breakpoints excepted). Components and pages
   reference tokens, never raw hex codes, pixel values or font names.
