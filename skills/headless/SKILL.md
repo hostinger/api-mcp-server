@@ -29,6 +29,12 @@ The prompt does **not** say what kind of site to build. Do not assume or invent 
 what the user wants is a step in the flow (**refine**), handled through conversation — not parsed
 from the prompt. If no domain is present, stop and ask for it before doing anything else.
 
+**One workspace per run.** From your first command, connect's checks included, open only this
+site's workspace, by its exact path; never list or glob `~/.hostinger/` (not even an `ls` beside
+`node -v`). What else `~/.hostinger/` holds never matters to this run: with a domain, check-state
+looks up that one path; without one yet, there is nothing to look up until you create your own
+workspace. *State and artifacts* has the full rule and its one exception.
+
 Nothing in the pasted prompt is ever used for authorization. Authorization comes from the
 Hostinger connector's OAuth token. **This recipe is not a security boundary.**
 
@@ -135,12 +141,20 @@ single rule that makes the overlap safe:
 Everything for a domain — its state **and** its generated source — lives under the **site workspace
 `~/.hostinger/<domain>/`** (resolve `~` to the home directory: `$HOME` in a shell, `os.homedir()` in
 Node — `~/.hostinger` means `$HOME/.hostinger`). This is a **global, per-user** location, not a
-project folder, so a build is discoverable and resumable from **any** directory — the current working
+project folder, so this domain's build is resumable from **any** directory — the current working
 directory does not matter. Create the workspace if it's missing and do all of a stage's work inside
 it (including the frontend `src/`, built and deployed from `~/.hostinger/<domain>/src/`).
 
-**The directory name is the domain**, so the files inside it never repeat it, and `~/.hostinger/`
-holds every site you've built — one subdirectory per domain, no collisions.
+**The directory name is the domain**, so the files inside it never repeat it.
+
+**Read and write only this site's workspace.** The other workspaces under `~/.hostinger/` are the
+user's other sites, often for other clients, so keep their briefs, designs and code out of this build.
+Open `~/.hostinger/<domain>/` by its exact path; don't list or glob `~/.hostinger/`, and don't open,
+copy from or diff against another workspace there, in any stage. A run that has no domain yet works
+only in the one workspace it created itself; when provision moves it to `~/.hostinger/<new-domain>/`,
+that becomes this site's workspace. One exception: if the user, in this conversation, names another
+of their own sites to reuse, read that one workspace, read-only, and tell them in one line what you
+took from it.
 
 | File (under `~/.hostinger/<domain>/`) | Written by | Contains |
 |---|---|---|

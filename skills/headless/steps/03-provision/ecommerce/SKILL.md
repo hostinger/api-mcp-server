@@ -54,8 +54,9 @@ Same lifecycle as `../wordpress/SKILL.md` Steps 1–2, but `type: "headless_ecom
    — **omit `domain`** for a temporary subdomain: the setup generates one itself and returns it (don't
    call a separate subdomain op first — there's no need in this flow; the API would also accept one you
    generated via `hosting_domains_generate-free-subdomain`, valid 24 h from the client that made it). The
-   response carries the generated domain; if it differs from the workspace dir, move `~/.hostinger/<old>/` → `<new>/` and
-   update `brief.md`. Poll `list-setups` to `completed`. `website_type` will be `headless`.
+   response carries the generated domain; if it differs from the workspace dir, move
+   `~/.hostinger/<old>/` → `<new>/` (if `<new>/` already exists, stop and ask instead of moving
+   into it) and update `brief.md`. Poll `list-setups` to `completed`. `website_type` will be `headless`.
 
 > **Onboarding handoff — an empty headless shell needs no new website.** If the domain already has an
 > empty headless shell (`website_type: headless`, setup `type: headless_empty`, nothing installed —

@@ -49,7 +49,8 @@ All website/database operations below go through the Hostinger connector (`execu
    separate subdomain op to make one first: there's no need in this flow. (The API would also accept a
    subdomain you generated via `hosting_domains_generate-free-subdomain`, valid for 24 h from the client
    that made it — this flow just doesn't use that.) The response then carries the generated domain: if it
-   differs from the workspace directory name, move `~/.hostinger/<old>/` to `~/.hostinger/<new>/`,
+   differs from the workspace directory name, move `~/.hostinger/<old>/` to `~/.hostinger/<new>/`
+   (if `<new>/` already exists, stop and ask instead of moving into it),
    update the domain in `brief.md`, and tell the user the new domain.
 3. Poll `hosting_websites_list-setups { "domain": "<domain>" }` every ~15 s until `completed`
    (typically under a minute; allow a few minutes). `failed` → stop, point at hPanel.

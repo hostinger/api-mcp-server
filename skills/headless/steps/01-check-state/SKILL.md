@@ -20,8 +20,7 @@ Nothing in this step creates, provisions, deploys, or deletes anything. It reads
 Everything for a domain lives under the global site workspace **`~/.hostinger/<domain>/`** — one
 directory per domain, under the user's home (`~` = `$HOME`), **not** the current working directory.
 The directory name **is** the domain, so `state.json` inside does not store it. Because it's global,
-`~/.hostinger/` holds every site the user has built and each one is discoverable and resumable from
-any directory — no collisions.
+this domain's build is resumable from any directory.
 
 `state.json` shape (`stage` is the *next* stage to run; `provision` is the background task's status,
 present only once provision has fired):
@@ -94,7 +93,8 @@ and **release it on a clean stop** (Step 6). The lock marks an active session, n
 
 ## Step 2 — Read the workspace directory
 
-Look at `~/.hostinger/<domain>/`:
+Check `~/.hostinger/<domain>/` by its exact path (for example `test -d ~/.hostinger/<domain>`), not
+by listing `~/.hostinger/`:
 
 - **Absent** → no history for this domain in the workspace.
 - **Present** → read `state.json` (its `stage`) and whatever artifacts exist (`brief.md`,
@@ -203,6 +203,8 @@ Then:
 ## Invariants
 
 - **One directory per domain.** The domain is the key; state files never repeat it.
+- **Only this domain's workspace.** Never list `~/.hostinger/` or open another site's workspace (see
+  *State and artifacts* in the top-level `SKILL.md`).
 - **Never create a second site** on a domain that already has one.
 - **Never re-provision or overwrite a live site.** Recovery is forward-only.
 - **Reality beats local state**, always.
