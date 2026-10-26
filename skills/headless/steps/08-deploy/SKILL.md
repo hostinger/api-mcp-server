@@ -46,12 +46,28 @@ static frameworks serve their output dir as files. If unsure of a framework's ou
 framework's own build output, but **always pass `appType`/`outputDirectory` on the deploy call with the
 framework's correct values** — don't rely on auto-detection (it returns null → 403).
 
+> ## ⚠️ Next.js 16+: build with webpack, not Turbopack (recurring deploy failure)
+> Next.js 16 makes **Turbopack** the default bundler for `next build`. Turbopack's native (Rust)
+> compiler needs a newer **glibc** than the Hostinger build server ships, so the server build aborts
+> with a "glibc too old" error — and Turbopack **does not fall back** to webpack on its own, so the
+> deploy fails every time. **Fix: build with webpack.** On **Next.js 16+** the project's `build` script
+> in `package.json` must be `next build --webpack` (not plain `next build`); `buildScript` on the deploy
+> call stays `"build"` — that's what runs it. The `--webpack` flag exists only on Next.js 16+; on
+> **Next.js 15.x** leave the build script as plain `next build` (it already defaults to webpack).
+> **Confirm this in `package.json` before deploying** (the frontend step scaffolds it this way — see
+> `../06-frontend`). Alternative, only if you must avoid the `--webpack` flag: pin Next.js to `15.x`
+> (keeping plain `next build`), whose `next build` still defaults to webpack. Next.js only — other
+> frameworks are unaffected.
+
 ## Step 1 — Pre-flight
 
 1. **Instance live.** `provision.status == "completed"`, re-verified with
    `hosting_websites_list-setups { "domain": "<domain>" }`.
 2. **Build output exists locally** (the framework's output dir — e.g. `.next/`, `dist/`, `.output/`) and
    the project builds clean (frontend/validate already did this). If not, go back.
+   - **Next.js 16+:** `package.json`'s `build` script is `next build --webpack`, not plain `next build` —
+     the server's glibc can't run Turbopack's native compiler (see the box above). On Next.js 15.x leave it
+     as plain `next build`. Fix it here if it isn't.
 3. **Env vars (only if used).** Build-time vars (e.g. `NEXT_PUBLIC_*`) must be set **before** the build
    with `hosting_nodejs_replace-environment-variables` (full replace). Never put secrets in the repo or
    the archive. **Webapp with a database:** that full replace wipes the `DB_*`/`DATABASE_URL` that

@@ -162,6 +162,12 @@ Guidelines (framework-agnostic):
 - **No `.htaccess`** in the project (deploy would overwrite the live one); don't commit `node_modules`
   or build output.
 - Set `engines.node` to `22` (the deploy builds on Node 22).
+- **Next.js 16+ only:** set the `build` script to `next build --webpack`, not plain `next build`. Next.js
+  16 defaults `next build` to **Turbopack**, whose native compiler needs a newer glibc than the Hostinger
+  build server has, so a Turbopack build fails on deploy and won't fall back to webpack. Webpack builds
+  clean there. The `--webpack` flag exists only on Next.js 16+; on **Next.js 15.x** leave the build script
+  as plain `next build` (it already defaults to webpack). (Alternative: pin Next.js to `15.x`, keeping
+  plain `next build`.)
 
 ## Step 4 — Hand off
 
