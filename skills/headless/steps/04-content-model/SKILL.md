@@ -90,7 +90,8 @@ Guidance:
 
 Every article (and every product) needs an image. There are two sources, and **you MUST offer the user
 both and let them choose — never pick silently.** State the default for this backend in one line, name
-the other option, and proceed on their answer (a skipped answer / "you decide" = use the default):
+the other option, and proceed on their answer ("you decide" = use the default; a skipped tool result is
+not an answer, see *When you ask the user* in the top-level `SKILL.md`):
 
 | Option | Tool | Backends | Needs the live instance? |
 |---|---|---|---|

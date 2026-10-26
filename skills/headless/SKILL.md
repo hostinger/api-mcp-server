@@ -102,6 +102,17 @@ user is offered the choice to continue, switch domains, or start over — before
 Refinement before provisioning, because the backend cannot be chosen until the brief exists.
 Validation before deploy, always — nothing reaches the live domain unseen.
 
+### When you ask the user
+
+A question tool's result is the user's answer only when it carries their choice or their words. When
+it comes back skipped, rejected, empty or as an error (a *skipped* result), nobody has answered yet:
+Cursor's `AskQuestion`, for one, returns "Questions skipped by the user" when no one touched it. Ask
+the same questions again as plain text in your reply, end your turn, and continue from what the user
+types. One plain-text re-ask is enough: it can't come back skipped. Fill a question you asked with a
+default only when the user says so in their own words ("you decide", "just build it", "skip that"),
+or when they said up front that no one will be there to answer; then list those defaults under gaps
+in the final report. Every step that asks the user something follows this.
+
 ### Background provision & the instance barrier
 
 **Provision always runs — what it does depends on what the domain already has.** Often onboarding on

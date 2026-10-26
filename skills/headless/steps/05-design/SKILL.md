@@ -76,7 +76,8 @@ Read `brief.md`, `state.json`, and `content-model.md` if it exists.
    the final report. Files or exact colours and fonts the owner supplied win over anything you read.
 2. **Confirm in one question.** Describe the kept look in two plain sentences and ask: *keep it, or
    change something?* "Keep the look we have" still gets this question; skip it only when the brief
-   says to change nothing at all ("keep it exactly as it is"). Change →
+   says to change nothing at all ("keep it exactly as it is"). A skipped tool result is not Keep; see
+   *When you ask the user* in the top-level `SKILL.md`. Change →
    apply only what they asked for; a request for a new logo runs Step 6 for the logo alone.
 3. **Check it** as in Step 5. The kept colours are fixed like brand colours: a pair that fails gets a
    shade of the same hue in that role only. Spacing moves to the nearest grid value, and a font
@@ -188,7 +189,9 @@ never suggest one or give an example: that idea would end up in the logo.
 Then:
 
 - **Pick** → use it as written, and confirm the look in one line.
-- **"You decide" / skipped** → use A, and tell them in one line which look you went with.
+- **"You decide"** → use A, and tell them in one line which look you went with.
+- **Skipped tool result** → not an answer: write the three directions as plain lines
+  and wait for the reply (see *When you ask the user* in the top-level `SKILL.md`).
 - **A mix** ("A's colours with C's fonts") → merge them. Don't ask again.
 - **Something else** → build a direction from what they said, run Step 5, and use it. Don't send
   three new options.

@@ -10,8 +10,10 @@ Find out what the user wants to build, guess which backend fits, and write it do
 the site comes from talking to the user.
 
 **Keep it short.** The only thing you must know is *what they are building* — enough to guess the
-backend. Every other question is skippable: the more the user gives, the better the site, but never
-hold the build hostage to refinement. Fill gaps with sensible defaults and say so in the brief.
+backend. Every other question is optional: the more the user gives, the better the site, but never
+hold the build hostage to refinement. Fill gaps with sensible defaults and say so in the brief. A
+skipped question tool is not the user passing on a question; see *When you ask the user* in the
+top-level `SKILL.md`.
 
 > **Never ask the user to choose a backend or a technology.** Don't ask "WordPress or Ecommerce?",
 > don't present WordPress/Ecommerce/WooCommerce/Webapp as options, and don't surface the backend in a
@@ -34,8 +36,9 @@ Read everything already in `~/.hostinger/<domain>/` (`state.json`, `connect.json
 or files the user dropped there) — it all counts as input.
 
 If `brief.md` already exists for this domain, **don't overwrite it**. Show the user a three-line
-summary (what the site is, its pages, the suggested backend) and ask: *keep it, or change something?*
-Keep → go to Step 6. Change → edit only what they asked for, then re-confirm (Step 5).
+summary (what the site is, its pages, the suggested backend) and ask: *keep it, or change
+something?* Keep → go to Step 6. Change → edit only what they asked for, then re-confirm (Step 5). A
+skipped tool result is not Keep; see *When you ask the user* in the top-level `SKILL.md`.
 
 If the site is already provisioned (`site.json` exists), the backend is **fixed** — never change the
 Suggested backend on a provisioned site. Explain that switching backends means a new domain.
@@ -75,9 +78,11 @@ sentence is enough. Links, screenshots or files help too. Skip anything you don'
 Ask in **short rounds of 2–3 questions**, and adapt each round to the previous answers. If your tool
 has a structured question UI (multiple choice with an "other" field), use it for the choice-shaped
 follow-up questions (pages, selling yes/no, tone) — **never for the opening "what do you want to
-build?" and never for the backend** (that's your decision, not theirs). **At most 3 rounds**, and stop early as soon as you can guess the backend and the user
-seems done — "just build it", "you decide", or a skipped question means *use defaults*, not *ask
-again*.
+build?" and never for the backend** (that's your decision, not theirs). **At most 3 rounds**, and
+stop early as soon as you can guess the backend and the user seems done — "just build it" or "you
+decide" means *use defaults*, not *ask again*. A skipped tool result is not their answer: re-ask
+that round in plain text, as *When you ask the user* in the top-level `SKILL.md` says. The re-ask
+repeats the round; it doesn't count toward the 3.
 
 **Round 1 — what it is (the only required round):**
 
@@ -85,7 +90,7 @@ again*.
 2. **Will you sell anything on it?** Physical products, digital products, services with checkout —
    or nothing. *This decides the backend.* Skip it only when the answer is already unmistakable
    ("an online shop for my candles", "my personal blog"); when in doubt, ask.
-3. **Who is it for?** The audience, and how they'll find the site. *(skippable)*
+3. **Who is it for?** The audience, and how they'll find the site. *(optional)*
 
 **Round 2 — what goes on it (optional, adapt to Round 1):**
 
@@ -132,6 +137,9 @@ the default from what you found:
 - **Agent designs and builds it** *(default when the folder has nothing site-like)* — "Give me ideas
   — you design and code it." Today's flow: the design step proposes directions and the frontend step
   scaffolds and implements them.
+
+A skipped tool result is not a pick: re-ask in plain text, and use the seeded default only when the
+user says so (see *When you ask the user* in the top-level `SKILL.md`).
 
 Record the answer as the brief's **Build mode**. This is the one frontend/technology question you *do*
 put to the user; everything else about the stack (framework, SSR/SSG) is still inferred. The deliverable
@@ -192,9 +200,10 @@ site, not the backend:
   WordPress admin"), **not** as a choice you're asking them to make. Don't ask "is WordPress OK?" or
   offer alternatives unless it was a genuine close call *and* the difference matters to the user.
 
-End with *"Good to go, or anything to change?"* A yes (or silence-equivalent like "go") → write
-`brief.md`. Changes → apply them and write it; don't loop back into questions. If the user
-*volunteers* a different backend, use theirs and note it in the brief.
+End with *"Good to go, or anything to change?"* A yes (or "go") → write `brief.md`. A skipped tool
+result is not a yes (see *When you ask the user* in the top-level `SKILL.md`). Changes → apply them
+and write it; don't loop back into questions. If the user *volunteers* a different backend, use
+theirs and note it in the brief.
 
 ## Step 6 — Write `brief.md` and hand off
 

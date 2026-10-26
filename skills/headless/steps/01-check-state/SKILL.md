@@ -187,7 +187,8 @@ connect-only files are *not* something to resume.
 - **Buy a domain** — they want a custom domain instead of the temporary one. Route to the domain
   purchase / `connect-domain` flow, then continue with the chosen domain.
 
-When the intent is ambiguous, **ask** — don't guess.
+When the intent is ambiguous, **ask** — don't guess. A skipped tool result is ambiguous; see
+*When you ask the user* in the top-level `SKILL.md`.
 
 ---
 
