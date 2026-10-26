@@ -7019,6 +7019,12 @@ the contact will be created with a pending status and a confirmation email will 
        * Existing tags to attach to the created contact
        */
       tag_uuids?: array;
+      /**
+       * Custom field values to set on the contact. When a contact with this email already exists,
+only fields that have no value yet are filled. Unknown field UUIDs and values that do not
+match the field type are skipped.
+       */
+      fields?: array;
     };
     response: any; // Response structure will depend on the API
   };
@@ -7117,9 +7123,10 @@ values, source and note with `GET /api/reach/v1/profiles/{profileUuid}/contacts/
    * Create many contacts in a profile in a single call.
 
 The contacts are imported in the background, so a success response means the import was
-accepted rather than finished. Contacts whose email already exists in the profile are
-left as they are. If double opt-in is enabled, new contacts start off pending and are
-sent a confirmation email.
+accepted rather than finished. Contacts whose email already exists in the profile keep
+their current values; only the ones that are still empty, custom fields included, are
+filled in. If double opt-in is enabled, new contacts start off pending and are sent a
+confirmation email.
    */
   "reach_contacts_create-in-bulk": {
     params: {
@@ -7218,6 +7225,12 @@ and a confirmation email will be sent.
        * Existing tags to attach to the created contact
        */
       tag_uuids?: array;
+      /**
+       * Custom field values to set on the contact. When a contact with this email already exists,
+only fields that have no value yet are filled. Unknown field UUIDs and values that do not
+match the field type are skipped.
+       */
+      fields?: array;
     };
     response: any; // Response structure will depend on the API
   };

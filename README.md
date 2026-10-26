@@ -3217,9 +3217,10 @@ values, source and note with `GET /api/reach/v1/profiles/{profileUuid}/contacts/
 Create many contacts in a profile in a single call.
 
 The contacts are imported in the background, so a success response means the import was
-accepted rather than finished. Contacts whose email already exists in the profile are
-left as they are. If double opt-in is enabled, new contacts start off pending and are
-sent a confirmation email.
+accepted rather than finished. Contacts whose email already exists in the profile keep
+their current values; only the ones that are still empty, custom fields included, are
+filled in. If double opt-in is enabled, new contacts start off pending and are sent a
+confirmation email.
 
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/contacts/bulk`

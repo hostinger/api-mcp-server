@@ -647,6 +647,35 @@ export default [
             "type": "string",
             "description": "tag_uuids parameter"
           }
+        },
+        "fields": {
+          "type": "array",
+          "description": "Custom field values to set on the contact. When a contact with this email already exists,\nonly fields that have no value yet are filled. Unknown field UUIDs and values that do not\nmatch the field type are skipped.",
+          "items": {
+            "type": "object",
+            "description": "fields parameter",
+            "properties": {
+              "uuid": {
+                "type": "string",
+                "description": "uuid parameter"
+              },
+              "value": {
+                "type": "string",
+                "description": "For the scalar field types"
+              },
+              "selected_option_uuids": {
+                "type": "array",
+                "description": "For the choice field types",
+                "items": {
+                  "type": "string",
+                  "description": "selected_option_uuids parameter"
+                }
+              }
+            },
+            "required": [
+              "uuid"
+            ]
+          }
         }
       },
       "required": [
@@ -834,7 +863,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create many contacts in a profile in a single call.\n\nThe contacts are imported in the background, so a success response means the import was\naccepted rather than finished. Contacts whose email already exists in the profile are\nleft as they are. If double opt-in is enabled, new contacts start off pending and are\nsent a confirmation email.",
+    "description": "Create many contacts in a profile in a single call.\n\nThe contacts are imported in the background, so a success response means the import was\naccepted rather than finished. Contacts whose email already exists in the profile keep\ntheir current values; only the ones that are still empty, custom fields included, are\nfilled in. If double opt-in is enabled, new contacts start off pending and are sent a\nconfirmation email.",
     "method": "POST",
     "path": "/api/reach/v1/profiles/{profileUuid}/contacts/bulk",
     "inputSchema": {
@@ -866,6 +895,35 @@ export default [
               "phone": {
                 "type": "string",
                 "description": "Phone number in E.164 format (leading \"+\" then 7-15 digits)"
+              },
+              "fields": {
+                "type": "array",
+                "description": "Custom field values to set on the contact. For a contact whose email already\nexists, only fields that have no value yet are filled. Unknown field UUIDs and\nvalues that do not match the field type are skipped.",
+                "items": {
+                  "type": "object",
+                  "description": "fields parameter",
+                  "properties": {
+                    "uuid": {
+                      "type": "string",
+                      "description": "uuid parameter"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "For the scalar field types"
+                    },
+                    "selected_option_uuids": {
+                      "type": "array",
+                      "description": "For the choice field types",
+                      "items": {
+                        "type": "string",
+                        "description": "selected_option_uuids parameter"
+                      }
+                    }
+                  },
+                  "required": [
+                    "uuid"
+                  ]
+                }
               }
             },
             "required": [
@@ -998,6 +1056,35 @@ export default [
           "items": {
             "type": "string",
             "description": "tag_uuids parameter"
+          }
+        },
+        "fields": {
+          "type": "array",
+          "description": "Custom field values to set on the contact. When a contact with this email already exists,\nonly fields that have no value yet are filled. Unknown field UUIDs and values that do not\nmatch the field type are skipped.",
+          "items": {
+            "type": "object",
+            "description": "fields parameter",
+            "properties": {
+              "uuid": {
+                "type": "string",
+                "description": "uuid parameter"
+              },
+              "value": {
+                "type": "string",
+                "description": "For the scalar field types"
+              },
+              "selected_option_uuids": {
+                "type": "array",
+                "description": "For the choice field types",
+                "items": {
+                  "type": "string",
+                  "description": "selected_option_uuids parameter"
+                }
+              }
+            },
+            "required": [
+              "uuid"
+            ]
           }
         }
       },

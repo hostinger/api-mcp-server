@@ -4,6 +4,21 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.9.0 — 2026-10-26
+
+### Operations
+
+- Changed the input schema of `reach_contacts_create`
+- Changed the description and input schema of `reach_contacts_create-in-bulk`
+- Changed the input schema of `reach_contacts_create-bulk`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.8.1 — 2026-10-23
 
 ### Also in this release
