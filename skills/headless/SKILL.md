@@ -198,6 +198,9 @@ provision runs in the background, its status lives in its own `provision` field 
 - `run` (the current run), `history` (one entry per stage or phase, with real start and end
   times), and `reports_sent` / `reports_rejected` (which copy of each report reached Hostinger) are
   written **only** by `run-log.mjs`. Leave them alone when you update `state.json` by hand.
+- The **onboarding slug** is how hPanel names the coding tool: `claude` for Claude Code, else
+  `cursor`, `codex`, `vscode`, `antigravity`, `devin`. Map it from the `<tool>` you pass to
+  `run-start --tool` (`state.json → run.tool`, e.g. `claude-code` → `claude`).
 
 ---
 

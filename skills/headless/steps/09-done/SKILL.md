@@ -56,7 +56,7 @@ Write it in this order:
    Use the stage numbers and names from the orchestrator's flow table.
 
 3. **Links** — every URL that exists at this point. Build the hPanel URLs from `site.json`
-   (`order_id`, `username`, `domain`) and `state.json` (`tool`); take the rest from `site.json` /
+   (`order_id`, `username`, `domain`) and the onboarding slug; take the rest from `site.json` /
    `deploy.json`. Lead with the one the user cares about most — the **main site** — then the admin
    and dashboards. **Don't list the success page here:** it opens on its own (see *Open the success
    page*), so printing its URL in the report is just noise — the only exception is when a browser
@@ -98,13 +98,12 @@ On a **successful** run (the deploy succeeded and the live checks passed), open 
 user's **main / system browser** right after presenting the report, so they land on the hPanel
 celebration/next-steps screen for their new site. This is a side effect only — **don't print the
 success URL in the report output** (it just opens); the one exception is the can't-open-a-browser
-fallback below. Build the URL with `<tool>` as the running tool's onboarding slug (`claude` for
-Claude Code, else `cursor`, `codex`, `vscode`, `antigravity`, `devin`), mapped from
-`state.json → tool` (e.g. `claude-code` → `claude`):
+fallback below. Build the URL with `<tool>` as the running tool's onboarding slug (see *State and
+artifacts* in the top-level `SKILL.md`):
 
 ```bash
 # Build the URL first, then open it with the OS default (main) browser — not an embedded one.
-# <tool> = the onboarding slug (claude for Claude Code, else cursor/codex/vscode/antigravity/devin)
+# <tool> = the onboarding slug
 URL="https://hpanel.hostinger.com/headless-onboarding/<order_id>/<username>/success/<domain>/<tool>"
 open "$URL"        # macOS
 # xdg-open "$URL"  # Linux

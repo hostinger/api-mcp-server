@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.10.0 — 2026-10-26
+
+### Also in this release
+
+- Bundled agent skills: `skills/headless/SKILL.md`, `skills/headless/steps/01-check-state/SKILL.md`, `skills/headless/steps/09-done/SKILL.md`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v3.9.0 — 2026-10-26
 
 ### Operations

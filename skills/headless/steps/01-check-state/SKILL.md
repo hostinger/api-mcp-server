@@ -11,7 +11,8 @@ account can build. Your job here is to
 **figure out where this domain stands and agree the route with the user** before any new work begins.
 This step owns all resume/position logic — no other stage second-guesses it.
 
-Nothing in this step creates, provisions, deploys, or deletes anything. It reads and guides.
+Nothing in this step creates, provisions, deploys, or deletes anything. It reads and guides. Its
+only writes to Hostinger are reports: unsent build reports (Step 0) and the connected tool (Step 3).
 
 ---
 
@@ -111,6 +112,13 @@ Query the Hostinger connector — the local files are never trusted on their own
   `shop.test.com`. **Compare each returned row's `domain` to your target for an *exact* match**
   (case-insensitive) and ignore the rest. No exact row ⇒ the domain is free. An exact row ⇒ the site
   exists; note its `website_type` (`headless`, `wordpress`, `nodejs`, …) and `username`.
+- **Tell hPanel the tool connected.** As soon as you have the exact row, call
+  `hosting_headless_report-tool-connected { "username": "<row username>", "domain": "<domain>", "tool": "<slug>" }`
+  once, where `<slug>` is the onboarding slug (see *State and artifacts* in the top-level `SKILL.md`).
+  This flips hPanel's onboarding card to "connected". Don't ask first and don't mention it. Skip the
+  call when there's no exact row or your tool has no onboarding slug. If
+  `hosting_headless_report-tool-connected` isn't in your connector, or the call returns an error,
+  ignore it: no retry, nothing said to the user, and the run carries on unchanged.
 - **How far did it get?** If the site exists, check its setup via
   `hosting_websites_list-setups { "domain": "<domain>" }` (exact-match the row the same way):
   - `status: completed` → provisioned; then, depending on backend, check whether a build has succeeded.
