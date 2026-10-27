@@ -28,7 +28,7 @@ workspace `~/.hostinger/<domain>/src/`.
 > API, or the MySQL database recorded in `site.json → database`). It comes in two shapes, decided back in
 > **refine**:
 >
-> - **An existing app the user brought to deploy** (refine routes "deploy my app" here). **Use their
+> - **An existing app under Build mode "Bring your own frontend"** (refine routes "deploy my app" here). **Use their
 >   project as the source** — copy/point `~/.hostinger/<domain>/src/` at it and keep its own framework and
 >   UI. **Do not scaffold a new project, and do not re-implement `design.md` over it** (so **the design
 >   step does not apply** to an app that brings its own UI). Your job is only to make it deployable: set
@@ -36,7 +36,10 @@ workspace `~/.hostinger/<domain>/src/`.
 >   Step 2 design pass**, and ignore the `content-model.md` requirement in Step 3.
 > - **A new app built from the brief.** Scaffold and build it from `brief.md` (and `design.md` if the
 >   design step produced one — design *does* run for a from-scratch app). Its data is owned by the app, so
->   there is still **no `content-model.md`** to bind against.
+>   there is still **no `content-model.md`** to bind against. An existing app under **Build mode "Agent
+>   designs and builds"** takes this shape too, but starts from its source: copy the project at
+>   `brief.md` → **Existing project** into `~/.hostinger/<domain>/src/`, keep its framework, screens,
+>   features and data wiring, and rebuild its UI to `design.md` instead of scaffolding a new project.
 >
 > Framework choice (Step 1), the build, and hand-off (Step 4) apply to both. The per-backend bullets in
 > Step 3 are **WordPress / WooCommerce / Ecommerce only** — for a webapp follow the Webapp bullet there.
@@ -50,7 +53,8 @@ it, and the backend constraint:
   Next.js is the default, not a requirement (Express, Nuxt, SvelteKit, etc. are all fine).
 - **WordPress + WooCommerce → SSR required** (same reason — cart/checkout need per-request rendering).
 - **WordPress → SSG (Astro)** when the brief says SSG, otherwise **SSR (Next.js default)**.
-- **Webapp → the app's own stack.** An **existing app** keeps its current framework (don't impose one); a
+- **Webapp → the app's own stack.** An **existing app** keeps its current framework (don't impose one), including
+  one rebuilt under **Agent designs and builds**; a
   **new app** uses whatever fits the brief (SSR or SPA). Either way it deploys as a Node.js app (Step 8) —
   an SSR app runs a server, a SPA builds to static output.
 - Map rendering → framework: **`ssr` → Next.js**, **`ssg` → Astro** — unless the brief/prompt explicitly

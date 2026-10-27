@@ -150,10 +150,15 @@ app's look:
   existing project in the current folder as the source**, collaborates on design/code at the user's
   direction, and wires it to the provisioned backend. There is **no agent-generated design** — the
   design step defers to the user (see the Build mode box at the top of the design step), and the
-  frontend step builds on their project rather than scaffolding a new one. Write "Keep the look we
-  have: the app in this folder" in **Design direction**.
-- **Agent designs and builds it — a new design** — the design step proposes directions and the
-  frontend step scaffolds and implements them.
+  frontend step builds on their project rather than scaffolding a new one. Build mode is **Bring your
+  own frontend**; write "Keep the look we have: the app in this folder" in **Design direction**.
+- **Agent rebuilds it — keep my app's look** — the design step reads the look (colours, fonts, logo)
+  from their project, and the frontend step starts from the project's source, keeping its screens and
+  features, and rebuilds its UI to that look. Build mode is **Agent designs and builds**; write "Keep
+  the look we have: the app in this folder" in **Design direction**.
+- **Agent rebuilds it — a new design** — the design step proposes directions and the frontend step
+  rebuilds the app from them. Build mode is **Agent designs and builds**; take **Design direction**
+  from Round 3.
 
 A skipped tool result is not a pick: re-ask in plain text, and use the default only when the user
 says so (see *When you ask the user* in the top-level `SKILL.md`).
@@ -162,9 +167,10 @@ Otherwise don't ask: Build mode is **Agent designs and builds**. When the user s
 own code elsewhere, ask for its path, inspect it as in Step 2, and from then on treat it as a project
 found in the folder.
 
-Record the answer as the brief's **Build mode**. This is the one frontend/technology question you *do*
-put to the user; everything else about the stack (framework, SSR/SSG) is still inferred. The deliverable
-is the same either way — a working site on the backend; only *who drives the frontend* changes.
+Record the Build mode the chosen option names in the brief's **Build mode**, and its look in **Design
+direction**. This is the one frontend/technology question you *do* put to the user; everything else
+about the stack (framework, SSR/SSG) is still inferred. The deliverable is the same either way — a working
+site on the backend; only *who drives the frontend* changes.
 
 ## Step 4 — Decide the backend (your call, from the brief — not a question)
 
@@ -297,7 +303,8 @@ the app reads — names only, never values>
 ## Build mode
 **<Bring your own frontend | Agent designs and builds>** — <one line>. <When "Bring your own frontend":
 how they want to drive design/code; the project's path is under **Existing project**. When "Agent designs and builds": leave the design + frontend steps to run as
-normal.> The design step and the frontend step both read this: **Bring your own frontend** → design
+normal; with **Existing project** filled, the frontend starts from that app's source and rebuilds its UI
+to design.md.> The design step and the frontend step both read this: **Bring your own frontend** → design
 defers to the user and frontend builds on their project; **Agent designs and builds** → both run as normal.
 
 ## Rendering

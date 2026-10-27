@@ -17,10 +17,12 @@ user gave. **Out:** `~/.hostinger/<domain>/design.md` and the logo files in
 > Read `brief.md` → **Build mode** first. When it is **Bring your own frontend**, the user drives the
 > design — **do not generate three directions or write a prescriptive `design.md` over their project.**
 > The frontend already exists (or the user vibe-codes it with you); your job is to follow *their*
-> direction, not impose one. Skip Steps 1–7 below: either write nothing, or capture only what the user
-> explicitly asks for (a short note of their stated colours/vibe) so the frontend step has it. The logo
-> and token work here apply only when **Build mode is "Agent designs and builds"**. (This mirrors the
-> frontend step's existing "existing app the user brought" handling, now generalised to any backend.)
+> direction, not impose one. Skip Steps 1–7 below, *Keep the current look* included, even when
+> **Design direction** keeps the look of the app in this folder: their own code already carries it.
+> Either write nothing, or capture only what the user explicitly asks for (a short note of their
+> stated colours/vibe) so the frontend step has it, then do Step 7's `state.json` update so the flow
+> moves on to frontend. The logo and token work here apply only when **Build mode is "Agent designs
+> and builds"**.
 
 This is **prepare work**: it runs while provision settles (see *Background provision & the instance
 barrier* in the top-level `SKILL.md`). Nothing here calls the Hostinger connector or the backend.
@@ -73,7 +75,19 @@ Read `brief.md`, `state.json`, and `content-model.md` if it exists.
    logo file as it is (the header `<img>` or inline `<svg>`, plus its favicon if it has one) and save
    it unchanged in `brand/`. Screenshots or a brand guide: read the colours and lettering from them;
    a logo seen only in a screenshot counts as no logo file, so list "logo file needed" under gaps in
-   the final report. Files or exact colours and fonts the owner supplied win over anything you read.
+   the final report. The app in this folder (the path under `brief.md` → **Existing project**):
+   read its source; no build or browser needed.
+   - *Colours:* the theme tokens (Tailwind v4 `@theme`, v3 `tailwind.config.*` `theme`/`theme.extend`,
+     `:root` custom properties), ranked by how often the code uses them (class names, `var()`), with
+     the page background and body text taken from the root layout or `body`.
+   - *Fonts:* theme font tokens, `@fontsource` imports or dependencies, Google Fonts `<link>` or
+     `@import`, and the `font-family` on `body` and headings.
+   - *Logo:* files named `logo*` in `public/`, `static/`, `src/assets/` or `assets/`;
+     `favicon*`, `icon*` or `apple-icon*` in `public/`, `static/`, `app/` or `src/app/`; or the icon
+     declared by `<link rel="icon">` in `index.html` or the root layout's `metadata.icons`. Copy them
+     unchanged into `brand/`.
+
+   Files or exact colours and fonts the owner supplied win over anything you read.
 2. **Confirm in one question.** Describe the kept look in two plain sentences and ask: *keep it, or
    change something?* "Keep the look we have" still gets this question; skip it only when the brief
    says to change nothing at all ("keep it exactly as it is"). A skipped tool result is not Keep; see
