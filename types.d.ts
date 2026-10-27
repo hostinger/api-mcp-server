@@ -1404,7 +1404,7 @@ Use this endpoint to renew any subscription available in your account.
   };
 
   /**
-   * What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet), newest first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product, date or plan. Each entry has its title, summary, product, date, URL, status (released or upcoming), and plan when the entry states one. Needs no API token.
+   * What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product, date or plan. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
    */
   "changelog_list-entries": {
     params: {
@@ -1417,7 +1417,7 @@ Use this endpoint to renew any subscription available in your account.
        */
       product?: string;
       /**
-       * Only entries dated on or after this date, as YYYY-MM-DD
+       * Only released entries dated on or after this date, as YYYY-MM-DD. Upcoming items are not filtered by date.
        */
       since?: string;
       /**
@@ -1425,7 +1425,7 @@ Use this endpoint to renew any subscription available in your account.
        */
       plan?: string;
       /**
-       * Most entries to return, newest first
+       * Most entries to return
        */
       limit?: number;
     };
