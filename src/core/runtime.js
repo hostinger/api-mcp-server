@@ -64,8 +64,12 @@ const GetSkillRequestSchema = z.object({
   params: z.object({ uri: z.unknown().optional() }).passthrough().optional(),
 });
 
-// The public JSON Feed 1.1 of hostinger.com/changelog. Hostinger fields sit in its `_hostinger` extension.
-const CHANGELOG_FEED_URL = "https://www.hostinger.com/changelog/feed.json";
+// The public JSON Feed 1.1 files of hostinger.com: released changelog entries and upcoming roadmap items.
+// Hostinger fields sit in their `_hostinger` extension.
+const CHANGELOG_FEEDS = {
+  released: "https://www.hostinger.com/changelog/feed.json",
+  upcoming: "https://www.hostinger.com/roadmap/feed.json",
+};
 
 /**
  * MCP Server for Hostinger API
@@ -2839,7 +2843,10 @@ class MCPServer {
 
   async handleChangelogListEntries(params) {
     // Agents often send null for an optional field they don't use; treat it as unset.
-    const { product, since, availability, plan } = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== null));
+    const { status = 'released', product, since, plan } = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== null));
+    if (!['released', 'upcoming', 'all'].includes(String(status))) {
+      throw new Error(`status must be released, upcoming or all: ${status}`);
+    }
     const limit = params.limit ?? 20;
     if (typeof limit !== 'number' || !Number.isInteger(limit) || limit < 1 || limit > 100) {
       throw new Error('limit must be an integer from 1 to 100');
@@ -2849,30 +2856,35 @@ class MCPServer {
       throw new Error(`since is not a date: ${since}`);
     }
     const sameText = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
+    const time = (date) => Date.parse(date ?? '') || 0;
 
-    // The feed is public: send only the User-Agent, never the API headers.
-    const response = await axios.get(CHANGELOG_FEED_URL, { headers: { 'User-Agent': this.headers['User-Agent'] }, timeout: 30000 });
-    if (!Array.isArray(response.data?.items)) {
-      throw new Error(`Changelog feed returned no items (HTTP ${response.status})`);
-    }
-    const entries = response.data.items
-      .map(item => ({
+    const statuses = status === 'all' ? ['released', 'upcoming'] : [status];
+    const feeds = await Promise.all(statuses.map(async feedStatus => {
+      const feed = CHANGELOG_FEEDS[feedStatus];
+      // The feeds are public: send only the User-Agent, never the API headers.
+      const response = await axios.get(feed, { headers: { 'User-Agent': this.headers['User-Agent'] }, timeout: 30000 });
+      if (!Array.isArray(response.data?.items)) {
+        throw new Error(`${feed} returned no items (HTTP ${response.status})`);
+      }
+      // The feed sets the status: the changelog lists only released entries, the roadmap only unreleased items.
+      return response.data.items.map(item => ({
         title: item.title,
         summary: item.summary,
         product: item._hostinger?.product,
         date: item.date_published,
-        url: new URL(item.url, CHANGELOG_FEED_URL).toString(),
-        availability: item._hostinger?.availability,
+        url: new URL(item.url, feed).toString(),
+        status: feedStatus,
         plan: item._hostinger?.plan,
-      }))
+      }));
+    }));
+    const entries = feeds.flat()
       .filter(entry =>
         (product === undefined || sameText(entry.product, product)) &&
-        (sinceTime === undefined || Date.parse(entry.date) >= sinceTime) &&
-        (availability === undefined || entry.availability === availability) &&
+        (sinceTime === undefined || time(entry.date) >= sinceTime) &&
         (plan === undefined || (entry.plan ?? []).some(name => sameText(name, plan))))
-      .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+      .sort((a, b) => time(b.date) - time(a.date));
 
-    return { feed: CHANGELOG_FEED_URL, matched: entries.length, entries: entries.slice(0, limit) };
+    return { feeds: statuses.map(feedStatus => CHANGELOG_FEEDS[feedStatus]), matched: entries.length, entries: entries.slice(0, limit) };
   }
 
   agencyHosting_normalizePath(pathString) {

@@ -1404,22 +1404,22 @@ Use this endpoint to renew any subscription available in your account.
   };
 
   /**
-   * What's new at Hostinger: list entries of the public Hostinger changelog (release notes, recent changes, new features and improvements), newest first. Filter by product, publication date, availability or plan. Each entry has its title, summary, product, publication date, URL, and availability and plan when the changelog states them. Needs no API token.
+   * What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet), newest first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product, date or plan. Each entry has its title, summary, product, date, URL, status (released or upcoming), and plan when the entry states one. Needs no API token.
    */
   "changelog_list-entries": {
     params: {
+      /**
+       * Which entries to list: released (default) reads the changelog, for what's new; upcoming reads the roadmap's unreleased items, for what's coming; all reads both.
+       */
+      status?: string;
       /**
        * Only entries for this product, matched case-insensitively. Products include AI Builder, Web Hosting, VPS, Domains, Hostinger Mail, Reach, Ecommerce, WordPress, Hostinger Agent, AI Automation Apps, Web Pro, Billing, Growth and Payments.
        */
       product?: string;
       /**
-       * Only entries published on or after this date, as YYYY-MM-DD
+       * Only entries dated on or after this date, as YYYY-MM-DD
        */
       since?: string;
-      /**
-       * Only entries with this availability. Entries that don't state one are left out.
-       */
-      availability?: string;
       /**
        * Only entries available on this plan, matched case-insensitively. Entries that don't state plans are left out.
        */
