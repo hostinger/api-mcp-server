@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.15.2 — 2026-10-27
+
+### Also in this release
+
+- Bundled agent skills: `skills/headless/steps/04-content-model/SKILL.md`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v3.15.1 — 2026-10-27
 
 ### Also in this release

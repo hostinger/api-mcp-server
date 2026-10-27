@@ -96,7 +96,7 @@ not an answer, see *When you ask the user* in the top-level `SKILL.md`):
 | Option | Tool | Backends | Needs the live instance? |
 |---|---|---|---|
 | **A — Hostinger AI image generation** *(default for WordPress / WooCommerce)* | `wordpress_ai-content_generate-images` | WordPress, WordPress + WooCommerce | **yes** — runs at the instance barrier |
-| **B — Unsplash stock photos** *(default for Ecommerce / Webapp; the fallback everywhere)* | Unsplash API / web search | any | no — pure prepare work |
+| **B — Unsplash stock photos** *(default for Ecommerce / Webapp; the fallback everywhere)* | Unsplash API, or web search + web fetch | any | no — pure prepare work |
 
 > **Do not silently fall back to stock on a WordPress site.** On WordPress / WooCommerce the default is
 > **Hostinger AI (Option A)** — on-brand, generated from `design.md`. Using Unsplash on a WordPress build
@@ -105,8 +105,9 @@ not an answer, see *When you ask the user* in the top-level `SKILL.md`):
 > shortcut: the async start → poll → upload-before-expiry flow (Option A below) is the expected work, not
 > an optional extra. If you are tempted to skip it "for speed", stop and offer the user the choice instead.
 
-If you can generate images yourself (some agents can), that's a third path: put the files in `media/`
-and record alt text — no tool needed. **Record alt text for every image whichever source you use.**
+If you can generate images yourself (some agents can), offer that as a third option; only if the user
+picks it, put the files in `media/` (no tool needed). **Record alt text for every image whichever source
+you use.**
 
 **During the prepare wait, write an image brief for each image** into `content-model.md` no matter the
 option (subject, `image_type`, aspect, and the alt text you expect). Option B can also *fetch* the
@@ -171,14 +172,21 @@ and the push phase uploads them.
    - Without a key, use web search limited to `unsplash.com` (e.g. "unsplash photo Lisbon tram") and
      take the photo id from the result URL: the last segment of `unsplash.com/photos/<slug>-<id>`, or
      the whole segment for `unsplash.com/photos/<id>`.
-   - Don't call `unsplash.com/napi/…`. It sits behind a bot challenge and returns 401.
-2. **Resolve a direct file URL.** `GET https://unsplash.com/photos/<id>/download?force=true` (don't
-   follow the redirect) answers `302` with `Location: https://images.unsplash.com/photo-<…>?…`. The
-   `dl=` parameter in it also carries the photographer's name. Drop the query string and request a
-   web size: `https://images.unsplash.com/photo-<…>?w=1600&q=80&fm=jpg&fit=max`. The upload ability
-   needs this direct file URL, which returns 200 with `image/jpeg`. A photo *page* URL won't work.
-3. **Look before you keep it.** Download a small preview (`?w=500`) and view it. Search snippets
-   only show captions, and a photo often isn't quite what its title says. Reject anything off-topic.
+2. **Resolve a direct file URL.** With the API, the result's `urls.raw` is the file and `user.name`
+   the photographer; for each photo you keep, also `GET` its `links.download_location` (same header),
+   as the API terms require. Without a key, open the photo page (`https://unsplash.com/photos/<…>`)
+   with your **web-fetch tool** and ask it for the main photo's `images.unsplash.com/photo-<…>` URL,
+   quoted exactly, and the photographer's name. Either way, drop the query string and request a web
+   size: `https://images.unsplash.com/photo-<…>?w=1600&q=80&fm=jpg&fit=max`. Check that it returns
+   200 with `image/jpeg`: the upload ability needs this direct file URL, not the photo page.
+   - Every other `unsplash.com` request (curl on the page, `/photos/<id>/download`, `/napi/…`,
+     `/oembed`) hits a bot challenge: a `307` to `/.within.website` (Anubis) or a 401. If your fetch
+     tool gets the challenge page too, stop: no user-agent spoofing or other workarounds. On a
+     WordPress backend where Option A hasn't already failed, offer it; otherwise ask the user for an
+     `UNSPLASH_ACCESS_KEY` or record the gap (step 5).
+3. **Look before you keep it.** Download a small preview (`?w=500`) and view it. Search snippets and
+   fetch summaries only describe the page, and can hand you a related photo's thumbnail instead of
+   the main one; a photo also often isn't quite what its title says. Reject anything off-topic.
    If nothing fits exactly, take the closest real photo and note the gap rather than mislabel it.
 4. **Write alt text from what the photo shows**, not from the article's image brief. For example,
    use "Shopfronts and parked scooters on a Hanoi street" even if the article is about rain.
@@ -190,6 +198,9 @@ and the push phase uploads them.
    Image alt: <what the photo shows>
    Image file: <site>-<subject>.jpg
    ```
+
+   If you can't get a real photo, write `Image gap: <reason>` in place of these lines and tell the
+   user. Never substitute drawn or generated images without saying so.
 
 Unsplash photos are free to use under the Unsplash License. Still credit the photographer: the push
 phase stores "Photo by <Photographer> on Unsplash" as the image caption.
