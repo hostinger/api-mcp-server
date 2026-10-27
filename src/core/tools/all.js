@@ -2581,7 +2581,7 @@ export default [
       "destructiveHint": false
     },
     "topic": "hosting",
-    "description": "What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet), newest first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product, date or plan. Each entry has its title, summary, product, date, URL, status (released or upcoming), and plan when the entry states one. Needs no API token.",
+    "description": "What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product, date or plan. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.",
     "method": "",
     "path": "",
     "inputSchema": {
@@ -2604,7 +2604,7 @@ export default [
         "since": {
           "type": "string",
           "format": "date",
-          "description": "Only entries dated on or after this date, as YYYY-MM-DD"
+          "description": "Only released entries dated on or after this date, as YYYY-MM-DD. Upcoming items are not filtered by date."
         },
         "plan": {
           "type": "string",
@@ -2612,7 +2612,7 @@ export default [
         },
         "limit": {
           "type": "integer",
-          "description": "Most entries to return, newest first",
+          "description": "Most entries to return",
           "minimum": 1,
           "maximum": 100,
           "default": 20

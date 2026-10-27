@@ -66,9 +66,10 @@ const GetSkillRequestSchema = z.object({
 
 // The public JSON Feed 1.1 files of hostinger.com: released changelog entries and upcoming roadmap items.
 // Hostinger fields sit in their `_hostinger` extension.
+// Their key order is the order of the results: upcoming items, then released entries.
 const CHANGELOG_FEEDS = {
-  released: "https://www.hostinger.com/changelog/feed.json",
   upcoming: "https://www.hostinger.com/roadmap/feed.json",
+  released: "https://www.hostinger.com/changelog/feed.json",
 };
 
 /**
@@ -2857,7 +2858,7 @@ class MCPServer {
       throw new Error(`since is not a date: ${since}`);
     }
     const sameText = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
-    const time = (date) => Date.parse(date ?? '') || 0;
+    const time = (date, ifMissing) => Date.parse(date ?? '') || ifMissing;
 
     const statuses = status === 'all' ? feedStatuses : [status];
     const entriesPerFeed = await Promise.all(statuses.map(async feedStatus => {
@@ -2868,22 +2869,29 @@ class MCPServer {
         throw new Error(`${feed} returned no items (HTTP ${response.status})`);
       }
       // The feed sets the status: the changelog lists only released entries, the roadmap only unreleased items.
-      return response.data.items.map(item => ({
+      const toEntry = (item) => ({
         title: item.title,
         summary: item.summary,
         product: item._hostinger?.product,
-        date: item.date_published,
         url: new URL(item.url, feed).toString(),
         status: feedStatus,
         plan: item._hostinger?.plan,
-      }));
+      });
+      if (feedStatus === 'released') {
+        return response.data.items
+          .filter(item => sinceTime === undefined || time(item.date_published, 0) >= sinceTime)
+          .sort((a, b) => time(b.date_published, 0) - time(a.date_published, 0))
+          .map(item => ({ ...toEntry(item), date: item.date_published }));
+      }
+      // Roadmap items have no publication date: soonest expected release first, unknown dates last.
+      const releaseTime = (item) => time(item._hostinger?.expected_release_date, Number.MAX_SAFE_INTEGER);
+      return response.data.items
+        .sort((a, b) => releaseTime(a) - releaseTime(b))
+        .map(item => ({ ...toEntry(item), expected_release_date: item._hostinger?.expected_release_date }));
     }));
-    const entries = entriesPerFeed.flat()
-      .filter(entry =>
-        (product === undefined || sameText(entry.product, product)) &&
-        (sinceTime === undefined || time(entry.date) >= sinceTime) &&
-        (plan === undefined || (entry.plan ?? []).some(name => sameText(name, plan))))
-      .sort((a, b) => time(b.date) - time(a.date));
+    const entries = entriesPerFeed.flat().filter(entry =>
+      (product === undefined || sameText(entry.product, product)) &&
+      (plan === undefined || (entry.plan ?? []).some(name => sameText(name, plan))));
 
     return { feeds: statuses.map(feedStatus => CHANGELOG_FEEDS[feedStatus]), matched: entries.length, entries: entries.slice(0, limit) };
   }
