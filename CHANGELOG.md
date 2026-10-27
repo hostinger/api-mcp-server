@@ -4,6 +4,18 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.12.1 — 2026-10-27
+
+### Operations
+
+- Changed the description of `domains_portfolio_complete-setup`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.12.0 — 2026-10-27
 
 ### Operations

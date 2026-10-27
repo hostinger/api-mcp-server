@@ -1284,8 +1284,8 @@ common reason a domain is left awaiting setup. Create one with `Create WHOIS pro
 Some TLDs require `additional_details`. These are validated before setup, so a missing or
 invalid value is rejected without any registration being attempted.
 
-The domain is set up with the default nameservers and without privacy protection. Use
-`Update domain nameservers` and `Enable privacy protection` afterwards to change either.
+The domain is set up with the default nameservers and with privacy protection. Use
+`Update domain nameservers` and `Disable privacy protection` afterwards to change either.
 
 A successful response means the setup request was accepted, not that the domain is already
 registered. Poll `Get domain list` for the outcome, the domain appears in `Get domain details`
