@@ -3411,10 +3411,41 @@ Defaults to the website root.
   };
 
   /**
+   * Returns the caching state of the website: whether server-side caching is enabled and whether
+development (cacheless) mode is on. Works for the main domain, addon websites, parked domains
+and subdomains of the account; each reports its own settings and does not inherit them from
+its parent website.
+
+`is_enabled` is the setting changed by `Toggle website cache` and reflects a toggle
+immediately. `is_cacheless_mode_enabled` is true while development mode is on; caching is then
+bypassed even when `is_enabled` is true. `Toggle cacheless mode` is applied in the background,
+so this flag can take a few minutes to follow it.
+
+The domain must be the exact website name as listed on the account, without a `www.` prefix.
+Returns 404 when the domain is not a website on the account.
+   */
+  "hosting_cache_status": {
+    params: {
+      /**
+       * username parameter
+       */
+      username: string;
+      /**
+       * Domain name
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing
 is cached, effectively turning off all caching for the website; use it while actively developing,
 testing changes, debugging issues, or when real-time updates must be visible. Disable it after
 finishing development work to restore the performance benefits of caching.
+
+The change is applied in the background and can take a few minutes. Use `Get cache status` to
+check the current state.
    */
   "hosting_cache_toggle-cacheless": {
     params: {
@@ -3440,7 +3471,8 @@ faster page loads, reduced server load, and improved user experience; recommende
 websites. Disabling may impact performance; to temporarily bypass caching while developing or
 debugging, prefer toggling cacheless mode instead.
 
-Does nothing if caching is already in the requested state.
+Does nothing if caching is already in the requested state. Use `Get cache status` to check the
+current state.
    */
   "hosting_cache_toggle-website": {
     params: {

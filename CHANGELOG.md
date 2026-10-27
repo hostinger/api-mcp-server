@@ -4,6 +4,20 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.14.1 — 2026-10-27
+
+### Operations
+
+- Added `hosting_cache_status` — Get cache status
+- Changed the description of `hosting_cache_toggle-cacheless`
+- Changed the description of `hosting_cache_toggle-website`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.14.0 — 2026-10-27
 
 ### Also in this release

@@ -536,6 +536,41 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_cache_status",
+    "title": "Get cache status",
+    "annotations": {
+      "title": "Get cache status",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns the caching state of the website: whether server-side caching is enabled and whether\ndevelopment (cacheless) mode is on. Works for the main domain, addon websites, parked domains\nand subdomains of the account; each reports its own settings and does not inherit them from\nits parent website.\n\n`is_enabled` is the setting changed by `Toggle website cache` and reflects a toggle\nimmediately. `is_cacheless_mode_enabled` is true while development mode is on; caching is then\nbypassed even when `is_enabled` is true. `Toggle cacheless mode` is applied in the background,\nso this flag can take a few minutes to follow it.\n\nThe domain must be the exact website name as listed on the account, without a `www.` prefix.\nReturns 404 when the domain is not a website on the account.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
     "name": "hosting_cache_toggle-cacheless",
     "title": "Toggle cacheless mode",
     "annotations": {
@@ -544,7 +579,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing\nis cached, effectively turning off all caching for the website; use it while actively developing,\ntesting changes, debugging issues, or when real-time updates must be visible. Disable it after\nfinishing development work to restore the performance benefits of caching.",
+    "description": "Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing\nis cached, effectively turning off all caching for the website; use it while actively developing,\ntesting changes, debugging issues, or when real-time updates must be visible. Disable it after\nfinishing development work to restore the performance benefits of caching.\n\nThe change is applied in the background and can take a few minutes. Use `Get cache status` to\ncheck the current state.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/toggle",
     "inputSchema": {
@@ -585,7 +620,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Turns server-side caching for the website on or off, based on the enabled flag. Enable it for\nfaster page loads, reduced server load, and improved user experience; recommended for production\nwebsites. Disabling may impact performance; to temporarily bypass caching while developing or\ndebugging, prefer toggling cacheless mode instead.\n\nDoes nothing if caching is already in the requested state.",
+    "description": "Turns server-side caching for the website on or off, based on the enabled flag. Enable it for\nfaster page loads, reduced server load, and improved user experience; recommended for production\nwebsites. Disabling may impact performance; to temporarily bypass caching while developing or\ndebugging, prefer toggling cacheless mode instead.\n\nDoes nothing if caching is already in the requested state. Use `Get cache status` to check the\ncurrent state.",
     "method": "PATCH",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/cache/toggle",
     "inputSchema": {

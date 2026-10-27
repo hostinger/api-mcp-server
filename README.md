@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (416 total)
+- `hostinger-api-mcp` — unified server over every operation (417 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 3 operations for agent-readiness
 - `hostinger-billing-mcp` — 9 operations for billing
@@ -77,7 +77,7 @@ This package installs the following MCP server commands:
 - `hostinger-domains-mcp` — 42 operations for domains
 - `hostinger-ecommerce-mcp` — 29 operations for ecommerce
 - `hostinger-horizons-mcp` — 6 operations for horizons
-- `hostinger-hosting-mcp` — 66 operations for hosting
+- `hostinger-hosting-mcp` — 67 operations for hosting
 - `hostinger-mail-mcp` — 38 operations for mail
 - `hostinger-reach-mcp` — 69 operations for reach
 - `hostinger-vps-mcp` — 67 operations for vps
@@ -1840,12 +1840,33 @@ installation living in a subdirectory, pass the directory query parameter to cle
 - **Method**: `DELETE`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/clear`
 
+#### hosting_cache_status
+
+Returns the caching state of the website: whether server-side caching is enabled and whether
+development (cacheless) mode is on. Works for the main domain, addon websites, parked domains
+and subdomains of the account; each reports its own settings and does not inherit them from
+its parent website.
+
+`is_enabled` is the setting changed by `Toggle website cache` and reflects a toggle
+immediately. `is_cacheless_mode_enabled` is true while development mode is on; caching is then
+bypassed even when `is_enabled` is true. `Toggle cacheless mode` is applied in the background,
+so this flag can take a few minutes to follow it.
+
+The domain must be the exact website name as listed on the account, without a `www.` prefix.
+Returns 404 when the domain is not a website on the account.
+
+- **Method**: `GET`
+- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/status`
+
 #### hosting_cache_toggle-cacheless
 
 Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing
 is cached, effectively turning off all caching for the website; use it while actively developing,
 testing changes, debugging issues, or when real-time updates must be visible. Disable it after
 finishing development work to restore the performance benefits of caching.
+
+The change is applied in the background and can take a few minutes. Use `Get cache status` to
+check the current state.
 
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/toggle`
@@ -1857,7 +1878,8 @@ faster page loads, reduced server load, and improved user experience; recommende
 websites. Disabling may impact performance; to temporarily bypass caching while developing or
 debugging, prefer toggling cacheless mode instead.
 
-Does nothing if caching is already in the requested state.
+Does nothing if caching is already in the requested state. Use `Get cache status` to check the
+current state.
 
 - **Method**: `PATCH`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/toggle`
