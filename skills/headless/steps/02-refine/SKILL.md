@@ -9,8 +9,9 @@ Find out what the user wants to build, guess which backend fits, and write it do
 **conversation, not a form**: the pasted prompt names a domain and nothing else, so everything about
 the site comes from talking to the user.
 
-**Keep it short.** The only thing you must know is *what they are building* — enough to guess the
-backend. Every other question is optional: the more the user gives, the better the site, but never
+**Keep it short.** You must know what they are building, whether they sell and whether they'll
+publish content over time — enough to guess the backend — plus, when Step 2 found a project in the folder, the
+**Existing project** confirms. Every other question is optional: the more the user gives, the better the site, but never
 hold the build hostage to refinement. Fill gaps with sensible defaults and say so in the brief. A
 skipped question tool is not the user passing on a question; see *When you ask the user* in the
 top-level `SKILL.md`.
@@ -52,8 +53,8 @@ Before asking anything, collect what the user has already given you, so you don'
   framework config (`next.config.*`, `astro.config.*`, `vite.config.*`, `svelte.config.*`, `nuxt.*`),
   a `src/` or `app/` tree, `index.html`, a storefront/cart, etc. A real project here usually means the
   user **already has their own frontend** and mainly needs a Hostinger backend to wire it to — lean
-  toward "bring your own frontend" in Step 3. If the folder has nothing site-like, assume they don't
-  and lean toward "agent builds it".
+  toward "bring your own frontend" in Step 3. That is what *Step 2 found a project in the folder*
+  means everywhere below.
 - Anything in the pasted prompt beyond the domain (a sentence, a link, a screenshot).
 - Files in the current project that look like site material (copy, logos, product lists, images).
 - What the agent already knows about the user from local memory or this conversation (a prior build,
@@ -62,10 +63,13 @@ Before asking anything, collect what the user has already given you, so you don'
 
 ## Step 3 — Ask
 
-If Step 2 already answers *what are you building* and *will they sell*, skip the Round 1–3 questions
-below, but still ask **Build mode** before moving on.
+When Step 2 found a project in the folder, ask **Build mode** and the **Existing project** confirms
+below in your first message, after Round 1 when Round 1 still needs asking; they don't count toward
+the 3 rounds, and code that answers Round 1 never skips them. Otherwise don't ask Build mode: it
+defaults (see *Build mode* below).
 
-Otherwise open with one line and **wait for the user's answer**: *"Tell me what you want to build — a
+If Step 2 already answers the three Round 1 questions, skip the Round 1–3 questions below. Otherwise
+open with one line and **wait for the user's answer**: *"Tell me what you want to build — a
 sentence is enough. Links, screenshots or files help too. Skip anything you don't want to answer."*
 
 > **"What do you want to build?" is an OPEN question — ask it in plain prose and wait.** Never turn it
@@ -84,18 +88,19 @@ decide" means *use defaults*, not *ask again*. A skipped tool result is not thei
 that round in plain text, as *When you ask the user* in the top-level `SKILL.md` says. The re-ask
 repeats the round; it doesn't count toward the 3.
 
-**Round 1 — what it is (the only required round):**
+**Round 1 — what it is (required; these three decide the backend):**
 
 1. **What are you building?** The business or project, and what the site is for.
 2. **Will you sell anything on it?** Physical products, digital products, services with checkout —
-   or nothing. *This decides the backend.* Skip it only when the answer is already unmistakable
-   ("an online shop for my candles", "my personal blog"); when in doubt, ask.
-3. **Who is it for?** The audience, and how they'll find the site. *(optional)*
+   or nothing. Skip it only when the answer is already unmistakable ("an online shop for my
+   candles", "my personal blog"); when in doubt, ask.
+3. **Will you publish content over time?** Blog posts, articles, news, recipes, portfolio pieces,
+   case studies, and how often — or a handful of pages that rarely change. Skip it only when the
+   answer is already unmistakable ("my personal blog", an app the user is deploying).
 
 **Round 2 — what goes on it (optional, adapt to Round 1):**
 
-- **Content they'll publish over time** — blog posts, articles, news, recipes, portfolio pieces,
-  case studies? How often? Or is it a handful of pages that rarely change?
+- **Who is it for?** The audience, and how they'll find the site.
 - **Pages** — propose a page list from what you know and ask them to add or remove.
 - If they sell: **what and how many** — a rough product count, categories, whether products have
   variants (size, colour), and the shipping regions.
@@ -110,6 +115,20 @@ the design directions, so it is **not** asked again later; gather it here:
 - **Colours & brand** — brand/accent colours, logo, fonts, existing copy, photos. Note where they live.
 - **Must-haves and no-gos** — contact form, newsletter, bookings, languages, things to avoid.
 
+**Existing project — when Step 2 found a project in the folder (required, in the Build mode message):**
+
+Build mode answers the look. The code shows the rest, but the user knows what has to survive the
+move, so ask each as a confirm of what you found, naming it, so the user only says yes or corrects you:
+
+1. **Routes that open directly** — the client-side routes you found (name them, e.g. `/stats`,
+   `/settings`) must open from a typed link and survive a refresh? Ask only when the code routes in
+   the browser (React Router, Vue Router, a history or hash router); a server-routed app has none.
+2. **Data** — the database and environment variable names you found (or "none"): is that all the
+   app needs? Hostinger gives the app MySQL only: a different database (Postgres, MongoDB, a SQLite
+   file) goes under **Out of scope** as a migration the user owns, not as `Database: MySQL`.
+
+Record the routes and data in **Existing project**.
+
 If the user asks for something outside the scope (user accounts, member areas, bookings with a
 calendar backend, user-generated content), say plainly that the headless flow doesn't support it yet
 and record it under **Out of scope** — don't promise it.
@@ -121,25 +140,27 @@ and record it under **Out of scope** — don't promise it.
 > for it. (A form that needs accounts, payments or a booking calendar is still out of scope — this is a
 > plain name/email/message enquiry form.)
 
-### Build mode — ask once (this one *is* a user choice)
+### Build mode — a user choice when the folder holds a project
 
-The backend is your call, but **how the frontend gets built is the user's** — because most of the time
-the user already has their own frontend and just needs a Hostinger backend to wire it to. After the
-folder + memory inspection (Step 2), ask **one** question (a structured choice is ideal here), seeding
-the default from what you found:
+The backend is your call, but **how the frontend gets built is the user's**. When Step 2 found a
+project in the folder, ask **one** question (a structured choice is ideal here); it also settles the
+app's look:
 
-- **Bring your own frontend** *(default when Step 2 found a real project in the folder)* — "I already
-  have a frontend / I'll drive the design and we vibe-code it together." The agent **uses the user's
+- **Bring your own frontend — keep my app's look** *(the default)* — the agent **uses the user's
   existing project in the current folder as the source**, collaborates on design/code at the user's
   direction, and wires it to the provisioned backend. There is **no agent-generated design** — the
-  design step defers to the user (see the Build mode box at the top of the design step), and the frontend step builds on their project
-  rather than scaffolding a new one.
-- **Agent designs and builds it** *(default when the folder has nothing site-like)* — "Give me ideas
-  — you design and code it." Today's flow: the design step proposes directions and the frontend step
-  scaffolds and implements them.
+  design step defers to the user (see the Build mode box at the top of the design step), and the
+  frontend step builds on their project rather than scaffolding a new one. Write "Keep the look we
+  have: the app in this folder" in **Design direction**.
+- **Agent designs and builds it — a new design** — the design step proposes directions and the
+  frontend step scaffolds and implements them.
 
-A skipped tool result is not a pick: re-ask in plain text, and use the seeded default only when the
-user says so (see *When you ask the user* in the top-level `SKILL.md`).
+A skipped tool result is not a pick: re-ask in plain text, and use the default only when the user
+says so (see *When you ask the user* in the top-level `SKILL.md`).
+
+Otherwise don't ask: Build mode is **Agent designs and builds**. When the user says they have their
+own code elsewhere, ask for its path, inspect it as in Step 2, and from then on treat it as a project
+found in the folder.
 
 Record the answer as the brief's **Build mode**. This is the one frontend/technology question you *do*
 put to the user; everything else about the stack (framework, SSR/SSG) is still inferred. The deliverable
@@ -195,6 +216,8 @@ site, not the backend:
 
 - **The plan** — what it is, audience, pages, products (if any), tone. Mark anything you defaulted
   (*"assumed: warm, minimal look"*) so the user sees what they skipped.
+- **Your app** *(when Step 2 found a project in the folder)* — one line: keeps its look or gets a new
+  one, the routes that must open directly, and whether a database is created.
 - **How it's built** — state the backend as a *consequence* in one plain line, focused on what it
   means for them day to day ("I'll build this on WordPress, so you edit pages and posts in a normal
   WordPress admin"), **not** as a choice you're asking them to make. Don't ask "is WordPress OK?" or
@@ -208,8 +231,9 @@ theirs and note it in the brief.
 ## Step 6 — Write `brief.md` and hand off
 
 Write `brief.md` from the template below. Fill every section from the conversation, defaulting what
-the user skipped and tagging it `(assumed)`; leave out **Products** when nothing is sold. Use the
-user's own words where you can. Then update `state.json`:
+the user skipped and tagging it `(assumed)`; leave out **Products** when nothing is sold and
+**Existing project** unless Step 2 found a project in the folder. Use the user's own words where you
+can. Then update `state.json`:
 `"stage": "provision"`, fresh `updated_at`.
 
 The **Suggested backend** section is the contract with `03-provision/SKILL.md`, which routes on it.
@@ -239,7 +263,7 @@ routes it to the `wordpress` subfolder with the store enabled (it is **not** a s
 (layout, structure, mood); colours / brand palette; any screenshots. This is where ALL design questions
 land — the frontend step reads this and does not re-ask. Write "Agent's choice: <short style>" when the
 user didn't specify. Record in the user's own words a request to keep their current look ("Keep the look
-we have: <site URL | screenshots | brand guide>") and any logo idea they describe; the design step acts
+we have: <site URL | screenshots | brand guide | the app in this folder>") and any logo idea they describe; the design step acts
 on both.>
 
 ## Pages
@@ -261,14 +285,18 @@ on both.>
 ## Assets
 <logo, colours, photos, copy the user provided and where they are; "None yet" if none>
 
+## Existing project
+<only when Step 2 found a project in the folder: its path; the framework; the client-side
+routes that must open directly and on refresh (or "None"); Database: none | MySQL; the env var names
+the app reads — names only, never values>
+
 ## Suggested backend
 **<WordPress | Ecommerce | WordPress + Ecommerce | WordPress + WooCommerce | Webapp>** — <one-line reason>.
 <"Confirmed by the user." or "User chose this over the recommended <X> because <reason>.">
 
 ## Build mode
 **<Bring your own frontend | Agent designs and builds>** — <one line>. <When "Bring your own frontend":
-the path to the user's existing project in the current folder (the frontend source), and how they want
-to drive design/code. When "Agent designs and builds": leave the design + frontend steps to run as
+how they want to drive design/code; the project's path is under **Existing project**. When "Agent designs and builds": leave the design + frontend steps to run as
 normal.> The design step and the frontend step both read this: **Bring your own frontend** → design
 defers to the user and frontend builds on their project; **Agent designs and builds** → both run as normal.
 

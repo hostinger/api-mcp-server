@@ -58,6 +58,8 @@ All website/database operations below go through the Hostinger connector (`execu
 ## Step 3 — Database (only if the app needs one)
 
 Skip this step entirely for an app with no database (static SPA, an app that talks to an external API).
+The app needs one when `brief.md` → **Existing project** says **Database: MySQL**, or, for a new app,
+when the brief describes data the app stores itself.
 This is **join-half** work — it needs the live website, so run it once `provision.status == "completed"`.
 
 **Preferred — let the platform create the database and inject the credentials:**
