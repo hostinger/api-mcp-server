@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (418 total)
+- `hostinger-api-mcp` — unified server over every operation (419 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 3 operations for agent-readiness
 - `hostinger-billing-mcp` — 9 operations for billing
@@ -77,7 +77,7 @@ This package installs the following MCP server commands:
 - `hostinger-domains-mcp` — 42 operations for domains
 - `hostinger-ecommerce-mcp` — 29 operations for ecommerce
 - `hostinger-horizons-mcp` — 6 operations for horizons
-- `hostinger-hosting-mcp` — 68 operations for hosting
+- `hostinger-hosting-mcp` — 69 operations for hosting
 - `hostinger-mail-mcp` — 38 operations for mail
 - `hostinger-reach-mcp` — 69 operations for reach
 - `hostinger-vps-mcp` — 67 operations for vps
@@ -1831,6 +1831,13 @@ Check deployment status, build status, build logs and why a build failed (failur
 #### hosting_websites_trigger-event
 
 Tell Hostinger that something happened on this website, so Hostinger services such as hPanel can react to it. `event.name` picks the event and decides which `event.params` it takes. The call changes nothing on the website.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### changelog_list-entries
+
+What's new at Hostinger: list entries of the public Hostinger changelog (release notes, recent changes, new features and improvements), newest first. Filter by product, publication date, availability or plan. Each entry has its title, summary, product, publication date, URL, and availability and plan when the changelog states them. Needs no API token.
 
 - **Method**: `custom`
 - **Path**: `custom`
