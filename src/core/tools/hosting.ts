@@ -566,6 +566,58 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "changelog_list-entries",
+    "title": "List changelog entries (what's new, release notes)",
+    "annotations": {
+      "title": "List changelog entries (what's new, release notes)",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "topic": "hosting",
+    "description": "What's new at Hostinger: list entries of the public Hostinger changelog (release notes, recent changes, new features and improvements), newest first. Filter by product, publication date, availability or plan. Each entry has its title, summary, product, publication date, URL, and availability and plan when the changelog states them. Needs no API token.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "type": "string",
+          "description": "Only entries for this product, matched case-insensitively. Products include AI Builder, Web Hosting, VPS, Domains, Hostinger Mail, Reach, Ecommerce, WordPress, Hostinger Agent, AI Automation Apps, Web Pro, Billing, Growth and Payments."
+        },
+        "since": {
+          "type": "string",
+          "format": "date",
+          "description": "Only entries published on or after this date, as YYYY-MM-DD"
+        },
+        "availability": {
+          "type": "string",
+          "description": "Only entries with this availability. Entries that don't state one are left out.",
+          "enum": [
+            "beta",
+            "rolling_out",
+            "general"
+          ]
+        },
+        "plan": {
+          "type": "string",
+          "description": "Only entries available on this plan, matched case-insensitively. Entries that don't state plans are left out."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Most entries to return, newest first",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20
+        }
+      },
+      "required": []
+    },
+    "security": [],
+    "custom": true,
+    "handlerMethod": "handleChangelogListEntries",
+    "group": "hosting"
+  },
+  {
     "name": "hosting_cache_clear-website",
     "title": "Clear website cache",
     "annotations": {

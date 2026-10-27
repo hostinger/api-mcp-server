@@ -4,6 +4,19 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.17.0 — 2026-10-27
+
+### Operations
+
+- Added `changelog_list-entries` — List changelog entries (what's new, release notes)
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Server instructions: `src/core/instructions.js`, `src/core/instructions.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.16.0 — 2026-10-27
 
 ### Also in this release

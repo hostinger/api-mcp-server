@@ -95,6 +95,16 @@ const GetSkillRequestSchema = z.object({
 interface SkillFile { uri: string; digest: string; size: number; mimeType: string; text: string }
 interface Skill { uri: string; frontmatter: Record<string, unknown>; resources: SkillFile[] }
 
+// The public JSON Feed 1.1 of hostinger.com/changelog. Hostinger fields sit in its `_hostinger` extension.
+const CHANGELOG_FEED_URL = "https://www.hostinger.com/changelog/feed.json";
+interface ChangelogFeedItem {
+  url: string;
+  title: string;
+  summary: string;
+  date_published: string;
+  _hostinger?: { product?: string; availability?: string; plan?: string[] };
+}
+
 /**
  * MCP Server for Hostinger API
  * Generated from OpenAPI spec version 2.4.3
@@ -349,6 +359,8 @@ class MCPServer {
         return await this.handleShowJsDeploymentLogs(params);
       case 'hosting_websites_trigger-event':
         return await this.handleHostingTriggerWebsiteEvent(params);
+      case 'changelog_list-entries':
+        return await this.handleChangelogListEntries(params);
       case 'agency-hosting_deploy-node-static-website':
         return await this.handleNodeStaticDeploy(params);
       case 'agency-hosting_deploy-php-application':
@@ -2867,6 +2879,44 @@ class MCPServer {
 
       throw error;
     }
+  }
+
+  private async handleChangelogListEntries(params: Record<string, unknown>): Promise<unknown> {
+    // Agents often send null for an optional field they don't use; treat it as unset.
+    const { product, since, availability, plan } = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== null));
+    const limit = params.limit ?? 20;
+    if (typeof limit !== 'number' || !Number.isInteger(limit) || limit < 1 || limit > 100) {
+      throw new Error('limit must be an integer from 1 to 100');
+    }
+    const sinceTime = since === undefined ? undefined : Date.parse(String(since));
+    if (Number.isNaN(sinceTime)) {
+      throw new Error(`since is not a date: ${since}`);
+    }
+    const sameText = (a: unknown, b: unknown): boolean => String(a).toLowerCase() === String(b).toLowerCase();
+
+    // The feed is public: send only the User-Agent, never the API headers.
+    const response = await axios.get<{ items?: ChangelogFeedItem[] }>(CHANGELOG_FEED_URL, { headers: { 'User-Agent': this.headers['User-Agent'] }, timeout: 30000 });
+    if (!Array.isArray(response.data?.items)) {
+      throw new Error(`Changelog feed returned no items (HTTP ${response.status})`);
+    }
+    const entries = response.data.items
+      .map(item => ({
+        title: item.title,
+        summary: item.summary,
+        product: item._hostinger?.product,
+        date: item.date_published,
+        url: new URL(item.url, CHANGELOG_FEED_URL).toString(),
+        availability: item._hostinger?.availability,
+        plan: item._hostinger?.plan,
+      }))
+      .filter(entry =>
+        (product === undefined || sameText(entry.product, product)) &&
+        (sinceTime === undefined || Date.parse(entry.date) >= sinceTime) &&
+        (availability === undefined || entry.availability === availability) &&
+        (plan === undefined || (entry.plan ?? []).some(name => sameText(name, plan))))
+      .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+
+    return { feed: CHANGELOG_FEED_URL, matched: entries.length, entries: entries.slice(0, limit) };
   }
 
   private agencyHosting_normalizePath(pathString: string): string {
