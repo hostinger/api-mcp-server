@@ -1,7 +1,7 @@
 // Typed mirror of catalog.js. Keep both files, and api-remote-mcp's PHP
 // implementation, behaviourally identical. Both servers honour `hidden`: search skips the
 // entry, execute and multi-execute still run it. Each server has its own list
-// (generators.mcp.hidden and generators.remote-mcp.hidden in the API manifest).
+// (the files generators.mcp.hiddenFile and generators.remote-mcp.hiddenFile point to).
 
 export const DEFAULT_SEARCH_LIMIT = 5;
 export const MAX_SEARCH_LIMIT = 20;

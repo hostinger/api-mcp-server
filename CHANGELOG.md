@@ -4,6 +4,12 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.15.1 — 2026-10-27
+
+### Also in this release
+
+- Request handling and authentication: `src/core/catalog.js`, `src/core/catalog.ts`
+
 ## v3.15.0 — 2026-10-27
 
 ### Operations

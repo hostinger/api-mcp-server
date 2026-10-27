@@ -3,7 +3,7 @@
 // runtime supplies the catalog and the function that performs a call.
 // Keep in sync with catalog.ts and with api-remote-mcp's PHP implementation.
 // Both servers honour `hidden`: search skips the entry, execute and multi-execute still run
-// it. Each server has its own list (generators.mcp.hidden and generators.remote-mcp.hidden).
+// it. Each server has its own list (generators.mcp.hiddenFile and generators.remote-mcp.hiddenFile).
 
 export const DEFAULT_SEARCH_LIMIT = 5;
 export const MAX_SEARCH_LIMIT = 20;
