@@ -288,6 +288,27 @@ export interface APITools {
   };
 
   /**
+   * Tell Hostinger that something happened on this website, so Hostinger services such as hPanel can react to it. `event.name` picks the event and decides which `event.params` it takes. The call changes nothing on the website.
+   */
+  "hosting_websites_trigger-event": {
+    params: {
+      /**
+       * Username of the hosting account that owns the website, as hosting_websites_list returns it
+       */
+      username: string;
+      /**
+       * Domain name of the website (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * Event to trigger; `name` decides which `params` it takes
+       */
+      event: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Lists the datacenters available for provisioning a new website on the given Agency Plan
 hosting order.
 

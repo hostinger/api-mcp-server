@@ -496,6 +496,76 @@ const tools: OpenApiTool[] = [
     "hidden": true
   },
   {
+    "name": "hosting_websites_trigger-event",
+    "title": "Trigger website event",
+    "annotations": {
+      "title": "Trigger website event",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "topic": "hosting",
+    "description": "Tell Hostinger that something happened on this website, so Hostinger services such as hPanel can react to it. `event.name` picks the event and decides which `event.params` it takes. The call changes nothing on the website.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Username of the hosting account that owns the website, as hosting_websites_list returns it"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website (e.g., example.com)"
+        },
+        "event": {
+          "type": "object",
+          "description": "Event to trigger; `name` decides which `params` it takes",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the event. `headless_onboarding.tool.connected`: an AI coding tool started building this website with the Hostinger headless skill, so hPanel shows the tool as connected; send it once per skill run; takes `params.tool`.",
+              "enum": [
+                "headless_onboarding.tool.connected"
+              ]
+            },
+            "params": {
+              "type": "object",
+              "description": "Fields of the event",
+              "properties": {
+                "tool": {
+                  "type": "string",
+                  "description": "Lowercase slug of the AI coding tool. Known slugs: `claude` (Claude Code), `cursor` (Cursor), `codex` (Codex), `vscode` (VS Code), `antigravity` (Antigravity) and `devin` (Devin). For any other tool, send its own slug.",
+                  "pattern": "^[a-z0-9-]{1,32}$"
+                }
+              },
+              "required": [
+                "tool"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "name",
+            "params"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "username",
+        "domain",
+        "event"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "templateFile": "trigger-website-event.template.js",
+    "templateFileTS": "trigger-website-event.template.ts",
+    "handlerMethod": "handleHostingTriggerWebsiteEvent",
+    "group": "hosting"
+  },
+  {
     "name": "hosting_cache_clear-website",
     "title": "Clear website cache",
     "annotations": {

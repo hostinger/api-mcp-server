@@ -4,6 +4,20 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.15.0 — 2026-10-27
+
+### Operations
+
+- Added `hosting_websites_trigger-event` — Trigger website event
+
+### Also in this release
+
+- Documentation: `README.md`
+- Bundled agent skills: `skills/headless/steps/01-check-state/SKILL.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.14.1 — 2026-10-27
 
 ### Operations

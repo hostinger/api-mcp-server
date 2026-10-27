@@ -347,6 +347,8 @@ class MCPServer {
         return await this.handleListJavascriptDeployments(params);
       case 'hosting_show-js-deployment-logs':
         return await this.handleShowJsDeploymentLogs(params);
+      case 'hosting_websites_trigger-event':
+        return await this.handleHostingTriggerWebsiteEvent(params);
       case 'agency-hosting_deploy-node-static-website':
         return await this.handleNodeStaticDeploy(params);
       case 'agency-hosting_deploy-php-application':
@@ -2817,6 +2819,54 @@ class MCPServer {
       fromLine: effectiveFromLine,
       logs
     };
+  }
+
+  private async handleHostingTriggerWebsiteEvent(params: Record<string, unknown>): Promise<unknown> {
+    const { username, domain, event } = params;
+    const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
+    const url = new URL(`api/hosting/v1/accounts/${encodeURIComponent(String(username))}/websites/${encodeURIComponent(String(domain))}/events/trigger`, baseUrl).toString();
+
+    try {
+      const bearerToken = await this.getAuthToken();
+
+      const config: AxiosRequestConfig = {
+        method: 'post',
+        url,
+        headers: {
+          ...this.headers,
+          'Authorization': `Bearer ${bearerToken}`,
+          'Content-Type': 'application/json'
+        },
+        data: { event },
+        timeout: 60000, // 60s
+        validateStatus: function (status: number): boolean {
+          return status < 500;
+        }
+      };
+
+      const response = await axios(config);
+
+      if (response.status < 200 || response.status >= 300) {
+        throw new ApiExecutionError(response.status, response.data);
+      }
+
+      return response.data;
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.log('error', `Failed to trigger website event: ${errorMessage}`);
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        const responseStatus = error.response?.status;
+        this.log('error', 'API Error Details:', {
+          status: responseStatus,
+          data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
+        });
+      }
+
+      throw error;
+    }
   }
 
   private agencyHosting_normalizePath(pathString: string): string {
