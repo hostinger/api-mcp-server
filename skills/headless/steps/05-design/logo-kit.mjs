@@ -187,12 +187,16 @@ export function svgDoc({ width, height, title, body, id = 'logo-title' }) {
 
 /**
  * Validate a finished SVG string before writing it. Throws on: NaN/undefined/Infinity in the
- * markup, live <text> (the logo must be outlined), a missing <title>, or a missing viewBox.
+ * markup, live <text> (the logo must be outlined), a missing <title>, a missing viewBox, or an "&" that
+ * doesn't start an XML entity (a browser shows nothing for an SVG file that isn't well-formed XML).
  * @returns {{ bytes: number }}
  */
 export function check(svg) {
   const problems = [];
   if (/NaN|undefined|Infinity/.test(svg)) problems.push('contains NaN/undefined/Infinity');
+  if (/&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[\dA-Fa-f]+);)/.test(svg)) {
+    problems.push('contains a bare "&" or an HTML-only entity such as &nbsp;; build the file with svgDoc(), which escapes the title');
+  }
   if (/<text[\s>]/.test(svg)) problems.push('contains <text>; outline the letters with textPath/glyphPath');
   if (!/<title[^>]*>[^<]+<\/title>/.test(svg)) problems.push('missing <title>');
   if (!/viewBox="0 0 [\d.]+ [\d.]+"/.test(svg)) problems.push('missing or invalid viewBox');

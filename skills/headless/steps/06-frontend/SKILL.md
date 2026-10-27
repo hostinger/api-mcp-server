@@ -103,6 +103,12 @@ Read the backend from `site.json`:
   `yoast_head_json` into the page `<head>` (title, description, Open Graph, JSON-LD schema) — Yoast is
   installed by default at provision (`site.json → seo.enabled: true`). If `seo.enabled` is `false`
   (Yoast absent), fall back to generating per-page title/description/OG tags from each item's content.
+  - **Decode WordPress text.** WordPress returns titles and names HTML-encoded (`Tea &#038; Cake`,
+    `don&#8217;t`). Add the `entities` package and, in the one data module, run every title, name
+    and SEO field you render as plain text (posts, pages, terms, Yoast, Store API products and
+    categories) through `decodeHTML` once; strip an excerpt's tags first if you show it as text.
+    Leave HTML fields (`content.rendered`, an excerpt shown as HTML) as they are, and never inject a
+    decoded field as raw HTML.
   - **Contact form** (`site.json → contact_form.enabled: true`, any WordPress backend) → render the
     contact page's form and submit it **client-side** to Contact Form 7's public feedback endpoint. Put a
     `submitContactForm(data)` helper in the one data module: build a `FormData` with the field names from

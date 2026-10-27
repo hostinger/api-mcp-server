@@ -329,7 +329,10 @@ Write `brand/logo-build.mjs`, import from `./logo-kit.mjs`, and always run it fr
 | `arcText(font, text, { cx, cy, r, size })` | Letters around a circle, for seals |
 | `sticker(d, { fill, ink, strokeWidth, shadow, shadowColor, transform })` | Ink outline + hard offset shadow, for outlined directions. On dark backgrounds give the outline and shadow a palette colour that shows (`shadowColor` defaults to `ink`) |
 | `svgDoc({ width, height, title, body })` | Root SVG with `role="img"` and a `<title>` |
-| `check(svg)` | Throws on `NaN`, live `<text>`, a missing title or viewBox. Run it on every file before writing |
+| `check(svg)` | Throws on `NaN`, live `<text>`, a missing title or viewBox, or an `&` that isn't an XML entity. Run it on every file before writing |
+
+Wrap every file in `svgDoc()`, never a hand-written `<svg>` or `<title>`: it escapes the site name,
+and one bare `&` (as in "Salt & Pepper") makes the browser show nothing.
 
 Never call opentype's `path.toPathData()` directly; the kit's serializer exists because opentype.js
 2.0 writes `NaN` into some paths, and browsers silently stop drawing at the first `NaN`.
