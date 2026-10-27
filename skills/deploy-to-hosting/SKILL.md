@@ -86,7 +86,7 @@ Local files on the hosted server, deployed from an upload (step 2):
 
 On both the local and the hosted server, `hosting_deploy` with `git: { repository: "owner/name", branch }` does all of it: it finds the Git installation that can reach the repository and deploys it as the `type` you give. Always pass `type: "static"` or `"nodejs"` unless the site already runs a Node.js app (or you pass Node.js settings such as `appType`): a new site is not detected as Node.js, and a Node.js repository deployed as static would publish its source. Then:
 - **PHP and static sites:** saves the auto-deployment settings, which deploys the branch immediately and again on every push;
-- **Node.js sites:** starts a build of the branch with the stored build settings; later pushes build the same way. A Git deploy has nothing to detect from, so when none are stored pass `appType` and `nodeVersion` (from `engines` in `package.json`), plus `outputDirectory` and `buildScript` if the app has a build step; they are stored for those pushes.
+- **Node.js sites:** starts a build of the branch with the stored build settings; later pushes build the same way. When none are stored, they are detected from the branch's `package.json` and stored for those pushes; pass `appType`, `nodeVersion`, `outputDirectory`, `buildScript` or `entryFile` to override them (a compiled app still needs `entryFile`).
 
 With no active installation it stops and says so: the user connects GitHub or GitLab once in hPanel under Websites → Manage → Advanced → Git; there is no API for that step. Confirm with `hosting_get-deployment`, which returns the stored `gitAutoDeployment`.
 

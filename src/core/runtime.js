@@ -543,15 +543,29 @@ class MCPServer {
     return this.executeApiCall(tool, params);
   }
 
-  // The website for a domain, matched exactly (the list endpoint filters by substring).
+  // The website for a domain, matched exactly. The list endpoint filters by substring and pages its
+  // results, so a short domain can match many sites: read pages until the exact one turns up or a page
+  // comes back short, up to a limit.
   async findWebsite(domain) {
-    const response = await this.callOperation('hosting_websites_list', { domain });
-    const sites = response && Array.isArray(response.data) ? response.data : [];
-    const site = sites.find((website) => website.domain && website.domain.toLowerCase() === domain.toLowerCase());
-    if (!site) {
-      throw new Error('No website found for domain: ' + domain);
+    const perPage = 100;
+    const maxPages = 10;
+    for (let page = 1; page <= maxPages; page++) {
+      const response = await this.callOperation('hosting_websites_list', { domain, page, per_page: perPage });
+      const sites = response && Array.isArray(response.data) ? response.data : [];
+      const site = sites.find((website) => website.domain && website.domain.toLowerCase() === domain.toLowerCase());
+      if (site) {
+        // Agency Plan (U4S) websites come back without a username, and every later call would fail with
+        // an unclear API error.
+        if (typeof site.username !== 'string') {
+          throw new Error(site.domain + ' is an Agency Plan website: Git deploys and build status here work only for Shared and Cloud hosting websites. Use the agency-hosting operations for it.');
+        }
+        return site;
+      }
+      if (sites.length < perPage) {
+        break;
+      }
     }
-    return site;
+    throw new Error('No website found for domain: ' + domain);
   }
 
   hosting_deploy_types = ['static', 'nodejs', 'wordpress-site', 'wordpress-plugin', 'wordpress-theme'];
@@ -760,9 +774,11 @@ class MCPServer {
   // directory, and the API stores them as null, so a missing one is sent as null. Detection supplies
   // the build script but only guesses a root-level entry file, so a compiled app (TypeScript) must
   // pass entryFile.
-  // storedSettings tells base apart: settings stored for the site (Git deploy) belong to whatever
-  // framework it ran before, so a different appType starts from a clean build step, while settings
-  // detected from the project itself (archive deploy) are always right to keep.
+  // An explicit null for outputDirectory, buildScript or entryFile clears the stored value, so an app
+  // can drop a build step it no longer has.
+  // storedSettings tells base apart: settings stored for the site or detected from a Git branch (Git
+  // deploy) belong to the framework they were stored or detected for, so a different appType starts
+  // from a clean build step, while settings detected from the archive being deployed are kept.
   hosting_deploy_nodeSettings(base, params, storedSettings) {
     const given = base || {};
     const appType = params.appType ?? given.app_type;
@@ -771,6 +787,7 @@ class MCPServer {
     if (appType === undefined || appType === null) {
       throw new Error("Missing Node.js build setting: appType. Pass it to hosting_deploy, with outputDirectory and buildScript when the app has a build step; read them from the project's package.json.");
     }
+    const cleared = (name) => name in params && params[name] === null;
     const optional = {
       entry_file: params.entryFile ?? stored.entry_file,
       package_manager: params.packageManager ?? stored.package_manager,
@@ -779,9 +796,10 @@ class MCPServer {
       node_version: params.nodeVersion ?? stored.node_version ?? 22,
       app_type: appType,
       root_directory: params.rootDirectory ?? stored.root_directory ?? '.',
-      output_directory: params.outputDirectory ?? stored.output_directory ?? null,
-      build_script: params.buildScript ?? stored.build_script ?? null,
+      output_directory: cleared('outputDirectory') ? null : params.outputDirectory ?? stored.output_directory ?? null,
+      build_script: cleared('buildScript') ? null : params.buildScript ?? stored.build_script ?? null,
       ...Object.fromEntries(Object.entries(optional).filter(([, value]) => value !== undefined && value !== null)),
+      ...(cleared('entryFile') ? { entry_file: null } : {}),
     };
   }
 
@@ -829,6 +847,9 @@ class MCPServer {
     // Read only now that git is known to be an object.
     if (git !== undefined) {
       this.hosting_deploy_gitDirectory(git);
+      if (git.installationUuid !== undefined && (typeof git.installationUuid !== 'string' || git.installationUuid === '')) {
+        throw new Error('git.installationUuid must be a non-empty string when provided');
+      }
     }
   }
 
@@ -1058,23 +1079,59 @@ class MCPServer {
     };
   }
 
-  // The Git installation that can reach owner/name (GitLab owners may contain slashes).
-  async hosting_deploy_findRepository(fullName) {
+  // The Git installation that can reach owner/name (GitLab owners may contain slashes). Every active
+  // installation is checked, not just until the first match: a GitHub and a GitLab mirror can share a
+  // path, the installations come in no set order, and the same request must not deploy one repository
+  // one time and the other the next, overwriting the site. With an installation given, the name is taken as it is: the repository list stops at 500 entries, so a
+  // repository past that cannot be found by searching it.
+  async hosting_deploy_findRepository(fullName, installationUuid) {
     if (!fullName.includes('/')) {
       throw new Error('git.repository must be given as owner/name');
+    }
+    if (installationUuid !== undefined) {
+      const slash = fullName.lastIndexOf('/');
+      const owner = fullName.slice(0, slash);
+      const repository = fullName.slice(slash + 1);
+      if (owner === '' || repository === '') {
+        throw new Error('git.repository must be given as owner/name');
+      }
+      return { installationUuid, owner, repository };
     }
     const installations = await this.callOperation('hosting_git_list-installations', { status: 'active' });
     if (!Array.isArray(installations) || installations.length === 0) {
       throw new Error('No active Git installation. Connect GitHub or GitLab once in hPanel (Websites, Manage, Advanced, Git), then try again.');
     }
+    // The API returns at most this many repositories per installation. A full list without the
+    // repository may still hold it past the cut, so a match elsewhere cannot be trusted to be the only one.
+    const repositoryLimit = 500;
+    const truncated = [];
+    const matches = [];
     for (const installation of installations) {
-      const repositories = await this.callOperation('hosting_git_list-installation-repositories', { uuid: installation.uuid });
-      const repo = (Array.isArray(repositories) ? repositories : []).find((candidate) => String(candidate.full_name).toLowerCase() === fullName.toLowerCase());
+      const response = await this.callOperation('hosting_git_list-installation-repositories', { uuid: installation.uuid });
+      const repositories = Array.isArray(response) ? response : [];
+      const repo = repositories.find((candidate) => String(candidate.full_name).toLowerCase() === fullName.toLowerCase());
       if (repo) {
-        return { installationUuid: installation.uuid, owner: repo.owner, repository: repo.name };
+        matches.push({ installation, installationUuid: installation.uuid, owner: repo.owner, repository: repo.name });
+      } else if (repositories.length >= repositoryLimit) {
+        truncated.push(installation);
       }
     }
-    throw new Error('Repository ' + fullName + ' was not found in your ' + installations.length + ' active Git installation(s). Check the name, or give the Git provider access to it in hPanel (Websites, Manage, Advanced, Git).');
+    const describe = (installation) => (typeof installation.provider === 'string' ? installation.provider : 'git') + ' account ' + (typeof installation.account_login === 'string' ? installation.account_login : '?') + ' (installation ' + installation.uuid + ')';
+    if (matches.length > 1) {
+      throw new Error('Repository ' + fullName + ' is in ' + matches.length + ' of your Git installations: ' + matches.map((match) => describe(match.installation)).join('; ') + '. Pass git.installationUuid to say which one to deploy.');
+    }
+    if (matches.length === 1) {
+      if (truncated.length > 0) {
+        throw new Error('Repository ' + fullName + ' is in ' + describe(matches[0].installation) + ', but it may also be in ' + truncated.map(describe).join('; ') + ': repository lists stop at the first ' + repositoryLimit + '. Pass git.installationUuid to say which one to deploy.');
+      }
+      const { installationUuid, owner, repository } = matches[0];
+      return { installationUuid, owner, repository };
+    }
+    const notFound = 'Repository ' + fullName + ' was not found in your ' + installations.length + ' active Git installation(s). Check the name, or give the Git provider access to it in hPanel (Websites, Manage, Advanced, Git).';
+    if (truncated.length > 0) {
+      throw new Error(notFound + ' An installation lists only its first ' + repositoryLimit + ' repositories: if it has more, pass git.installationUuid (from hosting_git_list-installations) to name the repository directly.');
+    }
+    throw new Error(notFound);
   }
 
   // What a Git deploy is. There are no local files to look at, so guessing is dangerous: a Node.js
@@ -1101,7 +1158,15 @@ class MCPServer {
     if (type === 'nodejs' && directory !== '') {
       throw new Error('git.directory is for static deploys: a Node.js build has no target folder');
     }
-    const repo = await this.hosting_deploy_findRepository(git.repository);
+    // On these sites saving auto-deployment settings clones nothing, so a static deploy would report
+    // success and publish nothing.
+    if (type === 'static' && website.website_type === 'nodejs') {
+      throw new Error('This website runs a Node.js app: deploy it with type nodejs, or leave type out. Saving Git settings on a Node.js website does not deploy anything.');
+    }
+    if (type === 'static' && website.website_type === 'builder') {
+      throw new Error('This is a Website Builder website, which cannot deploy from Git: saving Git settings on it does not deploy anything.');
+    }
+    const repo = await this.hosting_deploy_findRepository(git.repository, git.installationUuid);
 
     if (type === 'static') {
       // Saving the settings deploys the branch now and again on every push.
@@ -1121,9 +1186,31 @@ class MCPServer {
         throw error;
       }
     }
-    const settings = this.hosting_deploy_nodeSettings(stored, params, true);
-    if (this.hosting_deploy_hasNodeOverrides(params)) {
-      // Later pushes build with the stored settings, not with this request: keep what was given.
+    // The API can return all-null settings, which mean nothing is stored.
+    const hasStored = stored !== null && typeof stored === 'object' && stored.app_type !== null && stored.app_type !== undefined;
+    let settings;
+    if (hasStored) {
+      settings = this.hosting_deploy_nodeSettings(stored, params, true);
+    } else {
+      // A first deploy: detect the settings from the branch's package.json. The request's settings beat
+      // them, and a different appType drops the build step detected for the other framework.
+      let detected = null;
+      try {
+        detected = await this.callOperation('hosting_nodejs_build-settings-from-repository', {
+          username, domain, owner: repo.owner, repository: repo.repository, branch: git.branch, installation_uuid: repo.installationUuid,
+        });
+      } catch (error) {
+        if (!(error instanceof ApiExecutionError && error.status === 422)) {
+          throw error;
+        }
+        if (params.appType === undefined || params.appType === null) {
+          throw new Error('No Node.js build settings could be detected from the ' + git.branch + ' branch (' + this.formatToolError(error) + '). Pass appType, with outputDirectory and buildScript when the app has a build step, or deploy with type static if the branch has no Node.js app.');
+        }
+      }
+      settings = this.hosting_deploy_nodeSettings(detected, params, true);
+    }
+    if (!hasStored || this.hosting_deploy_hasNodeOverrides(params)) {
+      // Later pushes build with the stored settings, not with this request: keep what was given or detected.
       await this.callOperation('hosting_nodejs_update-build-settings', { username, domain, ...settings });
     }
     const build = await this.callOperation('hosting_nodejs_start-build', {
@@ -1141,10 +1228,11 @@ class MCPServer {
       // Local checks first, so a bad path fails before any request is made.
       const type = this.hosting_deploy_resolveType(params);
       const website = await this.findWebsite(domain);
-      return this.hosting_deploy_fromPath(website.username, domain, type, params);
+      return this.hosting_deploy_fromPath(website.username, website.domain, type, params);
     }
+    // The lookup ignores case: the API calls and the result use the website's own spelling.
     const website = await this.findWebsite(domain);
-    return this.hosting_deploy_fromGit(website, domain, git, params);
+    return this.hosting_deploy_fromGit(website, website.domain, git, params);
   }
 
   // The failure analysis re-runs on every call and is limited to 5 a minute, so keep one request per
@@ -1190,9 +1278,9 @@ class MCPServer {
   }
 
   async handleHostingGetDeployment(params) {
-    const { domain, buildUuid, fromLine } = params;
+    const { domain: requestedDomain, buildUuid, fromLine } = params;
 
-    if (!domain || typeof domain !== 'string') {
+    if (!requestedDomain || typeof requestedDomain !== 'string') {
       throw new Error('domain is required and must be a string');
     }
     if (buildUuid !== undefined && (typeof buildUuid !== 'string' || buildUuid === '')) {
@@ -1202,7 +1290,8 @@ class MCPServer {
       throw new Error('fromLine must be a non-negative integer when provided');
     }
 
-    const { username } = await this.findWebsite(domain);
+    // The lookup ignores case: from here on use the website's own spelling, so one site has one analysis cache key.
+    const { username, domain } = await this.findWebsite(requestedDomain);
     const target = { username, domain };
 
     const gitSettings = await this.callOperation('hosting_git_auto-deployment-settings', target);

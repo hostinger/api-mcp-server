@@ -4,6 +4,21 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.11.1 — 2026-10-27
+
+### Operations
+
+- Hid 1 operation from search (it still runs through `execute`): `hosting_nodejs_build-settings-from-repository`
+- Changed the description and input schema of `hosting_deploy`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Bundled agent skills: `skills/deploy-to-hosting/SKILL.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.11.0 — 2026-10-27
 
 ### Also in this release

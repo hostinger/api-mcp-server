@@ -5,7 +5,7 @@
 
 export interface APITools {
   /**
-   * Deploy, publish or upload a website to Hostinger web hosting (Shared, Cloud): static HTML, PHP, a nodejs (Node.js) app, a whole WordPress site, or a WordPress plugin or theme, from a local directory, an archive or a GitHub or GitLab repository. It detects what the project is and does the upload, build and Git setup itself: do not call upload or build operations, and do not archive the directory yourself. WARNING: it overwrites the website's contents and cannot be undone; confirm the domain with the user before deploying to a site that already has content. A Node.js build runs on the server: this returns a buildUuid at once, then call hosting_get-deployment until the build state is completed or failed. A plugin or theme goes into the site's WordPress installation, also when WordPress is in a folder of the document root (headless). Static, PHP, plugin and theme deploys are done when this returns; a WordPress site import only starts, and its files are extracted a few minutes later. From Git, pass type (static or nodejs) unless the site already runs a Node.js app or you pass Node.js settings; a static or PHP site deploys the branch now and again on every push; a Node.js site builds the branch now and on every later push, with the settings stored for the site (when none are stored, pass appType and nodeVersion from the project's engines, plus outputDirectory and buildScript if the app has a build step). Git needs GitHub or GitLab connected once in hPanel.
+   * Deploy, publish or upload a website to Hostinger web hosting (Shared, Cloud): static HTML, PHP, a nodejs (Node.js) app, a whole WordPress site, or a WordPress plugin or theme, from a local directory, an archive or a GitHub or GitLab repository. It detects what the project is and does the upload, build and Git setup itself: do not call upload or build operations, and do not archive the directory yourself. WARNING: it overwrites the website's contents and cannot be undone; confirm the domain with the user before deploying to a site that already has content. A Node.js build runs on the server: this returns a buildUuid at once, then call hosting_get-deployment until the build state is completed or failed. A plugin or theme goes into the site's WordPress installation, also when WordPress is in a folder of the document root (headless). Static, PHP, plugin and theme deploys are done when this returns; a WordPress site import only starts, and its files are extracted a few minutes later. From Git, pass type (static or nodejs) unless the site already runs a Node.js app or you pass Node.js settings; a static or PHP site deploys the branch now and again on every push; a Node.js site builds the branch now and on every later push, with the settings stored for the site (when none are stored, they are detected from the branch's package.json; pass appType, nodeVersion, outputDirectory, buildScript or entryFile to override them). Git needs GitHub or GitLab connected once in hPanel.
    */
   "hosting_deploy": {
     params: {
@@ -38,7 +38,7 @@ export interface APITools {
        */
       databaseDump?: string;
       /**
-       * Node.js major version (default: detected from an archive, or stored for the site, else 22; set it from the project's engines for a Git deploy)
+       * Node.js major version (default: detected from an archive, or stored for the site, else detected from the branch's package.json, else 22)
        */
       nodeVersion?: number;
       /**
@@ -50,17 +50,17 @@ export interface APITools {
        */
       rootDirectory?: string;
       /**
-       * Build output directory relative to the root directory, e.g. dist
+       * Build output directory relative to the root directory, e.g. dist. Pass null to clear a stored value.
        */
-      outputDirectory?: string;
+      outputDirectory?: string | null;
       /**
-       * The package.json script that builds the app, e.g. build
+       * The package.json script that builds the app, e.g. build. Pass null to clear a stored value.
        */
-      buildScript?: string;
+      buildScript?: string | null;
       /**
-       * Entry file of a server app. Relative to the root directory for express, fastify, hono, react-router and other; for a compiled (TypeScript) app give the built file, e.g. dist/server.js, because detection guesses a root-level file. Relative to the output directory for nest, nuxt, nitro, astro and svelte-kit (main.js, not dist/main.js). Ignored for next.
+       * Entry file of a server app. Relative to the root directory for express, fastify, hono, react-router and other; for a compiled (TypeScript) app give the built file, e.g. dist/server.js, because detection guesses a root-level file. Relative to the output directory for nest, nuxt, nitro, astro and svelte-kit (main.js, not dist/main.js). Ignored for next. Pass null to clear a stored value.
        */
-      entryFile?: string;
+      entryFile?: string | null;
       /**
        * Package manager used to install dependencies
        */
