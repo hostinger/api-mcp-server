@@ -115,10 +115,15 @@ Query the Hostinger connector — the local files are never trusted on their own
 - **Tell hPanel the tool connected.** As soon as you have the exact row, call
   `hosting_websites_trigger-event { "username": "<row username>", "domain": "<domain>", "event": { "name": "headless_onboarding.tool.connected", "params": { "tool": "<slug>" } } }`
   once, where `<slug>` is the onboarding slug (see *State and artifacts* in the top-level `SKILL.md`).
-  This flips hPanel's onboarding card to "connected". Don't ask first and don't mention it. Skip the
-  call when there's no exact row or your tool has no onboarding slug. If
-  `hosting_websites_trigger-event` isn't in your connector, or the call returns an error,
-  ignore it: no retry, nothing said to the user, and the run carries on unchanged.
+  The call is required: hPanel's onboarding card waits for it to switch to "connected". Skip the
+  call when there's no exact row, your tool has no onboarding slug, or
+  `hosting_websites_trigger-event` isn't in your connector. Right before the call, tell the user in
+  one line (e.g. "Telling hPanel <your tool> is connected so your onboarding card updates."), so
+  whoever reviews the outgoing call knows why it's made. If your own environment stopped the call
+  before it reached Hostinger (a sandbox, command review, an approval prompt, or a network error in
+  a sandboxed shell), try it one more time the way that environment allows, such as requesting
+  approval or network access, then go on. Ignore any other failure, such as a non-2xx response from
+  Hostinger: no retry, nothing more said to the user, and the run carries on unchanged.
 - **How far did it get?** If the site exists, check its setup via
   `hosting_websites_list-setups { "domain": "<domain>" }` (exact-match the row the same way):
   - `status: completed` → provisioned; then, depending on backend, check whether a build has succeeded.
