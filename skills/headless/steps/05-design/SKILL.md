@@ -34,7 +34,11 @@ directions (Step 4), never both. "You decide" is a valid answer.
 **Talk like a person, not a designer.** Everything the user reads describes how the site will
 **look and feel**: colours by name ("hot pink, butter yellow"), lettering by feel ("big chunky
 rounded headlines"), and the details they'll notice ("photos tilted like stickers on a scrapbook").
-No hex codes, font names, or design jargon (palette, accent, tokens, shape language, contrast).
+No hex codes, font names, or design and tech words (palette, accent, tokens, shape language,
+contrast, favicon, wordmark, lockup, WCAG, 8-point grid, Next.js, SSR, `state.json`), even when
+the owner's own brand guide names them. This covers every message until the step ends, including
+the keep/change question, your one-line confirmation after the pick and the message you hand off
+with.
 
 **Two hard rules apply to every direction, however loud or quiet it is:**
 
@@ -423,6 +427,10 @@ deploy) and `updated_at` to the current UTC time (ISO 8601). Don't touch `provis
 
 If content prepare hasn't sourced images yet, it now follows `design.md` → **Imagery** (see
 `04-content-model/SKILL.md`).
+
+Hand off in one or two plain sentences, as *Talk like a person* says: "The look is set: warm cream,
+brown lettering, berry buttons and your loaf logo." Nothing after it: no font names, file names or
+stages, and gaps such as a missing icon file or a font that may not load go in the final report.
 
 ## `design.md` template
 
