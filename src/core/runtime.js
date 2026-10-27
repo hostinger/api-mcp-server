@@ -2844,8 +2844,9 @@ class MCPServer {
   async handleChangelogListEntries(params) {
     // Agents often send null for an optional field they don't use; treat it as unset.
     const { status = 'released', product, since, plan } = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== null));
-    if (!['released', 'upcoming', 'all'].includes(String(status))) {
-      throw new Error(`status must be released, upcoming or all: ${status}`);
+    const feedStatuses = Object.keys(CHANGELOG_FEEDS);
+    if (status !== 'all' && !feedStatuses.includes(status)) {
+      throw new Error('status must be one of: ' + [...feedStatuses, 'all'].join(', '));
     }
     const limit = params.limit ?? 20;
     if (typeof limit !== 'number' || !Number.isInteger(limit) || limit < 1 || limit > 100) {
@@ -2858,8 +2859,8 @@ class MCPServer {
     const sameText = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
     const time = (date) => Date.parse(date ?? '') || 0;
 
-    const statuses = status === 'all' ? ['released', 'upcoming'] : [status];
-    const feeds = await Promise.all(statuses.map(async feedStatus => {
+    const statuses = status === 'all' ? feedStatuses : [status];
+    const entriesPerFeed = await Promise.all(statuses.map(async feedStatus => {
       const feed = CHANGELOG_FEEDS[feedStatus];
       // The feeds are public: send only the User-Agent, never the API headers.
       const response = await axios.get(feed, { headers: { 'User-Agent': this.headers['User-Agent'] }, timeout: 30000 });
@@ -2877,7 +2878,7 @@ class MCPServer {
         plan: item._hostinger?.plan,
       }));
     }));
-    const entries = feeds.flat()
+    const entries = entriesPerFeed.flat()
       .filter(entry =>
         (product === undefined || sameText(entry.product, product)) &&
         (sinceTime === undefined || time(entry.date) >= sinceTime) &&
