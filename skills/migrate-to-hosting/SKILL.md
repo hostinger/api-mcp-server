@@ -41,7 +41,7 @@ Create the Hostinger website on the domain being migrated, not on a free subdoma
 
 ## 3. Import
 
-`hosting_deploy` and `agency-hosting_deploy-php-application` read files from this machine and exist only in the local `hostinger-api-mcp` server. On the hosted server (`mcp.hostinger.com`), upload the files first as described in the `deploy-to-hosting` skill ("Without the local deploy operations") and use the operation named in brackets below.
+`hosting_deploy` with `path` and `agency-hosting_deploy-php-application` read files from this machine, so only the local `hostinger-api-mcp` server has them; the hosted server's `hosting_deploy` deploys Git repositories only. On the hosted server (`mcp.hostinger.com`), upload the files first as described in the `deploy-to-hosting` skill ("Without the local deploy operations") and use the operation named in brackets below.
 
 **WordPress, Shared and Cloud:** `hosting_deploy` with `domain`, `path` (the site directory or its archive), `databaseDump` and `type: "wordpress-site"` uploads both, extracts the files and imports the database; large sites take several minutes. Always pass `type`: left to detection, a directory without `wp-config.php` or `wp-content` at its top level is taken for a plain site and the dump is not imported. [Upload `site.zip` and `dump.sql`, then `wordpress_installations_import-website` with `archive_path` and `sql_path`.] Then `wordpress_installations_detect` with `username` and poll `wordpress_installations_list` with `domain` until the install appears with `is_valid: true`.
 

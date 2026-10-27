@@ -307,14 +307,14 @@ palette (base and surface colours count).
 ### Build it with the logo kit
 
 The kit (`logo-kit.mjs`, next to this file) does the error-prone parts: it outlines letters into
-vector paths, sets text on a circle, draws the outline-and-shadow treatment, measures, and validates
-the output. You write the composition. Copy the kit into `brand/` so the build is self-contained
-and a redesign can re-run it:
+vector paths, sets text on a circle, draws the outline-and-shadow treatment, measures, validates
+the output, checks the sizes and renders a preview. You write the composition. Copy the kit into
+`brand/` so the build is self-contained and a redesign can re-run it:
 
 ```bash
 mkdir -p ~/.hostinger/<domain>/brand && cd ~/.hostinger/<domain>/brand
 cp <the folder this SKILL.md is in>/logo-kit.mjs .
-npm init -y >/dev/null && npm i opentype.js @fontsource/<display-slug>
+npm init -y >/dev/null && npm i opentype.js @resvg/resvg-js @fontsource/<display-slug>
 ```
 
 Write `brand/logo-build.mjs`, import from `./logo-kit.mjs`, and always run it from `brand/`
@@ -330,6 +330,9 @@ Write `brand/logo-build.mjs`, import from `./logo-kit.mjs`, and always run it fr
 | `sticker(d, { fill, ink, strokeWidth, shadow, shadowColor, transform })` | Ink outline + hard offset shadow, for outlined directions. On dark backgrounds give the outline and shadow a palette colour that shows (`shadowColor` defaults to `ink`) |
 | `svgDoc({ width, height, title, body })` | Root SVG with `role="img"` and a `<title>` |
 | `check(svg)` | Throws on `NaN`, live `<text>`, a missing title or viewBox, or an `&` that isn't an XML entity. Run it on every file before writing |
+| `tile(size, fill)` | The rounded tile for the mark and favicon; draw the symbol after it |
+| `widthBudget(letterHeight, height)` | The widest viewBox that still fits 192 px on small screens, for a logo of that height; see below |
+| `checkLogo({ logo, mark, favicon, letterHeight, background })` | Runs `check()` on all three files, checks their sizes and renders `brand/logo-preview.png`; see below |
 
 Wrap every file in `svgDoc()`, never a hand-written `<svg>` or `<title>`: it escapes the site name,
 and one bare `&` (as in "Salt & Pepper") makes the browser show nothing.
@@ -342,27 +345,48 @@ Never call opentype's `path.toPathData()` directly; the kit's serializer exists 
 | File | What | Must read clearly at |
 |---|---|---|
 | `brand/logo.svg` | The primary, mostly horizontal logo for the header | Its header display heights (desktop and small screens) |
-| `brand/logo-mark.svg` | A square icon from the same idea (initial, monogram or the swapped symbol) on a solid rounded tile (corner radius ≈ ¼ of the side) in a palette colour | 32 px |
+| `brand/logo-mark.svg` | A square icon from the same idea (initial, monogram or the swapped symbol) on a `tile()` in a palette colour | 32 px |
 | `brand/favicon.svg` | The simplest form of the mark: same tile, no shadow, no thin details, outlines thickened if it has any | 16 px, on both light and dark browser tab bars |
 | `brand/logo-build.mjs` | The script that built them, with `package.json`, kept so a redesign can adjust it | — |
 
 Add `brand/logo-seal.svg` only if the direction uses a seal as a secondary mark. Delete
 `brand/node_modules` when you're done; a redesign runs `npm i` in `brand/` first.
 
-**Check the sizes.** Display heights are multiples of 8, with one for desktop and one for small
-screens (they may be equal). Work them out from the viewBox:
+**Compose within the budget, so the first build passes.** The small-screen logo is at most 192 px
+wide with letters at least 16 px tall, so the whole logo can be only about 10–12 times as wide as
+its smallest letters are tall, whatever its height. On one line that's about ten letters plus a
+symbol; a longer name stacks or tags, and a second word set at half size halves the room. Size the
+viewBox in `logo-build.mjs` against `widthBudget(letterHeight, viewBoxHeight)`, the exact limit at
+the heights the kit picks; with your own `heights`, the FAIL line gives the limit. Draw the mark's
+symbol from simple, recognisable shapes that still read at 32 px; fine natural forms like petals or
+leaves turn to mush.
 
-- **Letter size:** letter height on screen = letter height ÷ viewBox height × display height, and it
-  must be ≥ 16 px. Use `xHeight` when the logo is mostly lowercase and `capHeight` when it's mostly
-  capitals; for mixed fonts, take the smaller word. A two-line lockup usually needs 64 px.
-- **Headroom:** `pathBox` covers the letters, not what you add. Leave room above for accents (Ė, Ž, Å sit above cap height) and below for descenders, plus whatever bounce, tilt, outline and shadow add, so nothing touches the viewBox edge.
-- **Width:** width on screen = viewBox width ÷ viewBox height × display height. At the small-screen
-  height it must be **≤ 192 px**, which leaves room for the menu button in a 320 px header. If it
-  doesn't fit, lower the small-screen height (letters still ≥ 16 px), simplify the logo, or show
-  `logo-mark.svg` with the name beside it on small screens.
-- **Look at it.** If you have a browser, render the files at both header heights, 32 px and 16 px,
-  the favicon on a light and a dark background, and fix anything that reads wrong. Without a
-  browser, rely on the numbers and list "logo not visually checked" under gaps in the final report.
+**Check the sizes and look at it after every build.** `letterHeight` is in viewBox units: the
+`xHeight` from `layout()` when the logo is mostly lowercase, `capHeight` when it's mostly capitals;
+for mixed fonts, the smaller word's. End `logo-build.mjs` with:
+
+```js
+checkLogo({ logo, mark, favicon, letterHeight, background: '<page background colour>' });
+```
+
+It picks the header heights for you: `--logo-h-sm` is the smallest multiple of 8 that makes the
+letters 16 px, and `--logo-h` the same but at least 48 px, both at most 80 px, so a stacked lockup
+keeps its words large or sets the mark beside them. Pass `heights: { desktop, small }` only when the
+direction needs a larger header logo. It first prints `--logo-h`, `--logo-h-sm` and the **Measured**
+line for `design.md`, then PASS or FAIL for the logo's letters ≥ 16 px at both
+heights, width ≤ 192 px on small screens, headroom around everything drawn and heights in multiples
+of 8; for the mark and favicon sitting on a `tile()` with nothing clipped and room around
+the symbol; and for no shadow on the favicon. Every FAIL names its fixes and the number to reach. It
+then renders `logo-preview.png` (the logo at both heights on the page background, the mark at 32 px
+and favicon at 16 px on light and dark strips, each also enlarged), and throws if anything failed.
+
+Then read `logo-preview.png`; don't search for another renderer or read the SVG source. Rebuild only
+for a FAIL line or something in the preview that reads wrong, such as collisions, a clipped or
+clearly off-centre mark, or a favicon detail that turns to mush, and fix everything you saw in one
+rebuild. Optical nudges of a few pixels and the header height aren't reasons to rebuild. A symbol
+gets one redraw: if it still reads wrong, replace it with a simpler form of the idea, such as the
+initial, in the next build. If the kit says "preview not rendered", rely on the size check and list
+"logo not visually checked" under gaps in the final report.
 
 The logo is exempt from text-contrast minimums, but the header link around it needs `alt` = the site
 name and a target of at least 24 px.

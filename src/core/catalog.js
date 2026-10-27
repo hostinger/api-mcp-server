@@ -2,7 +2,8 @@
 // multi-execute over a catalog of API operations. Pure functions only; the
 // runtime supplies the catalog and the function that performs a call.
 // Keep in sync with catalog.ts and with api-remote-mcp's PHP implementation.
-// `hidden` is stdio-only: the hosted server hides nothing, so the PHP side has no such flag.
+// Both servers honour `hidden`: search skips the entry, execute and multi-execute still run
+// it. Each server has its own list (generators.mcp.hidden and generators.remote-mcp.hidden).
 
 export const DEFAULT_SEARCH_LIMIT = 5;
 export const MAX_SEARCH_LIMIT = 20;

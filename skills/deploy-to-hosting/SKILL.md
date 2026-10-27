@@ -45,9 +45,9 @@ Archive rules for Agency (name archives `name_YYYYMMDD_HHMMSS.zip`) and for arch
 - **Static:** build locally first. `index.html` must be at the archive root, not inside a folder: `cd dist && zip -r ../site_20260101_120000.zip .`
 - **Node.js source:** no `node_modules/`, no build output (`dist/`, `.next/`, `build/`), no `.env*`, nothing matched by `.gitignore`; 50 MB at most. `git archive --format=zip -o app_20260101_120000.zip HEAD` produces exactly the committed files — mention that uncommitted changes are left out.
 
-`hosting_deploy` and the `agency-hosting_deploy-*` operations read files from this machine, so only the local server has them. On the hosted server (`mcp.hostinger.com`) `search` does not find them — upload the files yourself as below.
+`hosting_deploy` with `path` and the `agency-hosting_deploy-*` operations read files from this machine, so only the local server has them. The hosted server (`mcp.hostinger.com`) has `hosting_deploy` for Git repositories only (step 4) and `hosting_get-deployment` (step 3); to deploy files from this machine there, upload them yourself as below.
 
-### Without the local deploy operations (hosted server; on the local server only for Agency)
+### Without the local deploy operations (local files on the hosted server; Agency on either server)
 
 1. Get upload credentials: `hosting_files_generate-upload-url` (`username`, `domain`); Agency: `agency-hosting_files_generate-upload-url` (`website_uid`). Both return `url`, `auth_key` and `rest_auth_key`, which authenticate the upload instead of the API token.
 2. Upload each file with TUS, where `DEST` is its path in the website's storage:
@@ -72,34 +72,23 @@ curl -sS -X PATCH "$URL/$DEST?override=true" -H "X-Auth: $AUTH_KEY" -H "X-Auth-R
 
 ## 3. Node.js builds
 
-`hosting_deploy` returns a `buildUuid` at once; the build runs on the server and takes minutes. Track it with `hosting_get-deployment` (`domain`, optionally `buildUuid`; the latest build by default), polling every 10–20 s until `build.state` is `completed` or `failed`. It returns the build, its log and the stored build settings; pass the previous `logs.lines` as `fromLine` to read only new output.
+`hosting_deploy` returns a `buildUuid` at once; the build runs on the server and takes minutes. Track it — and a build started with `hosting_nodejs_start-build` after an upload — with `hosting_get-deployment` (`domain`, optionally `buildUuid`; the latest build by default), polling every 10–20 s until `build.state` is `completed` or `failed`. It returns the build, its log and the stored build settings; pass the previous `logs.lines` as `fromLine` to read only new output.
 
 - Failed build: the response already carries `analysis` (fetched once per build; the API allows 5 a minute).
 - Wrong detection (framework, `output_directory`, or an entry file inside the build output, such as `dist/server.js` for a compiled app): deploy again with `appType`, `outputDirectory`, `buildScript` or `entryFile` set. An archive deploy sends its settings with the request and leaves the stored ones alone; a Git deploy also stores these values, so later pushes build with them.
 
-On the hosted server, which has no `hosting_deploy` or `hosting_get-deployment`:
+Local files on the hosted server, deployed from an upload (step 2):
 
-- After the upload steps below, start the build and track it with `hosting_nodejs_list-builds` and `hosting_nodejs_build` (by `uuid`), polling every 10–20 s.
-- Failed build: `hosting_nodejs_analyse-failed-build` once per build (5 calls a minute), then `hosting_nodejs_build-logs` if the analysis is empty.
-- Wrong detection: run `hosting_nodejs_start-build` with explicit values, `source_type: "archive"` and `source_options.archive_path` set to the archive's file name in the document root (check it is there with `hosting_files_list-website-and-directories`). Store the same values with `hosting_nodejs_update-build-settings`.
+- Wrong detection: run `hosting_nodejs_start-build` again with explicit values, `source_type: "archive"` and `source_options.archive_path` set to the archive's file name in the document root (check it is there with `hosting_files_list-website-and-directories`). Store the same values with `hosting_nodejs_update-build-settings`.
 - To review detected settings before any build: upload the archive with `hosting_files_generate-upload-url` (the TUS steps are in its description), then `hosting_nodejs_build-settings-from-archive`.
 
 ## 4. Auto-deploy from Git
 
-On the local server, `hosting_deploy` with `git: { repository: "owner/name", branch }` does all of it: it finds the Git installation that can reach the repository and deploys it as the `type` you give. Always pass `type: "static"` or `"nodejs"` unless the site already runs a Node.js app (or you pass Node.js settings such as `appType`): a new site is not detected as Node.js, and a Node.js repository deployed as static would publish its source. Then:
+On both the local and the hosted server, `hosting_deploy` with `git: { repository: "owner/name", branch }` does all of it: it finds the Git installation that can reach the repository and deploys it as the `type` you give. Always pass `type: "static"` or `"nodejs"` unless the site already runs a Node.js app (or you pass Node.js settings such as `appType`): a new site is not detected as Node.js, and a Node.js repository deployed as static would publish its source. Then:
 - **PHP and static sites:** saves the auto-deployment settings, which deploys the branch immediately and again on every push;
 - **Node.js sites:** starts a build of the branch with the stored build settings; later pushes build the same way. A Git deploy has nothing to detect from, so when none are stored pass `appType` and `nodeVersion` (from `engines` in `package.json`), plus `outputDirectory` and `buildScript` if the app has a build step; they are stored for those pushes.
 
 With no active installation it stops and says so: the user connects GitHub or GitLab once in hPanel under Websites → Manage → Advanced → Git; there is no API for that step. Confirm with `hosting_get-deployment`, which returns the stored `gitAutoDeployment`.
-
-On the hosted server, by hand:
-
-1. `hosting_git_list-installations`. With no `active` installation (check `status: "pending"` and `"suspended"` too), the user connects GitHub or GitLab once in hPanel, as above.
-2. `hosting_git_list-installation-repositories` with the installation `uuid` gives `owner`, `name` and `default_branch` (10 calls a minute).
-3. `hosting_git_update-auto-deployment-settings` with `installation_uuid`, `owner`, `repository`, `branch` and optional `directory`.
-   - PHP and static sites deploy the branch immediately and again on every push.
-   - Node.js sites clone nothing on save: start the first build with `hosting_nodejs_start-build`, `source_type: "git"` and the same `source_options`. Later pushes build with the stored settings, so keep `hosting_nodejs_update-build-settings` correct.
-4. Confirm with `hosting_git_auto-deployment-settings`.
 
 Agency Plan sites have no Git operations; deploy archives.
 

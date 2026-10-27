@@ -1,6 +1,7 @@
 // Typed mirror of catalog.js. Keep both files, and api-remote-mcp's PHP
-// implementation, behaviourally identical. `hidden` is stdio-only: the hosted server hides
-// nothing, so the PHP side has no such flag.
+// implementation, behaviourally identical. Both servers honour `hidden`: search skips the
+// entry, execute and multi-execute still run it. Each server has its own list
+// (generators.mcp.hidden and generators.remote-mcp.hidden in the API manifest).
 
 export const DEFAULT_SEARCH_LIMIT = 5;
 export const MAX_SEARCH_LIMIT = 20;

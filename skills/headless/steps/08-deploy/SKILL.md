@@ -12,6 +12,11 @@ serves the result. **Out:** `deploy.json`.
 This is an **instance-barrier** step: run it only after `provision.status == "completed"` and validate
 (if run) has passed. All operations go through the connector (`execute`).
 
+> **Connected to the hosted server (`mcp.hostinger.com`)?** Its `hosting_deploy` deploys Git
+> repositories only and cannot read a local `path`. Run this step through the local
+> `hostinger-api-mcp` server instead (see the connect step:
+> `npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp`).
+
 **In:** the project in `~/.hostinger/<domain>/src/`, `site.json` (`username`, `urls`), `state.json`
 (`frontend.framework`, `frontend.rendering`).
 
@@ -188,7 +193,7 @@ Update `state.json` (`stage` → `done`), then continue to Step 9 (done).
 
 ## Note — one deploy path, and never `type: "static"`
 
-`hosting_deploy` is the only path: give its `path` either the source **directory** (it archives it for
+`hosting_deploy` on the local server is the only path: give its `path` either the source **directory** (it archives it for
 you) or a local **archive** (`zip`, `tar`, `tar.gz`, `tgz`, `7z`) — there is no separate upload or build
 step to fall back to. Either way pass the explicit `appType`/`outputDirectory`/`nodeVersion`/
 `buildScript`/`packageManager`/`rootDirectory` from the table. Never deploy a headless site with
