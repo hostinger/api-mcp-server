@@ -4,6 +4,14 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.13.0 — 2026-10-27
+
+### Also in this release
+
+- Bundled agent skills: `skills/deploy-to-hosting/SKILL.md`, `skills/headless/steps/08-deploy/SKILL.md`
+- Server instructions: 4 files
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v3.12.2 — 2026-10-27
 
 ### Also in this release

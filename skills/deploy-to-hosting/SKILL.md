@@ -13,9 +13,23 @@ Ship a project that already exists — on disk or in a Git repository — to a H
 - Batch reads with `multi-execute`; values pass between steps as `$steps.<i>.<path>`. Batches chain operations from one server only — the Hostinger Connector runs `hosting`, `wordpress` and `agency-hosting` as separate servers.
 - Every deploy overwrites the website's current contents. Confirm the target domain with the user before the first deploy to a site that already has content.
 
+## 0. If a shell and the Hostinger CLI are available
+
+`hostinger up` does steps 1 to 3 in one call and is the shortest path when you can run commands and the `hostinger` CLI is installed (`brew install hostinger/tap/hostinger`), signed in and has `hostinger up`: it finds or creates the website, detects the type, packs the directory (honouring `.gitignore`; skipping `node_modules`, `.git`, `.env` files, credentials and private keys, and listing symlinks it does not follow), uploads, deploys or builds, waits for the build and links the directory in `.hostinger/site.json`, the same file this skill uses. Nothing is asked without a terminal.
+
+```
+hostinger up <dir> --domain <domain> --yes --format json     # existing website; --yes only after the user agreed to replace its content
+hostinger up <dir> --create --format json                    # new website on the only plan, free subdomain
+hostinger up <dir> --domain <domain> --dry-run                # the plan as JSON, changes nothing: show it to the user before a first deploy (overwritesContent: the real run needs --yes)
+hostinger up <dir> --domain <domain> --type nodejs --app-type next --output-directory .next --build-script build --node-version 22 --yes --format json
+hostinger up <dir> --domain <domain> --no-wait --format json  # returns buildUuid at once; poll with `hostinger hosting nodejs build <domain> <uuid>`
+```
+
+Run it from the project directory: the link is written in the current directory, with `path` naming `<dir>`. The JSON result has `url`, `data.type`, `data.buildUuid`, `data.buildState`, `data.skippedFiles` and, on failure, `error`. Shared and Cloud plans only; for Agency plans, archives and WordPress plugins or themes, use the operations below. The MCP's `hosting_deploy` does the same work when there is no shell.
+
 ## 1. Pick the target website
 
-- `.hostinger/site.json` in the project: reuse its `domain` and `username` (or `website_uid`).
+- `.hostinger/site.json` in the project: reuse its `domain` and `username` (or `website_uid`). The CLI's `hostinger up` and `hostinger link` write the same file and keep any fields you add while it names the same website (linking another website starts it afresh); its `type` may be `static`, `nodejs` or `php`.
 - Otherwise look the domain up with `hosting_websites_list` (Shared and Cloud; substring match — take the exact entry) and `agency-hosting_websites_list-plan` (Agency; keep `details.uid`).
 - No website yet:
   - Shared and Cloud: take a domain (the user's own, or `hosting_domains_generate-free-subdomain`) and an `order_id` from `hosting_orders_list`, then `hosting_websites_create`. `datacenter_code` is needed only for the first website on a new plan (first entry of `hosting_datacenters_list`). Poll `hosting_websites_list-setups` with `domain` every 10–15 s until `status: completed` — uploads and deploys return 404 or 409 before that.
