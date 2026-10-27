@@ -8,7 +8,7 @@ by area.
 
 ### Operations
 
-- Added `changelog_list-entries` — List changelog entries (what's new, release notes)
+- Added `changelog_list-entries` — List changelog and roadmap entries (what's new, what's coming)
 
 ### Also in this release
 
