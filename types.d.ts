@@ -6707,7 +6707,8 @@ steps yet returns an empty list.
 progress.
 
 This describes how the campaign was set up and how far it has got. For opens, clicks and
-unsubscribes use the campaign statistics endpoint.
+unsubscribes use the campaign statistics endpoint. The email content is not included: pass
+`template_uuid` to the get email template endpoint to read its HTML.
    */
   "reach_campaigns_get": {
     params: {
@@ -8232,11 +8233,55 @@ full address: Reach adds the profile's connected sending domain itself.
   };
 
   /**
+   * Disconnect an eCommerce store from the profile.
+
+Reach stops receiving the store's customers and orders, and its products and coupons are
+removed from Reach; contacts and past orders stay. Take `store_id` from the list eCommerce
+stores endpoint; for a store that is `connected_to_other_profile`, call this with that
+profile. Also succeeds when the store is not connected to this profile, so success is not
+proof that anything was disconnected. Confirm the store and the plan with the customer
+before calling.
+   */
+  "reach_integrations_disconnect-ecommerce-store": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Hostinger eCommerce store ID, as returned by the eCommerce stores list
+       */
+      storeId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get all of the customer's Hostinger eCommerce stores, each with its `store_id` and
+`connection_status` for the profile in the path.
+
+A store is connected to at most one profile. `connected_to_other_profile` does not name that
+profile - call this for each profile to find it. The list is empty, not an error, when the
+eCommerce service cannot be reached. Pass `store_id` to the disconnect eCommerce store
+endpoint. Connecting an AI Website Builder site connects the store selling on it.
+   */
+  "reach_integrations_list-ecommerce-stores": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Get a list of the email templates in a profile, most recently updated first.
 
 Templates are the reusable email bodies a campaign is built from. The list is not paginated
-and only the metadata is returned - the template content itself is not exposed. Use the
-`uuid` of a template as the `template_uuid` when creating a campaign.
+and only the metadata is returned, without the HTML content. Use the `uuid` of a template
+as the `template_uuid` when creating a campaign. To read one template's HTML use the get
+email template endpoint, and only when the content itself is needed.
    */
   "reach_templates_list-email": {
     params: {
@@ -8271,6 +8316,109 @@ the markup self-contained.
        * Name the template is listed under. Not shown to the recipients.
        */
       title?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get one email template of the profile with its full HTML in `template_content`.
+
+A campaign's email content is its template: to read what a campaign sends, get the campaign
+and pass its `template_uuid` here. The HTML can be large, so fetch it only when the content
+itself is needed, never to browse or pick templates - the list email templates endpoint does
+that without content. Personalization tags such as `{{name}}` come back unrendered.
+   */
+  "reach_templates_email": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Template uuid parameter
+       */
+      templateUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Get the websites connected to the profile, each with its `domain` and `platform_type`.
+
+A domain is connected to at most one profile, so to find which plan a site is on, call this
+for each profile. Only connected sites are listed, not every website the customer owns, and
+eCommerce stores are not included - use the list eCommerce stores endpoint for those. Pass
+`domain` to the disconnect WordPress site or disconnect AI Website Builder site endpoint.
+   */
+  "reach_integrations_list-connected-websites": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Connect an AI Website Builder site the customer built manually to the profile, so its
+subscribers flow into Reach.
+
+Fails with not found when the customer owns no AI Website Builder site with that domain.
+Fails with `DOMAIN_ALREADY_EXISTS` when the domain is connected to any profile - to move a
+site to another plan, disconnect it from the old profile first - and with
+`WEBSITE_CONNECTION_ALREADY_EXISTS` when this profile already has an AI Website Builder site.
+The eCommerce store selling on the site, if it is not connected anywhere, is connected too.
+WordPress sites and sites made with the agentic AI Website Builder cannot be connected here.
+   */
+  "reach_integrations_connect-ai-website-builder-site": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * domain parameter
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Disconnect an AI Website Builder site from the profile; the site stops sending subscribers
+to Reach.
+
+Take `domain` from the list connected websites endpoint. Works for a site that was already
+deleted in the builder. Fails with not found when the domain is not connected to this
+profile. Contacts and any connected eCommerce store stay. The site stays disconnected until
+it is connected again, so confirm the site and the plan with the customer before calling.
+   */
+  "reach_integrations_disconnect-ai-website-builder-site": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Disconnect a WordPress site from the profile.
+
+The Reach plugin on the site stops sending subscribers and store data, and the site's
+products and coupons are removed from Reach; contacts and past orders stay. Take `domain`
+from the list connected websites endpoint. Fails with not found when the domain is not
+connected to this profile. This cannot be undone through the API - the customer reconnects
+from the WordPress plugin - so confirm the site and the plan with the customer before calling.
+   */
+  "reach_integrations_disconnect-wordpress-site": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
     };
     response: any; // Response structure will depend on the API
   };

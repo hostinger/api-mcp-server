@@ -133,7 +133,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Get a single campaign with its sender, subject, template reference, targeting and delivery\nprogress.\n\nThis describes how the campaign was set up and how far it has got. For opens, clicks and\nunsubscribes use the campaign statistics endpoint.",
+    "description": "Get a single campaign with its sender, subject, template reference, targeting and delivery\nprogress.\n\nThis describes how the campaign was set up and how far it has got. For opens, clicks and\nunsubscribes use the campaign statistics endpoint. The email content is not included: pass\n`template_uuid` to the get email template endpoint to read its HTML.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}",
     "inputSchema": {
@@ -2902,6 +2902,72 @@ export default [
     "group": "reach"
   },
   {
+    "name": "reach_integrations_disconnect-ecommerce-store",
+    "title": "Disconnect Ecommerce store",
+    "annotations": {
+      "title": "Disconnect Ecommerce store",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Disconnect an eCommerce store from the profile.\n\nReach stops receiving the store's customers and orders, and its products and coupons are\nremoved from Reach; contacts and past orders stay. Take `store_id` from the list eCommerce\nstores endpoint; for a store that is `connected_to_other_profile`, call this with that\nprofile. Also succeeds when the store is not connected to this profile, so success is not\nproof that anything was disconnected. Confirm the store and the plan with the customer\nbefore calling.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/ecommerce/stores/{storeId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "storeId": {
+          "type": "string",
+          "description": "Hostinger eCommerce store ID, as returned by the eCommerce stores list"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "storeId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_integrations_list-ecommerce-stores",
+    "title": "List Ecommerce stores",
+    "annotations": {
+      "title": "List Ecommerce stores",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Get all of the customer's Hostinger eCommerce stores, each with its `store_id` and\n`connection_status` for the profile in the path.\n\nA store is connected to at most one profile. `connected_to_other_profile` does not name that\nprofile - call this for each profile to find it. The list is empty, not an error, when the\neCommerce service cannot be reached. Pass `store_id` to the disconnect eCommerce store\nendpoint. Connecting an AI Website Builder site connects the store selling on it.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/ecommerce/stores",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_templates_list-email",
     "title": "List email templates",
     "annotations": {
@@ -2909,7 +2975,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Get a list of the email templates in a profile, most recently updated first.\n\nTemplates are the reusable email bodies a campaign is built from. The list is not paginated\nand only the metadata is returned - the template content itself is not exposed. Use the\n`uuid` of a template as the `template_uuid` when creating a campaign.",
+    "description": "Get a list of the email templates in a profile, most recently updated first.\n\nTemplates are the reusable email bodies a campaign is built from. The list is not paginated\nand only the metadata is returned, without the HTML content. Use the `uuid` of a template\nas the `template_uuid` when creating a campaign. To read one template's HTML use the get\nemail template endpoint, and only when the content itself is needed.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/templates",
     "inputSchema": {
@@ -2961,6 +3027,168 @@ export default [
       "required": [
         "profileUuid",
         "template_content"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_templates_email",
+    "title": "Get email template",
+    "annotations": {
+      "title": "Get email template",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Get one email template of the profile with its full HTML in `template_content`.\n\nA campaign's email content is its template: to read what a campaign sends, get the campaign\nand pass its `template_uuid` here. The HTML can be large, so fetch it only when the content\nitself is needed, never to browse or pick templates - the list email templates endpoint does\nthat without content. Personalization tags such as `{{name}}` come back unrendered.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/templates/{templateUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "templateUuid": {
+          "type": "string",
+          "description": "Template uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "templateUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_integrations_list-connected-websites",
+    "title": "List connected websites",
+    "annotations": {
+      "title": "List connected websites",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Get the websites connected to the profile, each with its `domain` and `platform_type`.\n\nA domain is connected to at most one profile, so to find which plan a site is on, call this\nfor each profile. Only connected sites are listed, not every website the customer owns, and\neCommerce stores are not included - use the list eCommerce stores endpoint for those. Pass\n`domain` to the disconnect WordPress site or disconnect AI Website Builder site endpoint.",
+    "method": "GET",
+    "path": "/api/reach/v1/profiles/{profileUuid}/websites",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_integrations_connect-ai-website-builder-site",
+    "title": "Connect AI Website Builder site",
+    "annotations": {
+      "title": "Connect AI Website Builder site",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Connect an AI Website Builder site the customer built manually to the profile, so its\nsubscribers flow into Reach.\n\nFails with not found when the customer owns no AI Website Builder site with that domain.\nFails with `DOMAIN_ALREADY_EXISTS` when the domain is connected to any profile - to move a\nsite to another plan, disconnect it from the old profile first - and with\n`WEBSITE_CONNECTION_ALREADY_EXISTS` when this profile already has an AI Website Builder site.\nThe eCommerce store selling on the site, if it is not connected anywhere, is connected too.\nWordPress sites and sites made with the agentic AI Website Builder cannot be connected here.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/websites/website-builder",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_integrations_disconnect-ai-website-builder-site",
+    "title": "Disconnect AI Website Builder site",
+    "annotations": {
+      "title": "Disconnect AI Website Builder site",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Disconnect an AI Website Builder site from the profile; the site stops sending subscribers\nto Reach.\n\nTake `domain` from the list connected websites endpoint. Works for a site that was already\ndeleted in the builder. Fails with not found when the domain is not connected to this\nprofile. Contacts and any connected eCommerce store stay. The site stays disconnected until\nit is connected again, so confirm the site and the plan with the customer before calling.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/websites/website-builder",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_integrations_disconnect-wordpress-site",
+    "title": "Disconnect WordPress site",
+    "annotations": {
+      "title": "Disconnect WordPress site",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Disconnect a WordPress site from the profile.\n\nThe Reach plugin on the site stops sending subscribers and store data, and the site's\nproducts and coupons are removed from Reach; contacts and past orders stay. Take `domain`\nfrom the list connected websites endpoint. Fails with not found when the domain is not\nconnected to this profile. This cannot be undone through the API - the customer reconnects\nfrom the WordPress plugin - so confirm the site and the plan with the customer before calling.",
+    "method": "DELETE",
+    "path": "/api/reach/v1/profiles/{profileUuid}/websites/wordpress",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid"
       ]
     },
     "security": [

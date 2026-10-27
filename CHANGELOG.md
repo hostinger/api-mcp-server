@@ -4,6 +4,26 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.12.0 — 2026-10-27
+
+### Operations
+
+- Added `reach_integrations_disconnect-ecommerce-store` — Disconnect Ecommerce store
+- Added `reach_integrations_list-ecommerce-stores` — List Ecommerce stores
+- Added `reach_templates_email` — Get email template
+- Added `reach_integrations_list-connected-websites` — List connected websites
+- Added `reach_integrations_connect-ai-website-builder-site` — Connect AI Website Builder site
+- Added `reach_integrations_disconnect-ai-website-builder-site` — Disconnect AI Website Builder site
+- Added `reach_integrations_disconnect-wordpress-site` — Disconnect WordPress site
+- Changed the description of `reach_campaigns_get`
+- Changed the description of `reach_templates_list-email`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.11.1 — 2026-10-27
 
 ### Operations
