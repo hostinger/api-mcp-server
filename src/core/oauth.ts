@@ -88,6 +88,20 @@ function parseIssuer(raw: string): string {
   return u.origin;
 }
 
+// No shell: the URL is a single argv entry, never parsed by sh or cmd.
+// Windows resolves a bare program name from the working directory before PATH,
+// so rundll32 is launched by absolute path to never pick up a planted copy.
+export function browserCommand(platform: string, url: string, systemRoot = process.env.SystemRoot): [string, string[]] {
+  if (platform === 'darwin') return ['open', [url]];
+  if (platform === 'win32') {
+    return [
+      path.win32.join(systemRoot || 'C:\\Windows', 'System32', 'rundll32.exe'),
+      ['url.dll,FileProtocolHandler', url],
+    ];
+  }
+  return ['xdg-open', [url]];
+}
+
 export class OAuthProvider {
   private readonly issuer: string;
   private _loginInProgress: Promise<string> | null = null;
@@ -377,12 +391,7 @@ export class OAuthProvider {
   private _openBrowser(url: string): void {
     process.stderr.write(`\n[OAuth] Opening browser for sign-in:\n  ${url}\n`);
     process.stderr.write('[OAuth] If the browser does not open, copy the URL above into one manually.\n\n');
-    // No shell: the URL is a single argv entry, never parsed by sh or cmd.
-    const [cmd, args]: [string, string[]] = process.platform === 'darwin'
-      ? ['open', [url]]
-      : process.platform === 'win32'
-        ? ['rundll32', ['url.dll,FileProtocolHandler', url]]
-        : ['xdg-open', [url]];
+    const [cmd, args] = browserCommand(process.platform, url);
     execFile(cmd, args, (err) => {
       if (err) {
         process.stderr.write(`[OAuth] Could not auto-launch browser: ${err.message}\n`);

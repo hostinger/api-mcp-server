@@ -4,6 +4,12 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.20.4 — 2026-10-28
+
+### Also in this release
+
+- OAuth sign-in flow: `src/core/oauth.js`, `src/core/oauth.ts`
+
 ## v3.20.3 — 2026-10-28
 
 ### Operations

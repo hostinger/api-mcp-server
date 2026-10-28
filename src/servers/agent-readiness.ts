@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/agent-readiness.js';
 
-startServer({ name: 'hostinger-agent-readiness-mcp', version: '3.20.3', tools });
+startServer({ name: 'hostinger-agent-readiness-mcp', version: '3.20.4', tools });
