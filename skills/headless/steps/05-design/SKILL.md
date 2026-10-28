@@ -301,6 +301,27 @@ package names. The **display** family must also resolve as a static package
 (`npm view @fontsource/<slug> version`): the static packages ship `.woff` files the logo kit can
 read; the variable ones ship only `.woff2`.
 
+### 5.5 The header fits on one line
+
+The header is where a cramped width shows first: the logo, every nav item and the call-to-action
+button share one row, and when they run out of room they wrap mid-phrase ("Services &" over
+"Pricing", "Book" over "Appointment"). That always looks broken. Decide it here so the frontend
+can't build it that way.
+
+- **Labels never break mid-phrase.** Nav links and the header button get `white-space: nowrap`, so a
+  two-word label stays on one line or not at all.
+- **Collapse before it wraps — not at 320 px.** The inline nav is replaced by a menu (hamburger)
+  button at the width where the logo, all nav items and the button stop fitting on one line, which is
+  usually wider than the mobile breakpoint. Estimate that width from the number of nav items and their
+  label lengths, round up to a multiple of 8, and make it the header's own breakpoint. Below it, only
+  the logo and the menu button show; the nav items and the CTA move into the opened menu.
+- **Keep header labels short.** A nav label is one or two short words; a button label is a two-word
+  verb phrase at most ("Book now", not "Book an Appointment"). When the content model gives a long
+  navigation label, the header may show a shorter form ("Contact & Booking" → "Contact") while the
+  page keeps its full name — note the shortened label in the **Header + nav** row.
+- Record the header breakpoint in *Grid, shape & motion* and the `nowrap` + collapse rule in the
+  **Header + nav** component row (and its `≤ 320 px` cell).
+
 ## Step 6 — Design the logo
 
 **The user supplied a logo** → copy it into `brand/` unchanged, note it in the **Logo** section, and
@@ -525,7 +546,7 @@ prefers-reduced-motion".>
 ## Components
 | Component | Renders (from content model) | Look | ≤ 320 px |
 |---|---|---|---|
-| Header + nav | Navigation items | … | … |
+| Header + nav | Navigation items | … Nav links and the button never wrap (`white-space: nowrap`); the inline nav collapses to a menu button at <px> (the width it stops fitting one line). | Logo + menu button only; nav items and CTA inside the menu |
 | Post card | Article: image, category, title, excerpt | … | … |
 | … | | | |
 
@@ -549,6 +570,9 @@ duotone…); alt text written from what the photo shows.>
   exemptions.
 - **WCAG 2.2 AA is the floor.** No direction is offered, chosen or written that fails it. Brand
   colours keep their hue but only appear in roles where they pass.
+- **The header never wraps.** Nav labels and the header button stay on one line (`white-space:
+  nowrap`); the inline nav collapses to a menu button at the width it stops fitting, not only at the
+  mobile breakpoint (5.5).
 - **Brand assets are fixed.** A supplied logo, colour or font appears in every direction, unchanged.
 - **A logo is designed, not typed.** Outlined SVG paths built with the logo kit, never live text,
   emoji or clip-art, and always readable at its smallest use. The one exception: a kept look with no
