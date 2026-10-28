@@ -2,7 +2,7 @@ import { createHash, randomBytes } from 'crypto';
 import { createServer, Server } from 'http';
 import { readFile, writeFile, mkdir } from 'fs/promises';
 import { existsSync, readFileSync } from 'fs';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import os from 'os';
@@ -68,12 +68,32 @@ export function getEnvToken(): string | undefined {
     || process.env['APITOKEN'];
 }
 
+/**
+ * The issuer must be a bare origin: https, or http only on loopback. It ends up
+ * in token requests and in the browser launch, so a path, query or userinfo is
+ * refused instead of carried along.
+ */
+function parseIssuer(raw: string): string {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    throw new Error(`Invalid OAUTH_ISSUER: ${raw}`);
+  }
+  const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(u.hostname);
+  const schemeOk = u.protocol === 'https:' || (u.protocol === 'http:' && loopback);
+  if (!schemeOk || u.username || u.password || u.pathname !== '/' || u.search || u.hash) {
+    throw new Error(`Invalid OAUTH_ISSUER: ${raw} (expected an https origin such as ${DEFAULT_ISSUER})`);
+  }
+  return u.origin;
+}
+
 export class OAuthProvider {
   private readonly issuer: string;
   private _loginInProgress: Promise<string> | null = null;
 
   constructor(issuerBaseUrl?: string) {
-    this.issuer = (issuerBaseUrl || process.env['OAUTH_ISSUER'] || DEFAULT_ISSUER).replace(/\/$/, '');
+    this.issuer = parseIssuer(issuerBaseUrl || process.env['OAUTH_ISSUER'] || DEFAULT_ISSUER);
   }
 
   async getAccessToken(): Promise<string> {
@@ -357,15 +377,13 @@ export class OAuthProvider {
   private _openBrowser(url: string): void {
     process.stderr.write(`\n[OAuth] Opening browser for sign-in:\n  ${url}\n`);
     process.stderr.write('[OAuth] If the browser does not open, copy the URL above into one manually.\n\n');
-    let cmd: string;
-    if (process.platform === 'darwin') {
-      cmd = `open "${url}"`;
-    } else if (process.platform === 'win32') {
-      cmd = `start "" "${url}"`;
-    } else {
-      cmd = `xdg-open "${url}"`;
-    }
-    exec(cmd, (err) => {
+    // No shell: the URL is a single argv entry, never parsed by sh or cmd.
+    const [cmd, args]: [string, string[]] = process.platform === 'darwin'
+      ? ['open', [url]]
+      : process.platform === 'win32'
+        ? ['rundll32', ['url.dll,FileProtocolHandler', url]]
+        : ['xdg-open', [url]];
+    execFile(cmd, args, (err) => {
       if (err) {
         process.stderr.write(`[OAuth] Could not auto-launch browser: ${err.message}\n`);
       }
