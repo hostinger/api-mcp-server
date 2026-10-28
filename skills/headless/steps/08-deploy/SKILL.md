@@ -22,7 +22,8 @@ This is an **instance-barrier** step: run it only after `provision.status == "co
 > `cd ~/.hostinger/<domain>/src && hostinger up --domain <domain> --type nodejs --app-type <appType> --output-directory <dir> --build-script build --node-version 22 --package-manager npm --yes --format json`.
 > It uploads, builds, waits and returns `data.buildUuid` and `data.buildState`; add `--no-wait` to
 > return at once and poll with `hostinger hosting nodejs build <domain> <uuid>`. Then continue at
-> "Verify" below.
+> "Verify" below. Recent CLI versions see that the site is headless (`data.headless: true`) and
+> deploy only its Node.js frontend, leaving `/cms` alone; still pass the settings above.
 
 **In:** the project in `~/.hostinger/<domain>/src/`, `site.json` (`username`, `urls`), `state.json`
 (`frontend.framework`, `frontend.rendering`).
