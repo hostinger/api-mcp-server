@@ -170,7 +170,7 @@ took from it.
 | File (under `~/.hostinger/<domain>/`) | Written by | Contains |
 |---|---|---|
 | `state.json` | every stage | tool, next stage, Hostinger connector version, timestamps |
-| `connect.json` | connect | tool, account/plan readiness |
+| `connect.json` | connect | tool, MCP version, sign-in method, plan; shape in `connect/SKILL.md` |
 | `brief.md` | refine | refined brief, audience, tone, pages, must-haves |
 | `site.json` | provision | chosen backend, username, install id, all URLs |
 | `content-model.md` | content model | entities, fields, pages, navigation |

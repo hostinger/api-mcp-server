@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.19.1 — 2026-10-28
+
+### Also in this release
+
+- Bundled agent skills: `skills/headless/SKILL.md`, `skills/headless/connect/SKILL.md`, `skills/headless/run-log.mjs`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v3.19.0 — 2026-10-28
 
 No changes to the published artifact.

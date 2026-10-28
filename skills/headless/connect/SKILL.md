@@ -87,7 +87,28 @@ Credentials live in `~/.config/hostinger-mcp/credentials.json` (macOS/Linux) or 
 If the user's tool isn't listed yet, connect it the generic way (register the Hostinger MCP server
 for that tool, or drive `npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp` over stdio) and continue.
 
-## Phase 3 - Continue to Headless Hosting steps
+## Phase 3 - Write `connect.json`
+
+Once the tool is connected, write `~/.hostinger/<domain>/connect.json` (create the folder if it is
+missing) in exactly this shape:
+
+```json
+{ "tool": "claude-code", "mcp": "hostinger-api-mcp 3.8.0", "auth": "oauth_cached",
+  "order_id": null, "plan": null, "connected_at": "2026-10-28T10:46:12Z" }
+```
+
+- `tool`: the `<tool>` from the Phase 2 route (`claude-code`, `codex`, `cursor`, `vscode`,
+  `antigravity`, `devin`, or a short lowercase name for an unlisted tool), the same value later
+  passed to `run-start --tool`.
+- `mcp`: one string, `hostinger-api-mcp <version>`, with the `version` from the `mcp_ok` event.
+  Never an object.
+- `auth`: the `method` from the `logged_in` event (`api_token`, `oauth_cached` or `oauth`).
+- `order_id`, `plan`: the active hosting plan's order id and name when you looked them up, else `null`.
+- `connected_at`: the current time in UTC, ISO 8601 to the second.
+
+Extra keys are allowed, but keep these six as above: the build report reads `tool` and `mcp`.
+
+## Phase 4 - Continue to Headless Hosting steps
 
 After evrything is verified and you have access to the Hostinger MCP Server and the skills then you can go back to `headless/SKILL.md` and follow the steps section to start the process.
 

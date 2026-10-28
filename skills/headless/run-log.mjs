@@ -100,6 +100,15 @@ function readEvents(ws) {
     .map((line) => JSON.parse(line));
 }
 
+// connect.json from older runs may hold mcp as an object or only mcp_version; the report needs strings.
+function readConnect(ws) {
+  const connect = readJson(join(ws.dir, 'connect.json'), {});
+  const mcp = connect.mcp ?? connect.mcp_version ?? null;
+  let version = mcp;
+  if (mcp !== null && typeof mcp !== 'string') version = mcp.name || mcp.version ? [mcp.name, mcp.version].filter(Boolean).join(' ') : JSON.stringify(mcp);
+  return { tool: typeof connect.tool === 'string' ? connect.tool : null, mcp: version };
+}
+
 function runStart(ws, flags) {
   const state = loadState(ws);
   // A previous run that never reached its report (closed window, crash) is closed out first, so
@@ -111,7 +120,7 @@ function runStart(ws, flags) {
   const fresh = loadState(ws);
   const previous = fresh.run ?? {};
   const startedAt = now();
-  const connect = readJson(join(ws.dir, 'connect.json'), {});
+  const connect = readConnect(ws);
   // Run ids are the start time; a second run in the same second gets a suffix.
   const taken = new Set([
     ...(fresh.history ?? []).map((h) => h.run),
@@ -268,7 +277,7 @@ function buildReport(ws, { outcome, tokens } = {}) {
   const run = currentRun(ws, state);
   const site = readJson(join(ws.dir, 'site.json'), {});
   const deploy = readJson(join(ws.dir, 'deploy.json'), {});
-  const connect = readJson(join(ws.dir, 'connect.json'), {});
+  const connect = readConnect(ws);
   const history = (state.history ?? []).filter((h) => h.run === run.id);
   // Lines logged before events were checked on write may not match the schema.
   const dropped = [];
@@ -291,7 +300,7 @@ function buildReport(ws, { outcome, tokens } = {}) {
   const stillOpen = resolvedOutcome !== 'abandoned' && history.some((h) => !h.ended_at);
   const endedAt = stillOpen ? now() : lastActivity;
   const stages = history.map((h) => ({ ...h, minutes: minutesBetween(h.started_at, h.ended_at ?? endedAt) }));
-  const gaps = [...loggingGaps(stages, run, resolvedOutcome), ...dropped];
+  const gaps = [...loggingGaps(stages, run, resolvedOutcome, site.backend), ...dropped];
   const strip = ({ ts, run: _run, type: _type, ...rest }) => ({ ...rest, logged_at: ts });
   const liveStage = stages.find((s) => s.stage === 'deploy' && s.result?.startsWith('ok'));
   if (!OUTCOMES.includes(resolvedOutcome)) fail(`unknown outcome "${resolvedOutcome}"; one of ${OUTCOMES.join(', ')}`);
@@ -316,7 +325,7 @@ function buildReport(ws, { outcome, tokens } = {}) {
       model: run.model ?? null,
       os: process.platform,
       node: process.version,
-      mcp: connect.mcp ?? null,
+      mcp: connect.mcp,
       backend: site.backend ?? null,
       frontend: frontendStack(ws.dir),
       outcome: resolvedOutcome,
@@ -400,15 +409,21 @@ function reportRejected(ws, [runId]) {
 
 // Gaps are printed as warnings by `report`, so guesses never pass as measurements.
 const EXPECTED_FOR_BUILD = ['check_state', 'refine', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy'];
-function loggingGaps(stages, run, outcome) {
+// Stages a backend skips on purpose: webapp has no CMS, so no content model.
+const SKIPPED_BY_BACKEND = { webapp: ['content_model'] };
+function loggingGaps(stages, run, outcome, backend) {
   const gaps = [];
   for (const s of stages) {
-    if (!s.ended_at) gaps.push({ stage: s.stage, phase: s.phase, problem: 'started but never ended' });
-    else if (s.start_estimated) gaps.push({ stage: s.stage, phase: s.phase, problem: 'start time estimated, not measured' });
-    else if (Date.parse(s.ended_at) - Date.parse(s.started_at) < 5000) gaps.push({ stage: s.stage, phase: s.phase, problem: 'logged with no duration; probably started and ended in one go after the work' });
+    // A skipped stage did no work, so it has no duration to measure.
+    const problem = s.result === 'skipped' ? null
+      : !s.ended_at ? 'started but never ended'
+      : s.start_estimated ? 'start time estimated, not measured'
+      : Date.parse(s.ended_at) === Date.parse(s.started_at) ? 'logged with no duration; probably started and ended in one go after the work'
+      : null;
+    if (problem) gaps.push({ stage: s.stage, phase: s.phase, problem });
   }
   if (run.kind === 'build' && outcome === 'live') {
-    for (const stage of EXPECTED_FOR_BUILD) {
+    for (const stage of EXPECTED_FOR_BUILD.filter((name) => !SKIPPED_BY_BACKEND[backend]?.includes(name))) {
       if (!stages.some((s) => s.stage === stage)) gaps.push({ stage, phase: null, problem: 'never logged, though the site went live' });
     }
   }
