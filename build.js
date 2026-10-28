@@ -29,13 +29,7 @@ exec('npx tsc', (error, stdout, stderr) => {
 
     console.log('TypeScript compilation successful');
 
-    // Copy .env.example to dist
     try {
-        if (fs.existsSync('./.env.example')) {
-            fs.copyFileSync('./.env.example', './dist/.env.example');
-            console.log('Copied .env.example to dist directory');
-        }
-        
         if (fs.existsSync('./README.md')) {
             fs.copyFileSync('./README.md', './dist/README.md');
             console.log('Copied README.md to dist directory');

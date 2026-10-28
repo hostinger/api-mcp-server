@@ -6,7 +6,6 @@ import minimist from 'minimist';
 import cors from "cors";
 import express from "express";
 import {Request, Response} from "express";
-import { config as dotenvConfig } from "dotenv";
 import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
@@ -27,9 +26,6 @@ import os from "os";
 import { Zip, ZipDeflate } from "fflate";
 import { META_TOOLS, searchOperations, renderSearch, findOperation, runSteps } from "./catalog.js";
 import type { CatalogOperation } from "./catalog.js";
-
-// Load environment variables
-dotenvConfig({ quiet: true });
 
 // Define tool and security scheme types
 interface OpenApiTool extends Tool {

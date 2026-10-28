@@ -4,6 +4,16 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.21.1 — 2026-10-28
+
+### Also in this release
+
+- Other files: `.env.example`, `.gitignore`
+- Documentation: `README.md`
+- Build and packaging: `build.js`
+- Dependencies: `package-lock.json`, `package.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+
 ## v3.21.0 — 2026-10-28
 
 ### Also in this release

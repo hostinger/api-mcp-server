@@ -2,7 +2,7 @@ node_modules/
 dist/
 *.tsbuildinfo
 
-# Local secrets. .env.example ships with the package and is not matched by `.env`.
+# Local secrets.
 .env
 .env.local
 

@@ -99,7 +99,7 @@ The server supports two authentication methods:
 
 ### API Token (recommended for CI/scripts)
 
-Set `HOSTINGER_API_TOKEN` in the environment or `.env` file. When present it always takes precedence — no OAuth code runs.
+Set `HOSTINGER_API_TOKEN` in the environment (the MCP client's `env` block). When present it always takes precedence — no OAuth code runs.
 
 ### OAuth 2.0 with PKCE (interactive sign-in)
 
