@@ -9,29 +9,11 @@ Verify the live site, then hand over the URLs (success page, main site, WordPres
 summary of what was built, and what the user can do next. **On a successful run, open the success page
 for the user** (see *Open the success page*).
 
-## Verify the live site (brief)
-
-On a run that deployed this session, re-confirm what you're about to hand over actually works (deploy
-already checked this — this is a quick re-confirm, not a full re-run):
-
-- **Main site:** `GET https://<domain>/` → 200 (Next.js SSR: `x-powered-by: Next.js`; Astro SSG: static
-  HTML with real content).
-- **WordPress admin:** `GET {urls.wp_admin}` → reachable (a login page, 200/302), not 404.
-- **Backend API:** `GET {urls.rest_api}/posts?per_page=1` → 200 (WordPress); for a **WooCommerce** store
-  (`site.json → woocommerce.enabled`) also `GET {urls.store_api}/products?per_page=1` → 200; or the
-  storefront API for the sales channel → 200 (Ecommerce).
-- **Contact form** (`site.json → contact_form.enabled`): validate already sent a test submission, so
-  don't send another here. In the handover, tell the owner the contact page is live and enquiries email
-  the **WordPress admin address** (via `wp_mail`) — and that for the most reliable delivery that address
-  should be a Hostinger mailbox on the domain. If validate reported `mail_failed`, say so plainly instead
-  of claiming the form sends.
-
-If a check fails, say so in the outcome paragraph and don't claim the site is live.
-
 ## Final report
 
 Every run ends with this report, whether it finishes here or stops at an earlier stage (a dummy or
-missing step, a failed provision, the user pausing). Build it from `state.json`, `site.json`,
+missing step, a failed provision, the user pausing). On a run that deployed this session, run the
+checks in *Verify the live site* below first. Build the report from `state.json`, `site.json`,
 `deploy.json` and what you actually did and checked in this run. Report only what you verified. Don't
 claim a stage passed if you didn't check it.
 
@@ -41,19 +23,23 @@ Write it in this order:
    early, name the stage it stopped at, why, and what the user will see right now (e.g. "the site
    root returns 403 until the frontend is deployed").
 
-2. **Steps completed** — a table with one row per stage that ran:
+2. **Steps completed.** This table is required on every run, including early stops: never replace
+   it with prose. Give one row per stage that ran, using the stage numbers and names from the
+   orchestrator's flow table. Leave out stages that didn't run and name them in the outcome
+   paragraph instead. A finished WordPress blog build looks like this:
 
    | Stage | Result |
    |---|---|
-   | connect | How the connector was reached, MCP version, how sign-in happened. |
-   | 1 check state | New build / resumed at `<stage>` / adopted an existing site. |
-   | 2 refine | What the brief is and which backend it chose (say if a sample brief was used). |
-   | 3 provision | Plan and order used, how long setup took, which verification checks passed. |
-   | 4 content model | What was created (counts of pages, posts, terms, menus, media, SEO) and how it was verified. |
-   | … | One row for each further stage that ran (design, frontend, validate, deploy, done). |
-
-   Stages that didn't run are left out of the table and named in the outcome paragraph instead.
-   Use the stage numbers and names from the orchestrator's flow table.
+   | connect | Hostinger connector reached over MCP (`@hostinger/mcp` 1.9.2); signed in through the browser login. |
+   | 1 check state | New build for `harbourlight.blog`; no earlier workspace. |
+   | 2 refine | Personal travel blog about coastal towns in the UK; backend: WordPress. |
+   | 3 provision | Business plan, order 41875230; setup took 6 min; domain, SSL and WordPress checks passed. |
+   | 4 content model | 5 pages, 8 posts, 6 categories, 1 menu, 14 images (Hostinger AI), SEO titles on every page; counts re-read from the REST API. |
+   | 5 design | "Salt & Ink" direction: serif headings, sea-blue accents; `design.md` and logo written, logo check passed. |
+   | 6 frontend | Next.js SSR with home, blog, post, category and contact pages wired to the REST API; local build passed. |
+   | 7 validate | Instance setup completed; REST API returned the 8 pushed posts; no preview (nobody signing off). |
+   | 8 deploy | Source uploaded, build finished in 3 min; site root returns 200. |
+   | 9 done | Main site, wp-admin and REST API re-checked live: all returned 200. |
 
 3. **Links** — every URL that exists at this point. Build the hPanel URLs from `site.json`
    (`order_id`, `username`, `domain`) and the onboarding slug; take the rest from `site.json` /
@@ -91,6 +77,25 @@ Write it in this order:
 
 Never include passwords, JWTs or other secrets in the report. For wp-admin access, give the URL and
 offer a one-click login link (`wordpress_login_create-links`), not credentials.
+
+## Verify the live site (brief)
+
+On a run that deployed this session, re-confirm what you're about to hand over actually works (deploy
+already checked this — this is a quick re-confirm, not a full re-run):
+
+- **Main site:** `GET https://<domain>/` → 200 (Next.js SSR: `x-powered-by: Next.js`; Astro SSG: static
+  HTML with real content).
+- **WordPress admin:** `GET {urls.wp_admin}` → reachable (a login page, 200/302), not 404.
+- **Backend API:** `GET {urls.rest_api}/posts?per_page=1` → 200 (WordPress); for a **WooCommerce** store
+  (`site.json → woocommerce.enabled`) also `GET {urls.store_api}/products?per_page=1` → 200; or the
+  storefront API for the sales channel → 200 (Ecommerce).
+- **Contact form** (`site.json → contact_form.enabled`): validate already sent a test submission, so
+  don't send another here. In the handover, tell the owner the contact page is live and enquiries email
+  the **WordPress admin address** (via `wp_mail`) — and that for the most reliable delivery that address
+  should be a Hostinger mailbox on the domain. If validate reported `mail_failed`, say so plainly instead
+  of claiming the form sends.
+
+If a check fails, say so in the outcome paragraph and don't claim the site is live.
 
 ## Open the success page
 
