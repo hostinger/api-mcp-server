@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (418 total)
+- `hostinger-api-mcp` — unified server over every operation (412 total)
 - `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 3 operations for agent-readiness
 - `hostinger-billing-mcp` — 9 operations for billing
@@ -77,9 +77,9 @@ This package installs the following MCP server commands:
 - `hostinger-domains-mcp` — 42 operations for domains
 - `hostinger-ecommerce-mcp` — 29 operations for ecommerce
 - `hostinger-horizons-mcp` — 6 operations for horizons
-- `hostinger-hosting-mcp` — 68 operations for hosting
+- `hostinger-hosting-mcp` — 61 operations for hosting
 - `hostinger-mail-mcp` — 38 operations for mail
-- `hostinger-reach-mcp` — 69 operations for reach
+- `hostinger-reach-mcp` — 70 operations for reach
 - `hostinger-vps-mcp` — 67 operations for vps
 - `hostinger-wordpress-mcp` — 40 operations for wordpress
 
@@ -1828,123 +1828,33 @@ Check deployment status, build status, build logs and why a build failed (failur
 - **Method**: `custom`
 - **Path**: `custom`
 
+#### hosting_websites_get-settings
+
+Read a website's SSL certificate, HTTPS redirect, CDN and server cache settings in one call. ssl is the SSL status as hosting_ssl_status returns it: the certificate status (active, installing, waiting_for_retry, failed, expired or not_installed) and provider, whether it is a lifetime certificate, whether HTTP is redirected to HTTPS, when it expires and the last installation error. cdn.is_enabled says whether the Hostinger CDN serves the website. cache.is_enabled says whether server-side caching is on, and cache.is_cacheless_mode_enabled whether development (cacheless) mode bypasses it. Use it before hosting_websites_update-settings, and to follow an SSL installation started by hosting_ssl_install: poll until ssl.status is active or failed, with growing pauses. A section that cannot be read comes back as { error } and the others are still returned; cache is null with a cacheNote when cache status is not available. To install or remove a certificate use hosting_ssl_install or hosting_ssl_uninstall. Works for Shared and Cloud hosting websites.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_websites_update-settings
+
+Change a website's HTTPS redirect, CDN and server cache settings in one call. Pass only the settings to change, at least one. Settings are applied in the order cache, cachelessMode, cdn, httpsRedirect, and the call stops at the first failure. applied lists the settings that were changed. When a setting fails, the call returns an error whose text is the same JSON: failed names the setting and why, and skipped lists the ones not attempted; a multi-execute batch stops there too. Turning httpsRedirect on needs an active SSL certificate: the call checks it first and changes nothing when there is none. Install one with hosting_ssl_install and wait until hosting_websites_get-settings shows ssl.status active. cachelessMode is applied in the background and takes effect within a few minutes; enabling the CDN changes DNS records, so visitors are served through it after a few minutes of propagation. Certificates are not installed or removed here: use hosting_ssl_install and hosting_ssl_uninstall. Read the current values with hosting_websites_get-settings. Works for Shared and Cloud hosting websites.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_cache_clear
+
+Clear a website's server cache (the hosting server's page cache) and Hostinger CDN cache, so updated content shows at once. By default (scope: all) it clears the server cache and, when the CDN is on, purges the CDN too. scope: cdn purges only the CDN edge cache and leaves the server cache alone; that fails with 422 when the CDN is off. For a WordPress site installed in a subdirectory, pass directory to clear that installation's cache (only with scope all). This does not purge the WordPress LiteSpeed Cache plugin: that is a separate WordPress operation (wordpress_litespeed-cache_purge-lite-speed). To turn caching or the CDN on or off use hosting_websites_update-settings. Works for Shared and Cloud hosting websites.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
 #### hosting_websites_trigger-event
 
 Tell Hostinger that something happened on this website, so Hostinger services such as hPanel can react to it. `event.name` picks the event and decides which `event.params` it takes. The call changes nothing on the website.
 
 - **Method**: `custom`
 - **Path**: `custom`
-
-#### hosting_cache_clear-website
-
-Permanently clears all server-side cache for the website at once. Use it when content was
-updated and needs to be visible immediately, or after making major changes.
-
-Also purges the Hostinger CDN cache when CDN is enabled on the website. To purge only the CDN
-cache and leave the server cache untouched, use `Purge CDN cache`. For a WordPress
-installation living in a subdirectory, pass the directory query parameter to clear its cache.
-
-- **Method**: `DELETE`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/clear`
-
-#### hosting_cache_status
-
-Returns the caching state of the website: whether server-side caching is enabled and whether
-development (cacheless) mode is on. Works for the main domain, addon websites, parked domains
-and subdomains of the account; each reports its own settings and does not inherit them from
-its parent website.
-
-`is_enabled` is the setting changed by `Toggle website cache` and reflects a toggle
-immediately. `is_cacheless_mode_enabled` is true while development mode is on; caching is then
-bypassed even when `is_enabled` is true. `Toggle cacheless mode` is applied in the background,
-so this flag can take a few minutes to follow it.
-
-The domain must be the exact website name as listed on the account, without a `www.` prefix.
-Returns 404 when the domain is not a website on the account.
-
-- **Method**: `GET`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/status`
-
-#### hosting_cache_toggle-cacheless
-
-Turns development (cacheless) mode on or off, based on the enabled flag. When enabled, nothing
-is cached, effectively turning off all caching for the website; use it while actively developing,
-testing changes, debugging issues, or when real-time updates must be visible. Disable it after
-finishing development work to restore the performance benefits of caching.
-
-The change is applied in the background and can take a few minutes. Use `Get cache status` to
-check the current state.
-
-- **Method**: `PATCH`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cacheless-mode/toggle`
-
-#### hosting_cache_toggle-website
-
-Turns server-side caching for the website on or off, based on the enabled flag. Enable it for
-faster page loads, reduced server load, and improved user experience; recommended for production
-websites. Disabling may impact performance; to temporarily bypass caching while developing or
-debugging, prefer toggling cacheless mode instead.
-
-Does nothing if caching is already in the requested state. Use `Get cache status` to check the
-current state.
-
-- **Method**: `PATCH`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cache/toggle`
-
-#### hosting_cdn_disable
-
-Turns off the Hostinger CDN for the website domain. Once DNS propagation completes, the
-website content is served directly from the origin server. Repeating the call is safe; when
-CDN is already disabled, it applies the DNS change again.
-
-Returns 422 for platform-managed domains (for example `*.hostingersite.com` and
-`*.app-preview.com`), where CDN cannot be disabled, even when CDN is already off. Also returns
-422 while the account is being moved to another server (retry after the move finishes), or
-when the CDN provider rejects the change. Returns 404 when the domain is not a website on the
-account.
-
-- **Method**: `POST`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cdn/disable`
-
-#### hosting_cdn_enable
-
-Turns on the Hostinger CDN for the website domain, which speeds up page loads and reduces the
-load on the server. Works for the main domain, parked domains and subdomains of the account.
-
-Enabling changes the domain's DNS records and usually takes a few seconds. After that, DNS
-propagation can take a few more minutes before visitors are served through the CDN.
-
-Repeating the call is safe, for example after a timeout. When CDN is already enabled, it
-applies the DNS change again and refreshes the CDN SSL certificate.
-
-Returns 422 when the account is disabled, while the account is being moved to another
-server (retry after the move finishes), or when the CDN provider rejects the change.
-Returns 404 when the domain is not a website on the account.
-
-- **Method**: `POST`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cdn/enable`
-
-#### hosting_cdn_purge-cache
-
-Purges the website's content from the Hostinger CDN edge cache only. The origin server cache
-is not touched; to clear both, use `Clear website cache`.
-
-Returns 422 when CDN is not enabled on the website. Returns 404 when the domain is not a
-website on the account.
-
-- **Method**: `DELETE`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cdn/purge`
-
-#### hosting_cdn_status
-
-Returns whether the Hostinger CDN is enabled for the website domain. Works for the main
-domain, parked domains and subdomains of the account.
-
-The domain must be the exact website name as listed on the account, without a `www.` prefix.
-Returns 404 when the domain is not a website on the account.
-
-- **Method**: `GET`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/cdn/status`
 
 #### hosting_cron-jobs_list
 
@@ -2561,32 +2471,6 @@ one has to be uninstalled first.
 
 - **Method**: `POST`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/setup`
-
-#### hosting_ssl_status
-
-Returns the SSL state of the website: the certificate `status` and `provider`, whether the
-certificate is a lifetime one managed by the platform, whether HTTP requests are redirected to
-HTTPS, when the certificate stops being valid and the last installation error.
-
-`installing` and `waiting_for_retry` mean an installation is in progress. `failed` means the
-last installation gave up, or the website was not updated for 60 minutes while `installing`;
-`last_error` holds the reason when it is a known message, otherwise it is null. `expired`
-means the assigned certificate's validity has ended. `not_installed` means no certificate is
-assigned. Free subdomains use a platform-managed certificate: with no installation recorded
-they report `active` with `provider` and `expires_at` null.
-
-- **Method**: `GET`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/status`
-
-#### hosting_ssl_toggle-https-redirect
-
-Turns the HTTP to HTTPS redirect of the website on or off, based on `is_enabled`. Does
-nothing when the redirect is already in the requested state. Turning it on requires an
-installed certificate (`status` `active` or `expired` on `Get SSL status`) and returns 422
-when there is none; turning it off is always accepted.
-
-- **Method**: `PATCH`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/ssl/https-redirect/toggle`
 
 #### hosting_ssl_uninstall
 
@@ -3720,6 +3604,21 @@ a connected domain cannot be changed here. Returns the settings after the change
 - **Method**: `PATCH`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/settings`
 
+#### reach_integrations_connect-ecommerce-store
+
+Connect one of the customer's eCommerce stores to the profile, so Reach receives its
+customers and orders.
+
+Take `store_id` from the list eCommerce stores endpoint. Fails with not found
+(`ECOMMERCE_STORE_NOT_FOUND`) when the store is not one of the customer's own stores, also
+when the eCommerce service cannot be reached. Fails with a conflict
+(`ECOMMERCE_CONNECTION_ALREADY_EXISTS`) when the store is connected to any profile or this
+profile already has a store - to move a store to another plan, disconnect it from the
+profile that holds it first.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/ecommerce/stores/{storeId}`
+
 #### reach_integrations_disconnect-ecommerce-store
 
 Disconnect an eCommerce store from the profile.
@@ -3728,8 +3627,8 @@ Reach stops receiving the store's customers and orders, and its products and cou
 removed from Reach; contacts and past orders stay. Take `store_id` from the list eCommerce
 stores endpoint; for a store that is `connected_to_other_profile`, call this with that
 profile. Also succeeds when the store is not connected to this profile, so success is not
-proof that anything was disconnected. Confirm the store and the plan with the customer
-before calling.
+proof that anything was disconnected. To move the store to another plan, connect it to the
+new profile afterwards. Confirm the store and the plan with the customer before calling.
 
 - **Method**: `DELETE`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/ecommerce/stores/{storeId}`
@@ -3741,8 +3640,8 @@ Get all of the customer's Hostinger eCommerce stores, each with its `store_id` a
 
 A store is connected to at most one profile. `connected_to_other_profile` does not name that
 profile - call this for each profile to find it. The list is empty, not an error, when the
-eCommerce service cannot be reached. Pass `store_id` to the disconnect eCommerce store
-endpoint. Connecting an AI Website Builder site connects the store selling on it.
+eCommerce service cannot be reached. Pass `store_id` to the connect or disconnect eCommerce
+store endpoint.
 
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/ecommerce/stores`

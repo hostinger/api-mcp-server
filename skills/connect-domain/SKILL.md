@@ -53,7 +53,7 @@ Agency Plan:
 
 Start only once `dig` shows the domain resolving to Hostinger — the certificate authority checks the domain against the server.
 
-- Shared and Cloud: `hosting_ssl_status`. When it is not `active`, call `hosting_ssl_install` and poll the status until `active` (or `failed` with `last_error`), then `hosting_ssl_toggle-https-redirect` with `is_enabled: true` (it returns 422 until a certificate exists).
+- Shared and Cloud: `ssl` in `hosting_websites_get-settings`. When `ssl.status` is not `active`, call `hosting_ssl_install` and poll `hosting_websites_get-settings` until it is `active` (or `failed` with `last_error`), then `hosting_websites_update-settings` with `httpsRedirect: true` (it changes nothing until the certificate is `active`).
 - Agency: `agency-hosting_ssl_install-website` for each domain, then poll `agency-hosting_ssl_website-status`. A domain allows three setups per seven days and one request a minute — install once DNS is right and never loop.
 - A `CAA` record at the apex that does not allow `letsencrypt.org` blocks issuance; the user adds `0 issue "letsencrypt.org"` beside the existing ones.
 

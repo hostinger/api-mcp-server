@@ -2918,6 +2918,41 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
+    "name": "reach_integrations_connect-ecommerce-store",
+    "title": "Connect Ecommerce store",
+    "annotations": {
+      "title": "Connect Ecommerce store",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Connect one of the customer's eCommerce stores to the profile, so Reach receives its\ncustomers and orders.\n\nTake `store_id` from the list eCommerce stores endpoint. Fails with not found\n(`ECOMMERCE_STORE_NOT_FOUND`) when the store is not one of the customer's own stores, also\nwhen the eCommerce service cannot be reached. Fails with a conflict\n(`ECOMMERCE_CONNECTION_ALREADY_EXISTS`) when the store is connected to any profile or this\nprofile already has a store - to move a store to another plan, disconnect it from the\nprofile that holds it first.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/ecommerce/stores/{storeId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "storeId": {
+          "type": "string",
+          "description": "Hostinger eCommerce store ID, as returned by the eCommerce stores list"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "storeId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_integrations_disconnect-ecommerce-store",
     "title": "Disconnect Ecommerce store",
     "annotations": {
@@ -2926,7 +2961,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Disconnect an eCommerce store from the profile.\n\nReach stops receiving the store's customers and orders, and its products and coupons are\nremoved from Reach; contacts and past orders stay. Take `store_id` from the list eCommerce\nstores endpoint; for a store that is `connected_to_other_profile`, call this with that\nprofile. Also succeeds when the store is not connected to this profile, so success is not\nproof that anything was disconnected. Confirm the store and the plan with the customer\nbefore calling.",
+    "description": "Disconnect an eCommerce store from the profile.\n\nReach stops receiving the store's customers and orders, and its products and coupons are\nremoved from Reach; contacts and past orders stay. Take `store_id` from the list eCommerce\nstores endpoint; for a store that is `connected_to_other_profile`, call this with that\nprofile. Also succeeds when the store is not connected to this profile, so success is not\nproof that anything was disconnected. To move the store to another plan, connect it to the\nnew profile afterwards. Confirm the store and the plan with the customer before calling.",
     "method": "DELETE",
     "path": "/api/reach/v1/profiles/{profileUuid}/ecommerce/stores/{storeId}",
     "inputSchema": {
@@ -2961,7 +2996,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Get all of the customer's Hostinger eCommerce stores, each with its `store_id` and\n`connection_status` for the profile in the path.\n\nA store is connected to at most one profile. `connected_to_other_profile` does not name that\nprofile - call this for each profile to find it. The list is empty, not an error, when the\neCommerce service cannot be reached. Pass `store_id` to the disconnect eCommerce store\nendpoint. Connecting an AI Website Builder site connects the store selling on it.",
+    "description": "Get all of the customer's Hostinger eCommerce stores, each with its `store_id` and\n`connection_status` for the profile in the path.\n\nA store is connected to at most one profile. `connected_to_other_profile` does not name that\nprofile - call this for each profile to find it. The list is empty, not an error, when the\neCommerce service cannot be reached. Pass `store_id` to the connect or disconnect eCommerce\nstore endpoint.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/ecommerce/stores",
     "inputSchema": {

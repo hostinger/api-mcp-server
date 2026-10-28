@@ -4,6 +4,26 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.18.0 — 2026-10-28
+
+### Operations
+
+- Added `hosting_websites_get-settings` — Get website SSL, CDN and cache settings
+- Added `hosting_websites_update-settings` — Update website HTTPS redirect, CDN and cache settings
+- Added `hosting_cache_clear` — Clear website cache
+- Added `reach_integrations_connect-ecommerce-store` — Connect Ecommerce store
+- Hid 10 operations from search (they still run through `execute`): `hosting_cache_clear-website`, `hosting_cache_status`, `hosting_cache_toggle-cacheless`, `hosting_cache_toggle-website`, `hosting_cdn_disable`, `hosting_cdn_enable`, `hosting_cdn_purge-cache`, `hosting_cdn_status`, `hosting_ssl_status`, `hosting_ssl_toggle-https-redirect`
+- Changed the description of `reach_integrations_disconnect-ecommerce-store`
+- Changed the description of `reach_integrations_list-ecommerce-stores`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Bundled agent skills: 4 files
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.17.4 — 2026-10-28
 
 ### Also in this release

@@ -190,6 +190,131 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_websites_get-settings",
+    "title": "Get website SSL, CDN and cache settings",
+    "annotations": {
+      "title": "Get website SSL, CDN and cache settings",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "topic": "hosting",
+    "description": "Read a website's SSL certificate, HTTPS redirect, CDN and server cache settings in one call. ssl is the SSL status as hosting_ssl_status returns it: the certificate status (active, installing, waiting_for_retry, failed, expired or not_installed) and provider, whether it is a lifetime certificate, whether HTTP is redirected to HTTPS, when it expires and the last installation error. cdn.is_enabled says whether the Hostinger CDN serves the website. cache.is_enabled says whether server-side caching is on, and cache.is_cacheless_mode_enabled whether development (cacheless) mode bypasses it. Use it before hosting_websites_update-settings, and to follow an SSL installation started by hosting_ssl_install: poll until ssl.status is active or failed, with growing pauses. A section that cannot be read comes back as { error } and the others are still returned; cache is null with a cacheNote when cache status is not available. To install or remove a certificate use hosting_ssl_install or hosting_ssl_uninstall. Works for Shared and Cloud hosting websites.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "replacesHidden": true,
+    "templateFile": "get-website-settings.template.js",
+    "templateFileTS": "get-website-settings.template.ts",
+    "handlerMethod": "handleHostingWebsitesGetSettings",
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_websites_update-settings",
+    "title": "Update website HTTPS redirect, CDN and cache settings",
+    "annotations": {
+      "title": "Update website HTTPS redirect, CDN and cache settings",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "topic": "hosting",
+    "description": "Change a website's HTTPS redirect, CDN and server cache settings in one call. Pass only the settings to change, at least one. Settings are applied in the order cache, cachelessMode, cdn, httpsRedirect, and the call stops at the first failure. applied lists the settings that were changed. When a setting fails, the call returns an error whose text is the same JSON: failed names the setting and why, and skipped lists the ones not attempted; a multi-execute batch stops there too. Turning httpsRedirect on needs an active SSL certificate: the call checks it first and changes nothing when there is none. Install one with hosting_ssl_install and wait until hosting_websites_get-settings shows ssl.status active. cachelessMode is applied in the background and takes effect within a few minutes; enabling the CDN changes DNS records, so visitors are served through it after a few minutes of propagation. Certificates are not installed or removed here: use hosting_ssl_install and hosting_ssl_uninstall. Read the current values with hosting_websites_get-settings. Works for Shared and Cloud hosting websites.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)"
+        },
+        "cache": {
+          "type": "boolean",
+          "description": "Turn server-side caching on (true) or off (false). Keep it on for production websites; to bypass it while developing, use cachelessMode instead."
+        },
+        "cachelessMode": {
+          "type": "boolean",
+          "description": "Turn development (cacheless) mode on (true) or off (false). While it is on nothing is cached, so changes show at once; turn it off when done. Applied in the background within a few minutes."
+        },
+        "cdn": {
+          "type": "boolean",
+          "description": "Turn the Hostinger CDN on (true) or off (false). Changes DNS records; propagation takes a few minutes. Cannot be turned off for platform-managed domains (*.hostingersite.com)."
+        },
+        "httpsRedirect": {
+          "type": "boolean",
+          "description": "Redirect HTTP to HTTPS (true) or stop redirecting (false). Turning it on needs an active SSL certificate (see hosting_ssl_install)."
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "replacesHidden": true,
+    "templateFile": "update-website-settings.template.js",
+    "templateFileTS": "update-website-settings.template.ts",
+    "handlerMethod": "handleHostingWebsitesUpdateSettings",
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_cache_clear",
+    "title": "Clear website cache",
+    "annotations": {
+      "title": "Clear website cache",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "topic": "hosting",
+    "description": "Clear a website's server cache (the hosting server's page cache) and Hostinger CDN cache, so updated content shows at once. By default (scope: all) it clears the server cache and, when the CDN is on, purges the CDN too. scope: cdn purges only the CDN edge cache and leaves the server cache alone; that fails with 422 when the CDN is off. For a WordPress site installed in a subdirectory, pass directory to clear that installation's cache (only with scope all). This does not purge the WordPress LiteSpeed Cache plugin: that is a separate WordPress operation (wordpress_litespeed-cache_purge-lite-speed). To turn caching or the CDN on or off use hosting_websites_update-settings. Works for Shared and Cloud hosting websites.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)"
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "all",
+            "cdn"
+          ],
+          "description": "What to clear: all (default) clears the server cache and, when the CDN is on, the CDN too; cdn purges only the CDN edge cache and fails when the CDN is off.",
+          "default": "all"
+        },
+        "directory": {
+          "type": "string",
+          "description": "WordPress installed in a subdirectory: its directory relative to the website root (e.g., blog), to clear that installation's cache. Only when scope is all; default the website root."
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "replacesHidden": true,
+    "templateFile": "clear-cache.template.js",
+    "templateFileTS": "clear-cache.template.ts",
+    "handlerMethod": "handleHostingCacheClear",
+    "group": "hosting"
+  },
+  {
     "name": "agency-hosting_deploy-node-static-website",
     "title": "Deploy node-static website",
     "annotations": {
@@ -6293,7 +6418,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_cache_status",
@@ -6328,7 +6454,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_cache_toggle-cacheless",
@@ -6369,7 +6496,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_cache_toggle-website",
@@ -6410,7 +6538,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_cdn_disable",
@@ -6445,7 +6574,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_cdn_enable",
@@ -6480,7 +6610,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_cdn_purge-cache",
@@ -6516,7 +6647,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_cdn_status",
@@ -6551,7 +6683,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_cron-jobs_list",
@@ -9648,7 +9781,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_ssl_toggle-https-redirect",
@@ -9689,7 +9823,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_ssl_uninstall",
@@ -14441,6 +14576,41 @@ const tools: OpenApiTool[] = [
     "group": "reach"
   },
   {
+    "name": "reach_integrations_connect-ecommerce-store",
+    "title": "Connect Ecommerce store",
+    "annotations": {
+      "title": "Connect Ecommerce store",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Connect one of the customer's eCommerce stores to the profile, so Reach receives its\ncustomers and orders.\n\nTake `store_id` from the list eCommerce stores endpoint. Fails with not found\n(`ECOMMERCE_STORE_NOT_FOUND`) when the store is not one of the customer's own stores, also\nwhen the eCommerce service cannot be reached. Fails with a conflict\n(`ECOMMERCE_CONNECTION_ALREADY_EXISTS`) when the store is connected to any profile or this\nprofile already has a store - to move a store to another plan, disconnect it from the\nprofile that holds it first.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/ecommerce/stores/{storeId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "storeId": {
+          "type": "string",
+          "description": "Hostinger eCommerce store ID, as returned by the eCommerce stores list"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "storeId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_integrations_disconnect-ecommerce-store",
     "title": "Disconnect Ecommerce store",
     "annotations": {
@@ -14449,7 +14619,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Disconnect an eCommerce store from the profile.\n\nReach stops receiving the store's customers and orders, and its products and coupons are\nremoved from Reach; contacts and past orders stay. Take `store_id` from the list eCommerce\nstores endpoint; for a store that is `connected_to_other_profile`, call this with that\nprofile. Also succeeds when the store is not connected to this profile, so success is not\nproof that anything was disconnected. Confirm the store and the plan with the customer\nbefore calling.",
+    "description": "Disconnect an eCommerce store from the profile.\n\nReach stops receiving the store's customers and orders, and its products and coupons are\nremoved from Reach; contacts and past orders stay. Take `store_id` from the list eCommerce\nstores endpoint; for a store that is `connected_to_other_profile`, call this with that\nprofile. Also succeeds when the store is not connected to this profile, so success is not\nproof that anything was disconnected. To move the store to another plan, connect it to the\nnew profile afterwards. Confirm the store and the plan with the customer before calling.",
     "method": "DELETE",
     "path": "/api/reach/v1/profiles/{profileUuid}/ecommerce/stores/{storeId}",
     "inputSchema": {
@@ -14484,7 +14654,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Get all of the customer's Hostinger eCommerce stores, each with its `store_id` and\n`connection_status` for the profile in the path.\n\nA store is connected to at most one profile. `connected_to_other_profile` does not name that\nprofile - call this for each profile to find it. The list is empty, not an error, when the\neCommerce service cannot be reached. Pass `store_id` to the disconnect eCommerce store\nendpoint. Connecting an AI Website Builder site connects the store selling on it.",
+    "description": "Get all of the customer's Hostinger eCommerce stores, each with its `store_id` and\n`connection_status` for the profile in the path.\n\nA store is connected to at most one profile. `connected_to_other_profile` does not name that\nprofile - call this for each profile to find it. The list is empty, not an error, when the\neCommerce service cannot be reached. Pass `store_id` to the connect or disconnect eCommerce\nstore endpoint.",
     "method": "GET",
     "path": "/api/reach/v1/profiles/{profileUuid}/ecommerce/stores",
     "inputSchema": {

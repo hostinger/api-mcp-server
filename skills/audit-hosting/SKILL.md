@@ -29,7 +29,7 @@ Tell the user the size (plans, websites, WordPress installs) before the checks. 
 
 Per Shared and Cloud website (skip `builder` and `horizons`):
 
-- `hosting_ssl_status` — flag `failed` (with `last_error`), `expired`, `not_installed` on a custom domain, `is_https_redirect_enabled: false`, and `expires_at` within 30 days when `is_lifetime` is false. Lifetime certificates renew on their own.
+- `hosting_websites_get-settings` — in `ssl`, flag `failed` (with `last_error`), `expired`, `not_installed` on a custom domain, `is_https_redirect_enabled: false`, and `expires_at` within 30 days when `is_lifetime` is false; lifetime certificates renew on their own. In `cache`, flag `is_cacheless_mode_enabled: true` (development mode left on) and `is_enabled: false`.
 - Node.js sites: `hosting_get-deployment` (latest build failed? `build.state`) and `hosting_nodejs_list-vulnerabilities` with `severities: ["critical", "high"]`.
 
 Per hosting account (`username`): `hosting_databases_list` — flag `disk_usage_mb` above 80% of `max_size_mb`.

@@ -130,6 +130,6 @@ curl -s -o /dev/null -w "%{http_code}\n" https://DOMAIN/
 curl -s https://DOMAIN/ | grep -o "TEXT THE PROJECT RENDERS"
 ```
 
-A `200` alone can be a placeholder page; match real copy. A new site may serve a default page briefly — clear it with `hosting_cache_clear-website` and retry before calling the deploy failed.
+A `200` alone can be a placeholder page; match real copy. A new site may serve a default page briefly — clear it with `hosting_cache_clear` and retry before calling the deploy failed.
 
 Write `.hostinger/site.json` in the project so later runs reuse the target: `{ "domain", "username" or "website_uid", "type": "static" | "nodejs" | "php" }`, keeping any fields already there.

@@ -91,6 +91,69 @@ export interface APITools {
   };
 
   /**
+   * Read a website's SSL certificate, HTTPS redirect, CDN and server cache settings in one call. ssl is the SSL status as hosting_ssl_status returns it: the certificate status (active, installing, waiting_for_retry, failed, expired or not_installed) and provider, whether it is a lifetime certificate, whether HTTP is redirected to HTTPS, when it expires and the last installation error. cdn.is_enabled says whether the Hostinger CDN serves the website. cache.is_enabled says whether server-side caching is on, and cache.is_cacheless_mode_enabled whether development (cacheless) mode bypasses it. Use it before hosting_websites_update-settings, and to follow an SSL installation started by hosting_ssl_install: poll until ssl.status is active or failed, with growing pauses. A section that cannot be read comes back as { error } and the others are still returned; cache is null with a cacheNote when cache status is not available. To install or remove a certificate use hosting_ssl_install or hosting_ssl_uninstall. Works for Shared and Cloud hosting websites.
+   */
+  "hosting_websites_get-settings": {
+    params: {
+      /**
+       * Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Change a website's HTTPS redirect, CDN and server cache settings in one call. Pass only the settings to change, at least one. Settings are applied in the order cache, cachelessMode, cdn, httpsRedirect, and the call stops at the first failure. applied lists the settings that were changed. When a setting fails, the call returns an error whose text is the same JSON: failed names the setting and why, and skipped lists the ones not attempted; a multi-execute batch stops there too. Turning httpsRedirect on needs an active SSL certificate: the call checks it first and changes nothing when there is none. Install one with hosting_ssl_install and wait until hosting_websites_get-settings shows ssl.status active. cachelessMode is applied in the background and takes effect within a few minutes; enabling the CDN changes DNS records, so visitors are served through it after a few minutes of propagation. Certificates are not installed or removed here: use hosting_ssl_install and hosting_ssl_uninstall. Read the current values with hosting_websites_get-settings. Works for Shared and Cloud hosting websites.
+   */
+  "hosting_websites_update-settings": {
+    params: {
+      /**
+       * Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * Turn server-side caching on (true) or off (false). Keep it on for production websites; to bypass it while developing, use cachelessMode instead.
+       */
+      cache?: boolean;
+      /**
+       * Turn development (cacheless) mode on (true) or off (false). While it is on nothing is cached, so changes show at once; turn it off when done. Applied in the background within a few minutes.
+       */
+      cachelessMode?: boolean;
+      /**
+       * Turn the Hostinger CDN on (true) or off (false). Changes DNS records; propagation takes a few minutes. Cannot be turned off for platform-managed domains (*.hostingersite.com).
+       */
+      cdn?: boolean;
+      /**
+       * Redirect HTTP to HTTPS (true) or stop redirecting (false). Turning it on needs an active SSL certificate (see hosting_ssl_install).
+       */
+      httpsRedirect?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Clear a website's server cache (the hosting server's page cache) and Hostinger CDN cache, so updated content shows at once. By default (scope: all) it clears the server cache and, when the CDN is on, purges the CDN too. scope: cdn purges only the CDN edge cache and leaves the server cache alone; that fails with 422 when the CDN is off. For a WordPress site installed in a subdirectory, pass directory to clear that installation's cache (only with scope all). This does not purge the WordPress LiteSpeed Cache plugin: that is a separate WordPress operation (wordpress_litespeed-cache_purge-lite-speed). To turn caching or the CDN on or off use hosting_websites_update-settings. Works for Shared and Cloud hosting websites.
+   */
+  "hosting_cache_clear": {
+    params: {
+      /**
+       * Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * What to clear: all (default) clears the server cache and, when the CDN is on, the CDN too; cdn purges only the CDN edge cache and fails when the CDN is off.
+       */
+      scope?: string;
+      /**
+       * WordPress installed in a subdirectory: its directory relative to the website root (e.g., blog), to clear that installation's cache. Only when scope is all; default the website root.
+       */
+      directory?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agency-hosting_deploy-php-application instead. The website UID is automatically resolved from the domain.
    */
   "agency-hosting_deploy-node-static-website": {
@@ -8286,14 +8349,39 @@ full address: Reach adds the profile's connected sending domain itself.
   };
 
   /**
+   * Connect one of the customer's eCommerce stores to the profile, so Reach receives its
+customers and orders.
+
+Take `store_id` from the list eCommerce stores endpoint. Fails with not found
+(`ECOMMERCE_STORE_NOT_FOUND`) when the store is not one of the customer's own stores, also
+when the eCommerce service cannot be reached. Fails with a conflict
+(`ECOMMERCE_CONNECTION_ALREADY_EXISTS`) when the store is connected to any profile or this
+profile already has a store - to move a store to another plan, disconnect it from the
+profile that holds it first.
+   */
+  "reach_integrations_connect-ecommerce-store": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Hostinger eCommerce store ID, as returned by the eCommerce stores list
+       */
+      storeId: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Disconnect an eCommerce store from the profile.
 
 Reach stops receiving the store's customers and orders, and its products and coupons are
 removed from Reach; contacts and past orders stay. Take `store_id` from the list eCommerce
 stores endpoint; for a store that is `connected_to_other_profile`, call this with that
 profile. Also succeeds when the store is not connected to this profile, so success is not
-proof that anything was disconnected. Confirm the store and the plan with the customer
-before calling.
+proof that anything was disconnected. To move the store to another plan, connect it to the
+new profile afterwards. Confirm the store and the plan with the customer before calling.
    */
   "reach_integrations_disconnect-ecommerce-store": {
     params: {
@@ -8315,8 +8403,8 @@ before calling.
 
 A store is connected to at most one profile. `connected_to_other_profile` does not name that
 profile - call this for each profile to find it. The list is empty, not an error, when the
-eCommerce service cannot be reached. Pass `store_id` to the disconnect eCommerce store
-endpoint. Connecting an AI Website Builder site connects the store selling on it.
+eCommerce service cannot be reached. Pass `store_id` to the connect or disconnect eCommerce
+store endpoint.
    */
   "reach_integrations_list-ecommerce-stores": {
     params: {

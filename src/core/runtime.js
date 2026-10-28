@@ -66,7 +66,7 @@ const GetSkillRequestSchema = z.object({
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 2.4.4
+ * Generated from OpenAPI spec version 2.5.0
  */
 class MCPServer {
   constructor({ name, version, tools, instructions, skills = [] }) {
@@ -302,6 +302,12 @@ class MCPServer {
         return await this.handleHostingDeploy(params);
       case 'hosting_get-deployment':
         return await this.handleHostingGetDeployment(params);
+      case 'hosting_websites_get-settings':
+        return await this.handleHostingWebsitesGetSettings(params);
+      case 'hosting_websites_update-settings':
+        return await this.handleHostingWebsitesUpdateSettings(params);
+      case 'hosting_cache_clear':
+        return await this.handleHostingCacheClear(params);
       case 'hosting_import-wordpress-website':
         return await this.handleWordpressWebsiteImport(params);
       case 'hosting_deploy-wordpress-plugin':
@@ -559,7 +565,7 @@ class MCPServer {
         // Agency Plan (U4S) websites come back without a username, and every later call would fail with
         // an unclear API error.
         if (typeof site.username !== 'string') {
-          throw new Error(site.domain + ' is an Agency Plan website: Git deploys and build status here work only for Shared and Cloud hosting websites. Use the agency-hosting operations for it.');
+          throw new Error(site.domain + ' is an Agency Plan website: this tool works only for Shared and Cloud hosting websites. Use the agency-hosting operations for it.');
         }
         return site;
       }
@@ -1328,6 +1334,150 @@ class MCPServer {
       buildSettings,
       gitAutoDeployment,
     };
+  }
+
+  // A 404 means the domain is not a website on the account, which fails the whole call; any other
+  // failure only fails its own section.
+  async hosting_websitesGetSettings_section(request, pick) {
+    try {
+      return pick(await request);
+    } catch (error) {
+      if (error instanceof ApiExecutionError && error.status === 404) {
+        throw error;
+      }
+      return { error: this.formatToolError(error) };
+    }
+  }
+
+  async handleHostingWebsitesGetSettings(params) {
+    const { domain: requestedDomain } = params;
+
+    if (!requestedDomain || typeof requestedDomain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    const { username, domain } = await this.findWebsite(requestedDomain);
+    const target = { username, domain };
+    // hosting_cache_status joined the spec after this tool: a catalog without it gets cache: null.
+    // Once every catalog has it, make this true (and drop cacheNote).
+    const cacheAvailable = this.operations.has('hosting_cache_status');
+
+    const [ssl, cdn, cache] = await Promise.all([
+      this.hosting_websitesGetSettings_section(this.callOperation('hosting_ssl_status', target), (response) => response),
+      this.hosting_websitesGetSettings_section(this.callOperation('hosting_cdn_status', target), (response) => ({ is_enabled: response.is_enabled })),
+      cacheAvailable
+        ? this.hosting_websitesGetSettings_section(this.callOperation('hosting_cache_status', target), (response) => ({
+          is_enabled: response.is_enabled,
+          is_cacheless_mode_enabled: response.is_cacheless_mode_enabled,
+        }))
+        : Promise.resolve(null),
+    ]);
+
+    return {
+      domain,
+      ssl,
+      cdn,
+      cache,
+      ...(cacheAvailable ? {} : { cacheNote: 'cache status not available yet' }),
+    };
+  }
+
+  // Application order, and how each setting maps to its operation.
+  hosting_websitesUpdateSettings_steps = [
+    { setting: 'cache', run: (target, value) => this.callOperation('hosting_cache_toggle-website', { ...target, enabled: value }) },
+    { setting: 'cachelessMode', run: (target, value) => this.callOperation('hosting_cache_toggle-cacheless', { ...target, enabled: value }) },
+    { setting: 'cdn', run: (target, value) => this.callOperation(value ? 'hosting_cdn_enable' : 'hosting_cdn_disable', target) },
+    { setting: 'httpsRedirect', run: (target, value) => this.callOperation('hosting_ssl_toggle-https-redirect', { ...target, is_enabled: value }) },
+  ];
+
+  async handleHostingWebsitesUpdateSettings(params) {
+    const { domain: requestedDomain } = params;
+
+    // Models send null for settings they leave unset.
+    const requested = this.hosting_websitesUpdateSettings_steps.filter(step => params[step.setting] !== undefined && params[step.setting] !== null);
+    for (const step of requested) {
+      if (typeof params[step.setting] !== 'boolean') {
+        throw new Error(step.setting + ' must be a boolean when provided');
+      }
+    }
+    if (requested.length === 0) {
+      throw new Error('Pass at least one of cache, cachelessMode, cdn, httpsRedirect');
+    }
+    if (!requestedDomain || typeof requestedDomain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    const { username, domain } = await this.findWebsite(requestedDomain);
+    const target = { username, domain };
+
+    // The redirect needs an installed certificate: check it before changing anything, so a
+    // missing certificate does not leave the other settings half applied.
+    if (params.httpsRedirect === true) {
+      const ssl = await this.callOperation('hosting_ssl_status', target);
+      const status = ssl ? ssl.status : undefined;
+      if (status !== 'active') {
+        const shown = ['string', 'number', 'boolean'].includes(typeof status) ? String(status) : 'unknown';
+        throw new Error('HTTPS redirect needs an active SSL certificate, but the SSL status of ' + domain + ' is ' + shown + '. Install SSL first with hosting_ssl_install and wait until hosting_websites_get-settings shows ssl.status active; no settings were changed.');
+      }
+    }
+
+    const applied = {};
+    let failed = null;
+    const skipped = [];
+    for (const step of requested) {
+      const value = params[step.setting];
+      if (failed) {
+        skipped.push(step.setting);
+        continue;
+      }
+      try {
+        await step.run(target, value);
+        applied[step.setting] = value;
+      } catch (error) {
+        failed = { setting: step.setting, error: this.formatToolError(error) };
+      }
+    }
+
+    const result = {
+      domain,
+      applied,
+      failed,
+      skipped,
+      ...('cachelessMode' in applied ? { note: 'cachelessMode takes effect in the background within a few minutes; hosting_websites_get-settings shows it once applied.' } : {}),
+    };
+    // A failed setting is a tool error carrying the same JSON, so execute reports it and a
+    // multi-execute batch stops at this step.
+    if (failed) {
+      throw new Error(JSON.stringify(result));
+    }
+    return result;
+  }
+
+  async handleHostingCacheClear(params) {
+    const { domain: requestedDomain } = params;
+    // Models send null for fields they leave unset.
+    const scope = params.scope ?? 'all';
+    const directory = params.directory ?? null;
+
+    if (scope !== 'all' && scope !== 'cdn') {
+      throw new Error('scope must be one of: all, cdn');
+    }
+    if (directory !== null && (typeof directory !== 'string' || directory === '')) {
+      throw new Error('directory must be a non-empty string when provided');
+    }
+    if (scope === 'cdn' && directory !== null) {
+      throw new Error('directory applies only when scope is all: the CDN purge clears the whole website');
+    }
+    if (!requestedDomain || typeof requestedDomain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    const { username, domain } = await this.findWebsite(requestedDomain);
+
+    const response = scope === 'cdn'
+      ? await this.callOperation('hosting_cdn_purge-cache', { username, domain })
+      : await this.callOperation('hosting_cache_clear-website', { username, domain, ...(directory !== null ? { directory } : {}) });
+    return { domain, cleared: scope, directory, response };
   }
 
   hosting_importWordpressWebsite_validateArchiveFormat(filePath) {
