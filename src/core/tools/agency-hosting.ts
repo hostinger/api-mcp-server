@@ -93,7 +93,7 @@ const tools: OpenApiTool[] = [
         },
         "removeArchive": {
           "type": "boolean",
-          "description": "Whether to remove the local archive file after successful deployment (default: true)"
+          "description": "Whether to remove the local archive file after successful deployment (default: false)"
         }
       },
       "required": [
@@ -133,7 +133,7 @@ const tools: OpenApiTool[] = [
         },
         "removeArchive": {
           "type": "boolean",
-          "description": "Whether to remove the local archive file after successful deployment (default: true)"
+          "description": "Whether to remove the local archive file after successful deployment (default: false)"
         }
       },
       "required": [

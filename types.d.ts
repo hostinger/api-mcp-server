@@ -167,7 +167,7 @@ export interface APITools {
        */
       archivePath: string;
       /**
-       * Whether to remove the local archive file after successful deployment (default: true)
+       * Whether to remove the local archive file after successful deployment (default: false)
        */
       removeArchive?: boolean;
     };
@@ -188,7 +188,7 @@ export interface APITools {
        */
       archivePath: string;
       /**
-       * Whether to remove the local archive file after successful deployment (default: true)
+       * Whether to remove the local archive file after successful deployment (default: false)
        */
       removeArchive?: boolean;
     };

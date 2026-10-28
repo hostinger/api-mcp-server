@@ -2449,7 +2449,6 @@ class MCPServer {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.log('error', `Failed to fetch build settings: ${errorMessage}`);
-      const archiveRemoved = this.hosting_deployJsApplication_removeArchive(archivePath, removeArchive);
 
       return {
         upload: {
@@ -2466,7 +2465,7 @@ class MCPServer {
           status: 'skipped'
         },
         removeArchive: {
-          status: archiveRemoved ? 'success' : 'skipped'
+          status: 'skipped'
         }
       };
     }
@@ -2479,7 +2478,6 @@ class MCPServer {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.log('error', `Failed to trigger build: ${errorMessage}`);
-      const archiveRemoved = this.hosting_deployJsApplication_removeArchive(archivePath, removeArchive);
 
       return {
         upload: {
@@ -2497,7 +2495,7 @@ class MCPServer {
           error: errorMessage
         },
         removeArchive: {
-          status: archiveRemoved ? 'success' : 'skipped'
+          status: 'skipped'
         }
       };
     }
@@ -2690,7 +2688,6 @@ class MCPServer {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.log('error', `Failed to trigger deployment: ${errorMessage}`);
-      const archiveRemoved = this.hosting_deployStaticWebsite_removeArchive(archivePath, removeArchive);
 
       return {
         upload: {
@@ -2704,7 +2701,7 @@ class MCPServer {
           error: errorMessage
         },
         removeArchive: {
-          status: archiveRemoved ? 'success' : 'skipped'
+          status: 'skipped'
         }
       };
     }
@@ -3304,7 +3301,7 @@ class MCPServer {
   }
 
   async handleNodeStaticDeploy(params) {
-    const { domain, archivePath, removeArchive = true } = params;
+    const { domain, archivePath, removeArchive = false } = params;
 
     this.agencyHosting_validateRequiredParams(params);
     this.agencyHosting_validateArchiveFile(archivePath);
@@ -3353,7 +3350,6 @@ class MCPServer {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.log('error', `Failed to trigger build: ${errorMessage}`);
-      const archiveRemoved = this.agencyHosting_removeArchive(archivePath, removeArchive);
 
       return {
         upload: {
@@ -3367,7 +3363,7 @@ class MCPServer {
           error: errorMessage
         },
         removeArchive: {
-          status: archiveRemoved ? 'success' : 'skipped'
+          status: 'skipped'
         }
       };
     }
@@ -3442,7 +3438,7 @@ class MCPServer {
   }
 
   async handlePhpAppDeploy(params) {
-    const { domain, archivePath, removeArchive = true } = params;
+    const { domain, archivePath, removeArchive = false } = params;
 
     this.agencyHosting_validateRequiredParams(params);
     this.agencyHosting_validateArchiveFile(archivePath);
@@ -3490,7 +3486,6 @@ class MCPServer {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.log('error', `Failed to trigger import: ${errorMessage}`);
-      const archiveRemoved = this.agencyHosting_removeArchive(archivePath, removeArchive);
 
       return {
         upload: {
@@ -3504,7 +3499,7 @@ class MCPServer {
           error: errorMessage
         },
         removeArchive: {
-          status: archiveRemoved ? 'success' : 'skipped'
+          status: 'skipped'
         }
       };
     }

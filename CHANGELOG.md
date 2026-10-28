@@ -4,6 +4,18 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.21.2 — 2026-10-28
+
+### Operations
+
+- Changed the input schema of `agency-hosting_deploy-node-static-website`
+- Changed the input schema of `agency-hosting_deploy-php-application`
+
+### Also in this release
+
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.21.1 — 2026-10-28
 
 ### Also in this release
