@@ -372,6 +372,31 @@ export interface APITools {
   };
 
   /**
+   * What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+   */
+  "changelog_list-entries": {
+    params: {
+      /**
+       * Which entries to list: released (default) reads the changelog, for what's new; upcoming reads the roadmap's unreleased items, for what's coming; all reads both.
+       */
+      status?: string;
+      /**
+       * Only entries for this product, matched case-insensitively. Products include AI Builder, Web Hosting, VPS, Domains, Hostinger Mail, Reach, Ecommerce, WordPress, Hostinger Agent, AI Automation Apps, Web Pro, Billing, Growth and Payments.
+       */
+      product?: string;
+      /**
+       * Only released entries dated on or after this date, as YYYY-MM-DD. Upcoming items are not filtered by date.
+       */
+      since?: string;
+      /**
+       * Most entries to return
+       */
+      limit?: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Lists the datacenters available for provisioning a new website on the given Agency Plan
 hosting order.
 

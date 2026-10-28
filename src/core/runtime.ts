@@ -39,6 +39,7 @@ interface OpenApiTool extends Tool {
   custom?: boolean;
   hidden?: boolean;
   group?: string;
+  everyServer?: boolean;
   topic?: string;
   handlerMethod?: string;
   templateFile?: string;
@@ -359,6 +360,8 @@ class MCPServer {
         return await this.handleNodeStaticDeploy(params);
       case 'agency-hosting_deploy-php-application':
         return await this.handlePhpAppDeploy(params);
+      case 'changelog_list-entries':
+        return await this.handleChangelogListEntries(params);
       default:
         throw new Error(`Unknown custom tool: ${tool.name}`);
     }
@@ -3552,6 +3555,74 @@ class MCPServer {
         status: archiveRemoved ? 'success' : 'skipped'
       }
     };
+  }
+
+  private async handleChangelogListEntries(params: Record<string, unknown>): Promise<unknown> {
+    // Their key order is the order of the results: upcoming items, then released entries.
+    const CHANGELOG_FEEDS = {
+      upcoming: "https://www.hostinger.com/roadmap/feed.json",
+      released: "https://www.hostinger.com/changelog/feed.json",
+    } as const;
+    type ChangelogStatus = keyof typeof CHANGELOG_FEEDS;
+    interface ChangelogFeedItem {
+      url: string;
+      title: string;
+      summary?: string;
+      date_published?: string;
+      _hostinger?: { product?: string; plan?: string[]; expected_release_date?: string };
+    }
+    // Agents often send null for an optional field they don't use; treat it as unset.
+    const { status = 'released', product, since, limit = 20 } = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== null));
+    const feedStatuses = Object.keys(CHANGELOG_FEEDS) as ChangelogStatus[];
+    if (status !== 'all' && !feedStatuses.includes(status as ChangelogStatus)) {
+      throw new Error('status must be one of: ' + [...feedStatuses, 'all'].join(', '));
+    }
+    if (typeof limit !== 'number' || !Number.isInteger(limit) || limit < 1 || limit > 100) {
+      throw new Error('limit must be an integer from 1 to 100');
+    }
+    const sinceTime = since === undefined ? undefined : Date.parse(String(since));
+    // Only a real YYYY-MM-DD day, the one form that reads back unchanged: Date.parse also takes "Oct 1"
+    // (as 2001-10-01) and rolls 2026-02-30 over to March.
+    if (sinceTime !== undefined && (Number.isNaN(sinceTime) || new Date(sinceTime).toISOString().slice(0, 10) !== since)) {
+      throw new Error(`since must be a day as YYYY-MM-DD: ${since}`);
+    }
+    const sameText = (a: unknown, b: unknown): boolean => String(a).toLowerCase() === String(b).toLowerCase();
+    const time = (date: string | undefined, ifMissing: number): number => Date.parse(date ?? '') || ifMissing;
+
+    const statuses = status === 'all' ? feedStatuses : [status as ChangelogStatus];
+    const entriesPerFeed = await Promise.all(statuses.map(async feedStatus => {
+      const feed = CHANGELOG_FEEDS[feedStatus];
+      // The feeds are public: send only the User-Agent, never the API headers.
+      const response = await axios.get<{ items?: ChangelogFeedItem[] }>(feed, { headers: { 'User-Agent': this.headers['User-Agent'] }, timeout: 30000 })
+        .catch((error: Error) => { throw new Error(`${feed} could not be read: ${error.message}`); });
+      if (!Array.isArray(response.data?.items)) {
+        throw new Error(`${feed} returned no items (HTTP ${response.status})`);
+      }
+      // The feed sets the status: the changelog lists only released entries, the roadmap only unreleased items.
+      const toEntry = (item: ChangelogFeedItem) => ({
+        title: item.title,
+        summary: item.summary,
+        product: item._hostinger?.product,
+        url: new URL(item.url, feed).toString(),
+        status: feedStatus,
+        plan: item._hostinger?.plan,
+      });
+      if (feedStatus === 'released') {
+        const publishedTime = (item: ChangelogFeedItem): number => time(item.date_published, 0);
+        return response.data.items
+          .filter(item => sinceTime === undefined || publishedTime(item) >= sinceTime)
+          .sort((a, b) => publishedTime(b) - publishedTime(a))
+          .map(item => ({ ...toEntry(item), date: item.date_published }));
+      }
+      // Roadmap items have no publication date: soonest expected release first, unknown dates last.
+      const releaseTime = (item: ChangelogFeedItem): number => time(item._hostinger?.expected_release_date, Number.MAX_SAFE_INTEGER);
+      return response.data.items
+        .sort((a, b) => releaseTime(a) - releaseTime(b))
+        .map(item => ({ ...toEntry(item), expected_release_date: item._hostinger?.expected_release_date }));
+    }));
+    const entries = entriesPerFeed.flat().filter(entry => product === undefined || sameText(entry.product, product));
+
+    return { feeds: statuses.map(feedStatus => CHANGELOG_FEEDS[feedStatus]), matched: entries.length, entries: entries.slice(0, limit) };
   }
 
   /**

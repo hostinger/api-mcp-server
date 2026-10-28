@@ -69,19 +69,19 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (412 total)
-- `hostinger-agency-hosting-mcp` — 42 operations for agency-hosting
-- `hostinger-agent-readiness-mcp` — 3 operations for agent-readiness
-- `hostinger-billing-mcp` — 9 operations for billing
-- `hostinger-dns-mcp` — 8 operations for dns
-- `hostinger-domains-mcp` — 42 operations for domains
-- `hostinger-ecommerce-mcp` — 29 operations for ecommerce
-- `hostinger-horizons-mcp` — 6 operations for horizons
-- `hostinger-hosting-mcp` — 61 operations for hosting
-- `hostinger-mail-mcp` — 38 operations for mail
-- `hostinger-reach-mcp` — 70 operations for reach
-- `hostinger-vps-mcp` — 67 operations for vps
-- `hostinger-wordpress-mcp` — 40 operations for wordpress
+- `hostinger-api-mcp` — unified server over every operation (413 total)
+- `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
+- `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
+- `hostinger-billing-mcp` — 10 operations for billing
+- `hostinger-dns-mcp` — 9 operations for dns
+- `hostinger-domains-mcp` — 43 operations for domains
+- `hostinger-ecommerce-mcp` — 30 operations for ecommerce
+- `hostinger-horizons-mcp` — 7 operations for horizons
+- `hostinger-hosting-mcp` — 62 operations for hosting
+- `hostinger-mail-mcp` — 39 operations for mail
+- `hostinger-reach-mcp` — 71 operations for reach
+- `hostinger-vps-mcp` — 68 operations for vps
+- `hostinger-wordpress-mcp` — 41 operations for wordpress
 
 Every binary exposes the same three tools; a scoped binary only searches and executes its own group's operations. `hostinger-api-mcp` remains the backwards-compatible default.
 
@@ -234,6 +234,13 @@ The operations `search` offers, by binary:
 Operations that newer tools replace are hidden from `search`, and not documented, in every binary that also offers the replacing tool. They keep working through `execute` until they are removed.
 
 ### `hostinger-agency-hosting-mcp`
+
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
 
 #### agency-hosting_deploy-node-static-website
 
@@ -685,6 +692,13 @@ Lists the WordPress core versions available for installation on an Agency Plan w
 
 ### `hostinger-agent-readiness-mcp`
 
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
 #### agent-readiness_checks_list
 
 List every check an agent readiness scan runs, with its name, category and weight.\n
@@ -720,6 +734,13 @@ Returns 404 when the domain has never been scanned; use the `Run agent readiness
 - **Path**: `/api/agent-readiness/v1/scans/{domain}`
 
 ### `hostinger-billing-mcp`
+
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
 
 #### billing_catalog_list
 
@@ -835,6 +856,13 @@ Use this endpoint to renew any subscription available in your account.
 
 ### `hostinger-dns-mcp`
 
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
 #### dns_snapshots_get
 
 Retrieve particular DNS snapshot with contents of DNS zone records.
@@ -920,6 +948,13 @@ Use this endpoint to verify DNS record validity before applying changes.
 - **Path**: `/api/dns/v1/zones/{domain}/validate`
 
 ### `hostinger-domains-mcp`
+
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
 
 #### domains_verifications_direct
 
@@ -1455,6 +1490,13 @@ Use this endpoint to view which domains use specific contact profiles.
 
 ### `hostinger-ecommerce-mcp`
 
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
 #### ecommerce_discounts_list
 
 List a store's discounts. Filter by free text over code and name, or by disabled state.
@@ -1700,6 +1742,13 @@ store currency. Returns the created variant.
 
 ### `hostinger-horizons-mcp`
 
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
 #### horizons_websites_clone
 
 Clone a Hostinger Horizons website into a new website.\n
@@ -1813,6 +1862,13 @@ interface in the provided website URL.
 - **Path**: `/api/horizons/v1/websites/{websiteId}`
 
 ### `hostinger-hosting-mcp`
+
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
 
 #### hosting_deploy
 
@@ -2567,6 +2623,13 @@ complete. The response returns before the removal finishes.
 
 ### `hostinger-mail-mcp`
 
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
 #### mail_aliases_create-alias
 
 Create an alias for the given mailbox. The alias address is formed
@@ -2908,6 +2971,13 @@ requests are rate limited upstream.
 - **Path**: `/api/mail/v1/webhooks/{webhookId}/test`
 
 ### `hostinger-reach-mcp`
+
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
 
 #### reach_automations_get
 
@@ -3736,6 +3806,13 @@ from the WordPress plugin - so confirm the site and the plan with the customer b
 
 ### `hostinger-vps-mcp`
 
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
 #### vps_data-centers_list
 
 Retrieve all available data centers.
@@ -4527,6 +4604,13 @@ Use this endpoint to power off running VPS instances.
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/stop`
 
 ### `hostinger-wordpress-mcp`
+
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
 
 #### wordpress_ai-content_generate-images
 
