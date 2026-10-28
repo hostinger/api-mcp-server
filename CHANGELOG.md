@@ -4,6 +4,12 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.17.4 — 2026-10-28
+
+### Also in this release
+
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+
 ## v3.17.3 — 2026-10-28
 
 ### Also in this release
