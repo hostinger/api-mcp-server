@@ -4,6 +4,19 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.20.3 — 2026-10-28
+
+### Operations
+
+- Changed the input schema of `hosting_deploy`
+- Changed the input schema of `hosting_deploy-wordpress-plugin`
+- Changed the input schema of `hosting_deploy-wordpress-theme`
+
+### Also in this release
+
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.20.2 — 2026-10-28
 
 ### Also in this release

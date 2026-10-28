@@ -14,7 +14,7 @@ export interface APITools {
        */
       domain: string;
       /**
-       * Local directory (preferred; it is archived for you, skipping node_modules, .git and .env files, but not reading .gitignore, so keep build output out) or archive (zip, tar, tar.gz, tgz, 7z, gz, gzip). Not together with git.
+       * Local directory (preferred; it is archived for you, skipping node_modules, .git and secret files (.env, keys, credentials), but not reading .gitignore, so keep build output out) or archive (zip, tar, tar.gz, tgz, 7z, gz, gzip). Not together with git.
        */
       path?: string;
       /**
@@ -230,7 +230,7 @@ export interface APITools {
        */
       slug: string;
       /**
-       * Absolute or relative path to the plugin directory containing all plugin files
+       * Absolute or relative path to the plugin directory containing all plugin files. node_modules, .git, symlinks and secret files (.env, keys, credentials) are not uploaded.
        */
       pluginPath: string;
     };
@@ -251,7 +251,7 @@ export interface APITools {
        */
       slug: string;
       /**
-       * Absolute or relative path to the theme directory containing all theme files
+       * Absolute or relative path to the theme directory containing all theme files. node_modules, .git, symlinks and secret files (.env, keys, credentials) are not uploaded.
        */
       themePath: string;
       /**

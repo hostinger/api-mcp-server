@@ -72,7 +72,7 @@ export default [
         },
         "path": {
           "type": "string",
-          "description": "Local directory (preferred; it is archived for you, skipping node_modules, .git and .env files, but not reading .gitignore, so keep build output out) or archive (zip, tar, tar.gz, tgz, 7z, gz, gzip). Not together with git."
+          "description": "Local directory (preferred; it is archived for you, skipping node_modules, .git and secret files (.env, keys, credentials), but not reading .gitignore, so keep build output out) or archive (zip, tar, tar.gz, tgz, 7z, gz, gzip). Not together with git."
         },
         "git": {
           "type": "object",
@@ -416,7 +416,7 @@ export default [
         },
         "pluginPath": {
           "type": "string",
-          "description": "Absolute or relative path to the plugin directory containing all plugin files"
+          "description": "Absolute or relative path to the plugin directory containing all plugin files. node_modules, .git, symlinks and secret files (.env, keys, credentials) are not uploaded."
         }
       },
       "required": [
@@ -458,7 +458,7 @@ export default [
         },
         "themePath": {
           "type": "string",
-          "description": "Absolute or relative path to the theme directory containing all theme files"
+          "description": "Absolute or relative path to the theme directory containing all theme files. node_modules, .git, symlinks and secret files (.env, keys, credentials) are not uploaded."
         },
         "activate": {
           "type": "boolean",

@@ -380,6 +380,93 @@ class MCPServer {
     }
   }
 
+  // Directories that hold credentials, the server's own token store (hostinger-mcp) among them.
+  private credentialDirectories = ['.ssh', '.aws', '.gnupg', '.config', '.kube', '.docker', '.azure', 'hostinger-mcp'];
+
+  // System directories. /var as a whole stays deployable: sites live in /var/www, and macOS keeps its temp dir there.
+  private systemDirectories = ['/etc', '/root', '/usr', '/bin', '/sbin', '/boot', '/proc', '/sys', '/dev', '/var/lib', '/var/log', '/var/db', '/var/root', '/private/etc', '/private/var/lib', '/private/var/log', '/private/var/db', '/private/var/root', '/System', '/Library'];
+
+  // A deploy publishes what it reads, and the path comes from the model, so prompt-injected arguments could
+  // publish any readable file. Refused, before anything is read or sent: the home directory and every directory
+  // above it (they contain the credentials), other users' home directories, system directories, a path in a
+  // credential directory, and a secret file. Symlinks are resolved first.
+  // os is imported by deploy.template: the JS generator dedupes import blocks by their whole text, and this block
+  // must stay identical to agency-hosting/shared's, or tus and fs are imported twice.
+  private assertDeployablePath(localPath: string): void {
+    let real: string;
+    try {
+      real = fs.realpathSync(localPath);
+    } catch (error) {
+      throw new Error('Path not found: ' + localPath);
+    }
+    let home = os.homedir();
+    try {
+      home = fs.realpathSync(home);
+    } catch (error) {
+      // a missing home directory has nothing in it to protect
+    }
+    const inside = (dir: string, file: string): boolean => {
+      const relative = path.relative(dir, file);
+      return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+    };
+    // A home in the filesystem root (HOME=/ in a container run as a user without a passwd entry) exempts nothing.
+    const inHome = path.dirname(home) !== home && inside(home, real);
+    // The directory that holds the home directories (/Users, /home); not when home sits in the root (/root).
+    const homes = path.dirname(home);
+    const otherHome = !inHome && path.dirname(homes) !== homes && inside(homes, real);
+    const inSystem = !inHome && this.systemDirectories.some((dir: string) => inside(dir, real));
+    const inCredentials = real.split(path.sep).some((segment: string) => this.credentialDirectories.includes(segment.toLowerCase()));
+    if (inside(real, home) || otherHome || inSystem || inCredentials || (fs.statSync(real).isFile() && this.isSecretFile(path.basename(real)))) {
+      throw new Error('Refusing to deploy ' + localPath + ': it is, or contains, a home, system or credentials location. Pass the project directory or archive.');
+    }
+  }
+
+  // Env files (examples such as .env.example are kept), credentials and private keys: a deploy would serve them
+  // publicly. Matches the CLI's isSecretFile, plus .npmrc and the Hostinger credential files.
+  private isSecretFile(name: string): boolean {
+    if (['.env', '.envrc', '.netrc', '.git-credentials', '.pgpass', '.npmrc', '.hostinger.yaml', 'credentials.json'].includes(name)) {
+      return true;
+    }
+    if (['id_rsa', 'id_dsa', 'id_ecdsa', 'id_ed25519'].some((key) => name.startsWith(key))) {
+      return true;
+    }
+    if (name.endsWith('.pem') || name.endsWith('.key')) {
+      return true;
+    }
+    return name.startsWith('.env.') && !['.env.example', '.env.sample', '.env.template', '.env.dist'].includes(name);
+  }
+
+  // The files to ship, as sorted forward-slash paths relative to dir, and the secret files left out.
+  // node_modules, .git and OS junk are skipped; symlinks are not followed. .gitignore is not read:
+  // keep build output out of the directory.
+  // exclude is a file that is uploaded on its own (the database dump) and must not also travel inside
+  // the archive, where extracting it would leave a second, downloadable copy.
+  private listDeployFiles(dir: string, exclude?: string): { files: string[]; skipped: string[] } {
+    const files: string[] = [];
+    const skipped: string[] = [];
+    const walk = (relativeDir: string): void => {
+      for (const entry of fs.readdirSync(path.join(dir, relativeDir), { withFileTypes: true })) {
+        if (entry.isSymbolicLink()) {
+          continue;
+        }
+        const relativePath = relativeDir ? relativeDir + '/' + entry.name : entry.name;
+        if (entry.isDirectory()) {
+          if (entry.name !== 'node_modules' && entry.name !== '.git') {
+            walk(relativePath);
+          }
+        } else if (entry.isFile() && entry.name !== '.DS_Store' && path.resolve(dir, relativePath) !== exclude) {
+          if (this.isSecretFile(entry.name)) {
+            skipped.push(relativePath);
+          } else {
+            files.push(relativePath);
+          }
+        }
+      }
+    };
+    walk('');
+    return { files: files.sort(), skipped: skipped.sort() };
+  }
+
   private async resolveUsername(domain: string): Promise<string> {
     const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
     const url = new URL(`api/hosting/v1/websites?domain=${encodeURIComponent(domain)}`, baseUrl).toString();
@@ -718,43 +805,6 @@ class MCPServer {
     return slug;
   }
 
-  // .env and .env.* hold secrets, and one in a document root can be fetched over HTTP; the platform
-  // takes variables from its own settings, so they are never packed. Examples are kept.
-  private hosting_deploy_isEnvFile(name: string): boolean {
-    return name === '.env' || (name.startsWith('.env.') && !['.env.example', '.env.sample', '.env.template', '.env.dist'].includes(name));
-  }
-
-  // The files to ship, as sorted forward-slash paths relative to dir, and the .env files left out.
-  // node_modules, .git and OS junk are skipped; symlinks are not followed. .gitignore is not read:
-  // keep build output out of the directory.
-  // exclude is a file that is uploaded on its own (the database dump) and must not also travel inside
-  // the archive, where extracting it would leave a second, downloadable copy.
-  private hosting_deploy_listFiles(dir: string, exclude?: string): { files: string[]; skipped: string[] } {
-    const files: string[] = [];
-    const skipped: string[] = [];
-    const walk = (relativeDir: string): void => {
-      for (const entry of fs.readdirSync(path.join(dir, relativeDir), { withFileTypes: true })) {
-        if (entry.isSymbolicLink()) {
-          continue;
-        }
-        const relativePath = relativeDir ? relativeDir + '/' + entry.name : entry.name;
-        if (entry.isDirectory()) {
-          if (entry.name !== 'node_modules' && entry.name !== '.git') {
-            walk(relativePath);
-          }
-        } else if (entry.isFile() && entry.name !== '.DS_Store' && path.resolve(dir, relativePath) !== exclude) {
-          if (this.hosting_deploy_isEnvFile(entry.name)) {
-            skipped.push(relativePath);
-          } else {
-            files.push(relativePath);
-          }
-        }
-      }
-    };
-    walk('');
-    return { files: files.sort(), skipped: skipped.sort() };
-  }
-
   // Adds what was left out to a result, so it is never silent.
   private hosting_deploy_withSkipped(result: any, skipped: string[]): any {
     if (skipped.length === 0) {
@@ -763,7 +813,7 @@ class MCPServer {
     return {
       ...result,
       skippedFiles: skipped,
-      skippedNote: 'These .env files were not uploaded. Set their values with hosting_nodejs_replace-environment-variables.',
+      skippedNote: 'These files hold secrets (env files, keys, credentials) and were not uploaded. Set environment values with hosting_nodejs_replace-environment-variables.',
     };
   }
 
@@ -964,7 +1014,7 @@ class MCPServer {
       return { archivePath: resolved, skipped: [] };
     }
 
-    const { files, skipped } = this.hosting_deploy_listFiles(resolved, exclude);
+    const { files, skipped } = this.listDeployFiles(resolved, exclude);
     if (files.length === 0) {
       throw new Error('No files to deploy in ' + resolved);
     }
@@ -1015,7 +1065,7 @@ class MCPServer {
     const isPlugin = type === 'wordpress-plugin';
     const directory = path.resolve(params.path);
     const slug = params.slug !== undefined ? params.slug : this.hosting_deploy_slug(directory);
-    const { files, skipped } = this.hosting_deploy_listFiles(directory);
+    const { files, skipped } = this.listDeployFiles(directory);
     if (files.length === 0) {
       throw new Error('No files found in directory: ' + directory);
     }
@@ -1274,6 +1324,10 @@ class MCPServer {
 
     if (git === undefined) {
       // Local checks first, so a bad path fails before any request is made.
+      this.assertDeployablePath(params.path);
+      if (params.databaseDump !== undefined) {
+        this.assertDeployablePath(params.databaseDump);
+      }
       const type = this.hosting_deploy_resolveType(params);
       const website = await this.findWebsite(domain);
       return this.hosting_deploy_fromPath(website.username, website.domain, type, params);
@@ -1550,6 +1604,7 @@ class MCPServer {
   }
 
   private hosting_importWordpressWebsite_validateArchiveFile(archivePath: string): void {
+    this.assertDeployablePath(archivePath);
     if (!fs.existsSync(archivePath)) {
       throw new Error(`Archive file not found: ${archivePath}`);
     }
@@ -1565,6 +1620,7 @@ class MCPServer {
   }
 
   private hosting_importWordpressWebsite_validateDatabaseFile(databaseDump: string): void {
+    this.assertDeployablePath(databaseDump);
     if (!fs.existsSync(databaseDump)) {
       throw new Error(`Database dump file not found: ${databaseDump}`);
     }
@@ -1820,6 +1876,7 @@ class MCPServer {
   }
 
   private hosting_deployWordpressPlugin_validatePluginDirectory(pluginPath: string): void {
+    this.assertDeployablePath(pluginPath);
     if (!fs.existsSync(pluginPath)) {
       throw new Error(`Plugin directory not found: ${pluginPath}`);
     }
@@ -1828,32 +1885,6 @@ class MCPServer {
     if (!pluginStats.isDirectory()) {
       throw new Error(`Plugin path is not a directory: ${pluginPath}`);
     }
-  }
-
-  private hosting_deployWordpressPlugin_scanDirectory(dirPath: string, basePath: string = dirPath): Array<{absolutePath: string, relativePath: string}> {
-    const files: Array<{absolutePath: string, relativePath: string}> = [];
-    
-    const scanDir = (currentPath: string) => {
-      const items = fs.readdirSync(currentPath);
-      
-      for (const item of items) {
-        const itemPath = path.join(currentPath, item);
-        const stats = fs.statSync(itemPath);
-        
-        if (stats.isDirectory()) {
-          scanDir(itemPath);
-        } else if (stats.isFile()) {
-          const relativePath = path.relative(basePath, itemPath);
-          files.push({
-            absolutePath: itemPath,
-            relativePath: relativePath
-          });
-        }
-      }
-    };
-    
-    scanDir(dirPath);
-    return files;
   }
 
   private async hosting_deployWordpressPlugin_deployPlugin(username: string, domain: string, slug: string, pluginPath: string): Promise<boolean> {
@@ -1920,7 +1951,8 @@ class MCPServer {
     const uploadDirName = `${slug}-${randomSuffix}`;
 
     this.log('info', `Scanning plugin directory: ${pluginPath}`);
-    const pluginFiles = this.hosting_deployWordpressPlugin_scanDirectory(pluginPath);
+    const { files, skipped } = this.listDeployFiles(pluginPath);
+    const pluginFiles = files.map((relativePath: string) => ({ absolutePath: path.join(pluginPath, relativePath), relativePath }));
 
     if (pluginFiles.length === 0) {
       throw new Error(`No files found in plugin directory: ${pluginPath}`);
@@ -2008,6 +2040,7 @@ class MCPServer {
             failed: failureCount
           },
           results,
+          ...(skipped.length > 0 ? { skippedFiles: skipped } : {}),
           deploymentError: errorMessage
         };
       }
@@ -2021,6 +2054,7 @@ class MCPServer {
         failed: failureCount
       },
       results,
+      ...(skipped.length > 0 ? { skippedFiles: skipped } : {}),
       uploadDirName
     };
   }
@@ -2051,6 +2085,7 @@ class MCPServer {
   }
 
   private hosting_deployWordpressTheme_validateThemeDirectory(themePath: string): void {
+    this.assertDeployablePath(themePath);
     if (!fs.existsSync(themePath)) {
       throw new Error(`Theme directory not found: ${themePath}`);
     }
@@ -2059,32 +2094,6 @@ class MCPServer {
     if (!themeStats.isDirectory()) {
       throw new Error(`Theme path is not a directory: ${themePath}`);
     }
-  }
-
-  private hosting_deployWordpressTheme_scanDirectory(dirPath: string, basePath: string = dirPath): Array<{absolutePath: string, relativePath: string}> {
-    const files: Array<{absolutePath: string, relativePath: string}> = [];
-    
-    const scanDir = (currentPath: string) => {
-      const items = fs.readdirSync(currentPath);
-      
-      for (const item of items) {
-        const itemPath = path.join(currentPath, item);
-        const stats = fs.statSync(itemPath);
-        
-        if (stats.isDirectory()) {
-          scanDir(itemPath);
-        } else if (stats.isFile()) {
-          const relativePath = path.relative(basePath, itemPath);
-          files.push({
-            absolutePath: itemPath,
-            relativePath: relativePath
-          });
-        }
-      }
-    };
-    
-    scanDir(dirPath);
-    return files;
   }
 
   private async hosting_deployWordpressTheme_deployTheme(username: string, domain: string, slug: string, themePath: string, activate: boolean = false): Promise<boolean> {
@@ -2152,7 +2161,8 @@ class MCPServer {
     const uploadDirName = `${slug}-${randomSuffix}`;
 
     this.log('info', `Scanning theme directory: ${themePath}`);
-    const themeFiles = this.hosting_deployWordpressTheme_scanDirectory(themePath);
+    const { files, skipped } = this.listDeployFiles(themePath);
+    const themeFiles = files.map((relativePath: string) => ({ absolutePath: path.join(themePath, relativePath), relativePath }));
 
     if (themeFiles.length === 0) {
       throw new Error(`No files found in theme directory: ${themePath}`);
@@ -2240,6 +2250,7 @@ class MCPServer {
             failed: failureCount
           },
           results,
+          ...(skipped.length > 0 ? { skippedFiles: skipped } : {}),
           deploymentError: errorMessage
         };
       }
@@ -2253,6 +2264,7 @@ class MCPServer {
         failed: failureCount
       },
       results,
+      ...(skipped.length > 0 ? { skippedFiles: skipped } : {}),
       uploadDirName,
       activated: activate
     };
@@ -2306,6 +2318,7 @@ class MCPServer {
   }
 
   private hosting_deployJsApplication_validateArchiveFile(archivePath: string): void {
+    this.assertDeployablePath(archivePath);
     if (!fs.existsSync(archivePath)) {
       throw new Error(`Archive file not found: ${archivePath}`);
     }
@@ -2601,6 +2614,7 @@ class MCPServer {
   }
 
   private hosting_deployStaticWebsite_validateArchiveFile(archivePath: string): void {
+    this.assertDeployablePath(archivePath);
     if (!fs.existsSync(archivePath)) {
       throw new Error(`Archive file not found: ${archivePath}`);
     }
@@ -3052,6 +3066,7 @@ class MCPServer {
   }
 
   private agencyHosting_validateArchiveFile(archivePath: string): void {
+    this.assertDeployablePath(archivePath);
     if (!fs.existsSync(archivePath)) {
       throw new Error(`Archive file not found: ${archivePath}`);
     }
@@ -3059,6 +3074,12 @@ class MCPServer {
     const archiveStats = fs.statSync(archivePath);
     if (!archiveStats.isFile()) {
       throw new Error(`Archive path is not a file: ${archivePath}`);
+    }
+
+    // Only an archive is uploaded (and, with removeArchive, deleted afterwards), never any other file.
+    const name = path.basename(archivePath).toLowerCase();
+    if (!['.zip', '.tar', '.tar.gz', '.tgz', '.7z', '.gz', '.gzip'].some((extension) => name.endsWith(extension))) {
+      throw new Error('Invalid archive format. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip');
     }
   }
 
