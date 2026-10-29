@@ -12,16 +12,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SUCCESS_HTML: string = readFileSync(path.join(__dirname, 'oauth-success.html'), 'utf8');
 const ERROR_HTML_TEMPLATE: string = readFileSync(path.join(__dirname, 'oauth-error.html'), 'utf8');
 
-function escapeHtml(s: string): string {
-  return String(s).replace(/[&<>"']/g, (ch) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  })[ch] as string);
-}
-
 const DEFAULT_ISSUER = 'https://auth.hostinger.com';
 const REGISTER_PATH = '/api/external/v1/oauth-server/register';
 const AUTHORIZE_PATH = '/api/external/v1/oauth-server/authorize';
@@ -29,6 +19,16 @@ const TOKEN_PATH = '/api/external/v1/oauth-server/token';
 const REVOKE_PATH = '/api/external/v1/oauth-server/token/revoke';
 const CLIENT_NAME = 'hostinger-mcp';
 const CALLBACK_PATH = '/oauth/callback';
+// RFC 6749 §4.1.2.1 — anything else in ?error= is reported as unknown_error
+const OAUTH_ERROR_CODES = new Set([
+  'invalid_request',
+  'unauthorized_client',
+  'access_denied',
+  'unsupported_response_type',
+  'invalid_scope',
+  'server_error',
+  'temporarily_unavailable',
+]);
 const CREDENTIALS_DIR_NAME = 'hostinger-mcp';
 const CREDENTIALS_FILE_NAME = 'credentials.json';
 const EXPIRY_BUFFER_SECONDS = 60;
@@ -321,19 +321,23 @@ export class OAuthProvider {
         const state = url.searchParams.get('state');
         const error = url.searchParams.get('error');
 
-        const body = error
-          ? ERROR_HTML_TEMPLATE.replace('{{error}}', escapeHtml(error))
+        if (state !== expectedState) {
+          res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' });
+          res.end(ERROR_HTML_TEMPLATE.replace('{{error}}', 'invalid_state'));
+          return;
+        }
+
+        const oauthError = error && (OAUTH_ERROR_CODES.has(error) ? error : 'unknown_error');
+        const body = oauthError
+          ? ERROR_HTML_TEMPLATE.replace('{{error}}', oauthError)
           : SUCCESS_HTML;
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         res.end(body);
 
         setImmediate(() => server.close());
 
-        if (error) {
-          return reject(new Error(`OAuth error from authorization server: ${error}`));
-        }
-        if (!state || state !== expectedState) {
-          return reject(new Error('OAuth state mismatch'));
+        if (oauthError) {
+          return reject(new Error(`OAuth error from authorization server: ${oauthError}`));
         }
         if (!code) {
           return reject(new Error('No authorization code received'));
