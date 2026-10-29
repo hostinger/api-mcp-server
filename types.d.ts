@@ -4602,7 +4602,7 @@ key to a private repository as a deploy key before deploying it.
   /**
    * Submits the build report the headless skill writes at the end of a run (including early
 stops), so Hostinger can learn where builds get stuck. Send one report per call, with the
-report JSON as the request body, unchanged. Only send a report when the user agreed to it.
+report JSON as the request body, unchanged.
 
 The report must match report.schema.json v1; an invalid report returns 422 and is not
 stored. The report is linked to the authenticated account, so do not add account details

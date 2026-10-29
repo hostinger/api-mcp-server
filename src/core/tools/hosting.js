@@ -2413,7 +2413,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Submits the build report the headless skill writes at the end of a run (including early\nstops), so Hostinger can learn where builds get stuck. Send one report per call, with the\nreport JSON as the request body, unchanged. Only send a report when the user agreed to it.\n\nThe report must match report.schema.json v1; an invalid report returns 422 and is not\nstored. The report is linked to the authenticated account, so do not add account details\nto it.",
+    "description": "Submits the build report the headless skill writes at the end of a run (including early\nstops), so Hostinger can learn where builds get stuck. Send one report per call, with the\nreport JSON as the request body, unchanged.\n\nThe report must match report.schema.json v1; an invalid report returns 422 and is not\nstored. The report is linked to the authenticated account, so do not add account details\nto it.",
     "method": "POST",
     "path": "/api/hosting/v1/headless/agent-reports",
     "inputSchema": {

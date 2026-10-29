@@ -94,7 +94,7 @@ interface Skill { uri: string; frontmatter: Record<string, unknown>; resources: 
 
 /**
  * MCP Server for Hostinger API
- * Generated from OpenAPI spec version 2.6.0
+ * Generated from OpenAPI spec version 2.6.1
  */
 class MCPServer {
   private readonly name: string;
@@ -379,30 +379,36 @@ class MCPServer {
   // Directories that hold credentials, the server's own token store (hostinger-mcp) among them.
   private credentialDirectories = ['.ssh', '.aws', '.gnupg', '.config', '.kube', '.docker', '.azure', 'hostinger-mcp'];
 
-  // System directories. /var as a whole stays deployable: sites live in /var/www, and macOS keeps its temp dir there.
-  private systemDirectories = ['/etc', '/root', '/usr', '/bin', '/sbin', '/boot', '/proc', '/sys', '/dev', '/var/lib', '/var/log', '/var/db', '/var/root', '/private/etc', '/private/var/lib', '/private/var/log', '/private/var/db', '/private/var/root', '/System', '/Library'];
+  // System directories and the roots of the home directories. /var as a whole stays deployable: sites live in /var/www, and macOS keeps its temp dir there.
+  private systemDirectories = ['/etc', '/root', '/usr', '/bin', '/sbin', '/boot', '/proc', '/sys', '/dev', '/var/lib', '/var/log', '/var/db', '/var/root', '/private/etc', '/private/var/lib', '/private/var/log', '/private/var/db', '/private/var/root', '/System', '/Library',
+    // Every user's home directory, whatever the current home is (root's is /root, a container's can be /).
+    '/home', '/Users', ...(process.platform === 'win32' ? [path.join(process.env.SystemDrive || 'C:', 'Users')] : [])];
 
   // A deploy publishes what it reads, and the path comes from the model, so prompt-injected arguments could
   // publish any readable file. Refused, before anything is read or sent: the home directory and every directory
   // above it (they contain the credentials), other users' home directories, system directories, a path in a
-  // credential directory, and a secret file. Symlinks are resolved first.
+  // credential directory, and a secret file. The native realpath resolves symlinks and, on macOS
+  // and Windows, the on-disk case, 8.3 short names and trailing dots; a path it cannot resolve is refused.
   // os is imported by deploy.template: the JS generator dedupes import blocks by their whole text, and this block
   // must stay identical to agency-hosting/shared's, or tus and fs are imported twice.
   private assertDeployablePath(localPath: string): void {
     let real: string;
     try {
-      real = fs.realpathSync(localPath);
+      real = fs.realpathSync.native(localPath);
     } catch (error) {
       throw new Error('Path not found: ' + localPath);
     }
     let home = os.homedir();
     try {
-      home = fs.realpathSync(home);
+      home = fs.realpathSync.native(home);
     } catch (error) {
       // a missing home directory has nothing in it to protect
     }
+    // macOS and Windows file systems ignore case: /USERS/me is the home directory there.
+    const caseless = process.platform === 'darwin' || process.platform === 'win32';
+    const fold = (p: string): string => (caseless ? p.toLowerCase() : p);
     const inside = (dir: string, file: string): boolean => {
-      const relative = path.relative(dir, file);
+      const relative = path.relative(fold(dir), fold(file));
       return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
     };
     // A home in the filesystem root (HOME=/ in a container run as a user without a passwd entry) exempts nothing.
@@ -410,9 +416,14 @@ class MCPServer {
     // The directory that holds the home directories (/Users, /home); not when home sits in the root (/root).
     const homes = path.dirname(home);
     const otherHome = !inHome && path.dirname(homes) !== homes && inside(homes, real);
+    // Hidden directories at the top of the home (dotfiles, tool state) and the per-user app data (Library,
+    // AppData) hold keychains, browser profiles and tokens; .claude-worktrees holds Claude Code's git worktrees.
+    const top = path.relative(fold(home), fold(real)).split(path.sep)[0];
+    const inHomeData = inHome && top !== '.claude-worktrees' && (top.startsWith('.') || top === fold('Library') || top === fold('AppData'));
     const inSystem = !inHome && this.systemDirectories.some((dir: string) => inside(dir, real));
-    const inCredentials = real.split(path.sep).some((segment: string) => this.credentialDirectories.includes(segment.toLowerCase()));
-    if (inside(real, home) || otherHome || inSystem || inCredentials || (fs.statSync(real).isFile() && this.isSecretFile(path.basename(real)))) {
+    // Windows drops trailing dots and spaces from a name: .ssh. is .ssh.
+    const inCredentials = real.split(path.sep).some((segment: string) => this.credentialDirectories.includes((process.platform === 'win32' ? segment.replace(/[. ]+$/, '') : segment).toLowerCase()));
+    if (inside(real, home) || otherHome || inHomeData || inSystem || inCredentials || (fs.statSync(real).isFile() && this.isSecretFile(path.basename(real)))) {
       throw new Error('Refusing to deploy ' + localPath + ': it is, or contains, a home, system or credentials location. Pass the project directory or archive.');
     }
   }
@@ -420,13 +431,14 @@ class MCPServer {
   // Env files (examples such as .env.example are kept), credentials and private keys: a deploy would serve them
   // publicly. Matches the CLI's isSecretFile, plus .npmrc and the Hostinger credential files.
   private isSecretFile(name: string): boolean {
-    if (['.env', '.envrc', '.netrc', '.git-credentials', '.pgpass', '.npmrc', '.hostinger.yaml', 'credentials.json'].includes(name)) {
+    if (['.env', '.envrc', '.netrc', '.git-credentials', '.pgpass', '.npmrc', '.hostinger.yaml', 'credentials.json', 'auth.json', '.my.cnf', '.pypirc', '.vault-token'].includes(name)) {
       return true;
     }
     if (['id_rsa', 'id_dsa', 'id_ecdsa', 'id_ed25519'].some((key) => name.startsWith(key))) {
       return true;
     }
-    if (name.endsWith('.pem') || name.endsWith('.key')) {
+    // Shell and REPL histories, and Terraform state (it stores secrets in plain text).
+    if (name.endsWith('.pem') || name.endsWith('.key') || name.endsWith('_history') || name.endsWith('.tfstate') || name.endsWith('.tfstate.backup')) {
       return true;
     }
     return name.startsWith('.env.') && !['.env.example', '.env.sample', '.env.template', '.env.dist'].includes(name);
@@ -447,7 +459,10 @@ class MCPServer {
         }
         const relativePath = relativeDir ? relativeDir + '/' + entry.name : entry.name;
         if (entry.isDirectory()) {
-          if (entry.name !== 'node_modules' && entry.name !== '.git') {
+          // Credential directories are left out and reported; a project's own .config/ ships.
+          if (entry.name !== '.config' && this.credentialDirectories.includes(entry.name.toLowerCase())) {
+            skipped.push(relativePath);
+          } else if (entry.name !== 'node_modules' && entry.name !== '.git') {
             walk(relativePath);
           }
         } else if (entry.isFile() && entry.name !== '.DS_Store' && path.resolve(dir, relativePath) !== exclude) {
