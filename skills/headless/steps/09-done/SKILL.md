@@ -1,6 +1,6 @@
 ---
 name: headless-step-done
-description: "Step 9 (done) of the Hostinger Headless flow. Verifies the live site, then hands over the URLs (hPanel success page, main site, WordPress/store admin, dashboard), opens the success page in the browser on a successful run, and gives a summary of what was built and what the user can do next. Its final report format is also used whenever a run stops early."
+description: "Step 9 (done) of the Hostinger Headless flow. Verifies the live site, then hands over the URLs (hPanel success page, main site, WordPress/store admin, dashboard), opens the success page in the browser on a successful run, and gives a summary of what was built plus explicit next steps — how to log in to wp-admin and reset the password, how to manage content, and how to finish WooCommerce/store setup so it can take orders. Its final report format is also used whenever a run stops early."
 ---
 
 # headless-step-done
@@ -52,14 +52,17 @@ Write it in this order:
    - **WordPress admin (one-click auto-login):** for a WordPress backend, **mint and hand over the
      auto-login redirect URL** — `wordpress_login_create-links { username, software: <site.json
      wordpress.install_id> }` returns a temporary link that logs the user straight into wp-admin. Give
-     that URL as the admin link (it lands on `/cms/wp-admin`), so the user never needs a password. Also
-     note the plain `urls.wp_admin` as a fallback. **Never print or store a password.** For a
-     **WordPress + WooCommerce** store, this *same* wp-admin login is the store admin (wp-admin →
-     WooCommerce → Products/Orders) — do **not** use the Ecommerce `store_admin` path. **Call out the one
-     setup step under *Gaps / follow-ups*:** when `site.json → woocommerce.payment_enabled` is `false`,
-     the owner must enable a payment method + a shipping zone in WooCommerce → Settings before checkout
-     works (the catalog and cart already work). For a Hostinger **Ecommerce** store, link the store admin
-     from `urls.store_admin` instead.
+     that URL as the admin link (it lands on `/cms/wp-admin`), so the user never needs a password.
+     Alongside it, give the two ways back in that don't expire: the **login URL `{urls.wp_admin}`**
+     (`https://<domain>/cms/wp-admin` — the headless WordPress lives under `/cms`), and the **WP Admin
+     button in hPanel** (hPanel → the website → *WP Admin*). Note how to **reset the password**: on the
+     `/cms/wp-admin` login screen use **"Lost your password?"**, and WordPress emails a reset link to the
+     **WordPress admin email** (the address set at install, which the owner already has) — see *Next
+     steps* for an optional deliverability tip.
+     **Never print or store a password.** For a **WordPress + WooCommerce** store, this *same* wp-admin
+     login is the store admin (wp-admin → WooCommerce → Products/Orders) — do **not** use the Ecommerce
+     `store_admin` path; the store setup the owner still needs is spelled out under *Next steps*. For a
+     Hostinger **Ecommerce** store, link the store admin from `urls.store_admin` instead.
    - **hPanel site dashboard:** `https://hpanel.hostinger.com/websites/<domain>` (the headless website
      is installed by now).
    - **Onboarding (resume):** `https://hpanel.hostinger.com/headless-onboarding/<order_id>/<username>/`
@@ -69,10 +72,34 @@ Write it in this order:
    > release. If a built URL 404s, retry the same path without the `/<username>` segment before
    > reporting it as broken.
 
-4. **Where state lives** — the workspace path `~/.hostinger/<domain>/`, the `stage` that a
+4. **Next steps** — what the user does now to actually use the site. Required on a successful run;
+   tailor the bullets to the backend and keep them concrete. This is the hand-holding the hPanel
+   success page can't give: don't just link wp-admin, tell them what to do once they're in.
+
+   - **Manage content (WordPress):** in wp-admin (the one-click link, the `/cms/wp-admin` login URL, or
+     hPanel → *WP Admin*) → **Posts**, **Pages**, **Media**, **Appearance → Menus**. Say how edits reach
+     the live site for *this* build: an **SSR** frontend re-reads the REST API each request, so changes
+     show up with no redeploy; an **SSG/static** build must be redeployed to pick up new content (read
+     `state.json → frontend.rendering`).
+   - **Log in later & reset the password:** repeat the two non-expiring routes (the `/cms/wp-admin` login
+     URL and hPanel's *WP Admin* button) and the **"Lost your password?"** reset. The reset link goes to
+     the **WordPress admin email** — the address set at install, which the owner already has — so nothing
+     extra is needed to receive it. Optionally, for more reliable delivery, they can create a mailbox on
+     the domain (hPanel → *Emails*) and set it as the admin address in **wp-admin → Settings → General**.
+   - **WordPress + WooCommerce — finish store setup so it can take orders.** The catalog and cart already
+     work, but **checkout stays off until the owner configures it in wp-admin**: WooCommerce → Settings →
+     **Payments** (enable at least one method) and → **Shipping** (add a zone with a rate), then confirm
+     products/prices and place a test order. When `site.json → woocommerce.payment_enabled` is `false`,
+     state plainly that this step is **required before any purchase works** — this is the gap owners hit.
+   - **Hostinger Ecommerce store:** when `site.json → ecommerce.payment_enabled` is `false`, finish
+     payment setup in the store admin (`urls.store_admin`) before the storefront can sell; otherwise it's
+     ready to take orders.
+   - **Webapp:** manage the app from hPanel → the website (environment variables, deployments, logs).
+
+5. **Where state lives** — the workspace path `~/.hostinger/<domain>/`, the `stage` that a
    resumed run will start from, and the build report `~/.hostinger/<domain>/report.html`.
 
-5. **Gaps / follow-ups** (only if any) — a short numbered list of anything skipped, approximated or
+6. **Gaps / follow-ups** (only if any) — a short numbered list of anything skipped, approximated or
    left for the user (e.g. no images generated, default WordPress content left in place).
 
 Never include passwords, JWTs or other secrets in the report. For wp-admin access, give the URL and
