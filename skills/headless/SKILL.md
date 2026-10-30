@@ -113,6 +113,16 @@ default only when the user says so in their own words ("you decide", "just build
 or when they said up front that no one will be there to answer; then list those defaults under gaps
 in the final report. Every step that asks the user something follows this.
 
+### Which language you write in
+
+Write every message to the user, the final report included, in the language of the user's own
+words in their latest message, so a user who writes a whole message in a new language gets replies
+in that language from then on. What they quote or paste doesn't count (a business name, sample copy,
+a tagline), and neither does a request for the site's language: "I want the website in Lithuanian",
+written in English, sets the site's language (refine records it with the must-haves) and the replies
+stay in English. When the latest message gives nothing to go by (a "yes", a link, only pasted text),
+keep the language you were using.
+
 ### Background provision & the instance barrier
 
 **Provision always runs — what it does depends on what the domain already has.** Often onboarding on
