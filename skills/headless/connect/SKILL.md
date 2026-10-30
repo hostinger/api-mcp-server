@@ -30,7 +30,8 @@ If that errors (Node not installed) or prints a version below 20, install or upg
 
 ## Phase 1 — Run the bootstrap (deterministic)
 
-Download the bootstrap script, then run it. It verifies the MCP server and handles sign-in, emitting one JSON event per line on stdout. Run it as a background/streaming process and relay its events to the user.
+Download the bootstrap script, then run it. It verifies the MCP server and handles sign-in, emitting one JSON event per line on stdout. Run it as a background/streaming process. Show the user only the sign-in URL (`awaiting_user`) or a
+failure's `detail`, and handle the other events silently (table below).
 
 The script is safe and inspectable: it only checks the MCP server via `npx` and drives the OAuth sign-in (a browser flow with a localhost callback) — no other network calls, no filesystem writes. Read it first if your sandbox flags externally-downloaded code.
 
@@ -110,7 +111,9 @@ Extra keys are allowed, but keep these six as above: the build report reads `too
 
 ## Phase 4 - Continue to Headless Hosting steps
 
-After evrything is verified and you have access to the Hostinger MCP Server and the skills then you can go back to `headless/SKILL.md` and follow the steps section to start the process.
+Once everything is verified and you have the Hostinger MCP Server and the skills, tell the user in
+one line that you're connected to Hostinger, as *The first message* in `headless/SKILL.md` describes.
+Then go back to `headless/SKILL.md` and continue with check-state without waiting for a reply.
 
 
 ## Reference Sources

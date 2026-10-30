@@ -66,13 +66,17 @@ Before asking anything, collect what the user has already given you, so you don'
 ## Step 3 — Ask
 
 When Step 2 found a project in the folder, ask **Build mode** and the **Existing project** confirms
-below in your first message, after Round 1 when Round 1 still needs asking; they don't count toward
+below in the opener, after Round 1 when Round 1 still needs asking; they don't count toward
 the 3 rounds, and code that answers Round 1 never skips them. Otherwise don't ask Build mode: it
 defaults (see *Build mode* below).
 
 If Step 2 already answers the Round 1 questions, skip the Round 1–3 questions below. Otherwise
 open with one line and **wait for the user's answer**: *"Tell me what you want to build — a
 sentence is enough. Links, screenshots or files help too. Skip anything you don't want to answer."*
+
+The opener is its own message, sent after check-state. Of the rounds it asks Round 1 only (plus the
+Build mode and Existing project confirms above, when they apply). Never fold Round 2 or 3 into it
+(audience, pages, look, content or logo), not even as a numbered list under the opening question.
 
 > **"What do you want to build?" is an OPEN question — ask it in plain prose and wait.** Never turn it
 > into a multiple-choice list of pre-baked site ideas ("Coffee shop / Travel blog / Portfolio …"):
