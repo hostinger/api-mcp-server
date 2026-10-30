@@ -444,8 +444,8 @@ The template's token list is the **minimum**: add what the design needs (`--colo
 listed in *Grid, shape & motion* as plain px values.
 
 Then update `state.json`: set `"stage": "frontend"` (also for a redesign: restyle, then validate and
-deploy) and `updated_at` to the current UTC time (ISO 8601). Don't touch `provision`, `run` or
-`history` (`run-log.mjs` owns those), or add other keys.
+deploy) and `updated_at` to the current UTC time (ISO 8601). Don't touch `provision` or add
+other keys.
 
 If content prepare hasn't sourced images yet, it now follows `design.md` → **Imagery** (see
 `04-content-model/SKILL.md`).

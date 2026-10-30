@@ -129,7 +129,7 @@ open "$URL"        # macOS
 ## Build report
 
 Right after the final report, save the build report for this run. It turns the run log (stage times
-from `state.json`, events from `events.jsonl`) into `reports/<run>.json` and `.html`, and copies the
+from `run-log.json`, events from `events.jsonl`) into `reports/<run>.json` and `.html`, and copies the
 HTML to `report.html` in the workspace:
 
 ```bash

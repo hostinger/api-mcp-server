@@ -198,6 +198,7 @@ took from it.
 | File (under `~/.hostinger/<domain>/`) | Written by | Contains |
 |---|---|---|
 | `state.json` | every stage | tool, next stage, Hostinger connector version, timestamps |
+| `run-log.json` | `run-log.mjs` only | the current run, each stage's start and end times, which reports reached Hostinger |
 | `connect.json` | connect | tool, MCP version, sign-in method, plan; shape in `connect/SKILL.md` |
 | `brief.md` | refine | refined brief, audience, tone, pages, must-haves |
 | `site.json` | provision | chosen backend, username, install id, all URLs |
@@ -234,12 +235,11 @@ provision runs in the background, its status lives in its own `provision` field 
   prepare step ignores `provision` entirely.
 - On **resume**, `provision.status` is a hint only: re-poll `hosting_websites_list-setups` to learn
   the truth, then update the field.
-- `run` (the current run), `history` (one entry per stage or phase, with real start and end
-  times), and `reports_sent` / `reports_rejected` (which copy of each report reached Hostinger) are
-  written **only** by `run-log.mjs`. Leave them alone when you update `state.json` by hand.
+- Write `state.json` however is easiest, rewriting the whole file included: the run log lives in
+  `run-log.json`, which only `run-log.mjs` writes.
 - The **onboarding slug** is how hPanel names the coding tool: `claude` for Claude Code, else
   `cursor`, `codex`, `vscode`, `antigravity`, `devin`. Map it from the `<tool>` you pass to
-  `run-start --tool` (`state.json → run.tool`, e.g. `claude-code` → `claude`).
+  `run-start --tool` (`run-log.json → run.tool`, e.g. `claude-code` → `claude`).
 
 ---
 

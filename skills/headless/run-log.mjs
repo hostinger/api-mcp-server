@@ -76,20 +76,43 @@ function workspace(domain) {
     dir,
     domain,
     statePath: join(dir, 'state.json'),
+    logPath: join(dir, 'run-log.json'),
     eventsPath: join(dir, 'events.jsonl'),
     reportsDir: join(dir, 'reports'),
   };
 }
 
-const loadState = (ws) => readJson(ws.statePath, {});
-function saveState(ws, state) {
-  state.updated_at = now();
+// state.json belongs to the agent, which may rewrite it whole or leave it half-written, so the run
+// log keeps its own file and only reads state.json, treating anything unreadable as empty.
+function readState(ws) {
+  try {
+    const state = readJson(ws.statePath, {});
+    return state && typeof state === 'object' && !Array.isArray(state) ? state : {};
+  } catch {
+    return {};
+  }
+}
+
+function loadLog(ws) {
+  if (!existsSync(ws.logPath)) migrate(ws);
+  return readJson(ws.logPath, {});
+}
+const saveLog = (ws, log) => writeJson(ws.logPath, log);
+
+// Builds started before run-log.json existed kept the run log in state.json: move it out once, so
+// those builds keep their timings and the record of reports already sent.
+function migrate(ws) {
+  const state = readState(ws);
+  const fields = ['run', 'history', 'reports_sent', 'reports_rejected'].filter((key) => key in state);
+  if (!fields.length) return;
+  saveLog(ws, Object.fromEntries(fields.map((key) => [key, state[key]])));
+  for (const key of fields) delete state[key];
   writeJson(ws.statePath, state);
 }
 
-function currentRun(ws, state) {
-  if (!state.run?.id) fail('no run started; call run-start first (check-state does this)');
-  return state.run;
+function currentRun(log) {
+  if (!log.run?.id) fail('no run started; call run-start first (check-state does this)');
+  return log.run;
 }
 
 function readEvents(ws) {
@@ -110,14 +133,14 @@ function readConnect(ws) {
 }
 
 function runStart(ws, flags) {
-  const state = loadState(ws);
+  const log = loadLog(ws);
   // A previous run that never reached its report (closed window, crash) is closed out first, so
   // its log still turns into a report.
-  if (state.run?.id && !state.run.reported_at) {
+  if (log.run?.id && !log.run.reported_at) {
     buildReport(ws, { outcome: 'abandoned' });
-    console.log(`closed previous run ${state.run.id} as abandoned`);
+    console.log(`closed previous run ${log.run.id} as abandoned`);
   }
-  const fresh = loadState(ws);
+  const fresh = loadLog(ws);
   const previous = fresh.run ?? {};
   const startedAt = now();
   const connect = readConnect(ws);
@@ -135,21 +158,21 @@ function runStart(ws, flags) {
     id,
     kind,
     started_at: startedAt,
-    tool: flags.tool ?? connect.tool ?? fresh.tool ?? previous.tool ?? null,
+    tool: flags.tool ?? connect.tool ?? readState(ws).tool ?? previous.tool ?? null,
     model: flags.model ?? previous.model ?? null,
     skill: flags.skill ?? previous.skill ?? null,
   };
   fresh.history ??= [];
-  saveState(ws, fresh);
+  saveLog(ws, fresh);
   console.log(`run ${fresh.run.id} started`);
 }
 
 function runUpdate(ws, flags) {
-  const state = loadState(ws);
-  const run = currentRun(ws, state);
+  const log = loadLog(ws);
+  const run = currentRun(log);
   for (const key of ['kind', 'tool', 'model', 'skill']) if (typeof flags[key] === 'string') run[key] = flags[key];
   if (!['build', 'resume', 'redesign', 'iterate'].includes(run.kind)) fail(`unknown kind "${run.kind}"; one of build, resume, redesign, iterate`);
-  saveState(ws, state);
+  saveLog(ws, log);
   console.log(`run ${run.id} updated`);
 }
 
@@ -157,8 +180,8 @@ function runUpdate(ws, flags) {
 // to the run it follows: reopen it, so the next `report` rewrites that run's report instead of
 // starting a second one.
 function runResume(ws, flags) {
-  const state = loadState(ws);
-  const run = currentRun(ws, state);
+  const log = loadLog(ws);
+  const run = currentRun(log);
   if (!run.reported_at) {
     console.log(`run ${run.id} is still open; nothing to resume`);
     return;
@@ -168,42 +191,42 @@ function runResume(ws, flags) {
     { resumed_at: now(), after_report_at: run.reported_at, reason: typeof flags.reason === 'string' ? flags.reason : null },
   ];
   delete run.reported_at;
-  saveState(ws, state);
+  saveLog(ws, log);
   console.log(`run ${run.id} resumed (follow-up ${run.follow_ups.length})`);
 }
 
 function stageStart(ws, [stage], flags) {
   if (!STAGES.includes(stage)) fail(`unknown stage "${stage}"; one of ${STAGES.join(', ')}`);
-  const state = loadState(ws);
-  const run = currentRun(ws, state);
-  state.history ??= [];
+  const log = loadLog(ws);
+  const run = currentRun(log);
+  log.history ??= [];
   const phase = flags.phase ?? null;
-  const open = state.history.find((h) => h.run === run.id && h.stage === stage && h.phase === phase && !h.ended_at);
+  const open = log.history.find((h) => h.run === run.id && h.stage === stage && h.phase === phase && !h.ended_at);
   if (open) {
     console.log(`${stage}${phase ? `/${phase}` : ''} already started at ${open.started_at}`);
     return;
   }
   const late = lateStart(flags, run);
-  state.history.push({ run: run.id, stage, phase, started_at: late ?? now(), ended_at: null, result: null, note: null, ...(late ? { start_estimated: true } : {}) });
-  saveState(ws, state);
+  log.history.push({ run: run.id, stage, phase, started_at: late ?? now(), ended_at: null, result: null, note: null, ...(late ? { start_estimated: true } : {}) });
+  saveLog(ws, log);
   console.log(`${stage}${phase ? `/${phase}` : ''} started${late ? ` (estimated start ${late})` : ''}`);
 }
 
 function stageEnd(ws, [stage, result], flags) {
   if (!STAGES.includes(stage)) fail(`unknown stage "${stage}"`);
   if (!RESULTS.includes(result)) fail(`unknown result "${result}"; one of ${RESULTS.join(', ')}`);
-  const state = loadState(ws);
-  const run = currentRun(ws, state);
-  state.history ??= [];
+  const log = loadLog(ws);
+  const run = currentRun(log);
+  log.history ??= [];
   const phase = flags.phase ?? null;
-  let entry = [...state.history].reverse().find((h) => h.run === run.id && h.stage === stage && h.phase === phase && !h.ended_at);
+  let entry = [...log.history].reverse().find((h) => h.run === run.id && h.stage === stage && h.phase === phase && !h.ended_at);
   if (!entry) {
     // Missed stage-start: use the remembered start if given, else the end of the previous stage; either way estimated.
-    const runEntries = state.history.filter((h) => h.run === run.id);
+    const runEntries = log.history.filter((h) => h.run === run.id);
     const lastEnd = runEntries.map((h) => h.ended_at).filter(Boolean).sort().at(-1);
     const late = lateStart(flags, run);
     entry = { run: run.id, stage, phase, started_at: late ?? lastEnd ?? run.started_at, ended_at: null, result: null, note: null, start_estimated: true };
-    state.history.push(entry);
+    log.history.push(entry);
     console.log(`${stage}${phase ? `/${phase}` : ''}: stage-start was not logged; start estimated as ${entry.started_at}${late ? '' : ' (end of the previous stage). Pass --started-ago if you know better'}`);
   } else if (flags['started-at'] || flags['started-ago']) {
     entry.started_at = lateStart(flags, run);
@@ -212,23 +235,23 @@ function stageEnd(ws, [stage, result], flags) {
   entry.ended_at = now();
   entry.result = result;
   if (typeof flags.note === 'string') entry.note = flags.note;
-  saveState(ws, state);
+  saveLog(ws, log);
   console.log(`${stage}${phase ? `/${phase}` : ''} ended: ${result}`);
 }
 
 function stageFix(ws, [stage], flags) {
   if (!STAGES.includes(stage)) fail(`unknown stage "${stage}"`);
-  const state = loadState(ws);
-  const run = currentRun(ws, state);
+  const log = loadLog(ws);
+  const run = currentRun(log);
   const phase = flags.phase ?? null;
-  const entry = [...(state.history ?? [])].reverse().find((h) => h.run === run.id && h.stage === stage && h.phase === phase);
+  const entry = [...(log.history ?? [])].reverse().find((h) => h.run === run.id && h.stage === stage && h.phase === phase);
   if (!entry) fail(`${stage}${phase ? `/${phase}` : ''} was never logged in this run; use stage-start with --started-ago instead`);
   const late = lateStart(flags, run);
   if (!late) fail('stage-fix needs --started-ago (e.g. 6m) or --started-at <ISO time>');
   if (entry.ended_at && late > entry.ended_at) fail(`the new start ${late} is after the stage ended (${entry.ended_at})`);
   entry.started_at = late;
   entry.start_estimated = true;
-  saveState(ws, state);
+  saveLog(ws, log);
   console.log(`${stage}${phase ? `/${phase}` : ''} start set to ${late} (estimated)`);
 }
 
@@ -253,18 +276,16 @@ function event(ws, [type, raw]) {
   }
   // A bad line in events.jsonl would fail every later report and run-start.
   validate({ ...data, logged_at: now() }, eventSchema(type), `event ${type}`);
-  const state = loadState(ws);
-  const run = currentRun(ws, state);
+  const log = loadLog(ws);
+  const run = currentRun(log);
   appendFileSync(ws.eventsPath, `${JSON.stringify({ ts: now(), run: run.id, type, ...data })}\n`);
   console.log(`${type} logged`);
 }
 
 const minutesBetween = (a, b) => (a && b ? Math.round(((Date.parse(b) - Date.parse(a)) / 60000) * 10) / 10 : null);
 
-function frontendStack(dir) {
-  // Framework is recorded in state.json by the frontend step.
-  const state = readJson(join(dir, 'state.json'), {});
-  const fe = state.frontend ?? {};
+// Framework is recorded in state.json by the frontend step.
+function frontendStack(fe, dir) {
   const framework = fe.framework ?? fe.stack ?? null;
   if (framework) return fe.rendering ? `${framework} (${fe.rendering})` : framework;
   // Fallback: an older build may have a design.md with a "## Stack" heading.
@@ -273,12 +294,13 @@ function frontendStack(dir) {
 }
 
 function buildReport(ws, { outcome, tokens } = {}) {
-  const state = loadState(ws);
-  const run = currentRun(ws, state);
+  const log = loadLog(ws);
+  const run = currentRun(log);
   const site = readJson(join(ws.dir, 'site.json'), {});
   const deploy = readJson(join(ws.dir, 'deploy.json'), {});
+  const state = readState(ws);
   const connect = readConnect(ws);
-  const history = (state.history ?? []).filter((h) => h.run === run.id);
+  const history = (log.history ?? []).filter((h) => h.run === run.id);
   // Lines logged before events were checked on write may not match the schema.
   const dropped = [];
   const events = readEvents(ws)
@@ -316,7 +338,7 @@ function buildReport(ws, { outcome, tokens } = {}) {
   const report = {
     schema_version: '1',
     generated_at: now(),
-    // Intent, not delivery: delivery is tracked in state.json.
+    // Intent, not delivery: delivery is tracked in run-log.json.
     consent: { sent: true, note: 'Sent to Hostinger automatically at the end of the run.' },
     run: { id: run.id, kind: run.kind, skill: run.skill, follow_ups: run.follow_ups ?? [] },
     info: {
@@ -327,9 +349,9 @@ function buildReport(ws, { outcome, tokens } = {}) {
       node: process.version,
       mcp: connect.mcp,
       backend: site.backend ?? null,
-      frontend: frontendStack(ws.dir),
+      frontend: frontendStack(state.frontend ?? {}, ws.dir),
       outcome: resolvedOutcome,
-      stopped_at: resolvedOutcome === 'live' ? null : stoppedAt(stages, state),
+      stopped_at: resolvedOutcome === 'live' ? null : stoppedAt(stages, state.stage),
       live_url: resolvedOutcome === 'live' ? deploy.urls?.site ?? site.urls?.site ?? null : null,
       admin_url: site.urls?.wp_admin ?? null,
     },
@@ -357,23 +379,23 @@ function buildReport(ws, { outcome, tokens } = {}) {
   writeFileSync(join(ws.reportsDir, `${run.id}.html`), renderHtml(report));
   copyFileSync(join(ws.reportsDir, `${run.id}.html`), join(ws.dir, 'report.html'));
 
-  const fresh = loadState(ws);
+  const fresh = loadLog(ws);
   fresh.run.reported_at = now();
-  saveState(ws, fresh);
+  saveLog(ws, fresh);
   for (const g of gaps) console.log(`warning: ${g.stage}${g.phase ? `/${g.phase}` : ''}: ${g.problem}`);
   return join(ws.dir, 'report.html');
 }
 
 // A report counts as sent only while the sent copy's generated_at matches the file.
 function reportFile(ws, runId) {
-  const id = runId ?? currentRun(ws, loadState(ws)).id;
+  const id = runId ?? currentRun(loadLog(ws)).id;
   const file = join(ws.reportsDir, `${id}.json`);
   if (!existsSync(file)) fail(`no report for run ${id} at ${file}`);
   return { id, file, generatedAt: readJson(file, {}).generated_at };
 }
 
 function unsent(ws) {
-  const state = loadState(ws);
+  const log = loadLog(ws);
   const files = existsSync(ws.reportsDir) ? readdirSync(ws.reportsDir).filter((f) => f.endsWith('.json')).sort() : [];
   // Older reports promised "nothing is uploaded".
   const pending = files
@@ -382,26 +404,26 @@ function unsent(ws) {
       return { id: f.replace(/\.json$/, ''), file: join(ws.reportsDir, f), generatedAt: report.generated_at, consent: report.consent };
     })
     .filter(({ consent }) => consent?.sent !== false)
-    .filter(({ id, generatedAt }) => state.reports_sent?.[id] !== generatedAt && state.reports_rejected?.[id] !== generatedAt);
+    .filter(({ id, generatedAt }) => log.reports_sent?.[id] !== generatedAt && log.reports_rejected?.[id] !== generatedAt);
   if (!pending.length) console.log('no unsent reports');
   for (const { id, file } of pending) console.log(`${id} ${file}`);
 }
 
 function reportSent(ws, [runId]) {
   const { id, generatedAt } = reportFile(ws, runId);
-  const state = loadState(ws);
-  state.reports_sent = { ...state.reports_sent, [id]: generatedAt };
-  saveState(ws, state);
+  const log = loadLog(ws);
+  log.reports_sent = { ...log.reports_sent, [id]: generatedAt };
+  saveLog(ws, log);
   console.log(`report ${id} marked sent`);
 }
 
 // A 422 is schema drift, so resending won't help.
 function reportRejected(ws, [runId]) {
   const { id, generatedAt } = reportFile(ws, runId);
-  const state = loadState(ws);
-  state.reports_rejected = { ...state.reports_rejected, [id]: generatedAt };
-  saveState(ws, state);
-  const run = currentRun(ws, state);
+  const log = loadLog(ws);
+  log.reports_rejected = { ...log.reports_rejected, [id]: generatedAt };
+  saveLog(ws, log);
+  const run = currentRun(log);
   const symptom = `build report ${id} rejected with 422 by hosting_headless_submit-build-report`;
   appendFileSync(ws.eventsPath, `${JSON.stringify({ ts: now(), run: run.id, type: 'issue', stage: run.reported_at ? 'done' : 'check_state', symptom, severity: 'medium', resolved: false, user_had_to_intervene: false })}\n`);
   console.log(`report ${id} marked rejected; issue logged in run ${run.id}`);
@@ -430,9 +452,9 @@ function loggingGaps(stages, run, outcome, backend) {
   return gaps;
 }
 
-function stoppedAt(stages, state) {
+function stoppedAt(stages, fallbackStage) {
   const stuck = [...stages].reverse().find((s) => !s.ended_at || s.result === 'failed' || s.result === 'stopped');
-  return stuck?.stage ?? state.stage ?? null;
+  return stuck?.stage ?? fallbackStage ?? null;
 }
 
 // Minimal JSON Schema subset, so reports from different tools share one shape without a dependency.
