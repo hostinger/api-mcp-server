@@ -40,13 +40,13 @@ Agency Plan:
 
 ## 3. Point DNS at Hostinger
 
-**DNS already at Hostinger** (nameservers end in `dns-parking.com`): creating the website normally writes the records. Read the zone with `dns_records_list`; when `@` and `www` already point at the site, change nothing. Before any edit, note the newest `dns_snapshots_list` entry — `dns_snapshots_restore` rolls back to it.
+**DNS already at Hostinger** (nameservers end in `dns-parking.com`): keep the domain's existing `*.dns-parking.com` nameserver pair and do not change its nameservers. Creating the website normally writes the records. Read the zone with `dns_records_list`; when `@` and `www` already point at the site, change nothing. Before any edit, note the newest `dns_snapshots_list` entry — `dns_snapshots_restore` rolls back to it.
 
 `dns_records_update` defaults to `overwrite: true`, which deletes every existing record with the same name and type. Adding a `TXT` at `@` that way wipes SPF and verification records. Send `overwrite: false` when adding; use `true` only to replace one record set on purpose, and run `dns_records_validate` on the same payload first.
 
 **DNS elsewhere** (registered at Hostinger with other nameservers, or registered elsewhere). Two options — let the user choose:
 
-- **Switch nameservers to Hostinger.** Hostinger then manages every record. First copy each record the current DNS serves beyond the website — `MX`, `TXT`, service `CNAME`s — into the Hostinger zone with `dns_records_update` (`overwrite: false`); otherwise email breaks when the nameservers flip. Hostinger's nameserver pairs differ between domains (`ns1`/`ns2.dns-parking.com`, `solar`/`lunar.dns-parking.com` and others), so use the pair hPanel shows for this domain, never a guessed one. For Hostinger-registered domains apply it with `domains_portfolio_update-nameservers`; otherwise the user changes it at their registrar.
+- **Switch nameservers to Hostinger.** Hostinger then manages every record. First copy each record the current DNS serves beyond the website — `MX`, `TXT`, service `CNAME`s — into the Hostinger zone with `dns_records_update` (`overwrite: false`); otherwise email breaks when the nameservers flip. Hostinger's nameserver pairs differ between domains, and DNS resolves only on the pair the domain belongs to. Use the pair hPanel shows for the domain (Nameservers page → "Use Hostinger nameservers"), or ask the user for it. Never guess nameservers, and never use `ns1`/`ns2.dns-parking.com`. For Hostinger-registered domains apply it with `domains_portfolio_update-nameservers`; otherwise the user changes it at their registrar.
 - **Keep the current DNS provider** and change only the web records: `A` for `@` and `CNAME` (or `A`) for `www`. Agency sites point at `details.ipv4`. Shared and Cloud sites point at the targets in the Hostinger zone for the domain (`dns_records_list`) or, when that zone does not exist, the IP hPanel shows for the website. The user makes this change at their DNS provider.
 
 ## 4. SSL and HTTPS
