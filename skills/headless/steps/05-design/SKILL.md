@@ -327,9 +327,10 @@ can't build it that way.
 **The user supplied a logo** → copy it into `brand/` unchanged, note it in the **Logo** section, and
 skip the rest of this step. Never redraw or recolour it.
 
-Otherwise, turn the name into a **designed** logo: shaped, coloured and composed. Typing the name in
-the display font with an emoji or symbol next to it doesn't count. Build the chosen direction's **logo
-idea** (as replaced by any logo wish, Step 4) with one or two of these moves:
+Otherwise, turn the brief's **Site name**, spelled as the user confirmed it, into a **designed** logo:
+shaped, coloured and composed. Typing the name in the display font with an emoji or symbol next to it
+doesn't count. Build the chosen direction's **logo idea** (as replaced by any logo wish, Step 4) with
+one or two of these moves:
 
 | Move | What it is | Suits |
 |---|---|---|

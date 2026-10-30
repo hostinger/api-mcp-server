@@ -1,6 +1,6 @@
 ---
 name: headless-step-refine
-description: "Step 2 (refine) of the Hostinger Headless flow. Turns the user's seed — often just a domain — into a brief through conversation: asks what they want to build (purpose, audience, tone, pages, products, must-haves; images, local files, links all welcome), then *infers* the backend that fits (WordPress, Ecommerce, WordPress + Ecommerce, WordPress + WooCommerce for a one-site content+store, or Webapp for a custom app/SPA) — it never asks the user to pick a backend or a technology; the user confirms the plan in plain language, then it writes brief.md. Hostinger Ecommerce stays the default for selling; WooCommerce is chosen only when the user explicitly asks for it or wants content and a store on one WordPress site."
+description: "Step 2 (refine) of the Hostinger Headless flow. Turns the user's seed — often just a domain — into a brief through conversation: asks what they want to build (purpose, audience, tone, pages, products, must-haves; images, local files, links all welcome), then *infers* the backend that fits (WordPress, Ecommerce, WordPress + Ecommerce, WordPress + WooCommerce for a one-site content+store, or Webapp for a custom app/SPA) — it never asks the user to pick a backend or a technology; it asks for the site name (suggesting a few when the user has none), the user confirms the plan in plain language, and only after their yes it writes brief.md. Hostinger Ecommerce stays the default for selling; WooCommerce is chosen only when the user explicitly asks for it or wants content and a store on one WordPress site."
 ---
 
 # headless-step-refine
@@ -9,12 +9,13 @@ Find out what the user wants to build, guess which backend fits, and write it do
 **conversation, not a form**: the pasted prompt names a domain and nothing else, so everything about
 the site comes from talking to the user.
 
-**Keep it short.** You must know what they are building, whether they sell and whether they'll
-publish content over time — enough to guess the backend — plus, when Step 2 found a project in the folder, the
-**Existing project** confirms. Every other question is optional: the more the user gives, the better the site, but never
-hold the build hostage to refinement. Fill gaps with sensible defaults and say so in the brief. A
-skipped question tool is not the user passing on a question; see *When you ask the user* in the
-top-level `SKILL.md`.
+**Keep it short.** You must know what they are building, whether they sell and whether they'll publish
+content over time — enough to guess the backend — plus the **site name** the user gave or picked and,
+when Step 2 found a project in the folder, the **Existing project** confirms. Every other question is
+optional: the more the user gives, the better the site, but never hold the build hostage to
+refinement. Fill gaps with sensible defaults (never the site name) and say so in the brief. A skipped
+question tool is not the user passing on a question; see *When you ask the user* in the top-level
+`SKILL.md`.
 
 > **Never ask the user to choose a backend or a technology.** Don't ask "WordPress or Ecommerce?",
 > don't present WordPress/Ecommerce/WooCommerce/Webapp as options, and don't surface the backend in a
@@ -37,9 +38,10 @@ Read everything already in `~/.hostinger/<domain>/` (`state.json`, `connect.json
 or files the user dropped there) — it all counts as input.
 
 If `brief.md` already exists for this domain, **don't overwrite it**. Show the user a three-line
-summary (what the site is, its pages, the suggested backend) and ask: *keep it, or change
-something?* Keep → go to Step 6. Change → edit only what they asked for, then re-confirm (Step 5). A
-skipped tool result is not Keep; see *When you ask the user* in the top-level `SKILL.md`.
+summary (what the site is, its pages, the suggested backend) and ask: *keep it, or change something?*
+Keep → go to Step 6, unless the brief has no **Site name** section: then ask Round 1 question 4 first
+and add it. Change → edit only what they asked for, then re-confirm (Step 5). A skipped tool result is
+not Keep; see *When you ask the user* in the top-level `SKILL.md`.
 
 If the site is already provisioned (`site.json` exists), the backend is **fixed** — never change the
 Suggested backend on a provisioned site. Explain that switching backends means a new domain.
@@ -68,7 +70,7 @@ below in your first message, after Round 1 when Round 1 still needs asking; they
 the 3 rounds, and code that answers Round 1 never skips them. Otherwise don't ask Build mode: it
 defaults (see *Build mode* below).
 
-If Step 2 already answers the three Round 1 questions, skip the Round 1–3 questions below. Otherwise
+If Step 2 already answers the Round 1 questions, skip the Round 1–3 questions below. Otherwise
 open with one line and **wait for the user's answer**: *"Tell me what you want to build — a
 sentence is enough. Links, screenshots or files help too. Skip anything you don't want to answer."*
 
@@ -82,13 +84,13 @@ sentence is enough. Links, screenshots or files help too. Skip anything you don'
 Ask in **short rounds of 2–3 questions**, and adapt each round to the previous answers. If your tool
 has a structured question UI (multiple choice with an "other" field), use it for the choice-shaped
 follow-up questions (pages, selling yes/no, tone) — **never for the opening "what do you want to
-build?" and never for the backend** (that's your decision, not theirs). **At most 3 rounds**, and
-stop early as soon as you can guess the backend and the user seems done — "just build it" or "you
-decide" means *use defaults*, not *ask again*. A skipped tool result is not their answer: re-ask
-that round in plain text, as *When you ask the user* in the top-level `SKILL.md` says. The re-ask
-repeats the round; it doesn't count toward the 3.
+build?" and never for the backend** (that's your decision, not theirs). **At most 3 rounds**, and stop
+early as soon as you can guess the backend and the user seems done — "just build it" or "you decide"
+means *use defaults*, not *ask again*, except for the site name and the Step 5 confirm. A skipped tool
+result is not their answer: re-ask that round in plain text, as *When you ask the user* in the
+top-level `SKILL.md` says. The re-ask repeats the round; it doesn't count toward the 3.
 
-**Round 1 — what it is (required; these three decide the backend):**
+**Round 1 — what it is (required; the first three decide the backend):**
 
 1. **What are you building?** The business or project, and what the site is for.
 2. **Will you sell anything on it?** Physical products, digital products, services with checkout —
@@ -97,6 +99,12 @@ repeats the round; it doesn't count toward the 3.
 3. **Will you publish content over time?** Blog posts, articles, news, recipes, portfolio pieces,
    case studies, and how often — or a handful of pages that rarely change. Skip it only when the
    answer is already unmistakable ("my personal blog", an app the user is deploying).
+4. **What's the site called?** The business or brand name the site and logo will carry. Skip it when
+   the user already named the business anywhere ("I run Paper Moon"), and use that name as given, even
+   when it differs from the domain: asking again tells them you weren't listening. With no name, or
+   "you decide", suggest 2–3 names that fit the business plus one taken from the domain
+   (`kowalski-plumbing.co.uk` → "Kowalski Plumbing"), and wait for their pick: "you decide" means
+   *pick from your suggestions*, because a name they never saw ends up on their logo and every page.
 
 **Round 2 — what goes on it (optional, adapt to Round 1):**
 
@@ -217,9 +225,11 @@ client-only app) — it deploys as a Node.js app either way. When unsure, defaul
 
 ## Step 5 — Confirm the plan in one message
 
-Send **one** message that confirms **what you'll build** — the plan, not the plumbing. Lead with the
-site, not the backend:
+This confirm always happens, even after "you decide" or "just build it": an owner who said "go" early
+hasn't seen the name or the plan yet. Send **one** message, on its own, that confirms **what you'll
+build** — the plan, not the plumbing. Lead with the site, not the backend:
 
+- **The name** — the site name from Round 1, as it will appear on the logo and pages.
 - **The plan** — what it is, audience, pages, products (if any), tone. Mark anything you defaulted
   (*"assumed: warm, minimal look"*) so the user sees what they skipped.
 - **Your app** *(when Step 2 found a project in the folder)* — one line: keeps its look or gets a new
@@ -229,10 +239,12 @@ site, not the backend:
   WordPress admin"), **not** as a choice you're asking them to make. Don't ask "is WordPress OK?" or
   offer alternatives unless it was a genuine close call *and* the difference matters to the user.
 
-End with *"Good to go, or anything to change?"* A yes (or "go") → write `brief.md`. A skipped tool
+End with *"Good to go, or anything to change?"* and end your turn there: nothing after refine
+(provision, content, design, logo) starts until the user replies (see *When you ask the user* in the
+top-level `SKILL.md` for a run no one will answer). A yes (or "go") → write `brief.md`. A skipped tool
 result is not a yes (see *When you ask the user* in the top-level `SKILL.md`). Changes → apply them
-and write it; don't loop back into questions. If the user *volunteers* a different backend, use
-theirs and note it in the brief.
+and write it; don't loop back into questions. If the user *volunteers* a different backend, use theirs
+and note it in the brief.
 
 ## Step 6 — Write `brief.md` and hand off
 
@@ -254,6 +266,10 @@ routes it to the `wordpress` subfolder with the store enabled (it is **not** a s
 # Brief — <domain>
 
 > Brief agreed with the user on <today>.
+
+## Site name
+**<site name>** — <"Given by the user." | "Picked by the user from: <the suggestions>." | "Taken from
+the domain; no one was there to answer.">
 
 ## Purpose
 <what the site is, who runs it, what it's for — 2–3 sentences>

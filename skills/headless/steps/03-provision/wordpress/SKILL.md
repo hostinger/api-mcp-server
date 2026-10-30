@@ -79,7 +79,7 @@ install WordPress straight into its `/cms` directory. This is the onboarding han
    ```json
    { "operation": "wordpress_installations_install",
      "params": { "username": "<username>", "domain": "<domain>", "type": "headless",
-       "site_title": "<site title from brief.md>",
+       "site_title": "<the brief's Site name>",
        "credentials": { "login": "<admin login>", "email": "<account email>",
          "password": "<strong generated password>" } } }
    ```
