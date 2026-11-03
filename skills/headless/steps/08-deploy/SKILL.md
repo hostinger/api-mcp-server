@@ -124,7 +124,8 @@ build output must already be absent).
 
 `hosting_deploy` uploads the source and triggers `npm install` + the build **end-to-end** — do not call
 any upload or build operation yourself. It returns a build `buildUuid` at once. This **overwrites the
-website root** (expected) and keeps `/cms` intact. Passing `appType`/`outputDirectory` explicitly is what
+website root** (expected) and keeps `/cms` intact. `type` is always `"nodejs"` for a headless site —
+**never `"static"`** (see the gate below). Passing `appType`/`outputDirectory` explicitly is what
 keeps the root from serving 403 (see the rule above).
 
 ## Step 4 — Poll to completion
@@ -199,10 +200,17 @@ Update `state.json` (`stage` → `done`), then continue to Step 9 (done).
 
 ---
 
-## Note — one deploy path, and never `type: "static"`
+## Gate — a headless deploy is always `type: "nodejs"`, never `type: "static"`
+
+**Hard rule, check it before every deploy:** a headless site is deployed **only** with
+`type: "nodejs"` plus the explicit `appType`/`outputDirectory`/`nodeVersion`/`buildScript`/
+`packageManager`/`rootDirectory` from the table. **Never pass `type: "static"` on a headless site** — it
+serves the build as plain files over the document root and **overwrites `/cms`**, destroying the
+WordPress backend (this is the "accidentally cleared cms" failure). A static-built SPA (Vite/React/Vue)
+still deploys as `type: "nodejs"` with its `appType` — the framework's static output is served correctly
+that way, and `/cms` is preserved. If a flow ever tells you to deploy a headless site as `type:
+"static"`, you are on a stale/legacy skill copy — stop and re-pull the latest skills.
 
 `hosting_deploy` on the local server is the only path: give its `path` either the source **directory** (it archives it for
 you) or a local **archive** (`zip`, `tar`, `tar.gz`, `tgz`, `7z`) — there is no separate upload or build
-step to fall back to. Either way pass the explicit `appType`/`outputDirectory`/`nodeVersion`/
-`buildScript`/`packageManager`/`rootDirectory` from the table. Never deploy a headless site with
-`type: "static"` — it serves the directory as plain files and can overwrite `/cms`.
+step to fall back to.

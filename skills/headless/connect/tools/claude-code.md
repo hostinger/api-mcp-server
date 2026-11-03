@@ -26,7 +26,7 @@ process alive for the whole run, and use it wherever a stage calls the connector
 
 ## Step 2 — Install the skills and hand off
 
-Download the Hostinger skills locally so your agent reads the files directly with no further network calls. The repo is **public**, so fetch just the skill folder over HTTPS — no git, no credentials:
+Download the Hostinger skills locally **at the start of every run** so your agent then reads the files directly with no further network calls during the run. **Always pull the latest and let it overwrite any existing local `headless/` folder** — a build must never run on a stale skill copy (an outdated local copy is how a deleted, legacy flow ends up executing). The repo is **public**, so fetch just the skill folder over HTTPS — no git, no credentials:
 
 ```bash
 # macOS/Linux — downloads only skills/headless from the public repo
@@ -40,7 +40,7 @@ curl.exe -fsSL https://codeload.github.com/hostinger/api-mcp-server/tar.gz/refs/
 tar -xf headless-skill.tar.gz --strip-components=2 'api-mcp-server-main/skills/headless'
 ```
 
-This leaves a local `headless/` folder with the full skill set. If the tarball is ever blocked, browse the public folder at `https://github.com/hostinger/api-mcp-server/tree/main/skills/headless` and save each file under a local `headless/` directory, preserving the paths.
+This leaves a local `headless/` folder with the full skill set. The bundle carries a `headless/VERSION` stamp (`version=<semver>`, commit, build date) — after pulling, read it and tell the user which skills version this run uses; it is the value to record in `connect.json`. If the tarball is ever blocked, browse the public folder at `https://github.com/hostinger/api-mcp-server/tree/main/skills/headless` and save each file under a local `headless/` directory, preserving the paths.
 
 Then open `headless/SKILL.md` and follow the steps on it. That skill owns the rest of the run — it resolves the operations sequence.
 

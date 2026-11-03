@@ -88,13 +88,24 @@ Credentials live in `~/.config/hostinger-mcp/credentials.json` (macOS/Linux) or 
 If the user's tool isn't listed yet, connect it the generic way (register the Hostinger MCP server
 for that tool, or drive `npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp` over stdio) and continue.
 
+### Always pull the latest skills (never run a stale copy)
+
+The tool route above downloads the `headless/` skill bundle. **Do this at the start of every run and let
+it overwrite any existing local `headless/` folder** — a build must never run on a stale copy, because an
+outdated local bundle is how a deleted, legacy flow (e.g. a separate CMS domain + a `type:"static"`
+frontend — two instances) ends up executing. The bundle ships a `headless/VERSION` stamp
+(`version=<semver>` on line 1, then `commit` and `built`). After pulling, read it; if you want to confirm
+it is current, compare line 1 against the published marker at
+`https://raw.githubusercontent.com/hostinger/api-mcp-server/main/skills/headless/VERSION` and re-pull if
+they differ. Carry the version into `connect.json` (Phase 3) so the build report records which skills ran.
+
 ## Phase 3 - Write `connect.json`
 
 Once the tool is connected, write `~/.hostinger/<domain>/connect.json` (create the folder if it is
 missing) in exactly this shape:
 
 ```json
-{ "tool": "claude-code", "mcp": "hostinger-api-mcp 3.8.0", "auth": "oauth_cached",
+{ "tool": "claude-code", "mcp": "hostinger-api-mcp 3.8.0", "skills": "3.9.0", "auth": "oauth_cached",
   "order_id": null, "plan": null, "connected_at": "2026-10-28T10:46:12Z" }
 ```
 
@@ -103,11 +114,13 @@ missing) in exactly this shape:
   passed to `run-start --tool`.
 - `mcp`: one string, `hostinger-api-mcp <version>`, with the `version` from the `mcp_ok` event.
   Never an object.
+- `skills`: the `version=` value from the `headless/VERSION` stamp you just pulled — the skills bundle
+  version this run used. `"unknown"` if the stamp is absent (an old bundle predating the stamp).
 - `auth`: the `method` from the `logged_in` event (`api_token`, `oauth_cached` or `oauth`).
 - `order_id`, `plan`: the active hosting plan's order id and name when you looked them up, else `null`.
 - `connected_at`: the current time in UTC, ISO 8601 to the second.
 
-Extra keys are allowed, but keep these six as above: the build report reads `tool` and `mcp`.
+Extra keys are allowed, but keep these seven as above: the build report reads `tool`, `mcp` and `skills`.
 
 ## Phase 4 - Continue to Headless Hosting steps
 

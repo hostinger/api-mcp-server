@@ -129,7 +129,7 @@ function readConnect(ws) {
   const mcp = connect.mcp ?? connect.mcp_version ?? null;
   let version = mcp;
   if (mcp !== null && typeof mcp !== 'string') version = mcp.name || mcp.version ? [mcp.name, mcp.version].filter(Boolean).join(' ') : JSON.stringify(mcp);
-  return { tool: typeof connect.tool === 'string' ? connect.tool : null, mcp: version };
+  return { tool: typeof connect.tool === 'string' ? connect.tool : null, mcp: version, skills: typeof connect.skills === 'string' ? connect.skills : null };
 }
 
 function runStart(ws, flags) {
@@ -348,6 +348,7 @@ function buildReport(ws, { outcome, tokens } = {}) {
       os: process.platform,
       node: process.version,
       mcp: connect.mcp,
+      skills: connect.skills,
       backend: site.backend ?? null,
       frontend: frontendStack(state.frontend ?? {}, ws.dir),
       outcome: resolvedOutcome,

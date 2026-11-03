@@ -141,6 +141,22 @@ written in English, sets the site's language (refine records it with the must-ha
 stay in English. When the latest message gives nothing to go by (a "yes", a link, only pasted text),
 keep the language you were using.
 
+### One instance per headless site (the core invariant)
+
+> **A headless site is exactly one website.** The frontend is served at the site root and WordPress
+> lives at `/cms` **on the same domain** — one instance, one domain. There is **never** a second
+> website for the same build and **never** a separate CMS domain: the CMS is always the `/cms` path of
+> the site's own domain (`https://<domain>/cms`), not `cms.<domain>` or any other host. Provision
+> therefore **adopts and swaps** an existing headless shell rather than creating another site, and a
+> headless frontend is always deployed as a Node.js app (`type: "nodejs"`) — **never** `type: "static"`,
+> which serves the build as plain files over the document root and overwrites `/cms`.
+>
+> The deleted legacy flow that put WordPress on a separate `cms.<domain>` subdomain with a
+> `type:"static"` frontend on the main domain (two instances, recorded as `cms_domain` + `type:"static"`
+> in `site.json`) is **gone and forbidden**. If you ever see `cms_domain` or `type:"static"` in a
+> workspace's `site.json`, you are running a stale/legacy skill copy — stop and re-pull the latest skills
+> (see `connect/SKILL.md`) before continuing.
+
 ### Background provision & the instance barrier
 
 **Provision always runs — what it does depends on what the domain already has.** Often onboarding on

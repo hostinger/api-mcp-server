@@ -77,6 +77,13 @@ So provision has **two entry shapes**, and each subfolder's *detect* step picks 
 > flow — it is only triggered by experimental actions — so it **ignores headless instances entirely**:
 > it never detects, adopts or swaps an empty headless shell, and provisions its own **Node.js app host**
 > exactly as `webapp/SKILL.md` defines today. The swap below is **WordPress and Ecommerce only**.
+>
+> **But webapp must still never create a second instance for this build.** Only route here when the
+> brief's backend is `webapp` — a `wordpress` or `ecommerce` brief is never provisioned as a webapp. And
+> if this build's domain already has a headless shell/site (an onboarding `headless_empty`, or any row
+> from the single-instance gate below), **do not** spin up a separate Node.js host on another domain:
+> stop and tell the user the domain already has a headless instance, rather than leaving the build split
+> across two sites.
 
 **How to tell an empty shell from an already-provisioned backend** (both read `website_type: headless`):
 
@@ -95,6 +102,20 @@ background fire/join split) is identical to a fresh provision. A swap that insta
 asynchronous — fire it, record `provision.in_progress`, and join at the barrier just like a fresh create.
 
 ## Step 2 — Fire (don't block)
+
+> **Single-instance gate — pass all four before you create anything:**
+> 1. **Exact-match the domain** in `hosting_websites_list` (substring filter — match the exact `domain`).
+> 2. **A `headless` row already exists → adopt + swap it, never create.** Install the backend into that
+>    same site (WordPress → `wordpress_installations_install { type: "headless" }` into `/cms`; Ecommerce
+>    → adopt as the storefront host). **Do not call `start-setup` again** — that makes a second site.
+> 3. **No row at all → create one fresh** with the backend's own `start-setup` type. Create it for **this
+>    build's domain only** — never provision the backend on a different domain than the frontend (the CMS
+>    is the `/cms` path of the same site, never a separate `cms.<domain>`).
+> 4. **A row of a different kind** (`website_type` not `headless`) → **stop and tell the user**; never
+>    overwrite it.
+>
+> This is the whole of *Onboarding handoff* above, as one checklist. See it for how to tell an empty
+> shell from an already-provisioned backend.
 
 Follow the chosen subfolder's `SKILL.md` through **detect + create** (its "start-setup" call). The
 moment the create is accepted and queued, record it in `state.json` and **return** — do not sit on the

@@ -96,9 +96,11 @@ and speak newline-delimited JSON-RPC 2.0 over its stdin/stdout (`initialize` →
 
 ## Step 4 — Install the skills and hand off
 
-Download the Hostinger skills locally so your agent reads the files directly with no further network
-calls. The repo is **public**, so fetch just the skill folder over HTTPS — no git, no credentials (see
-`connect/tools/claude-code.md` for the full tarball command):
+Download the Hostinger skills locally **at the start of every run** so your agent then reads the files
+directly with no further network calls during the run. **Always pull the latest and overwrite any
+existing local `headless/` copy** so a run never uses a stale skill version. The repo is **public**, so
+fetch just the skill folder over HTTPS — no git, no credentials (see `connect/tools/claude-code.md` for
+the full tarball command):
 
 ```bash
 # macOS/Linux — downloads only skills/headless from the public repo
@@ -106,4 +108,4 @@ curl -fsSL https://codeload.github.com/hostinger/api-mcp-server/tar.gz/refs/head
   | tar -xz --strip-components=2 'api-mcp-server-main/skills/headless'
 ```
 
-Then open `headless/SKILL.md` and follow its steps. That skill owns the rest of the run.
+Then read the `headless/VERSION` stamp (record it in `connect.json`), open `headless/SKILL.md` and follow its steps. That skill owns the rest of the run.

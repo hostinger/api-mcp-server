@@ -31,7 +31,13 @@ All website/database operations below go through the Hostinger connector (`execu
    - `running` → skip to Step 2 (poll).
    - `failed` → tell the user and point them at hPanel; do **not** call start-setup again on your own.
 3. If the site exists but is a different kind (`website_type` is `headless`, or a WordPress/store site),
-   stop and tell the user — this domain already hosts something else.
+   stop and tell the user — this domain already hosts something else. **Never create a second site.**
+4. **Only provision a webapp for a `webapp` brief.** A `wordpress` or `ecommerce` brief belongs in those
+   subfolders (installed into one headless instance's `/cms`) — never spin up a separate Node.js host for
+   it. And if this build already has a headless shell/site (a recorded `site.json → website_type:
+   "headless"`, or a `headless`/`headless_empty` row for the project's domain), do **not** create a new
+   website on another domain: stop and tell the user, so the build never ends up split across two
+   instances.
 
 ## Step 2 — Create (only when nothing exists)
 
