@@ -2355,11 +2355,11 @@ nothing: WordPress can be added later through
 `POST /api/hosting/v1/accounts/{username}/wordpress/installations`
 (`wordpress_installations_install`) with `type: headless`.
 
-Omit `domain` to set the website up on a generated temporary free subdomain. To know the
-free subdomain before the call, so a timed-out call can be looked up and retried on the
-same domain, generate one through `POST /api/hosting/v1/domains/free-subdomains`
-(`hosting_domains_generate-free-subdomain`) and send it as `domain`. It is accepted for
-24 hours, only from the client that generated it.
+Omit `domain` to set the website up on a generated temporary free subdomain; the created
+setup returns it as `domain`. REST clients that need to know the free subdomain before the
+call, so a timed-out call can be looked up and retried on the same domain, can generate
+one through `POST /api/hosting/v1/domains/free-subdomains` and send it as `domain`. It is
+accepted for 24 hours, only from the client that generated it.
 
 When the order has no hosting account yet, the setup creates one first, in the datacenter
 given by `datacenter_code` or the order's default datacenter when it is omitted.
@@ -4658,12 +4658,12 @@ Install WordPress on an existing website.
 
 The website must already exist before calling this endpoint. To create a new
 website first, use POST /api/hosting/v1/orders/{order_id}/onboardings
-(`hosting_websites_start-setup`) and poll GET /api/hosting/v1/onboardings
+(`hosting_websites_create`) and poll GET /api/hosting/v1/onboardings
 (`hosting_websites_list-setups`) with the `domain` filter until its `status` is
 `completed`.
 
 Send `type: headless` to turn a headless website (for example one created by
-`hosting_websites_start-setup` with `type: headless_empty`) into a headless WordPress
+`hosting_websites_create` with `type: headless_empty`) into a headless WordPress
 website: WordPress is installed into the `cms` directory with the Hostinger headless
 MU plugin and the website is marked as a headless WordPress website. `directory` is
 not allowed with it. The target website must already be headless: the headless

@@ -4,6 +4,19 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.25.1 — 2026-11-03
+
+### Operations
+
+- Changed the description and input schema of `hosting_websites_create`
+- Changed the description and input schema of `wordpress_installations_install`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.25.0 — 2026-11-03
 
 ### Operations
