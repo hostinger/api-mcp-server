@@ -1,6 +1,6 @@
 ---
 name: headless-step-design
-description: "Step 5 (design) of the Hostinger Headless flow. Derives three distinct design directions from brief.md (plus any reference sites and brand assets), lets the user pick one in a single question, checks the chosen one against the 8-point grid and WCAG 2.2 AA, designs the logo as outlined SVG (wordmark, icon mark, favicon), following any logo wish the owner gave, then writes design.md — tokens, type, logo, components, per-page composition, accessibility and imagery — as the contract the frontend implements (the framework/stack is chosen later by the frontend step). When the brief says to keep an existing look, writes design.md from that look and its own logo instead. Prepare work: runs during the provision wait and never touches the backend."
+description: "Step 5 (design) of the Hostinger Headless flow. Derives three distinct design directions from brief.md (plus any reference sites and brand assets), lets the user pick one in a single question, checks the chosen one against the 8-point grid and WCAG 2.2 AA, draws the logo (the site name as text beside a small SVG icon that is also the favicon), following any logo wish the owner gave, then writes design.md — tokens, type, logo, components, per-page composition, accessibility and imagery — as the contract the frontend implements (the framework/stack is chosen later by the frontend step). When the brief says to keep an existing look, writes design.md from that look and its own logo instead. Prepare work: runs during the provision wait and never touches the backend."
 ---
 
 # headless-step-design
@@ -101,13 +101,9 @@ Read `brief.md`, `state.json`, and `content-model.md` if it exists.
    shade of the same hue in that role only. Spacing moves to the nearest grid value, and a font
    without an `@fontsource` package swaps to the closest one that resolves (5.4).
 4. **Logo.** Reuse the existing logo and favicon unchanged; never redraw or recolour them. With no
-   existing logo, the header shows the site name as text in the kept display font, and no logo is
-   designed.
+   existing logo, the header shows the site name as text in the kept display font; no icon is drawn.
 5. **Write `design.md`** (Step 7) from the kept look, then hand off as usual. In **Logo**:
    - *Files* and *Use* name the files as saved (a `.png` stays a `.png`), or say "No favicon kept".
-   - *Built from* says "Kept, not rebuilt". *Measured* still gives the width at `--logo-h-sm`
-     (≤ 192 px; else lower `--logo-h-sm` or show the name as text on small screens), and the header
-     link has `alt` = the site name and a target of at least 24 px (as in Step 6).
    - With no logo: *Files* says "None", *Use* says the header link holds the site name as text in
      `--font-display` and the browser's default favicon stays, and the *Don't* line is dropped.
 
@@ -118,7 +114,7 @@ Before inventing anything, gather what already constrains the design:
 | Signal | Where | How it constrains |
 |---|---|---|
 | Tone, purpose, audience | `brief.md` → *Tone*, *Purpose*, *Audience* | Sets the mood all three directions must fit |
-| Brand assets | `brief.md` → *Assets* | Logo, brand colours and fonts are **fixed** in every direction. Never recolour a supplied logo; Step 6 uses it instead of designing one |
+| Brand assets | `brief.md` → *Assets* | Logo, brand colours and fonts are **fixed** in every direction. Never recolour a supplied logo; Step 6 uses it instead of drawing an icon |
 | Pages and entities | `content-model.md` → *Navigation*, *Pages*, *Articles*; if it doesn't exist yet, `brief.md` → *Pages* | Drives the component inventory and page composition |
 | Reference sites | URLs in the brief or the conversation | Cues to borrow (see below) |
 | Images already sourced | `content-model.md` → the image lines under *Articles* (skip if none yet) | Glance at a few at small size; keep accents from clashing with their dominant colours |
@@ -165,9 +161,9 @@ Each direction carries exactly this:
   outlines, hard 8 px offset shadows, tilted cards").
 - **Signature element** — the one memorable move (a scrolling marquee, stickers, oversized numerals,
   a duotone photo treatment). If it moves on its own, it gets a pause control (5.3).
-- **Logo idea** — one line on how the name becomes a logo, using a move from Step 6 ("letters
-  bounce in different colours and the O is a smiley"). When the brief carries a logo wish (*Design
-  direction* or *Assets*), every direction's logo idea is that wish in its own style. A wish is words
+- **Logo idea** — one line on the small icon beside the name ("a smiling sun in butter yellow with
+  an ink outline"). When the brief carries a logo wish (*Design direction* or *Assets*), every
+  direction's logo idea is that wish in its own style. A wish is words
   describing a logo; a logo file in *Assets* is a supplied logo and wins (Step 6).
 
 **Only offer what can pass.** Before asking, run two quick gates on **all three**:
@@ -175,8 +171,7 @@ Each direction carries exactly this:
 1. **Contrast gate.** Every colour that will carry text (base, surfaces, and any accent used as a
    text block) has a palette text colour reaching **4.5:1** on it. Two text colours are fine (dark on
    light blocks, light on dark ones). Accents that only ever hold large text need 3:1.
-2. **Font gate.** Each font resolves on npm, and the display font also has a static `@fontsource`
-   package, because the logo is built from it (5.4).
+2. **Font gate.** Each font resolves on npm (5.4).
 
 A direction that fails either gate gets adjusted, not offered as-is. Don't offer a look that only
 works by breaking the rules, such as body text on a neon accent or a marquee that can't be stopped.
@@ -199,7 +194,7 @@ notes. The question may end with one plain clause saying they can add a logo ide
 never suggest one or give an example: that idea would end up in the logo.
 
 > **Sticker-book maximal** — Loud and playful, like a scrapbook: candy pink, butter yellow and lilac,
-> chunky headlines, tilted sticker photos and a bouncy logo with a smiley O.
+> chunky headlines, tilted sticker photos and a smiling-sun logo.
 
 > **Midnight disco** — A dark, glowing night-out feel: deep purple with neon pink, yellow and
 > turquoise, heavy rounded headlines and a logo like a neon sign.
@@ -217,8 +212,8 @@ Then:
 **Logo wish.** An answer can carry a logo idea next to the pick ("A, and make the logo a little
 teapot"); it replaces the chosen direction's logo idea, and wins over a wish from the brief.
 Whenever the logo follows a wish, from the answer or the brief, add it once to the line that confirms
-the pick: *"The logo follows your idea: a little teapot."* If the kit can't draw it as said (a
-detailed illustration, a photo), build its closest kit version and name what you simplified in that
+the pick: *"The logo follows your idea: a little teapot."* If it can't be a small icon as said (a
+detailed illustration, a photo), draw a simple version of it and name what you simplified in that
 same line. Don't ask a follow-up.
 
 Don't ask about anything else in this step.
@@ -297,9 +292,7 @@ These criteria are settled at design time. Write each answer into the **Accessib
 For each family, prefer the variable package and fall back to the static one:
 `npm view @fontsource-variable/<slug> version`, then `npm view @fontsource/<slug> version`. One must
 answer with a version. If neither does, swap to the closest family that does. Record the exact
-package names. The **display** family must also resolve as a static package
-(`npm view @fontsource/<slug> version`): the static packages ship `.woff` files the logo kit can
-read; the variable ones ship only `.woff2`.
+package names.
 
 ### 5.5 The header fits on one line
 
@@ -314,7 +307,10 @@ can't build it that way.
   button at the width where the logo, all nav items and the button stop fitting on one line, which is
   usually wider than the mobile breakpoint. Estimate that width from the number of nav items and their
   label lengths, round up to a multiple of 8, and make it the header's own breakpoint. Below it, only
-  the logo and the menu button show; the nav items and the CTA move into the opened menu.
+  the logo and the menu button show; the nav items and the CTA move into the opened menu. At 320 px
+  the icon, the site name (`--text-logo`, `white-space: nowrap`) and the menu button still fit one
+  row; lower `--text-logo` for a long name until they do. A supplied or kept logo and the menu
+  button must fit too; lower `--logo-h` (still ≥ 24 px) until they do.
 - **Keep header labels short.** A nav label is one or two short words; a button label is a two-word
   verb phrase at most ("Book now", not "Book an Appointment"). When the content model gives a long
   navigation label, the header may show a shorter form ("Contact & Booking" → "Contact") while the
@@ -322,114 +318,18 @@ can't build it that way.
 - Record the header breakpoint in *Grid, shape & motion* and the `nowrap` + collapse rule in the
   **Header + nav** component row (and its `≤ 320 px` cell).
 
-## Step 6 — Design the logo
+## Step 6 — Draw the logo
 
 **The user supplied a logo** → copy it into `brand/` unchanged, note it in the **Logo** section, and
 skip the rest of this step. Never redraw or recolour it.
 
-Otherwise, turn the brief's **Site name**, spelled as the user confirmed it, into a **designed** logo:
-shaped, coloured and composed. Typing the name in the display font with an emoji or symbol next to it
-doesn't count. Build the chosen direction's **logo idea** (as replaced by any logo wish, Step 4) with
-one or two of these moves:
+Otherwise the logo is the brief's **Site name**, spelled as the user confirmed it, as text in the
+display font, beside one small icon. Write the icon by hand as `brand/logo-mark.svg`: the chosen
+direction's **logo idea** (or the owner's logo wish, Step 4) in palette colours, simple enough to
+read at 16 px on light and dark tab bars, because it is also the favicon. Give it a `viewBox` and
+no text inside: the name beside it is the text. No emoji or raster clip-art.
 
-| Move | What it is | Suits |
-|---|---|---|
-| **Letter swap** | One letter becomes a simple shape tied to the subject: O → smiley, sun, loaf, plate, eye; I → candle, pencil, brush; A → roof, tent. Swap **one character** only, even if the letter appears twice, and the word must still read | Playful, friendly brands |
-| **Bounce** | Letters tilt ±3–6° and bob off the baseline, each in a palette colour, with an ink outline and hard shadow | Loud, maximal directions |
-| **Stack** | The name split over 2–3 lines on coloured tiles, or set as a tight block | Long names, bold directions |
-| **Tag** | The main word large; a short second word on a pill, ribbon or tab | Two-part names ("Dopamine Den") |
-| **Seal** | The name around a ring, with a monogram or symbol in the middle | A secondary mark (footer, hero sticker, social avatar), never the header logo |
-| **Typographic contrast** | Weight, style or case contrast between words (a light italic word next to a heavy upright one), custom tight spacing, one shared stroke or cut between letters | Quiet, refined, editorial directions |
-
-No emoji, clip-art, gradients, or details that vanish at small sizes. Colours come only from the
-palette (base and surface colours count).
-
-### Build it with the logo kit
-
-The kit (`logo-kit.mjs`, next to this file) does the error-prone parts: it outlines letters into
-vector paths, sets text on a circle, draws the outline-and-shadow treatment, measures, validates
-the output, checks the sizes and renders a preview. You write the composition. Copy the kit into
-`brand/` so the build is self-contained and a redesign can re-run it:
-
-```bash
-mkdir -p ~/.hostinger/<domain>/brand && cd ~/.hostinger/<domain>/brand
-cp <the folder this SKILL.md is in>/logo-kit.mjs .
-npm init -y >/dev/null && npm i opentype.js @resvg/resvg-js @fontsource/<display-slug>
-```
-
-Write `brand/logo-build.mjs`, import from `./logo-kit.mjs`, and always run it from `brand/`
-(packages resolve from the working directory):
-
-| Kit function | Use |
-|---|---|
-| `loadFont(slug, weight, style)` | Loads a static `@fontsource` weight across all its subsets (`latin`, `latin-ext`, …), so accented letters like Ė or Ł resolve; `style` is `'normal'` or `'italic'`. Throws if that weight or style isn't in the package, so pick another |
-| `layout(font, text, size)` | Kerned glyph positions, total width, `capHeight`, `xHeight`; place letters one by one for bounce or swap. Throws if a character isn't in the font |
-| `glyphPath(glyph, x, baselineY, size)` / `textPath(font, text, x, baselineY, size)` | Outlined path data for one letter or a whole word. For typographic contrast, load two weights or styles and set each word with `textPath` |
-| `pathBox(font, text, x, baselineY, size)` | Tight box around a word's outlines; size the viewBox from it plus room for outlines, shadows and tilt |
-| `arcText(font, text, { cx, cy, r, size })` | Letters around a circle, for seals |
-| `sticker(d, { fill, ink, strokeWidth, shadow, shadowColor, transform })` | Ink outline + hard offset shadow, for outlined directions. On dark backgrounds give the outline and shadow a palette colour that shows (`shadowColor` defaults to `ink`) |
-| `svgDoc({ width, height, title, body })` | Root SVG with `role="img"` and a `<title>` |
-| `check(svg)` | Throws on `NaN`, live `<text>`, a missing title or viewBox, or an `&` that isn't an XML entity. Run it on every file before writing |
-| `tile(size, fill)` | The rounded tile for the mark and favicon; draw the symbol after it |
-| `widthBudget(letterHeight, height)` | The widest viewBox that still fits 192 px on small screens, for a logo of that height; see below |
-| `checkLogo({ logo, mark, favicon, letterHeight, background })` | Runs `check()` on all three files, checks their sizes and renders `brand/logo-preview.png`; see below |
-
-Wrap every file in `svgDoc()`, never a hand-written `<svg>` or `<title>`: it escapes the site name,
-and one bare `&` (as in "Salt & Pepper") makes the browser show nothing.
-
-Never call opentype's `path.toPathData()` directly; the kit's serializer exists because opentype.js
-2.0 writes `NaN` into some paths, and browsers silently stop drawing at the first `NaN`.
-
-### Deliver four files
-
-| File | What | Must read clearly at |
-|---|---|---|
-| `brand/logo.svg` | The primary, mostly horizontal logo for the header | Its header display heights (desktop and small screens) |
-| `brand/logo-mark.svg` | A square icon from the same idea (initial, monogram or the swapped symbol) on a `tile()` in a palette colour | 32 px |
-| `brand/favicon.svg` | The simplest form of the mark: same tile, no shadow, no thin details, outlines thickened if it has any | 16 px, on both light and dark browser tab bars |
-| `brand/logo-build.mjs` | The script that built them, with `package.json`, kept so a redesign can adjust it | — |
-
-Add `brand/logo-seal.svg` only if the direction uses a seal as a secondary mark. Delete
-`brand/node_modules` when you're done; a redesign runs `npm i` in `brand/` first.
-
-**Compose within the budget, so the first build passes.** The small-screen logo is at most 192 px
-wide with letters at least 16 px tall, so the whole logo can be only about 10–12 times as wide as
-its smallest letters are tall, whatever its height. On one line that's about ten letters plus a
-symbol; a longer name stacks or tags, and a second word set at half size halves the room. Size the
-viewBox in `logo-build.mjs` against `widthBudget(letterHeight, viewBoxHeight)`, the exact limit at
-the heights the kit picks; with your own `heights`, the FAIL line gives the limit. Draw the mark's
-symbol from simple, recognisable shapes that still read at 32 px; fine natural forms like petals or
-leaves turn to mush.
-
-**Check the sizes and look at it after every build.** `letterHeight` is in viewBox units: the
-`xHeight` from `layout()` when the logo is mostly lowercase, `capHeight` when it's mostly capitals;
-for mixed fonts, the smaller word's. End `logo-build.mjs` with:
-
-```js
-checkLogo({ logo, mark, favicon, letterHeight, background: '<page background colour>' });
-```
-
-It picks the header heights for you: `--logo-h-sm` is the smallest multiple of 8 that makes the
-letters 16 px, and `--logo-h` the same but at least 48 px, both at most 80 px, so a stacked lockup
-keeps its words large or sets the mark beside them. Pass `heights: { desktop, small }` only when the
-direction needs a larger header logo. It first prints `--logo-h`, `--logo-h-sm` and the **Measured**
-line for `design.md`, then PASS or FAIL for the logo's letters ≥ 16 px at both
-heights, width ≤ 192 px on small screens, headroom around everything drawn and heights in multiples
-of 8; for the mark and favicon sitting on a `tile()` with nothing clipped and room around
-the symbol; and for no shadow on the favicon. Every FAIL names its fixes and the number to reach. It
-then renders `logo-preview.png` (the logo at both heights on the page background, the mark at 32 px
-and favicon at 16 px on light and dark strips, each also enlarged), and throws if anything failed.
-
-Then read `logo-preview.png`; don't search for another renderer or read the SVG source. Rebuild only
-for a FAIL line or something in the preview that reads wrong, such as collisions, a clipped or
-clearly off-centre mark, or a favicon detail that turns to mush, and fix everything you saw in one
-rebuild. Optical nudges of a few pixels and the header height aren't reasons to rebuild. A symbol
-gets one redraw: if it still reads wrong, replace it with a simpler form of the idea, such as the
-initial, in the next build. If the kit says "preview not rendered", rely on the size check and list
-"logo not visually checked" under gaps in the final report.
-
-The logo is exempt from text-contrast minimums, but the header link around it needs `alt` = the site
-name and a target of at least 24 px.
+Keep it quick: a few minutes, no installs, build scripts or preview loops.
 
 Don't show the logo to the user in this step; they see it in the preview.
 
@@ -498,8 +398,8 @@ confirms the framework (default Next.js SSR; ecommerce must be SSR) and records 
   /* layout */
   --content-max: …px;  /* multiple of 8 */
   --header-h: …px;     /* header band height, multiple of 8; scroll-padding-top uses it if sticky */
-  --logo-h: …px;       /* header logo height on desktop, multiple of 8 */
-  --logo-h-sm: …px;    /* on small screens; logo ≤ 192 px wide at this height */
+  --logo-h: …px;       /* header icon (or supplied logo) height, multiple of 8, ≥ 24 */
+  --text-logo: …rem;   /* site name beside the icon; icon + name + menu button fit at 320 px */
 }
 ```
 
@@ -516,17 +416,17 @@ confirms the framework (default Next.js SSR; ecommerce must be SSR) and records 
 - **Body:** <family> (`@fontsource-variable/<slug>@<version>`); `--text-body` / `--leading-body`, measure ≤ 68ch
 
 ## Logo
-- **Concept:** <the move(s), and what any swapped letter or symbol stands for, plus "From the owner:
-  '<their words>'" only when it follows their wish | "Supplied by the user" | "Kept from <source>" |
-  "No logo: owner kept the current look" (header shows the site name as text in `--font-display`)>
-- **Built from:** `@fontsource/<display-slug>@<version>`, weight(s)/style(s) …
-- **Files:** `brand/logo.svg` (header, `--logo-h` desktop / `--logo-h-sm` small screens),
-  `brand/logo-mark.svg`, `brand/favicon.svg`<, `brand/logo-seal.svg`>; source `brand/logo-build.mjs`
-- **Measured:** letters … px tall at `--logo-h-sm`; width … px at `--logo-h-sm`
-- **Use:** the frontend copies `brand/*.svg` into `public/`. Header: `<a href="/"><img src="/logo.svg"
-  alt="<Site name>" style="height: var(--logo-h)"></a>` (switch to `--logo-h-sm` on small screens).
-  Favicon: `<link rel="icon" href="/favicon.svg" type="image/svg+xml">`
-- **Don't:** recolour, stretch, add effects, or retype the logo as live text.
+- **Concept:** <what the icon shows, plus "From the owner: '<their words>'" only when it follows
+  their wish | "Supplied by the user" | "Kept from <source>" | "No logo: owner kept the current look"
+  (header shows the site name as text in `--font-display`)>
+- **Files:** `brand/logo-mark.svg` (header icon at `--logo-h`, and the favicon)
+- **Use:** the frontend copies `brand/` into `public/`. Header: `<a href="/"><img src="/logo-mark.svg"
+  alt="" style="height: var(--logo-h)"><Site name></a>`, the name as text in `--font-display`, so
+  the link's accessible name is the site name. Favicon: `<link rel="icon" href="/logo-mark.svg"
+  type="image/svg+xml">`. A supplied or kept logo goes in the link alone, as
+  `<img src="/<file>" alt="<Site name>" style="height: var(--logo-h)">`, with its own favicon if one
+  was supplied or kept, else the browser default.
+- **Don't:** recolour or stretch the icon, or replace the name text with an image of it.
 
 ## Grid, shape & motion
 <section padding desktop/mobile (space tokens), gutters, breakpoints in px (multiples of 8), borders,
@@ -575,9 +475,9 @@ duotone…); alt text written from what the photo shows.>
   nowrap`); the inline nav collapses to a menu button at the width it stops fitting, not only at the
   mobile breakpoint (5.5).
 - **Brand assets are fixed.** A supplied logo, colour or font appears in every direction, unchanged.
-- **A logo is designed, not typed.** Outlined SVG paths built with the logo kit, never live text,
-  emoji or clip-art, and always readable at its smallest use. The one exception: a kept look with no
-  logo shows the site name as text and gets no new logo.
+- **The logo is the name plus a simple icon.** The site name as text in the display font beside a
+  small hand-written SVG icon that is also the favicon, or a supplied or kept logo unchanged. No
+  emoji or raster clip-art. A kept look with no logo shows the name as text and gets no icon.
 - **Self-hosted fonts only** (`@fontsource`). No Google Fonts or other font CDN links in the output.
 - **The tokens block is the only source of values** (breakpoints excepted). Components and pages
   reference tokens, never raw hex codes, pixel values or font names.

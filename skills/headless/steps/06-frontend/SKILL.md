@@ -83,7 +83,8 @@ accessibility — plus the logo files in `brand/`. Don't re-run design questions
 
 - Treat `design.md` as the contract: the built pages should match its tokens, type scale, components and
   per-page composition, and the 8-point grid / WCAG 2.2 AA rules it carries.
-- Use the **logo** from `brand/` as-is (wordmark, icon mark, favicon); never recolour or redraw it.
+- Build the **logo** and favicon exactly as `design.md` → **Logo** → *Use* says; never recolour or redraw
+  what is in `brand/`.
 - If `design.md` is **missing** (e.g. a resumed older build), fall back to `brief.md → Design direction`
   (reference site, colours, brand, adjectives) and a tasteful, accessible default — but prefer `design.md`
   whenever it exists.
