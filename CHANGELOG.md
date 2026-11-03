@@ -4,6 +4,23 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.27.0 — 2026-11-03
+
+### Operations
+
+- Added `gpu_catalog_pool-groups` — Get pool groups
+- Added `gpu_catalog_pool-instance-types` — Get pool instance types
+- Added `gpu_catalog_pool-os-templates` — Get pool OS templates
+- Added `gpu_catalog_pool` — Get pool list
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`, `package.json`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+- Server entry points: `src/servers/gpu.js`, `src/servers/gpu.ts`
+
 ## v3.26.0 — 2026-11-03
 
 ### Also in this release

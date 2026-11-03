@@ -3426,6 +3426,76 @@ store currency. Returns the created variant.
   };
 
   /**
+   * Retrieve GPU pool groups, ordered by name.
+
+Each group bundles the pools of one GPU model and lists its currently available pools,
+whether any of them is available and the lowest hourly price among its instance types.
+The price is returned even when the group is out of stock.
+
+Use this endpoint to show which GPU models can be ordered and from what price.
+   */
+  "gpu_catalog_pool-groups": {
+    params: {
+      /**
+       * Currency of the returned prices, `USD` by default
+       */
+      currency?: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve the instance types offered by a specified GPU pool, ordered by CPU core count.
+
+Each instance type describes its CPU, memory and storage, and its hourly price.
+Only instance types that can currently be ordered are returned.
+
+Use this endpoint to choose the `pool_instance_id` for a new GPU instance.
+   */
+  "gpu_catalog_pool-instance-types": {
+    params: {
+      /**
+       * GPU pool ID
+       */
+      poolId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve the OS templates that can be installed on a specified GPU pool instance type.
+
+Use this endpoint to choose the `os_template_id` for a new GPU instance.
+   */
+  "gpu_catalog_pool-os-templates": {
+    params: {
+      /**
+       * GPU pool ID
+       */
+      poolId: number;
+      /**
+       * GPU pool instance type ID
+       */
+      poolInstanceId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve all available GPU pools, ordered by name.
+
+A pool serves GPU accelerators of one model from a single region.
+
+Use this endpoint to choose a pool before listing its instance types.
+   */
+  "gpu_catalog_pool": {
+    params: {
+
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Clone a Hostinger Horizons website into a new website.\n
 Use this tool when the user wants a copy of an existing website, for example to try out
 changes without touching the original.\n

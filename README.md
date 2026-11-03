@@ -69,13 +69,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (408 total)
+- `hostinger-api-mcp` — unified server over every operation (412 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
 - `hostinger-dns-mcp` — 9 operations for dns
 - `hostinger-domains-mcp` — 43 operations for domains
 - `hostinger-ecommerce-mcp` — 30 operations for ecommerce
+- `hostinger-gpu-mcp` — 5 operations for gpu
 - `hostinger-horizons-mcp` — 7 operations for horizons
 - `hostinger-hosting-mcp` — 57 operations for hosting
 - `hostinger-mail-mcp` — 39 operations for mail
@@ -1739,6 +1740,60 @@ store currency. Returns the created variant.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants`
+
+### `hostinger-gpu-mcp`
+
+#### changelog_list-entries
+
+What's new and what's coming at Hostinger: list entries of the public Hostinger changelog (release notes, product updates, recent changes, new features and improvements) and of the public roadmap (upcoming features not released yet). Released entries come newest first; upcoming items come soonest expected release first. Reads released changelog entries by default; pick upcoming for the roadmap or all for both. Filter by product or date. Each entry has its title, summary, product, URL, status (released or upcoming), and plan when the entry states one; released entries have their date, upcoming items their expected release date when set. Needs no API token.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### gpu_catalog_pool-groups
+
+Retrieve GPU pool groups, ordered by name.
+
+Each group bundles the pools of one GPU model and lists its currently available pools,
+whether any of them is available and the lowest hourly price among its instance types.
+The price is returned even when the group is out of stock.
+
+Use this endpoint to show which GPU models can be ordered and from what price.
+
+- **Method**: `GET`
+- **Path**: `/api/gpu/v1/pools/groups`
+
+#### gpu_catalog_pool-instance-types
+
+Retrieve the instance types offered by a specified GPU pool, ordered by CPU core count.
+
+Each instance type describes its CPU, memory and storage, and its hourly price.
+Only instance types that can currently be ordered are returned.
+
+Use this endpoint to choose the `pool_instance_id` for a new GPU instance.
+
+- **Method**: `GET`
+- **Path**: `/api/gpu/v1/pools/{poolId}/instances`
+
+#### gpu_catalog_pool-os-templates
+
+Retrieve the OS templates that can be installed on a specified GPU pool instance type.
+
+Use this endpoint to choose the `os_template_id` for a new GPU instance.
+
+- **Method**: `GET`
+- **Path**: `/api/gpu/v1/pools/{poolId}/instances/{poolInstanceId}/os-templates`
+
+#### gpu_catalog_pool
+
+Retrieve all available GPU pools, ordered by name.
+
+A pool serves GPU accelerators of one model from a single region.
+
+Use this endpoint to choose a pool before listing its instance types.
+
+- **Method**: `GET`
+- **Path**: `/api/gpu/v1/pools`
 
 ### `hostinger-horizons-mcp`
 
