@@ -385,9 +385,10 @@ class MCPServer {
     const homes = path.dirname(home);
     const otherHome = !inHome && path.dirname(homes) !== homes && inside(homes, real);
     // Hidden directories at the top of the home (dotfiles, tool state) and the per-user app data (Library,
-    // AppData) hold keychains, browser profiles and tokens; .claude-worktrees holds Claude Code's git worktrees.
+    // AppData, and ~/snap where Ubuntu's snap packages such as Firefox and Chromium keep their profiles) hold keychains,
+    // browser profiles and tokens; .claude-worktrees holds Claude Code's git worktrees.
     const top = path.relative(fold(home), fold(real)).split(path.sep)[0];
-    const inHomeData = inHome && top !== '.claude-worktrees' && (top.startsWith('.') || top === fold('Library') || top === fold('AppData'));
+    const inHomeData = inHome && top !== '.claude-worktrees' && (top.startsWith('.') || top === fold('Library') || top === fold('AppData') || top === 'snap');
     const inSystem = !inHome && this.systemDirectories.some((dir) => inside(dir, real));
     // Windows drops trailing dots and spaces from a name: .ssh. is .ssh.
     const inCredentials = real.split(path.sep).some((segment) => this.credentialDirectories.includes((process.platform === 'win32' ? segment.replace(/[. ]+$/, '') : segment).toLowerCase()));

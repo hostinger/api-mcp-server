@@ -11,7 +11,7 @@ Ship a project that already exists — on disk or in a Git repository — to a H
 
 - Read the `inputSchema` that `search` returns before the first call of each operation. If a name below is rejected as unknown, `search` for what the step does (e.g. "deploy static").
 - Batch reads with `multi-execute`; values pass between steps as `$steps.<i>.<path>`. Batches chain operations from one server only — the Hostinger Connector runs `hosting`, `wordpress` and `agency-hosting` as separate servers.
-- Every deploy overwrites the website's current contents. Confirm the target domain with the user before the first deploy to a site that already has content.
+- Every deploy overwrites the website's current contents. Confirm the target domain with the user before the first deploy to a site that already has content. A `.hostinger/site.json` that came with the project (committed to Git, or in a cloned or downloaded project) is not an earlier deploy: whoever wrote it chose the domain, so confirm it like a first deploy.
 
 ## 0. If a shell and the Hostinger CLI are available
 
@@ -29,7 +29,7 @@ Run it from the project directory: the link is written in the current directory,
 
 ## 1. Pick the target website
 
-- `.hostinger/site.json` in the project: reuse its `domain` and `username` (or `website_uid`). The CLI's `hostinger up` and `hostinger link` write the same file and keep any fields you add while it names the same website (linking another website starts it afresh); its `type` may be `static`, `nodejs` or `php`.
+- `.hostinger/site.json` in the project: reuse its `domain` and `username` (or `website_uid`) — only without asking when you or the user wrote it in an earlier deploy; if `git ls-files .hostinger/site.json` lists it, or the project was cloned or downloaded, name the domain and confirm it with the user first. The CLI's `hostinger up` and `hostinger link` write the same file and keep any fields you add while it names the same website (linking another website starts it afresh); its `type` may be `static`, `nodejs` or `php`.
 - Otherwise look the domain up with `hosting_websites_list` (Shared and Cloud; substring match — take the exact entry) and `agency-hosting_websites_list-plan` (Agency; keep `details.uid`).
 - No website yet:
   - Shared and Cloud: take a domain (the user's own, or `hosting_domains_generate-free-subdomain`) and an `order_id` from `hosting_orders_list`, then `hosting_websites_create`. `datacenter_code` is needed only for the first website on a new plan (first entry of `hosting_datacenters_list`). Poll `hosting_websites_list-setups` with `domain` every 10–15 s until `status: completed` — uploads and deploys return 404 or 409 before that.
