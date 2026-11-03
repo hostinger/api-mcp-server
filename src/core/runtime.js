@@ -357,6 +357,8 @@ class MCPServer {
 
   // System directories and the roots of the home directories. /var as a whole stays deployable: sites live in /var/www, and macOS keeps its temp dir there.
   systemDirectories = ['/etc', '/root', '/usr', '/bin', '/sbin', '/boot', '/proc', '/sys', '/dev', '/var/lib', '/var/log', '/var/db', '/var/root', '/private/etc', '/private/var/lib', '/private/var/log', '/private/var/db', '/private/var/root', '/System', '/Library',
+    // Container secrets (Docker's /run/secrets, the Kubernetes service-account token under /var/run/secrets) and runtime state.
+    '/run', '/var/run', '/private/var/run',
     // Every user's home directory, whatever the current home is (root's is /root, a container's can be /).
     '/home', '/Users', ...(process.platform === 'win32' ? [path.join(process.env.SystemDrive || 'C:', 'Users')] : [])];
 
@@ -397,10 +399,32 @@ class MCPServer {
     // browser profiles and tokens; .claude-worktrees holds Claude Code's git worktrees.
     const top = path.relative(fold(home), fold(real)).split(path.sep)[0];
     const inHomeData = inHome && top !== '.claude-worktrees' && (top.startsWith('.') || top === fold('Library') || top === fold('AppData') || top === 'snap');
+    // A profile reached outside the home roots (WSL's /mnt/c/Users/me, a home on a mounted disk): the top-level data
+    // of a directory under a Users or home directory, and a profile, or a directory holding profiles (/mnt/c/Users,
+    // /mnt/c), that has the data of one; a project's own users/ or home/ deploys.
+    const looksLikeProfile = (dir) => ['AppData', 'Library', '.ssh', '.aws', '.gnupg', '.kube'].some((name) => fs.existsSync(path.join(dir, name)));
+    const holdsProfiles = (dir) => {
+      try {
+        return fs.readdirSync(dir, { withFileTypes: true }).some((entry) => entry.isDirectory() && looksLikeProfile(path.join(dir, entry.name)));
+      } catch (error) {
+        return false;
+      }
+    };
+    const segments = real.split(path.sep);
+    const inProfile = !inHome && (holdsProfiles(path.join(real, 'Users')) || segments.some((segment, i) => {
+      if (!['users', 'home'].includes(segment.toLowerCase())) {
+        return false;
+      }
+      const top = segments[i + 2];
+      if (top === undefined) {
+        return i + 1 < segments.length ? looksLikeProfile(real) : holdsProfiles(real);
+      }
+      return top !== '.claude-worktrees' && (top.startsWith('.') || ['library', 'appdata', 'snap'].includes(top.toLowerCase()));
+    }));
     const inSystem = !inHome && this.systemDirectories.some((dir) => inside(dir, real));
     // Windows drops trailing dots and spaces from a name: .ssh. is .ssh.
     const inCredentials = real.split(path.sep).some((segment) => this.credentialDirectories.includes((process.platform === 'win32' ? segment.replace(/[. ]+$/, '') : segment).toLowerCase()));
-    if (inside(real, home) || otherHome || inHomeData || inSystem || inCredentials || (fs.statSync(real).isFile() && this.isSecretFile(path.basename(real)))) {
+    if (inside(real, home) || otherHome || inHomeData || inProfile || inSystem || inCredentials || (fs.statSync(real).isFile() && this.isSecretFile(path.basename(real)))) {
       throw new Error('Refusing to deploy ' + localPath + ': it is, or contains, a home, system or credentials location. Pass the project directory or archive.');
     }
   }

@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.27.1 — 2026-11-03
+
+### Also in this release
+
+- Bundled agent skills: `skills/headless/VERSION`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+
 ## v3.27.0 — 2026-11-03
 
 ### Operations
