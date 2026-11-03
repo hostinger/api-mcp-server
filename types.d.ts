@@ -154,6 +154,94 @@ export interface APITools {
   };
 
   /**
+   * List the extra domains of a website: its parked (alias) domains, which show the same site under another domain name, and its subdomains (e.g. blog.example.com), with each one's root directory. parked items have domain (a domain name or an IP address) and type (domain or ip); subdomains items have domain (the full name), subdomain (the prefix) and root_directory. A list that cannot be read comes back as { error } and the other is still returned. To add or remove one use hosting_websites_add-domain or hosting_websites_remove-domain. Works for Shared and Cloud hosting websites.
+   */
+  "hosting_websites_list-domains": {
+    params: {
+      /**
+       * Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)
+       */
+      domain: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Add a domain to an existing website: type parked adds a parked (alias) domain, a second domain name (or an IP address) that shows the same site; type subdomain creates a subdomain such as blog.example.com with its own directory. For a parked domain the domain must be owned by the account or already point to the website: check a domain from outside the account with hosting_domains_verify-ownership first. www belongs to the main domain: do not add it as a subdomain. To create a new website use hosting_websites_create instead. Works for Shared and Cloud hosting websites.
+   */
+  "hosting_websites_add-domain": {
+    params: {
+      /**
+       * Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * parked: an alias domain that shows the same website; subdomain: a subdomain of the website's domain.
+       */
+      type: string;
+      /**
+       * For parked: the domain name or IP address to park (e.g., example.net). For subdomain: the prefix (e.g., blog) or the full name (e.g., blog.example.com).
+       */
+      name: string;
+      /**
+       * Subdomains only: the subdomain's directory relative to the website root.
+       */
+      directory?: string;
+      /**
+       * Subdomains only: serve the subdomain from the website's public directory instead of its own directory.
+       */
+      usePublicDirectory?: boolean;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Remove a parked (alias) domain or a subdomain from a website. Pass its name as hosting_websites_list-domains shows it: a parked domain, or a subdomain's full name or prefix; the tool finds which one it is. To delete a whole website use hosting_websites_delete. Works for Shared and Cloud hosting websites.
+   */
+  "hosting_websites_remove-domain": {
+    params: {
+      /**
+       * Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * The parked domain (e.g., example.net) or the subdomain, as its full name (e.g., blog.example.com) or prefix (e.g., blog), to remove.
+       */
+      name: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Renamed to hosting_websites_create. This name still runs so older skills keep working, and will be removed in a future release.
+   */
+  "hosting_websites_start-setup": {
+    params: {
+      /**
+       * Hosting order ID. List orders to find available IDs.
+       */
+      order_id: number;
+      /**
+       * Website type, as hosting_websites_create takes it.
+       */
+      type?: string;
+      /**
+       * Domain for the website, as hosting_websites_create takes it.
+       */
+      domain?: string;
+      /**
+       * Datacenter code, as hosting_websites_create takes it.
+       */
+      datacenter_code?: string;
+      /**
+       * WordPress install settings, as hosting_websites_create takes them.
+       */
+      wordpress?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Deploy a node-static Agency Plan (h5g) website from an archive file. WARNING: this overwrites the website's existing contents and cannot be undone — always confirm with the user before proceeding. Use this for Agency Plan websites of type node-static (a Node.js-built static site that requires a build step or a plain simple static site). The tool resolves the website from its domain, uploads the archive to the website's file browser over TUS, and triggers the build-assets process which builds the site and deploys the result to public_html. This operation is synchronous: the build and deployment complete before the tool returns, so the website is live as soon as the tool finishes successfully — there is no separate asynchronous build to wait for or poll. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. For plain PHP applications that should be extracted as-is, use agency-hosting_deploy-php-application instead. The website UID is automatically resolved from the domain.
    */
   "agency-hosting_deploy-node-static-website": {
@@ -5286,7 +5374,7 @@ Returns 404 when the order does not exist or is not accessible to the authentica
 client, and 409 with a `Retry-After` header while a setup for the same domain is still
 running.
    */
-  "hosting_websites_start-setup": {
+  "hosting_websites_create": {
     params: {
       /**
        * Hosting order ID. List orders to find available IDs.
@@ -5734,7 +5822,7 @@ completed` before uploading files, deploying or creating databases. While the se
 `running`, endpoints that operate on the website may respond with `404` or `409`.
 `is_enabled` on the websites list reflects suspension, not readiness.
    */
-  "hosting_websites_create": {
+  "hosting_websites_create-deprecated": {
     params: {
       /**
        * Domain name for the website. Cannot start with "www." and can have at most one subdomain level, e.g. `blog.example.com`.

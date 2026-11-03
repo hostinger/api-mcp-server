@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (413 total)
+- `hostinger-api-mcp` — unified server over every operation (408 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
@@ -77,7 +77,7 @@ This package installs the following MCP server commands:
 - `hostinger-domains-mcp` — 43 operations for domains
 - `hostinger-ecommerce-mcp` — 30 operations for ecommerce
 - `hostinger-horizons-mcp` — 7 operations for horizons
-- `hostinger-hosting-mcp` — 62 operations for hosting
+- `hostinger-hosting-mcp` — 57 operations for hosting
 - `hostinger-mail-mcp` — 39 operations for mail
 - `hostinger-reach-mcp` — 71 operations for reach
 - `hostinger-vps-mcp` — 68 operations for vps
@@ -1905,6 +1905,27 @@ Clear a website's server cache (the hosting server's page cache) and Hostinger C
 - **Method**: `custom`
 - **Path**: `custom`
 
+#### hosting_websites_list-domains
+
+List the extra domains of a website: its parked (alias) domains, which show the same site under another domain name, and its subdomains (e.g. blog.example.com), with each one's root directory. parked items have domain (a domain name or an IP address) and type (domain or ip); subdomains items have domain (the full name), subdomain (the prefix) and root_directory. A list that cannot be read comes back as { error } and the other is still returned. To add or remove one use hosting_websites_add-domain or hosting_websites_remove-domain. Works for Shared and Cloud hosting websites.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_websites_add-domain
+
+Add a domain to an existing website: type parked adds a parked (alias) domain, a second domain name (or an IP address) that shows the same site; type subdomain creates a subdomain such as blog.example.com with its own directory. For a parked domain the domain must be owned by the account or already point to the website: check a domain from outside the account with hosting_domains_verify-ownership first. www belongs to the main domain: do not add it as a subdomain. To create a new website use hosting_websites_create instead. Works for Shared and Cloud hosting websites.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
+#### hosting_websites_remove-domain
+
+Remove a parked (alias) domain or a subdomain from a website. Pass its name as hosting_websites_list-domains shows it: a parked domain, or a subdomain's full name or prefix; the tool finds which one it is. To delete a whole website use hosting_websites_delete. Works for Shared and Cloud hosting websites.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
 #### hosting_websites_trigger-event
 
 Tell Hostinger that something happened on this website, so Hostinger services such as hPanel can react to it. `event.name` picks the event and decides which `event.params` it takes. The call changes nothing on the website.
@@ -2071,73 +2092,6 @@ requirements.
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/datacenters`
-
-#### hosting_domains_generate-free-subdomain
-
-Generate a unique free subdomain that can be used for hosting services without purchasing custom domains.
-Free subdomains allow you to start using hosting services immediately
-and you can always connect a custom domain to your site later.
-
-- **Method**: `POST`
-- **Path**: `/api/hosting/v1/domains/free-subdomains`
-
-#### hosting_domains_list-website-parked
-
-Retrieve all parked or alias domains created under the selected website.
-
-Use this endpoint to inspect parked domain configuration for a specific website,
-including the parent domain and root directory assigned to each parked domain.
-
-- **Method**: `GET`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains`
-
-#### hosting_domains_create-website-parked
-
-Create a parked or alias domain for the selected website.
-
-Provide a domain name or IP address to park on the website so it serves the same content
-as the parent domain.
-
-- **Method**: `POST`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains`
-
-#### hosting_domains_delete-website-parked
-
-Delete an existing parked or alias domain from the selected website.
-
-Use this endpoint to remove parked domains that are no longer needed.
-
-- **Method**: `DELETE`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/parked-domains/{parkedDomain}`
-
-#### hosting_domains_list-website-subdomains
-
-Retrieve all subdomains created under the selected website.
-
-Use this endpoint to inspect subdomain configuration for a specific website,
-including the parent domain and root directory assigned to each subdomain.
-
-- **Method**: `GET`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains`
-
-#### hosting_domains_create-website-subdomain
-
-Create a new subdomain for the selected website.
-
-Provide a subdomain prefix and, optionally, a custom directory or the
-website public directory to use as the subdomain root.
-
-- **Method**: `POST`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains`
-
-#### hosting_domains_delete-website-subdomain
-
-Delete an existing subdomain from the selected website.
-
-Use this endpoint to remove subdomains that are no longer needed.
-
-- **Method**: `DELETE`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/subdomains/{subdomain}`
 
 #### hosting_domains_verify-ownership
 
@@ -2383,7 +2337,7 @@ website.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/onboardings`
 
-#### hosting_websites_start-setup
+#### hosting_websites_create
 
 Starts a website setup on a Web or Cloud hosting order and returns the created setup
 right away; the website itself is provisioned asynchronously. Poll the list website
@@ -2568,34 +2522,6 @@ is ready for file, deploy or database operations, poll the list website setups
 endpoint instead.
 
 - **Method**: `GET`
-- **Path**: `/api/hosting/v1/websites`
-
-#### hosting_websites_create
-
-Deprecated: use `POST /api/hosting/v1/orders/{order_id}/onboardings` (start website setup)
-instead. It takes the same `domain` and `datacenter_code`, can also install WordPress, and
-returns the created setup.
-
-Create a new website for the authenticated client.
-
-You must choose which hosting order to create this website on. Pass that
-order as `order_id` together with the domain name. List orders to see
-available IDs; the website is provisioned on that order's hosting plan.
-
-Only Web and Cloud hosting orders are accepted. To create a website on an Agency
-Plan order, use `POST /api/agency-hosting/v1/orders/{order_id}/websites/setups`.
-
-When the order has no hosting account yet, a new hosting account is set up first, in the
-datacenter given by `datacenter_code` or the order's default datacenter when it is omitted.
-Subsequent websites will be hosted on the same datacenter automatically.
-
-Website creation is asynchronous and takes up to a few minutes. Poll the list website
-setups endpoint with the `domain` filter every 10 to 15 seconds and wait for `status:
-completed` before uploading files, deploying or creating databases. While the setup is
-`running`, endpoints that operate on the website may respond with `404` or `409`.
-`is_enabled` on the websites list reflects suspension, not readiness.
-
-- **Method**: `POST`
 - **Path**: `/api/hosting/v1/websites`
 
 #### hosting_websites_delete

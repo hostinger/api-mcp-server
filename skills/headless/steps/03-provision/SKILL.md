@@ -46,7 +46,7 @@ Tell the user the backend and its one-line reason before provisioning.
 > that brings its own code and data; it never installs WordPress. PocketBase is not available in this
 > version — refine never proposes it, and there is no `pocketbase/` subfolder; if a brief somehow names
 > it, stop and tell the user rather than improvising it. A **WordPress + Ecommerce** brief (two separate
-> backends — a WordPress site **and** a Hostinger Ecommerce store) has no single combined `start-setup`
+> backends — a WordPress site **and** a Hostinger Ecommerce store) has no single combined `hosting_websites_create`
 > type yet: stop, tell the user it isn't supported as one site, and offer either to continue with just
 > WordPress or just Ecommerce (route to that one subfolder), **or**, if they want content and a store on
 > **one** site, to switch the brief to **WordPress + WooCommerce** — the one-site path, which routes to
@@ -56,22 +56,22 @@ Tell the user the backend and its one-line reason before provisioning.
 
 Onboarding can create the website **before** you ever run, then paste the build prompt into this agent.
 When it does, the domain already has an **empty headless shell**: a website set up with
-`hosting_websites_start-setup { type: "headless_empty" }` — `website_type` is `headless`, but **nothing
+`hosting_websites_create { type: "headless_empty" }` — `website_type` is `headless`, but **nothing
 is installed** (no WordPress at `/cms`, no store). It is the hosting slot only, waiting for a backend.
 
 So provision has **two entry shapes**, and each subfolder's *detect* step picks between them:
 
 - **An empty headless shell already exists for the domain → adopt it and *swap* it to the chosen
-  backend. Never call `start-setup` again, never create a second site.** The swap is backend-specific:
+  backend. Never call `hosting_websites_create` again, never create a second site.** The swap is backend-specific:
   - **WordPress** → install WordPress **into the existing shell's `/cms`** with
     `wordpress_installations_install { type: "headless" }` (it rewrites the root `.htaccess` and marks
-    the site headless-WordPress). Do **not** use `start-setup { type: "headless_wordpress" }` — that is
+    the site headless-WordPress). Do **not** use `hosting_websites_create { type: "headless_wordpress" }` — that is
     only for creating a fresh site.
   - **Ecommerce** → the empty headless shell **is** the storefront host already (a `headless_ecommerce`
     website installs no store engine either). Adopt it as the frontend host and go straight to creating
     the store + custom sales channel.
 - **No site exists for the domain at all → create it fresh, exactly as each subfolder defines today**
-  (`start-setup` with the backend's own `type`).
+  (`hosting_websites_create` with the backend's own `type`).
 
 > **Webapp is not part of this handoff at all.** `webapp` is **not** reached on the usual onboarding
 > flow — it is only triggered by experimental actions — so it **ignores headless instances entirely**:
@@ -107,8 +107,8 @@ asynchronous — fire it, record `provision.in_progress`, and join at the barrie
 > 1. **Exact-match the domain** in `hosting_websites_list` (substring filter — match the exact `domain`).
 > 2. **A `headless` row already exists → adopt + swap it, never create.** Install the backend into that
 >    same site (WordPress → `wordpress_installations_install { type: "headless" }` into `/cms`; Ecommerce
->    → adopt as the storefront host). **Do not call `start-setup` again** — that makes a second site.
-> 3. **No row at all → create one fresh** with the backend's own `start-setup` type. Create it for **this
+>    → adopt as the storefront host). **Do not call `hosting_websites_create` again** — that makes a second site.
+> 3. **No row at all → create one fresh** with the backend's own `hosting_websites_create` type. Create it for **this
 >    build's domain only** — never provision the backend on a different domain than the frontend (the CMS
 >    is the `/cms` path of the same site, never a separate `cms.<domain>`).
 > 4. **A row of a different kind** (`website_type` not `headless`) → **stop and tell the user**; never
@@ -117,7 +117,7 @@ asynchronous — fire it, record `provision.in_progress`, and join at the barrie
 > This is the whole of *Onboarding handoff* above, as one checklist. See it for how to tell an empty
 > shell from an already-provisioned backend.
 
-Follow the chosen subfolder's `SKILL.md` through **detect + create** (its "start-setup" call). The
+Follow the chosen subfolder's `SKILL.md` through **detect + create** (its `hosting_websites_create` call). The
 moment the create is accepted and queued, record it in `state.json` and **return** — do not sit on the
 readiness poll:
 

@@ -130,7 +130,7 @@ Query the Hostinger connector — the local files are never trusted on their own
   - `status: failed` → provisioning stopped before finishing → route to **provision** to self-heal.
 - **Is it an empty headless shell from onboarding?** A `headless` site whose setup is `completed` is
   **not necessarily finished** — onboarding now creates the website *before* the build runs, as an
-  **empty headless shell** (`hosting_websites_start-setup { type: "headless_empty" }`): `website_type`
+  **empty headless shell** (`hosting_websites_create { type: "headless_empty" }`): `website_type`
   is `headless` but **no backend is installed** (no WordPress at `/cms`, no store). Tell a shell from a
   real backend the same way provision does: within 24 h the setup `type` is `headless_empty`; otherwise
   `wordpress_installations_list { username, domain, ownership: "all" }` returns **no** `/cms` row and

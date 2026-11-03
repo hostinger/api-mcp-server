@@ -4,6 +4,26 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.25.0 — 2026-11-03
+
+### Operations
+
+- Added `hosting_websites_list-domains` — List website parked (alias) domains and subdomains
+- Added `hosting_websites_add-domain` — Add a parked (alias) domain or subdomain to a website
+- Added `hosting_websites_remove-domain` — Remove a parked (alias) domain or subdomain from a website
+- Added `hosting_websites_create-deprecated` — Create website
+- Hid 8 operations from search (they still run through `execute`): `hosting_websites_start-setup`, `hosting_domains_generate-free-subdomain`, `hosting_domains_list-website-parked`, `hosting_domains_create-website-parked`, `hosting_domains_delete-website-parked`, `hosting_domains_list-website-subdomains`, `hosting_domains_create-website-subdomain`, `hosting_domains_delete-website-subdomain`
+- Changed the title, annotations, description, HTTP method, endpoint path, input schema and auth requirements of `hosting_websites_start-setup`
+- Changed the title, annotations, description, endpoint path and input schema of `hosting_websites_create`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Bundled agent skills: 9 files
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.24.3 — 2026-11-03
 
 ### Also in this release

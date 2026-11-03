@@ -28,10 +28,10 @@ dig +short MX DOMAIN; dig +short TXT DOMAIN; dig +short CAA DOMAIN
 
 Shared and Cloud:
 
-- **New website on the domain.** For a domain outside this account run `hosting_domains_verify-ownership` first. When `is_accessible` is false, give the user the `TXT` record it returns to add next to the existing ones, then verify again (propagation takes up to ~10 minutes). Create with `hosting_websites_create` (`domain` without `www.`, `order_id`), then poll `hosting_websites_list-setups` with `domain` every 10–15 s until `status: completed`.
-- **Moving a site off its free subdomain.** Shared and Cloud websites cannot be renamed through the API. Either create a website on the real domain and redeploy the project there (the `deploy-to-hosting` skill) — required for WordPress, which keeps its URL in the database — or, for static sites, park the domain on the existing site with `hosting_domains_create-website-parked`.
-- **Alias** (a second domain showing the same site): `hosting_domains_create-website-parked`.
-- **Subdomain** (`shop.example.com`): `hosting_domains_create-website-subdomain`. `www` belongs to the main domain — do not create it as a subdomain.
+- **New website on the domain.** For a domain outside this account run `hosting_domains_verify-ownership` first. When `is_accessible` is false, give the user the `TXT` record it returns to add next to the existing ones, then verify again (propagation takes up to ~10 minutes). Create with `hosting_websites_create` (`order_id`, `domain` without `www.`), then poll `hosting_websites_list-setups` with `domain` every 10–15 s until `status: completed`.
+- **Moving a site off its free subdomain.** Shared and Cloud websites cannot be renamed through the API. Either create a website on the real domain and redeploy the project there (the `deploy-to-hosting` skill) — required for WordPress, which keeps its URL in the database — or, for static sites, park the domain on the existing site with `hosting_websites_add-domain` (`type: "parked"`).
+- **Alias** (a second domain showing the same site): `hosting_websites_add-domain` with `type: "parked"`.
+- **Subdomain** (`shop.example.com`): `hosting_websites_add-domain` with `type: "subdomain"`. `www` belongs to the main domain — do not create it as a subdomain.
 
 Agency Plan:
 

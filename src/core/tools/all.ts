@@ -367,6 +367,177 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
+    "name": "hosting_websites_list-domains",
+    "title": "List website parked (alias) domains and subdomains",
+    "annotations": {
+      "title": "List website parked (alias) domains and subdomains",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "topic": "hosting",
+    "description": "List the extra domains of a website: its parked (alias) domains, which show the same site under another domain name, and its subdomains (e.g. blog.example.com), with each one's root directory. parked items have domain (a domain name or an IP address) and type (domain or ip); subdomains items have domain (the full name), subdomain (the prefix) and root_directory. A list that cannot be read comes back as { error } and the other is still returned. To add or remove one use hosting_websites_add-domain or hosting_websites_remove-domain. Works for Shared and Cloud hosting websites.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "replacesHidden": true,
+    "templateFile": "list-domains.template.js",
+    "templateFileTS": "list-domains.template.ts",
+    "handlerMethod": "handleHostingWebsitesListDomains",
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_websites_add-domain",
+    "title": "Add a parked (alias) domain or subdomain to a website",
+    "annotations": {
+      "title": "Add a parked (alias) domain or subdomain to a website",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "topic": "hosting",
+    "description": "Add a domain to an existing website: type parked adds a parked (alias) domain, a second domain name (or an IP address) that shows the same site; type subdomain creates a subdomain such as blog.example.com with its own directory. For a parked domain the domain must be owned by the account or already point to the website: check a domain from outside the account with hosting_domains_verify-ownership first. www belongs to the main domain: do not add it as a subdomain. To create a new website use hosting_websites_create instead. Works for Shared and Cloud hosting websites.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "parked",
+            "subdomain"
+          ],
+          "description": "parked: an alias domain that shows the same website; subdomain: a subdomain of the website's domain."
+        },
+        "name": {
+          "type": "string",
+          "description": "For parked: the domain name or IP address to park (e.g., example.net). For subdomain: the prefix (e.g., blog) or the full name (e.g., blog.example.com)."
+        },
+        "directory": {
+          "type": "string",
+          "description": "Subdomains only: the subdomain's directory relative to the website root."
+        },
+        "usePublicDirectory": {
+          "type": "boolean",
+          "description": "Subdomains only: serve the subdomain from the website's public directory instead of its own directory."
+        }
+      },
+      "required": [
+        "domain",
+        "type",
+        "name"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "replacesHidden": true,
+    "templateFile": "add-domain.template.js",
+    "templateFileTS": "add-domain.template.ts",
+    "handlerMethod": "handleHostingWebsitesAddDomain",
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_websites_remove-domain",
+    "title": "Remove a parked (alias) domain or subdomain from a website",
+    "annotations": {
+      "title": "Remove a parked (alias) domain or subdomain from a website",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "topic": "hosting",
+    "description": "Remove a parked (alias) domain or a subdomain from a website. Pass its name as hosting_websites_list-domains shows it: a parked domain, or a subdomain's full name or prefix; the tool finds which one it is. To delete a whole website use hosting_websites_delete. Works for Shared and Cloud hosting websites.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The parked domain (e.g., example.net) or the subdomain, as its full name (e.g., blog.example.com) or prefix (e.g., blog), to remove."
+        }
+      },
+      "required": [
+        "domain",
+        "name"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "replacesHidden": true,
+    "templateFile": "remove-domain.template.js",
+    "templateFileTS": "remove-domain.template.ts",
+    "handlerMethod": "handleHostingWebsitesRemoveDomain",
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_websites_start-setup",
+    "title": "Start website setup (renamed to hosting_websites_create)",
+    "annotations": {
+      "title": "Start website setup (renamed to hosting_websites_create)",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "topic": "hosting",
+    "description": "Renamed to hosting_websites_create. This name still runs so older skills keep working, and will be removed in a future release.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "order_id": {
+          "type": "integer",
+          "description": "Hosting order ID. List orders to find available IDs."
+        },
+        "type": {
+          "type": "string",
+          "description": "Website type, as hosting_websites_create takes it."
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain for the website, as hosting_websites_create takes it."
+        },
+        "datacenter_code": {
+          "type": "string",
+          "description": "Datacenter code, as hosting_websites_create takes it."
+        },
+        "wordpress": {
+          "type": "object",
+          "description": "WordPress install settings, as hosting_websites_create takes them."
+        }
+      },
+      "required": [
+        "order_id"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "templateFile": "start-setup.template.js",
+    "templateFileTS": "start-setup.template.ts",
+    "handlerMethod": "handleHostingWebsitesStartSetup",
+    "group": "hosting",
+    "hidden": true
+  },
+  {
     "name": "agency-hosting_deploy-node-static-website",
     "title": "Deploy node-static website",
     "annotations": {
@@ -7336,7 +7507,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_domains_list-website-parked",
@@ -7371,7 +7543,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_domains_create-website-parked",
@@ -7411,7 +7584,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_domains_delete-website-parked",
@@ -7452,7 +7626,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_domains_list-website-subdomains",
@@ -7487,7 +7662,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_domains_create-website-subdomain",
@@ -7535,7 +7711,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_domains_delete-website-subdomain",
@@ -7576,7 +7753,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_domains_verify-ownership",
@@ -9253,7 +9431,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_websites_start-setup",
+    "name": "hosting_websites_create",
     "title": "Start website setup",
     "annotations": {
       "title": "Start website setup",
@@ -9978,7 +10156,7 @@ const tools: OpenApiTool[] = [
     "group": "hosting"
   },
   {
-    "name": "hosting_websites_create",
+    "name": "hosting_websites_create-deprecated",
     "title": "Create website",
     "annotations": {
       "title": "Create website",
@@ -10014,7 +10192,8 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_websites_deploy-static-site-archive",

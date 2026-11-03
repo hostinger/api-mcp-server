@@ -15,7 +15,7 @@ frontend step builds into and the deploy step ships to as a Node.js application.
 
 All website/database operations below go through the Hostinger connector (`execute`).
 
-> **Fire vs join (background provision).** Steps 1–2 up to `hosting_websites_start-setup` are the
+> **Fire vs join (background provision).** Steps 1–2 up to `hosting_websites_create` are the
 > **fire** half: once the setup is queued, record `provision.in_progress` and return to do prepare work
 > (see the router `../SKILL.md`). The readiness **poll** at the end of Step 2, plus Steps 3–5, are the
 > **join** half — run them when an instance-barrier step needs the backend (or immediately, if the
@@ -29,7 +29,7 @@ All website/database operations below go through the Hostinger connector (`execu
 2. `hosting_websites_list-setups { "domain": "<domain>" }` — exact-match the row:
    - `completed` → already provisioned → skip to Step 3 (adopt it).
    - `running` → skip to Step 2 (poll).
-   - `failed` → tell the user and point them at hPanel; do **not** call start-setup again on your own.
+   - `failed` → tell the user and point them at hPanel; do **not** call `hosting_websites_create` again on your own.
 3. If the site exists but is a different kind (`website_type` is `headless`, or a WordPress/store site),
    stop and tell the user — this domain already hosts something else. **Never create a second site.**
 4. **Only provision a webapp for a `webapp` brief.** A `wordpress` or `ecommerce` brief belongs in those
@@ -46,16 +46,15 @@ All website/database operations below go through the Hostinger connector (`execu
 2. Start the setup as an **empty website** — **omit `type`** (no WordPress, no store):
 
    ```json
-   { "operation": "hosting_websites_start-setup",
+   { "operation": "hosting_websites_create",
      "params": { "order_id": <order_id>, "domain": "<domain>" } }
    ```
 
    `domain` must be a **customer-owned** domain. For a temporary `*.hostingersite.com` subdomain,
    **omit `domain`** — the setup generates one itself and returns it in the response. Don't call a
-   separate subdomain op to make one first: there's no need in this flow. (The API would also accept a
-   subdomain you generated via `hosting_domains_generate-free-subdomain`, valid for 24 h from the client
-   that made it — this flow just doesn't use that.) The response then carries the generated domain: if it
-   differs from the workspace directory name, move `~/.hostinger/<old>/` to `~/.hostinger/<new>/`
+   separate subdomain op to make one first: there's no need in this flow. The response then carries the
+   generated domain: if it differs from the workspace directory name, move `~/.hostinger/<old>/` to
+   `~/.hostinger/<new>/`
    (if `<new>/` already exists, stop and ask instead of moving into it),
    update the domain in `brief.md`, and tell the user the new domain.
 3. Poll `hosting_websites_list-setups { "domain": "<domain>" }` every ~15 s until `completed`

@@ -304,6 +304,14 @@ class MCPServer {
         return await this.handleHostingWebsitesUpdateSettings(params);
       case 'hosting_cache_clear':
         return await this.handleHostingCacheClear(params);
+      case 'hosting_websites_list-domains':
+        return await this.handleHostingWebsitesListDomains(params);
+      case 'hosting_websites_add-domain':
+        return await this.handleHostingWebsitesAddDomain(params);
+      case 'hosting_websites_remove-domain':
+        return await this.handleHostingWebsitesRemoveDomain(params);
+      case 'hosting_websites_start-setup':
+        return await this.handleHostingWebsitesStartSetup(params);
       case 'hosting_import-wordpress-website':
         return await this.handleWordpressWebsiteImport(params);
       case 'hosting_deploy-wordpress-plugin':
@@ -675,6 +683,14 @@ class MCPServer {
       }
     }
     throw new Error('No website found for domain: ' + domain);
+  }
+
+  // The items of a parked domain or subdomain list: the API answers with a bare array.
+  domainItems(response) {
+    if (Array.isArray(response)) {
+      return response;
+    }
+    return response && Array.isArray(response.data) ? response.data : [];
   }
 
   hosting_deploy_types = ['static', 'nodejs', 'wordpress-site', 'wordpress-plugin', 'wordpress-theme'];
@@ -1546,6 +1562,143 @@ class MCPServer {
       ? await this.callOperation('hosting_cdn_purge-cache', { username, domain })
       : await this.callOperation('hosting_cache_clear-website', { username, domain, ...(directory !== null ? { directory } : {}) });
     return { domain, cleared: scope, directory, response };
+  }
+
+  // A 404 means the domain is not a website on the account, which fails the whole call; any other
+  // failure only fails its own list.
+  async hosting_websitesListDomains_section(request, pick) {
+    try {
+      return this.domainItems(await request).map(pick);
+    } catch (error) {
+      if (error instanceof ApiExecutionError && error.status === 404) {
+        throw error;
+      }
+      return { error: this.formatToolError(error) };
+    }
+  }
+
+  async handleHostingWebsitesListDomains(params) {
+    const { domain: requestedDomain } = params;
+
+    if (!requestedDomain || typeof requestedDomain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    const { username, domain } = await this.findWebsite(requestedDomain);
+    const target = { username, domain };
+
+    const [parked, subdomains] = await Promise.all([
+      this.hosting_websitesListDomains_section(this.callOperation('hosting_domains_list-website-parked', target), (item) => ({
+        domain: item.domain,
+        type: item.type,
+        root_directory: item.root_directory,
+      })),
+      this.hosting_websitesListDomains_section(this.callOperation('hosting_domains_list-website-subdomains', target), (item) => ({
+        domain: item.domain,
+        subdomain: item.subdomain,
+        root_directory: item.root_directory,
+      })),
+    ]);
+
+    return { domain, parked, subdomains };
+  }
+
+  async handleHostingWebsitesAddDomain(params) {
+    const { domain: requestedDomain, type, name } = params;
+    // Models send null for fields they leave unset.
+    const directory = params.directory ?? null;
+    const usePublicDirectory = params.usePublicDirectory ?? null;
+
+    if (type !== 'parked' && type !== 'subdomain') {
+      throw new Error('type must be parked or subdomain');
+    }
+    if (!name || typeof name !== 'string') {
+      throw new Error('name is required and must be a string');
+    }
+    if (directory !== null && (typeof directory !== 'string' || directory === '')) {
+      throw new Error('directory must be a non-empty string when provided');
+    }
+    if (usePublicDirectory !== null && typeof usePublicDirectory !== 'boolean') {
+      throw new Error('usePublicDirectory must be a boolean');
+    }
+    if (type === 'parked' && (directory !== null || usePublicDirectory !== null)) {
+      throw new Error('directory and usePublicDirectory apply only to type subdomain');
+    }
+    if (!requestedDomain || typeof requestedDomain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    let prefix = '';
+    if (type === 'subdomain') {
+      const suffix = '.' + requestedDomain.toLowerCase();
+      prefix = name.toLowerCase().endsWith(suffix) ? name.slice(0, -suffix.length) : name;
+      if (prefix === '' || (prefix === name && name.includes('.'))) {
+        throw new Error('name must be a subdomain prefix (blog) or a name under ' + requestedDomain + ' (blog.' + requestedDomain + ')');
+      }
+      if (prefix.toLowerCase() === 'www') {
+        throw new Error('www cannot be added as a subdomain: it already belongs to ' + requestedDomain);
+      }
+    }
+
+    const { username, domain } = await this.findWebsite(requestedDomain);
+
+    if (type === 'parked') {
+      const response = await this.callOperation('hosting_domains_create-website-parked', { username, domain, parked_domain: name });
+      return { domain, type, name, response };
+    }
+
+    const response = await this.callOperation('hosting_domains_create-website-subdomain', {
+      username,
+      domain,
+      subdomain: prefix,
+      ...(directory !== null ? { directory } : {}),
+      ...(usePublicDirectory !== null ? { is_using_public_directory: usePublicDirectory } : {}),
+    });
+    return { domain, type, name: prefix + '.' + domain, response };
+  }
+
+  async handleHostingWebsitesRemoveDomain(params) {
+    const { domain: requestedDomain, name } = params;
+
+    if (!name || typeof name !== 'string') {
+      throw new Error('name is required and must be a string');
+    }
+    if (!requestedDomain || typeof requestedDomain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    const { username, domain } = await this.findWebsite(requestedDomain);
+    const target = { username, domain };
+
+    const [parkedResponse, subdomainsResponse] = await Promise.all([
+      this.callOperation('hosting_domains_list-website-parked', target),
+      this.callOperation('hosting_domains_list-website-subdomains', target),
+    ]);
+    const parkedDomains = this.domainItems(parkedResponse);
+    const subdomains = this.domainItems(subdomainsResponse);
+    const wanted = name.toLowerCase();
+
+    const parked = parkedDomains.find((item) => typeof item.domain === 'string' && item.domain.toLowerCase() === wanted);
+    if (parked) {
+      const response = await this.callOperation('hosting_domains_delete-website-parked', { ...target, parkedDomain: parked.domain });
+      return { domain, type: 'parked', name: parked.domain, response };
+    }
+
+    const subdomain = subdomains.find((item) => (typeof item.domain === 'string' && item.domain.toLowerCase() === wanted)
+      || (typeof item.subdomain === 'string' && item.subdomain.toLowerCase() === wanted));
+    if (subdomain) {
+      const response = await this.callOperation('hosting_domains_delete-website-subdomain', { ...target, subdomain: subdomain.subdomain });
+      return { domain, type: 'subdomain', name: subdomain.domain, response };
+    }
+
+    const listed = (items) => items.map((item) => item.domain).filter(Boolean).join(', ') || 'none';
+    throw new Error(name + ' is not a parked domain or subdomain of ' + domain + '. Parked domains: ' + listed(parkedDomains) + '. Subdomains: ' + listed(subdomains) + '.');
+  }
+
+  async handleHostingWebsitesStartSetup(params) {
+    // Models send null for fields they leave unset; the setup endpoint rejects some of them.
+    const forwarded = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== null && value !== undefined));
+    return this.callOperation('hosting_websites_create', forwarded);
   }
 
   hosting_importWordpressWebsite_validateArchiveFormat(filePath) {

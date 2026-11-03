@@ -165,7 +165,7 @@ but an instance existing does **not** mean provision is done or can be skipped. 
 which of these cases applies and records it, then provision takes the matching path:
 
 1. **An empty headless shell already exists for the domain (the common onboarding case).** Onboarding
-   creates the website first — an **empty headless shell** (`hosting_websites_start-setup { type:
+   creates the website first — an **empty headless shell** (`hosting_websites_create { type:
    "headless_empty" }`): `website_type` is `headless`, but **no backend is installed** (no WordPress at
    `/cms`, no store). This still goes through provision, which **adopts the shell and swaps it to the
    chosen backend** (the backend is picked in refine first): WordPress is installed into the shell's
@@ -173,14 +173,14 @@ which of these cases applies and records it, then provision takes the matching p
    Ecommerce storefront host. **Never skip provision for a shell, and never create a second site.** See
    the provision router's *Onboarding handoff*.
 2. **No instance exists at all** (the user ran the headless flow without onboarding provisioning
-   anything). Provision creates a fresh headless instance with `hosting_websites_start-setup` using the
+   anything). Provision creates a fresh headless instance with `hosting_websites_create` using the
    chosen backend's own `type`.
 3. **User wants a webapp.** Provision is a plain Node.js app host, not headless — `webapp` ignores
    headless shells entirely and is only reached by experimental actions, never the onboarding flow.
 
 Either way the create/install is asynchronous and returns `queued` immediately, then it's polled
 every ~15 s for a few minutes — **what you poll depends on the path**: a fresh
-`hosting_websites_start-setup` is polled with `hosting_websites_list-setups` until `completed`, while a
+`hosting_websites_create` is polled with `hosting_websites_list-setups` until `completed`, while a
 shell swap (`wordpress_installations_install`) creates no new setup, so it's polled with
 `wordpress_installations_list` until the `/cms` row is `is_valid`. Don't block on that poll. The
 single rule that makes the overlap safe:

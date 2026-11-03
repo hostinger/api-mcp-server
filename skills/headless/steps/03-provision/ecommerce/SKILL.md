@@ -50,11 +50,10 @@ Same lifecycle as `../wordpress/SKILL.md` Steps 1–2, but `type: "headless_ecom
 1. Detect: `hosting_websites_list` / `hosting_websites_list-setups` (exact-match the domain). `completed`
    → adopt. `running` → poll. `failed` → stop, point at hPanel. If `website_type` is not `headless`
    (plain WordPress, Node.js, …), stop and tell the user — don't overwrite another kind of site.
-2. Create (only if **no** site exists): `hosting_websites_start-setup { order_id, type: "headless_ecommerce", domain }`
+2. Create (only if **no** site exists): `hosting_websites_create { order_id, type: "headless_ecommerce", domain }`
    — **omit `domain`** for a temporary subdomain: the setup generates one itself and returns it (don't
-   call a separate subdomain op first — there's no need in this flow; the API would also accept one you
-   generated via `hosting_domains_generate-free-subdomain`, valid 24 h from the client that made it). The
-   response carries the generated domain; if it differs from the workspace dir, move
+   call a separate subdomain op first — there's no need in this flow). The response carries the
+   generated domain; if it differs from the workspace dir, move
    `~/.hostinger/<old>/` → `<new>/` (if `<new>/` already exists, stop and ask instead of moving
    into it) and update `brief.md`. Poll `list-setups` to `completed`. `website_type` will be `headless`.
 
@@ -63,7 +62,7 @@ Same lifecycle as `../wordpress/SKILL.md` Steps 1–2, but `type: "headless_ecom
 > typically created in onboarding), **adopt it as the storefront host and skip the create.** A
 > `headless_ecommerce` website installs no store engine either, so an empty headless shell *is* the host
 > you need — there is no backend to "swap" on the website side. Record its `username`/`order_id` and go
-> straight to Step 2 (store + custom sales channel). Never call `start-setup` on a domain that already
+> straight to Step 2 (store + custom sales channel). Never call `hosting_websites_create` on a domain that already
 > has a site.
 
 > Don't expect `/cms` or any API on this domain — it serves the storefront you build (Step 6) and
