@@ -389,6 +389,8 @@ class MCPServer {
 
   // System directories and the roots of the home directories. /var as a whole stays deployable: sites live in /var/www, and macOS keeps its temp dir there.
   private systemDirectories = ['/etc', '/root', '/usr', '/bin', '/sbin', '/boot', '/proc', '/sys', '/dev', '/var/lib', '/var/log', '/var/db', '/var/root', '/private/etc', '/private/var/lib', '/private/var/log', '/private/var/db', '/private/var/root', '/System', '/Library',
+    // Homebrew on Apple silicon and MacPorts keep service data (databases) and configs under their prefix.
+    '/opt/homebrew', '/opt/local',
     // Container secrets (Docker's /run/secrets, the Kubernetes service-account token under /var/run/secrets) and runtime state.
     '/run', '/var/run', '/private/var/run',
     // Every user's home directory, whatever the current home is (root's is /root, a container's can be /).
@@ -434,10 +436,9 @@ class MCPServer {
     // A profile reached outside the home roots (WSL's /mnt/c/Users/me, a home on a mounted disk): the top-level data
     // of a directory under a Users or home directory, and a profile, or a directory holding profiles (/mnt/c/Users,
     // /mnt/c), that has the data of one; a project's own users/ or home/ deploys.
-    const looksLikeProfile = (dir: string): boolean => ['AppData', 'Library', '.ssh', '.aws', '.gnupg', '.kube'].some((name: string) => fs.existsSync(path.join(dir, name)));
     const holdsProfiles = (dir: string): boolean => {
       try {
-        return fs.readdirSync(dir, { withFileTypes: true }).some((entry) => entry.isDirectory() && looksLikeProfile(path.join(dir, entry.name)));
+        return fs.readdirSync(dir, { withFileTypes: true }).some((entry) => entry.isDirectory() && this.looksLikeProfile(path.join(dir, entry.name)));
       } catch (error) {
         return false;
       }
@@ -449,16 +450,22 @@ class MCPServer {
       }
       const top = segments[i + 2];
       if (top === undefined) {
-        return i + 1 < segments.length ? looksLikeProfile(real) : holdsProfiles(real);
+        return i + 1 < segments.length ? this.looksLikeProfile(real) : holdsProfiles(real);
       }
       return top !== '.claude-worktrees' && (top.startsWith('.') || ['library', 'appdata', 'snap'].includes(top.toLowerCase()));
     }));
-    const inSystem = !inHome && this.systemDirectories.some((dir: string) => inside(dir, real));
+    const inSystem = !inHome && this.systemDirectories.some((dir: string) => inside(dir, real) || inside(real, dir));
     // Windows drops trailing dots and spaces from a name: .ssh. is .ssh.
     const inCredentials = real.split(path.sep).some((segment: string) => this.credentialDirectories.includes((process.platform === 'win32' ? segment.replace(/[. ]+$/, '') : segment).toLowerCase()));
     if (inside(real, home) || otherHome || inHomeData || inProfile || inSystem || inCredentials || (fs.statSync(real).isFile() && this.isSecretFile(path.basename(real)))) {
       throw new Error('Refusing to deploy ' + localPath + ': it is, or contains, a home, system or credentials location. Pass the project directory or archive.');
     }
+  }
+
+  // A user's profile, told by its app data or credentials: Library/Application Support rather than Library, which
+  // on a case-insensitive file system also matches a project's own library/.
+  private looksLikeProfile(dir: string): boolean {
+    return ['AppData', path.join('Library', 'Application Support'), '.ssh', '.aws', '.gnupg', '.kube'].some((name: string) => fs.existsSync(path.join(dir, name)));
   }
 
   // Env files (examples such as .env.example are kept), credentials and private keys: a deploy would serve them
@@ -485,6 +492,11 @@ class MCPServer {
   private listDeployFiles(dir: string, exclude?: string): { files: string[]; skipped: string[] } {
     const files: string[] = [];
     const skipped: string[] = [];
+    // A profile copy deployed as is (a backup disk's me/), told by its app data alone: a project's own .aws/ or .kube/
+    // at the top is skipped below, as before.
+    if (['AppData', path.join('Library', 'Application Support')].some((name: string) => fs.existsSync(path.join(dir, name)))) {
+      throw new Error('Refusing to deploy ' + dir + ': it is a home directory. Pass the project directory or archive.');
+    }
     const walk = (relativeDir: string): void => {
       for (const entry of fs.readdirSync(path.join(dir, relativeDir), { withFileTypes: true })) {
         if (entry.isSymbolicLink()) {
@@ -496,6 +508,11 @@ class MCPServer {
           if (entry.name !== '.config' && this.credentialDirectories.includes(entry.name.toLowerCase())) {
             skipped.push(relativePath);
           } else if (entry.name !== 'node_modules' && entry.name !== '.git') {
+            // assertDeployablePath judges only the top of the path: a profile copy nested deeper (a backup disk's
+            // Users/<name>) would ship its app data and keys.
+            if (this.looksLikeProfile(path.join(dir, relativePath))) {
+              throw new Error('Refusing to deploy ' + dir + ': ' + relativePath + ' is a home directory. Pass the project directory or archive.');
+            }
             walk(relativePath);
           }
         } else if (entry.isFile() && entry.name !== '.DS_Store' && path.resolve(dir, relativePath) !== exclude) {
