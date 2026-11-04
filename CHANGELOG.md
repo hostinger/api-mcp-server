@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.28.2 — 2026-11-04
+
+### Also in this release
+
+- Bundled agent skills: `skills/headless/VERSION`, `skills/headless/steps/08-deploy/SKILL.md`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v3.28.1 — 2026-11-04
 
 ### Also in this release

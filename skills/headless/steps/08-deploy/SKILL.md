@@ -115,9 +115,10 @@ echo "$DEPLOY_DIR/app.zip"   # the absolute path to pass as `path` in Step 3
 ```
 
 ```powershell
-# Windows PowerShell — %TEMP% sits under AppData, which the deploy also refuses; use a folder on the system drive
+# Windows PowerShell — %TEMP% sits under AppData, which the deploy also refuses; use a plain folder in your
+# profile, which only you can write to (never a folder under C:\, which every local account can write into)
 cd $HOME\.hostinger\<domain>\src
-$DeployDir = Join-Path $env:SystemDrive "hostinger-deploy\<domain>"; New-Item -ItemType Directory -Force $DeployDir | Out-Null
+$DeployDir = Join-Path $HOME "hostinger-deploy\<domain>"; New-Item -ItemType Directory -Force $DeployDir | Out-Null
 tar -a -cf "$DeployDir\app.zip" --exclude=node_modules --exclude=.next --exclude=dist --exclude=out --exclude=.git --exclude=.htaccess .
 "$DeployDir\app.zip"        # the absolute path to pass as `path` in Step 3
 ```
