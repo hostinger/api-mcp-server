@@ -154,7 +154,7 @@ keep the language you were using.
 > The deleted legacy flow that put WordPress on a separate `cms.<domain>` subdomain with a
 > `type:"static"` frontend on the main domain (two instances, recorded as `cms_domain` + `type:"static"`
 > in `site.json`) is **gone and forbidden**. If you ever see `cms_domain` or `type:"static"` in a
-> workspace's `site.json`, you are running a stale/legacy skill copy — stop and re-pull the latest skills
+> workspace's `site.json`, you are running a stale/legacy skill copy — stop and update the skill (`npx skills update` or the plugin update for an installed skill, or connect's Phase 1 npm install for a web-installed `headless/` folder)
 > (see `connect/SKILL.md`) before continuing.
 
 ### Background provision & the instance barrier

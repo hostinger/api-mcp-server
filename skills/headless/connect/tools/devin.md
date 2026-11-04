@@ -36,22 +36,13 @@ tokens to handle.
   ```
 
 If the tools still aren't in this session, follow *register, restart, resume* in `connect/SKILL.md`:
-finish Step 2 and `connect.json`, then ask the user to restart the Devin session (on Devin Desktop,
+write `connect.json`, then ask the user to restart the Devin session (on Devin Desktop,
 fully quit and reopen the app) and paste the same prompt. Never spawn the server yourself or write a
 JSON-RPC client to reach it.
 
-## Step 2 — Install the skills and hand off
+## Step 2 — Hand off
 
-Download the Hostinger skills locally **at the start of every run** so your agent then reads the files
-directly with no further network calls during the run. **Always pull the latest and overwrite any
-existing local `headless/` copy** so a run never uses a stale skill version. The repo is **public**, so
-fetch just the skill folder over HTTPS — no git, no credentials (see `connect/tools/claude-code.md` for
-the full tarball command):
-
-```bash
-# macOS/Linux — downloads only skills/headless from the public repo
-curl -fsSL https://codeload.github.com/hostinger/api-mcp-server/tar.gz/refs/heads/main \
-  | tar -xz --strip-components=2 'api-mcp-server-main/skills/headless'
-```
-
-Then read the `headless/VERSION` stamp (record it in `connect.json`), open `headless/SKILL.md` and follow its steps. That skill owns the rest of the run.
+The skills are already in place: Phase 1 of `connect/SKILL.md` found the installed `headless/`
+folder or installed it from the `@hostinger/mcp` release. Don't download them again here. Read the
+`headless/VERSION` stamp (record it in `connect.json`), open `headless/SKILL.md` and follow its
+steps. That skill owns the rest of the run.

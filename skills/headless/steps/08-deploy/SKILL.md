@@ -244,7 +244,7 @@ serves the build as plain files over the document root and **overwrites `/cms`**
 WordPress backend (this is the "accidentally cleared cms" failure). A static-built SPA (Vite/React/Vue)
 still deploys as `type: "nodejs"` with its `appType` — the framework's static output is served correctly
 that way, and `/cms` is preserved. If a flow ever tells you to deploy a headless site as `type:
-"static"`, you are on a stale/legacy skill copy — stop and re-pull the latest skills.
+"static"`, you are on a stale/legacy skill copy — stop and update the skill (`npx skills update` or the plugin update for an installed skill, or connect's Phase 1 npm install for a web-installed `headless/` folder).
 
 `hosting_deploy` on the local server is the only path: give its `path` a local **archive** (`zip`, `tar`,
 `tar.gz`, `tgz`, `7z`) written outside `~/.hostinger/` as in Step 2. There is no separate upload or

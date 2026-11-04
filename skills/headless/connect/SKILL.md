@@ -28,20 +28,51 @@ If that errors (Node not installed) or prints a version below 20, install or upg
 - Linux: `nvm install 22 && nvm use 22` (or your distro's Node 20+ package)
 - Windows: `winget install OpenJS.NodeJS.LTS` (or download from nodejs.org)
 
-## Phase 1 — Run the bootstrap (deterministic)
+## Phase 1 — Get the skill folder, then run its bootstrap (deterministic)
 
-Download the bootstrap script, then run it. It verifies the MCP server and handles sign-in, emitting one JSON event per line on stdout. Run it as a background/streaming process. Show the user only the sign-in URL (`awaiting_user`) or a
-failure's `detail`, and handle the other events silently (table below).
+### Find or install the skill folder
 
-The script is safe and inspectable: it only checks the MCP server via `npx` and drives the OAuth sign-in (a browser flow with a localhost callback) — no other network calls, no filesystem writes. Read it first if your sandbox flags externally-downloaded code.
+The bootstrap script and every step after connect ship in the `headless/` skill folder. Use the copy
+you already have; never fetch single files from GitHub.
+
+- **An installer put the skill here** (you read this file from disk, from a folder that `npx skills
+  add` or a Claude Code or Cursor plugin installed): that folder is `<skill>`. Use it as it is and
+  download nothing. Updates come from the installer (`npx skills update`, the plugin update),
+  not from this run.
+- **You read this file from the web, or from a `headless/` folder an earlier web run installed:**
+  install the skill from the published `@hostinger/mcp` npm release (for an earlier web install, only
+  when it is out of date; see below). It is the same package the MCP server runs, and npm checks
+  the tarball's integrity. Resolve the version first so the run uses one pinned release:
 
 ```bash
-# macOS/Linux:
-curl -fsSL -O https://raw.githubusercontent.com/hostinger/api-mcp-server/main/skills/headless/connect/bootstrap.mjs
-# Windows PowerShell:
-iwr https://raw.githubusercontent.com/hostinger/api-mcp-server/main/skills/headless/connect/bootstrap.mjs -OutFile bootstrap.mjs
+# macOS/Linux
+V=$(npm view @hostinger/mcp version) && npm pack "@hostinger/mcp@$V" --silent \
+  && tar -xzf "hostinger-mcp-$V.tgz" --strip-components=2 package/skills/headless && rm "hostinger-mcp-$V.tgz"
+```
 
-node bootstrap.mjs
+```powershell
+# Windows PowerShell
+$V = npm view @hostinger/mcp version; npm pack "@hostinger/mcp@$V" --silent
+tar -xzf "hostinger-mcp-$V.tgz" --strip-components=2 package/skills/headless; Remove-Item "hostinger-mcp-$V.tgz"
+```
+
+This leaves a local `headless/` folder, which is `<skill>`. A `headless/` folder already here from an
+earlier web install counts as installed, with one check: when line 1 of its `headless/VERSION` is older
+than `npm view @hostinger/mcp version`, install again the same way, so a run never uses a deleted,
+legacy flow.
+
+Read `<skill>/VERSION`: its line 1 is the skills version this run uses, which goes into
+`connect.json` (Phase 3).
+
+### Run the bootstrap
+
+Run the bundled script. It verifies the MCP server and handles sign-in, emitting one JSON event per line on stdout. Run it as a background/streaming process. Show the user only the sign-in URL (`awaiting_user`) or a
+failure's `detail`, and handle the other events silently (table below).
+
+The script is safe and inspectable: it only checks the MCP server via `npx` and drives the OAuth sign-in (a browser flow with a localhost callback) — no other network calls, no filesystem writes.
+
+```bash
+node <skill>/connect/bootstrap.mjs
 ```
 
 ### Relay these events
@@ -113,8 +144,8 @@ until the tool restarts. When either tool group above is missing:
    (`npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp`) if the ecommerce group is missing.
    Skip a server that is already registered under its name. When neither group is there, register
    both: the backend isn't chosen until refine, and one restart then covers every backend.
-2. **Pull the skills and write `connect.json`** (the route's skills step and Phase 3) before you stop,
-   so the next run starts from them.
+2. **Write `connect.json`** (Phase 3) before you stop. The skill folder from Phase 1 stays in place,
+   so the next run starts from it.
 3. **Send the first message and end your turn.** It follows *The first message* in
    `headless/SKILL.md`: the sign-in link if one was needed, then one line saying Hostinger is set up
    and asking the user to restart the tool (the route says how) and paste the same prompt again so the
@@ -136,16 +167,11 @@ If a tool loads new servers without a restart (VS Code), use them right away and
 If the user's tool isn't listed yet, connect it the generic way: register both Hostinger MCP servers
 in that tool's MCP config (command `npx`, args as above), then follow *register, restart, resume*.
 
-### Always pull the latest skills (never run a stale copy)
+### The skills come from Phase 1 only
 
-The tool route above downloads the `headless/` skill bundle. **Do this at the start of every run and let
-it overwrite any existing local `headless/` folder** — a build must never run on a stale copy, because an
-outdated local bundle is how a deleted, legacy flow (e.g. a separate CMS domain + a `type:"static"`
-frontend — two instances) ends up executing. The bundle ships a `headless/VERSION` stamp
-(`version=<semver>` on line 1, then `commit` and `built`). After pulling, read it; if you want to confirm
-it is current, compare line 1 against the published marker at
-`https://raw.githubusercontent.com/hostinger/api-mcp-server/main/skills/headless/VERSION` and re-pull if
-they differ. Carry the version into `connect.json` (Phase 3) so the build report records which skills ran.
+The tool routes don't download the skills: Phase 1 already found or installed `<skill>`. The bundle
+ships a `headless/VERSION` stamp (`version=<semver>` on line 1, then `commit` and `built`); carry the
+version into `connect.json` (Phase 3) so the build report records which skills ran.
 
 ## Phase 3 - Write `connect.json`
 
