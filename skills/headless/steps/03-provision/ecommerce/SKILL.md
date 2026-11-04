@@ -48,14 +48,17 @@ All website-lifecycle calls go through the `hosting` connector (`execute`); all 
 Same lifecycle as `../wordpress/SKILL.md` Steps 1–2, but `type: "headless_ecommerce"`:
 
 1. Detect: `hosting_websites_list` / `hosting_websites_list-setups` (exact-match the domain). `completed`
-   → adopt. `running` → poll. `failed` → stop, point at hPanel. If `website_type` is not `headless`
+   → adopt. `running` → record `provision.in_progress` and wait at the join. `failed` → stop, point at hPanel.
+   If `website_type` is not `headless`
    (plain WordPress, Node.js, …), stop and tell the user — don't overwrite another kind of site.
 2. Create (only if **no** site exists): `hosting_websites_create { order_id, type: "headless_ecommerce", domain }`
    — **omit `domain`** for a temporary subdomain: the setup generates one itself and returns it (don't
    call a separate subdomain op first — there's no need in this flow). The response carries the
    generated domain; if it differs from the workspace dir, move
    `~/.hostinger/<old>/` → `<new>/` (if `<new>/` already exists, stop and ask instead of moving
-   into it) and update `brief.md`. Poll `list-setups` to `completed`. `website_type` will be `headless`.
+   into it) and update `brief.md`. Don't wait here. At the join, `node <skill>/wait.mjs setup <domain>`
+   returns once the setup is `completed` (see *Waiting on Hostinger* in the top-level `SKILL.md`).
+   `website_type` will be `headless`.
 
 > **Onboarding handoff — an empty headless shell needs no new website.** If the domain already has an
 > empty headless shell (`website_type: headless`, setup `type: headless_empty`, nothing installed —

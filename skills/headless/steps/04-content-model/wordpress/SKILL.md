@@ -5,8 +5,7 @@ description: "Push phase of Step 4 for a headless WordPress backend: open an aut
 
 # headless-step-content-model-wordpress
 
-**Push phase — needs the live instance.** Run only after `provision.status == "completed"` (re-verify
-against `hosting_websites_list-setups`). It maps the backend-agnostic `content-model.md` onto real
+**Push phase — needs the live instance.** Run only after `provision.status == "completed"`. It maps the backend-agnostic `content-model.md` onto real
 WordPress objects.
 
 **In:** `content-model.md`, `site.json` (both prepared earlier), generated media under

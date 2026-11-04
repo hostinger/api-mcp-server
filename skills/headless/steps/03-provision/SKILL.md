@@ -10,9 +10,9 @@ matching subfolder, which provisions it.
 
 **In:** `brief.md`. **Out:** `site.json` (written by the subfolder).
 
-**This stage runs in the background.** Provisioning is mostly a poll wait, so it splits in two: a
-**fire** half (detect + create, returns straight away) and a **join** half (poll to `completed`,
-verify, write `site.json`). Fire it, record `provision.in_progress`, then go do the prepare work of
+**This stage is asynchronous.** Provisioning is mostly a wait on Hostinger, so it splits in two: a
+**fire** half (detect + create, returns straight away) and a **join** half (`wait.mjs` in the
+foreground, verify, write `site.json`). Fire it, record `provision.in_progress`, then go do the prepare work of
 the other stages (content-model prepare, frontend shell) while it settles. Only cross back to
 the join half when an instance-barrier step needs the live backend. See *Background provision & the
 instance barrier* in the top-level `SKILL.md`. An agent that can't interleave simply does fire and
@@ -98,7 +98,7 @@ So provision has **two entry shapes**, and each subfolder's *detect* step picks 
    you not to expect an empty shell.
 
 This only changes *detect*. Everything after the swap (verify, `site.json`, the WooCommerce tail, the
-background fire/join split) is identical to a fresh provision. A swap that installs WordPress is still
+fire/join split) is identical to a fresh provision. A swap that installs WordPress is still
 asynchronous — fire it, record `provision.in_progress`, and join at the barrier just like a fresh create.
 
 ## Step 2 — Fire (don't block)
@@ -118,8 +118,8 @@ asynchronous — fire it, record `provision.in_progress`, and join at the barrie
 > shell from an already-provisioned backend.
 
 Follow the chosen subfolder's `SKILL.md` through **detect + create** (its `hosting_websites_create` call). The
-moment the create is accepted and queued, record it in `state.json` and **return** — do not sit on the
-readiness poll:
+moment the create is accepted and queued, record it in `state.json` and **return** — do not wait for
+it yet:
 
 ```json
 { "stage": "content_model",
@@ -132,7 +132,8 @@ shell). The subfolder's readiness poll, verification and `site.json` are the **j
 ## Step 3 — Join (at the instance barrier)
 
 When an instance-barrier step is about to run (content-model push, frontend data wiring, deploy) — or
-right away, if the agent can't interleave — finish the subfolder's `SKILL.md`: **poll to `completed`**,
-run its verification, and write `site.json` (which records the chosen `backend`). Then set
-`provision.status` to `"completed"` in `state.json` with a fresh `updated_at`. On resume, treat a
-stored `in_progress` as a hint only — re-poll `hosting_websites_list-setups` for the truth first.
+right away, if the agent can't interleave — finish the subfolder's `SKILL.md`: run its `wait.mjs` (it
+returns at once if the job is already done), run its verification, and write `site.json` (which
+records the chosen `backend`). Then set `provision.status` to `"completed"` in `state.json` with a
+fresh `updated_at`.
+

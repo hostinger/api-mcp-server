@@ -6,6 +6,7 @@
 //   node run-log.mjs <domain> run-resume [--reason "<text>"]
 //   node run-log.mjs <domain> stage-start <stage> [--phase <phase>] [--started-ago 6m | --started-at <ISO time>]
 //   node run-log.mjs <domain> stage-end <stage> <result> [--phase <phase>] [--note "<text>"] [--started-ago 6m | --started-at <ISO time>]
+//   node run-log.mjs <domain> next <stage> [--phase <phase>]
 //   node run-log.mjs <domain> stage-fix <stage> [--phase <phase>] (--started-ago 6m | --started-at <ISO time>)
 //   node run-log.mjs <domain> event <issue|feedback|skill_gap|good> '<json>'
 //   node run-log.mjs <domain> report [--outcome live|stopped|failed|abandoned] [--tokens '<json>']
@@ -237,6 +238,22 @@ function stageEnd(ws, [stage, result], flags) {
   if (typeof flags.note === 'string') entry.note = flags.note;
   saveLog(ws, log);
   console.log(`${stage}${phase ? `/${phase}` : ''} ended: ${result}`);
+}
+
+// One call at a stage boundary: ends the open stage (or phase) as ok and starts <stage>, unless the open
+// one is <stage> itself, so re-running a chained `next X && …` doesn't close X as ok. With nothing open
+// it only starts; with more than one open it can't tell which ends, so it refuses.
+function next(ws, [stage], flags) {
+  if (!STAGES.includes(stage)) fail(`unknown stage "${stage}"; one of ${STAGES.join(', ')}`);
+  const log = loadLog(ws);
+  const run = currentRun(log);
+  const open = (log.history ?? []).filter((h) => h.run === run.id && !h.ended_at);
+  const label = (h) => `${h.stage}${h.phase ? ` --phase ${h.phase}` : ''}`;
+  if (open.length > 1) fail(`${open.map(label).join(' and ')} are open; end each with stage-end <stage> <result>, then call next`);
+  const phase = flags.phase ?? null;
+  const [current] = open;
+  if (current && !(current.stage === stage && current.phase === phase)) stageEnd(ws, [current.stage, 'ok'], { phase: current.phase ?? undefined });
+  stageStart(ws, [stage], { phase: flags.phase });
 }
 
 function stageFix(ws, [stage], flags) {
@@ -663,6 +680,9 @@ switch (command) {
   case 'stage-end':
     stageEnd(ws, rest, flags);
     break;
+  case 'next':
+    next(ws, rest, flags);
+    break;
   case 'stage-fix':
     stageFix(ws, rest, flags);
     break;
@@ -696,5 +716,5 @@ switch (command) {
     reportRejected(ws, rest);
     break;
   default:
-    fail('command must be run-start, run-update, run-resume, stage-start, stage-end, stage-fix, event, report, unsent, report-sent or report-rejected');
+    fail('command must be run-start, run-update, run-resume, stage-start, stage-end, next, stage-fix, event, report, unsent, report-sent or report-rejected');
 }

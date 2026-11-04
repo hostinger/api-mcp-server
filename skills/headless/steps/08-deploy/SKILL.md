@@ -21,7 +21,7 @@ This is an **instance-barrier** step: run it only after `provision.status == "co
 > settings passed exactly as the table below says. Run it from the project, since it links the current directory:
 > `cd ~/.hostinger/<domain>/src && hostinger up --domain <domain> --type nodejs --app-type <appType> --output-directory <dir> --build-script build --node-version 22 --package-manager npm --yes --format json`.
 > It uploads, builds, waits and returns `data.buildUuid` and `data.buildState`; add `--no-wait` to
-> return at once and poll with `hostinger hosting nodejs build <domain> <uuid>`. Then continue at
+> return at once and wait with `node <skill>/wait.mjs build <domain> <uuid>`. Then continue at
 > "Verify" below. Recent CLI versions see that the site is headless (`data.headless: true`) and
 > deploy only its Node.js frontend, leaving `/cms` alone; still pass the settings above.
 
@@ -74,8 +74,9 @@ framework's correct values** — don't rely on auto-detection (it returns null �
 
 ## Step 1 — Pre-flight
 
-1. **Instance live.** `provision.status == "completed"`, re-verified with
-   `hosting_websites_list-setups { "domain": "<domain>" }`.
+1. **Instance live (the deploy gate).** `provision.status == "completed"`, re-verified with
+   `hosting_websites_list-setups { "domain": "<domain>" }`: deploy overwrites the site root, so it never
+   trusts `state.json` alone.
 2. **Build output exists locally** (the framework's output dir — e.g. `.next/`, `dist/`, `.output/`) and
    the project builds clean (frontend/validate already did this). If not, go back.
    - **Next.js 16+:** `package.json`'s `build` script is `next build --webpack`, not plain `next build` —
@@ -128,15 +129,26 @@ website root** (expected) and keeps `/cms` intact. `type` is always `"nodejs"` f
 **never `"static"`** (see the gate below). Passing `appType`/`outputDirectory` explicitly is what
 keeps the root from serving 403 (see the rule above).
 
-## Step 4 — Poll to completion
+## Step 4 — Wait for the build and the live root
 
-Poll `hosting_get-deployment { "domain": "<domain>", "buildUuid": "<buildUuid>" }` with backoff until
-`build.state` is `completed`. On `failed`, the same response carries the end of the build log and the
-failure analysis — read it, fix locally, re-archive and redeploy (pass `fromLine`, the line count from
-the previous call, to read only new log output). `hosting_get-deployment` also returns the build settings
-stored for the site: `appType`/`outputDirectory`/`nodeVersion` should echo what you passed; if they read
-`null`, the settings didn't take — fix the deploy call before continuing. For an SSR app that built but
-hangs, `hosting_nodejs_restart-application { username, domain }` recovers the server without a rebuild.
+Wait for it in one command (see *Waiting on Hostinger* in the top-level `SKILL.md`):
+
+```bash
+node <skill>/wait.mjs build <domain> <buildUuid>
+```
+
+It waits for `hosting_get-deployment` to report the build `completed`, then for `https://<domain>/` to
+serve 200. What its result means here:
+
+- `ok: true`: the build is done and the root serves 200. Go on to Step 5.
+- `ok: false` with `build.state: failed`: read `log_tail` (the end of the build log) and `analysis`, fix
+  locally, re-archive and redeploy (pass `fromLine` to `hosting_get-deployment` to read only new log
+  output).
+- `ok: false` with `build settings missing`: the settings didn't take (the root would 403 for good). Fix
+  the deploy call and redeploy.
+- `ok: false` with `timed_out`: `last_status` says whether the build was still running or the root
+  wasn't serving 200 yet (see Step 5's note on a 403). For an SSR app that built but hangs,
+  `hosting_nodejs_restart-application { username, domain }` recovers the server without a rebuild.
 
 ## Step 5 — Verify the live site (all must pass)
 
@@ -163,9 +175,10 @@ hangs, `hosting_nodejs_restart-application { username, domain }` recovers the se
 >   200 is a passing, complete deploy. Never fail or hold the deploy because checkout is unavailable.
 > - **Webapp:** no content backend at all — the whole root is the app. Skip the check; `/cms` won't resolve.
 
-A `completed` build whose root 403s almost always means the build settings weren't passed to
-`hosting_deploy` (null settings) — pass them and redeploy. Caching can briefly serve a stale root;
-re-check after ~30 s.
+The root check is already done when `wait.mjs build` returned `ok: true`; check the rest in one shell
+command (`curl` each URL). A `completed` build whose root 403s almost always means the build settings
+weren't passed to `hosting_deploy` (null settings) — pass them and redeploy. Caching can briefly serve a
+stale root; re-check after ~30 s.
 
 ## Step 6 — Record `deploy.json`
 

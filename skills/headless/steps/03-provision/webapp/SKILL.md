@@ -57,8 +57,9 @@ All website/database operations below go through the Hostinger connector (`execu
    `~/.hostinger/<new>/`
    (if `<new>/` already exists, stop and ask instead of moving into it),
    update the domain in `brief.md`, and tell the user the new domain.
-3. Poll `hosting_websites_list-setups { "domain": "<domain>" }` every ~15 s until `completed`
-   (typically under a minute; allow a few minutes). `failed` → stop, point at hPanel.
+3. Don't wait here. At the join, `node <skill>/wait.mjs setup <domain>` (see *Waiting on Hostinger* in
+   the top-level `SKILL.md`) returns once the setup is `completed`, usually at once by then. A `failed`
+   setup → stop, point at hPanel.
 
 ## Step 3 — Database (only if the app needs one)
 

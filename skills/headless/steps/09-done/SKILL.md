@@ -160,8 +160,9 @@ from `run-log.json`, events from `events.jsonl`) into `reports/<run>.json` and `
 HTML to `report.html` in the workspace:
 
 ```bash
-node <skill>/run-log.mjs <domain> event good '{"text":"<something that went well>"}'   # one per thing, if not logged yet
-node <skill>/run-log.mjs <domain> stage-end done ok
+# one shell command; one `event good` per thing that went well, if not logged yet
+node <skill>/run-log.mjs <domain> event good '{"text":"<something that went well>"}' && \
+node <skill>/run-log.mjs <domain> stage-end done ok && \
 node <skill>/run-log.mjs <domain> report --outcome <live|stopped|failed> [--tokens '<json>']
 ```
 

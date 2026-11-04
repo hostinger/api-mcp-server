@@ -96,7 +96,7 @@ not an answer, see *When you ask the user* in the top-level `SKILL.md`):
 | Option | Tool | Backends | Needs the live instance? |
 |---|---|---|---|
 | **A — Hostinger AI image generation** *(default for WordPress / WooCommerce)* | `wordpress_ai-content_generate-images` | WordPress, WordPress + WooCommerce | **yes** — runs at the instance barrier |
-| **B — Unsplash stock photos** *(default for Ecommerce / Webapp; the fallback everywhere)* | Unsplash API, or web search + web fetch | any | no — pure prepare work |
+| **B — Unsplash stock photos** *(default for Ecommerce / Webapp; the fallback everywhere)* | Unsplash API, or web fetch of Unsplash search pages | any | no — pure prepare work |
 
 > **Do not silently fall back to stock on a WordPress site.** On WordPress / WooCommerce the default is
 > **Hostinger AI (Option A)** — on-brand, generated from `design.md`. Using Unsplash on a WordPress build
@@ -165,29 +165,47 @@ runs **at the instance barrier** (after `provision.status == "completed"`), usin
 This is still prepare work and needs no live backend: you pick the photos and record their URLs here,
 and the push phase uploads them.
 
-1. **Find candidates.** Use one photo per article, matching its subject and destination.
-   - With an `UNSPLASH_ACCESS_KEY` in the environment, use the official API:
-     `GET https://api.unsplash.com/search/photos?query=<subject>&orientation=landscape` with header
-     `Authorization: Client-ID <key>`.
-   - Without a key, use web search limited to `unsplash.com` (e.g. "unsplash photo Lisbon tram") and
-     take the photo id from the result URL: the last segment of `unsplash.com/photos/<slug>-<id>`, or
-     the whole segment for `unsplash.com/photos/<id>`.
-2. **Resolve a direct file URL.** With the API, the result's `urls.raw` is the file and `user.name`
-   the photographer; for each photo you keep, also `GET` its `links.download_location` (same header),
-   as the API terms require. Without a key, open the photo page (`https://unsplash.com/photos/<…>`)
-   with your **web-fetch tool** and ask it for the main photo's `images.unsplash.com/photo-<…>` URL,
-   quoted exactly, and the photographer's name. Either way, drop the query string and request a web
-   size: `https://images.unsplash.com/photo-<…>?w=1600&q=80&fm=jpg&fit=max`. Check that it returns
-   200 with `image/jpeg`: the upload ability needs this direct file URL, not the photo page.
-   - Every other `unsplash.com` request (curl on the page, `/photos/<id>/download`, `/napi/…`,
+Source every image in a few batched calls, not a search and a fetch per photo:
+
+1. **Find candidates, a page of them per fetch.** Group the image briefs into a few themes (e.g.
+   "sourdough bread", "bakery interior", "Lisbon street").
+   - With an `UNSPLASH_ACCESS_KEY` in the environment, use the official API, one call per theme:
+     `GET https://api.unsplash.com/search/photos?query=<theme>&orientation=landscape&per_page=20` with
+     header `Authorization: Client-ID <key>`. Each result's `urls.raw` is the file, `alt_description`
+     what it shows and `user.name` the photographer; for each photo you keep, also `GET` its
+     `links.download_location` (same header), as the API terms require.
+   - Without a key, open the theme's search page `https://unsplash.com/s/photos/<theme-with-dashes>`
+     with your **web-fetch tool**, once per theme, and ask it to list every free photo on the page with
+     its `images.unsplash.com/photo-<…>` URL quoted exactly (the part before `?`), the photo page
+     link, the alt text and the photographer. One fetch returns 10–20 candidates. Skip the
+     `plus.unsplash.com/premium_photo-…` results: they are Unsplash+ and not free. Fetch the themes in
+     parallel when your tool allows several calls at once. Fall back to a web search limited to
+     `unsplash.com` plus a fetch of one photo page (`https://unsplash.com/photos/<…>`) only for a
+     subject no search page covers.
+   - Every other `unsplash.com` request (curl on any page, `/photos/<id>/download`, `/napi/…`,
      `/oembed`) hits a bot challenge: a `307` to `/.within.website` (Anubis) or a 401. If your fetch
      tool gets the challenge page too, stop: no user-agent spoofing or other workarounds. On a
      WordPress backend where Option A hasn't already failed, offer it; otherwise ask the user for an
      `UNSPLASH_ACCESS_KEY` or record the gap (step 5).
-3. **Look before you keep it.** Download a small preview (`?w=500`) and view it. Search snippets and
-   fetch summaries only describe the page, and can hand you a related photo's thumbnail instead of
-   the main one; a photo also often isn't quite what its title says. Reject anything off-topic.
-   If nothing fits exactly, take the closest real photo and note the gap rather than mislabel it.
+2. **Check them all in one command.** Pick a candidate per image brief from the alt text, then in one
+   shell command request each web-size URL
+   (`https://images.unsplash.com/photo-<…>?w=1600&q=80&fm=jpg&fit=max`, query string replaced) and
+   confirm 200 `image/jpeg`, and save a small preview (`?w=500`) of each into one folder, e.g.:
+
+   ```bash
+   mkdir -p ~/.hostinger/<domain>/media/previews && cd ~/.hostinger/<domain>/media/previews && \
+   for id in photo-<a> photo-<b>; do
+     curl -s -o /dev/null -w "$id %{http_code} %{content_type}\n" "https://images.unsplash.com/$id?w=1600&q=80&fm=jpg&fit=max"
+     curl -s -o "$id.jpg" "https://images.unsplash.com/$id?w=500&q=60&fm=jpg&fit=max"
+   done
+   ```
+
+   The upload ability needs this direct file URL, not the photo page.
+3. **Look before you keep it.** View the previews, all in one turn where your tool can open several
+   images at once. Alt text from a search page describes the photo better than a search snippet, but
+   a photo often isn't quite what its title says. Reject anything off-topic and take the next
+   candidate from the same list. If nothing fits exactly, take the closest real photo and note the gap
+   rather than mislabel it.
 4. **Write alt text from what the photo shows**, not from the article's image brief. For example,
    use "Shopfronts and parked scooters on a Hanoi street" even if the article is about rain.
 5. **Record it** under each article in `content-model.md`:
@@ -212,7 +230,7 @@ Then update `state.json`: set `stage` to the next prepare stage still to do, fre
 
 ## Push phase — create it the backend's way (needs the instance)
 
-Only once `provision.status == "completed"` (re-verified against `hosting_websites_list-setups`),
+Only once `provision.status == "completed"` (see *State and artifacts* in the top-level `SKILL.md`),
 route on the brief's **Suggested backend** and follow that subfolder, which maps the helper onto the
 live backend — for WordPress, through the per-site WP MCP's ability tools (the installation JWT
 authenticates that MCP session; `wp/v2` REST is the public read surface, not a write path for the

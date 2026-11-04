@@ -32,8 +32,9 @@ present only once provision has fired):
   "updated_at": "…" }
 ```
 
-`provision.status` is `in_progress` or `completed` — but it is a **hint**: always re-verify it against
-`hosting_websites_list-setups` (Step 1) before trusting it to gate an instance-barrier step.
+`provision.status` is `in_progress` or `completed` — but it is a **hint** from an earlier session:
+re-verify it against `hosting_websites_list-setups` here (Step 1). See *State and artifacts* in the
+top-level `SKILL.md` for when the connector is asked again.
 
 ---
 
@@ -43,18 +44,14 @@ Before anything else, start a run and the stage (see *Run log and build report* 
 `SKILL.md`):
 
 ```bash
-node <skill>/run-log.mjs <domain> run-start --tool <tool> --model <model> --skill <skill version>
-node <skill>/run-log.mjs <domain> stage-start check_state
+node <skill>/run-log.mjs <domain> run-start --tool <tool> --model <model> --skill <skill version> && \
+node <skill>/run-log.mjs <domain> next check_state && \
+node <skill>/run-log.mjs <domain> unsent
 ```
 
 If an earlier run on this domain never wrote its report, `run-start` closes it as `abandoned` first.
-
-Then send any build reports that haven't reached Hostinger yet (that abandoned run, or a send that
-failed last time):
-
-```bash
-node <skill>/run-log.mjs <domain> unsent
-```
+`unsent` lists the build reports that haven't reached Hostinger yet (that abandoned run, or a send
+that failed last time).
 
 Each line is `<run> <path>`. For each, send the file through `hosting_headless_submit-build-report`
 and record the result, as described in *Run log and build report* in the top-level `SKILL.md`. One
@@ -70,7 +67,8 @@ Keep two things separate, and **never guess from a timestamp.**
   `hosting_websites_list-setups { "domain": "<domain>" }` and exact-match the domain row:
   - `status: running` → provisioning is underway **right now** (a background provision from an earlier
     turn). Don't start a second one — reconcile `state.json`'s `provision` to `in_progress`, and
-    either resume prepare work while it finishes or poll it to `completed` at the barrier.
+    either resume prepare work while it finishes or wait for it at the barrier with
+    `wait.mjs setup <domain>` (see *Waiting on Hostinger* in the top-level `SKILL.md`).
   - `status: failed` → not running; route to provision to self-heal (Step 3).
   - `completed` → provision is done; set `provision.status` to `completed`. Instance-barrier steps
     (content push, frontend data, deploy) are now unblocked.
@@ -200,7 +198,8 @@ When the intent is ambiguous, **ask** — don't guess. A skipped tool result is 
 
 Write `~/.hostinger/<domain>/state.json` with the agreed next `stage` and a fresh timestamp. If the
 route isn't a new build, record it with `run-log.mjs <domain> run-update --kind resume` (or
-`redesign` / `iterate`), then end the stage with `stage-end check_state ok --note "<the route>"`.
+`redesign` / `iterate`) and end the stage with the route as its note, in one shell command:
+`… run-update --kind resume && … stage-end check_state ok --note "<the route>"`.
 Then:
 
 - **Handing straight to the next stage in this same session?** Keep the `.lock` (you are still

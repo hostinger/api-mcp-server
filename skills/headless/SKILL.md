@@ -58,7 +58,7 @@ The order is sequencial run and check the whole headless flow:
 | — | **connect** — connect the Hostinger connector, auth, get active plan                                               | `connect/SKILL.md` → `connect/tools/<tool>.md` | `connect.json` | no |
 | 1 | **check state** — where does this domain stand? resume / switch / start over                                       | `steps/01-check-state/SKILL.md`                                       | `state.json` | no |
 | 2 | **refine** — discover what the user wants, in conversation                                                         | `steps/02-refine/SKILL.md`                                            | `brief.md` | no |
-| 3 | **provision** — choose the backend from the brief, then provision it                                               | `steps/03-provision/<backend>/SKILL.md`                               | `site.json` | **bg** — fire, then poll in the background |
+| 3 | **provision** — choose the backend from the brief, then provision it                                               | `steps/03-provision/<backend>/SKILL.md`                               | `site.json` | **bg** — fire, then wait at the join |
 | 4 | **content model** — define + create content/images, then push to the backend                                       | `steps/04-content-model/<backend>/SKILL.md`                           | `content-model.md` | prepare: no · **push: yes** |
 | 5 | **design** — derive design directions from the brief, pick one, write the `design.md` contract + logo              | `steps/05-design/SKILL.md`                                            | `design.md`, `brand/` | no |
 | 6 | **frontend** — pick/confirm the framework (default Next.js SSR), implement `design.md` against the backend         | `steps/06-frontend/SKILL.md`                                          | source in `<workspace>/src/` | shell: no · **data: yes** |
@@ -89,7 +89,7 @@ the user rather than improvising the stage from its description.
 The **Instance?** column says whether a stage touches the live backend:
 `no` = pure prepare work that can run during the provision wait;
 `push`/`data`/`yes` = a commit phase that joins the instance barrier;
-`bg` = provision itself, the background task.
+`bg` = provision itself: Hostinger runs the job while you do the prepare work.
 
 **Always end with the final report.** Whenever a run ends, give the user the final report defined
 in `steps/09-done/SKILL.md`: an outcome paragraph, a *Steps completed* table (one row per stage that
@@ -99,8 +99,8 @@ missing step, a failed provision, or a user pause. Every run also saves a **buil
 Waiting for the user's answer to a question is not a run ending: end your turn with the question
 alone, with no final report and no build report.
 
-**Log the run as you go.** Wrap every stage (and each phase of a split stage) in
-`run-log.mjs stage-start` / `stage-end`, and log an event the moment something goes wrong, the user
+**Log the run as you go.** Wrap every stage (and each phase of a split stage) in the run log —
+`run-log.mjs next <stage>` at each boundary — and log an event the moment something goes wrong, the user
 corrects you, or a skill is missing or wrong — before you continue. See *Run log and build report*.
 
 **Why this order.** connect first, so account/plan failures surface before the user spends time
@@ -178,16 +178,36 @@ which of these cases applies and records it, then provision takes the matching p
 3. **User wants a webapp.** Provision is a plain Node.js app host, not headless — `webapp` ignores
    headless shells entirely and is only reached by experimental actions, never the onboarding flow.
 
-Either way the create/install is asynchronous and returns `queued` immediately, then it's polled
-every ~15 s for a few minutes — **what you poll depends on the path**: a fresh
-`hosting_websites_create` is polled with `hosting_websites_list-setups` until `completed`, while a
-shell swap (`wordpress_installations_install`) creates no new setup, so it's polled with
-`wordpress_installations_list` until the `/cms` row is `is_valid`. Don't block on that poll. The
-single rule that makes the overlap safe:
+Either way the create/install is asynchronous and returns `queued` immediately, then it takes a few
+minutes — **what to wait on depends on the path**: a fresh `hosting_websites_create` is `wait.mjs setup`
+(until `hosting_websites_list-setups` says `completed`), while a shell swap
+(`wordpress_installations_install`) creates no new setup, so it's `wait.mjs cms` (until the `/cms` row of
+`wordpress_installations_list` is valid). Run it at the join, not at the fire: by then the prepare work
+has usually outlasted the job, so it returns at once. The single rule that makes the overlap safe:
 
-> **Fire provision as a background task, then do every stage's prepare work while it settles. The
+> **Fire provision (Hostinger runs it asynchronously), then do every stage's prepare work while it settles. The
 > moment a step must write to the live instance, it waits for provision to report ready (via the
 > backend step's readiness poll — see above). That wait is the *instance barrier*.**
+
+### Waiting on Hostinger: `wait.mjs`
+
+`wait.mjs` (next to this file) waits for a slow Hostinger job in one command, so you don't spend a turn
+on every check:
+
+```bash
+node <skill>/wait.mjs setup <domain>              # a fresh site's setup → completed
+node <skill>/wait.mjs cms <domain> <username>     # a shell swap's WordPress install at /cms → valid
+node <skill>/wait.mjs build <domain> <buildUuid>  # the deploy build → completed, then the root serves 200
+node <skill>/wait.mjs live <domain>               # the root serves 200
+```
+
+Run it in the foreground, with a `--timeout` just under your tool's command limit (e.g. `--timeout 9m`
+when commands may run 10 minutes); on `timed_out`, run the same command again: it picks the job up
+where it is. It prints one JSON line and
+exits 0 with `ok: true` and what it waited for; 1 with `ok: false` when the job failed, timed out
+(`timed_out`, `last_status`) or hit an error that waiting won't fix (`error`); 2 when it couldn't start
+the local Hostinger MCP, with `fallback` naming the connector operation to poll yourself, every ~15 s.
+Never write your own `sleep` loops.
 
 ---
 
@@ -243,14 +263,15 @@ provision runs in the background, its status lives in its own `provision` field 
 }
 ```
 
-- `provision` is **absent** until provision fires, `{"status":"in_progress", …}` while the
-  background poll runs, and `{"status":"completed", …}` once `hosting_websites_list-setups` confirms
-  it. `domain` is the poll target.
+- `provision` is **absent** until provision fires, `{"status":"in_progress", …}` from the fire until
+  the join's `wait.mjs` returns `ok: true`, then `{"status":"completed", …}`. `domain` is the wait's
+  target.
 - Any **instance-barrier** step (content-model push, frontend data, deploy) must read
-  `provision.status == "completed"` — and re-verify it against the connector — before it runs. A
-  prepare step ignores `provision` entirely.
-- On **resume**, `provision.status` is a hint only: re-poll `hosting_websites_list-setups` to learn
-  the truth, then update the field.
+  `provision.status == "completed"` before it runs. The connector is asked twice per run: at
+  check-state (or the provision join that sets `completed`), and in deploy's pre-flight, because deploy
+  overwrites the site. Steps in between trust `state.json`. A prepare step ignores `provision` entirely.
+- On **resume**, `provision.status` is a hint only: check-state re-polls `hosting_websites_list-setups`
+  to learn the truth, then updates the field.
 - Write `state.json` however is easiest, rewriting the whole file included: the run log lives in
   `run-log.json`, which only `run-log.mjs` writes.
 - The **onboarding slug** is how hPanel names the coding tool: `claude` for Claude Code, else
@@ -269,9 +290,10 @@ in. Write it out in full each time (a shell variable holding the command breaks 
 ```bash
 node <skill>/run-log.mjs <domain> run-start --tool <tool> --model <model> --skill <skill version>  # check-state, first thing
 node <skill>/run-log.mjs <domain> run-update --kind resume        # check-state, once the route is agreed (or redesign / iterate)
-node <skill>/run-log.mjs <domain> stage-start frontend            # before a stage
-node <skill>/run-log.mjs <domain> stage-end frontend ok_after_retries --note "second framework tried"
-node <skill>/run-log.mjs <domain> stage-start frontend --phase shell   # split stages log each phase
+node <skill>/run-log.mjs <domain> next frontend                  # at a stage boundary: ends the open stage as ok, starts this one
+node <skill>/run-log.mjs <domain> next frontend --phase shell     # split stages log each phase
+node <skill>/run-log.mjs <domain> stage-end frontend ok_after_retries --note "second framework tried"   # any other result, or a note
+node <skill>/run-log.mjs <domain> stage-start frontend            # start without ending anything
 node <skill>/run-log.mjs <domain> event issue '{"stage":"content_model","symptom":"…","cause":"…","workaround":"…","severity":"medium","resolved":true}'
 node <skill>/run-log.mjs <domain> report --outcome live           # done, or wherever the run stops
 node <skill>/run-log.mjs <domain> report-sent <run>               # after the report was sent (see below)
@@ -279,6 +301,12 @@ node <skill>/run-log.mjs <domain> report-rejected <run>           # the send ret
 node <skill>/run-log.mjs <domain> unsent                          # check-state: reports still to send
 node <skill>/run-log.mjs <domain> run-resume --reason "about/contact layout fix"   # follow-up in the same session
 ```
+
+**Don't spend a turn on the log.** Put each run-log call in the same shell command as the work next
+to it, joined with `&&` (e.g. `node <skill>/run-log.mjs <domain> next deploy && cd … && zip …`), and use
+`next` at a boundary rather than a `stage-end` plus a `stage-start`. When the stage ending wasn't plain
+`ok` or needs a note, put its `stage-end` first in the same command. `next` refuses when two stages are
+open and names them; end them with `stage-end`.
 
 **Follow-ups continue the run.** When the user asks for a change after the final report in the
 same session (a layout fix, a copy tweak, a redeploy), that work belongs to the run it follows:

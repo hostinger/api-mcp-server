@@ -16,9 +16,9 @@ description: "Step 7 (validate) of the Hostinger Headless flow. OPTIONAL quick g
 
 ## 1 — Instance status (always, quick)
 
-`provision.status == "completed"` **and** re-verify against the connector:
-`hosting_websites_list-setups { "domain": "<domain>" }`, exact-match the row → `completed`. Anything
-else → not ready; return to the instance barrier, don't deploy.
+`provision.status == "completed"` in `state.json`. Anything else → not ready; return to the instance
+barrier, don't deploy. Deploy's pre-flight asks the connector again (see *State and artifacts* in the
+top-level `SKILL.md`).
 
 ## 2 — Backend API status (WordPress / WooCommerce / Ecommerce, always, quick)
 
