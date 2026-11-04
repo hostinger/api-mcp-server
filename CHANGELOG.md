@@ -4,6 +4,14 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.28.5 — 2026-11-04
+
+### Also in this release
+
+- Distribution manifests: `server.json`
+- Bundled agent skills: `skills/headless/VERSION`
+- Other files: `logo.svg`
+
 ## v3.28.4 — 2026-11-04
 
 ### Also in this release
