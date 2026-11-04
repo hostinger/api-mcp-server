@@ -32,9 +32,17 @@ npm install -g @hostinger/mcp
 hostinger-api-mcp --version
 ```
 
-### Persist for future Cursor sessions (optional)
+### Register the servers in Cursor
 
-Register the server in `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (global), then fully quit and reopen Cursor once so it loads. **Do not** put `HOSTINGER_API_TOKEN` in this file when you want OAuth — leave the token unset so stdio OAuth can run:
+Check **both** tool groups, as *Check both tool groups* in `connect/SKILL.md` says: hosting
+(`mcp__hostinger__*` or `mcp__hostinger-hosting__*`) **and** ecommerce (`mcp__hostinger-ecommerce__*`).
+The scoped `mcp__hostinger-*__*` servers never include ecommerce, so they alone don't count. Both
+present → skip registration: go to Step 2 only if you still need sign-in, otherwise go to Step 3.
+
+If either is missing, register the missing server(s) in `~/.cursor/mcp.json` (global, so every project and every
+later run has them). Merge them into any existing `mcpServers` rather than replacing the file.
+**Do not** put `HOSTINGER_API_TOKEN` in this file when you want OAuth: leave the token unset so
+OAuth can run:
 
 ```json
 {
@@ -42,12 +50,20 @@ Register the server in `.cursor/mcp.json` (project) or `~/.cursor/mcp.json` (glo
     "hostinger": {
       "command": "npx",
       "args": ["--yes", "--package=@hostinger/mcp@latest", "hostinger-api-mcp"]
+    },
+    "hostinger-ecommerce": {
+      "command": "npx",
+      "args": ["--yes", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
     }
   }
 }
 ```
 
-If Hostinger MCP tools are already in this session (`mcp__hostinger__*` / `mcp__hostinger-*__*`), skip ahead to Step 2 only if you still need sign-in; otherwise go to Step 3.
+Cursor loads MCP servers only when the editor starts, so after Step 2 and Step 3 follow
+*register, restart, resume* in `connect/SKILL.md`: ask the user to fully quit and reopen Cursor
+(and, if Cursor asks, enable the two Hostinger servers under Settings → MCP), then paste the same
+prompt. Never spawn the server yourself or write a JSON-RPC client to reach it: every connector call
+must be a native MCP tool call.
 
 ## Step 2 — Authenticate with OAuth (browser opens)
 
@@ -84,17 +100,7 @@ npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp --logout
 
 **API token (optional, CI / scripts):** set `HOSTINGER_API_TOKEN` in the environment before launching Cursor. When present it always wins and no OAuth code runs. Do not commit the token.
 
-## Step 3 — Use the connector in this run (no Cursor restart)
-
-Cursor only loads registered MCP servers when the editor starts, so a mid-run `.cursor/mcp.json` change will not attach tools to **this** session. For the rest of this run, talk to the local stdio server directly: spawn
-
-```bash
-npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp
-```
-
-and speak newline-delimited JSON-RPC 2.0 over its stdin/stdout (`initialize` → `notifications/initialized` → `tools/call`). It reuses the cached sign-in from Step 2 (or `HOSTINGER_API_TOKEN`) — no tokens to handle in chat. It exposes `search`, `execute`, and `multi-execute`; everything the stages need goes through `execute`, and a result is in `reply.result.content[0].text`. Keep one process alive for the whole run.
-
-## Step 4 — Install the skills and hand off
+## Step 3 — Install the skills and hand off
 
 Download the Hostinger skills locally **at the start of every run** so your agent then reads the files
 directly with no further network calls during the run. **Always pull the latest and overwrite any

@@ -8,15 +8,16 @@ description: "Specific VS Code Hostinger MCP Server connection instructions for 
 - Make Hostinger MCP tools and Skills available in VS Code (GitHub Copilot / agent mode).
 - Don't provision hosting, create stores, install WordPress, or deploy by hand here — the skill does all of that. This entry stops at signed in and checking that Hostinger MCP and skills are reachable.
 
-## Step 1 — Make the connector callable
+## Step 1 — Make the MCP tools available
 
-The later stages drive the Hostinger connector. If its Hostinger tools already respond in this
-session, use them and move on.
+The later stages drive the Hostinger connector through VS Code's native MCP tools. Check **both** tool groups (hosting and ecommerce), as *Check both tool groups* in `connect/SKILL.md`
+says: other Hostinger tools responding doesn't mean the `hostinger-ecommerce` ones are there. Both
+respond → use them and move on.
 
-If they don't, register the Hostinger MCP server for VS Code. The local MCP runs as a **stdio**
-process and the bootstrap already signed you in, so it reuses your cached sign-in automatically
-(`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) — no tokens to handle. Add it to
-`.vscode/mcp.json` (workspace) or your user `settings.json` under `mcp`:
+If either is missing, register the missing server(s) for VS Code; skip one already registered. The bootstrap already signed you in, so they reuse
+the cached sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are
+no tokens to handle. Add them to `.vscode/mcp.json` (workspace) or your user `settings.json` under
+`mcp`:
 
 ```json
 // .vscode/mcp.json
@@ -26,21 +27,30 @@ process and the bootstrap already signed you in, so it reuses your cached sign-i
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@hostinger/mcp@latest"]
+    },
+    "hostinger-ecommerce": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
     }
   }
 }
 ```
 
-Or add it in one command: `code --add-mcp '{"name":"hostinger","command":"npx","args":["-y","@hostinger/mcp@latest"]}'`.
-VS Code picks up the server and its tools become available immediately — no editor restart needed.
+Or add them in two commands:
+
+```bash
+code --add-mcp '{"name":"hostinger","command":"npx","args":["-y","@hostinger/mcp@latest"]}'
+code --add-mcp '{"name":"hostinger-ecommerce","command":"npx","args":["--package=@hostinger/mcp@latest","hostinger-ecommerce-mcp"]}'
+```
+
+VS Code picks up new servers and their tools become available right away, with no editor restart.
 (Alternatively, the official Hostinger Connector extension installs the same server:
 `code --install-extension hostinger-official.hostinger-connector`.)
 
-If you can't reach the registered server from this run, drive `npx -y @hostinger/mcp@latest` directly
-over stdio instead: spawn it and speak newline-delimited JSON-RPC 2.0 over its stdin/stdout
-(`initialize` → `notifications/initialized` → `tools/call`). It exposes `search`, `execute`,
-`multi-execute`; everything the stages need goes through `execute`, and a result is in
-`reply.result.content[0].text`.
+If the tools still don't show up, follow *register, restart, resume* in `connect/SKILL.md`: finish
+Step 2 and `connect.json`, then ask the user to run **Developer: Reload Window** and paste the same
+prompt. Never spawn the server yourself or write a JSON-RPC client to reach it.
 
 ## Step 2 — Install the skills and hand off
 

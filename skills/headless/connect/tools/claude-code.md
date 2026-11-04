@@ -9,20 +9,30 @@ description: "Specific Claude Code Hostinger MCP Server connection instructions 
 - Don't provision hosting, create stores, install WordPress, or deploy by hand here — the skill does all of that. This entry stops at signed in and checking that Hostinger MCP and skills are available.
 
 
-## Step 1 — Make the MCP callable (no restart needed)
+## Step 1 — Make the MCP tools available
 
-Stages 2–10 drive the Hostinger connector. If its tools are already in this session
-(`mcp__hostinger__*`, or the scoped `mcp__hostinger-*__*`), use them and move on.
+Stages 2–10 drive the Hostinger connector through Claude Code's native MCP tools. Check **both** tool
+groups as *Check both tool groups* in `connect/SKILL.md` says:
 
-If they aren't, **don't register the server and restart** — Claude Code only loads MCP servers at
-startup, but you don't need it to. The Hostinger MCP runs as a local **stdio** process and the
-bootstrap already signed you in, so talk to it directly: spawn `npx -y @hostinger/mcp@latest` and
-speak newline-delimited JSON-RPC 2.0 over its stdin/stdout (`initialize` →
-`notifications/initialized` → `tools/call`). It reuses your cached sign-in automatically
-(`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) — no tokens to handle. It
-exposes `search`, `execute`, `multi-execute`; everything the stages need goes through `execute`, and
-a result is in `reply.result.content[0].text`. Write the little client yourself (~20 lines), keep one
-process alive for the whole run, and use it wherever a stage calls the connector.
+- **Hosting:** `mcp__hostinger__*`, or the scoped `mcp__hostinger-hosting__*`.
+- **Ecommerce:** `mcp__hostinger-ecommerce__*`. The scoped servers (`hostinger-hosting`,
+  `hostinger-wordpress`, `hostinger-domains`, …) never include it, so a session full of
+  `mcp__hostinger-*__*` tools can still be missing it.
+
+Both present → use them and move on. Either missing → register the missing server(s) at user scope
+now (`claude mcp list` shows what's already registered; skip those). The bootstrap already signed you
+in, so they reuse the cached sign-in (`~/.config/hostinger-mcp/credentials.json`, or
+`HOSTINGER_API_TOKEN`) and there are no tokens to handle:
+
+```bash
+claude mcp add hostinger --scope user -- npx -y @hostinger/mcp@latest                                     # hosting group missing
+claude mcp add hostinger-ecommerce --scope user -- npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp  # ecommerce group missing
+```
+
+Claude Code loads MCP servers only at startup, so follow *register, restart, resume* in
+`connect/SKILL.md`: finish Step 2 and `connect.json`, then ask the user to exit Claude Code, start it
+again in the same folder (`claude`, or `claude --continue` to keep this conversation) and paste the
+same prompt. Never spawn the server yourself or write a JSON-RPC client to reach it.
 
 ## Step 2 — Install the skills and hand off
 

@@ -8,32 +8,37 @@ description: "Specific Devin Hostinger MCP Server connection instructions for th
 - Make Hostinger MCP tools and Skills available in Devin.
 - Don't provision hosting, create stores, install WordPress, or deploy by hand here — the skill does all of that. This entry stops at signed in and checking that Hostinger MCP and skills are reachable.
 
-## Step 1 — Make the connector callable
+## Step 1 — Make the MCP tools available
 
-The later stages drive the Hostinger connector. If its Hostinger tools already respond in this
-session, use them and move on.
+The later stages drive the Hostinger connector through Devin's native MCP tools. Check **both** tool groups (hosting and ecommerce), as *Check both tool groups* in `connect/SKILL.md`
+says: other Hostinger tools responding doesn't mean the `hostinger-ecommerce` ones are there. Both
+respond → use them and move on.
 
-If they don't, register the Hostinger MCP server for Devin. The local MCP runs as a **stdio** process
-and the bootstrap already signed you in, so it reuses your cached sign-in automatically
-(`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) — no tokens to handle.
+If either is missing, register the missing server(s) for Devin; skip one already registered. The bootstrap already signed you in, so they reuse the
+cached sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are no
+tokens to handle.
 
-- **Devin CLI:** `devin mcp add hostinger -- npx -y @hostinger/mcp@latest`
-- **Devin app:** Settings → MCP Marketplace → **Add Your Own**, transport **STDIO**, with:
+- **Devin CLI:**
 
-  ```json
-  {
-    "command": "npx",
-    "args": ["-y", "@hostinger/mcp@latest"]
-  }
+  ```bash
+  devin mcp add hostinger -- npx -y @hostinger/mcp@latest
+  devin mcp add hostinger-ecommerce -- npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
   ```
 
-On Devin Desktop, fully quit and reopen the app once after adding the server so it loads.
+- **Devin app:** Settings → MCP Marketplace → **Add Your Own**, transport **STDIO**, once per server:
 
-If you can't reach the registered server from this run, drive `npx -y @hostinger/mcp@latest` directly
-over stdio instead: spawn it and speak newline-delimited JSON-RPC 2.0 over its stdin/stdout
-(`initialize` → `notifications/initialized` → `tools/call`). It exposes `search`, `execute`,
-`multi-execute`; everything the stages need goes through `execute`, and a result is in
-`reply.result.content[0].text`.
+  ```json
+  { "command": "npx", "args": ["-y", "@hostinger/mcp@latest"] }
+  ```
+
+  ```json
+  { "command": "npx", "args": ["--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"] }
+  ```
+
+If the tools still aren't in this session, follow *register, restart, resume* in `connect/SKILL.md`:
+finish Step 2 and `connect.json`, then ask the user to restart the Devin session (on Devin Desktop,
+fully quit and reopen the app) and paste the same prompt. Never spawn the server yourself or write a
+JSON-RPC client to reach it.
 
 ## Step 2 — Install the skills and hand off
 

@@ -97,23 +97,44 @@ Zip the project **source** with `package.json` at the archive root. **Include** 
 `package.json`, `package-lock.json`, `.nvmrc`. **Exclude** `node_modules/`, the build output
 (`.next/`, `dist/`, `out/`), `.git/`, and any `.htaccess` — the server installs and builds from source.
 
+> ## ⚠️ Write the archive outside `~/.hostinger/` (the deploy refuses it there)
+> `hosting_deploy` refuses any `path` under a hidden folder at the top of the home directory
+> (`~/.hostinger`, `~/.config`, …) with *"it is, or contains, a home, system or credentials location"*:
+> a deploy publishes what it reads, so the connector protects dotfolders that can hold tokens. That
+> covers both `~/.hostinger/<domain>/app.zip` **and** the `~/.hostinger/<domain>/src/` directory
+> itself, so neither can be passed as `path`. Keep the source in the workspace as usual, but write the
+> archive to a fresh temp directory and pass that. Don't copy the archive somewhere else after a
+> refusal, and don't move `src/` out of the workspace.
+
 ```bash
+# macOS/Linux — the OS temp dir is outside the home directory
 cd ~/.hostinger/<domain>/src
-zip -r -X ../app.zip . -x 'node_modules/*' '.next/*' 'dist/*' 'out/*' '.git/*' '**/.htaccess'
+DEPLOY_DIR=$(mktemp -d)
+zip -r -X "$DEPLOY_DIR/app.zip" . -x 'node_modules/*' '.next/*' 'dist/*' 'out/*' '.git/*' '**/.htaccess'
+echo "$DEPLOY_DIR/app.zip"   # the absolute path to pass as `path` in Step 3
 ```
+
+```powershell
+# Windows PowerShell — %TEMP% sits under AppData, which the deploy also refuses; use a folder on the system drive
+cd $HOME\.hostinger\<domain>\src
+$DeployDir = Join-Path $env:SystemDrive "hostinger-deploy\<domain>"; New-Item -ItemType Directory -Force $DeployDir | Out-Null
+tar -a -cf "$DeployDir\app.zip" --exclude=node_modules --exclude=.next --exclude=dist --exclude=out --exclude=.git --exclude=.htaccess .
+"$DeployDir\app.zip"        # the absolute path to pass as `path` in Step 3
+```
+
+Delete the temp directory once the build in Step 4 is `completed`.
 
 ## Step 3 — Deploy (one shot: settings + upload + build)
 
 Pass the framework's build settings **inline** on the deploy call — there is no separate settings step.
-`path` is the archive from Step 2 (or the source directory itself; `hosting_deploy` archives a directory
-for you, skipping `node_modules/`, `.git/` and `.env`, but it does **not** read `.gitignore`, so the
-build output must already be absent).
+`path` is the absolute path of the archive from Step 2, in its temp directory. Never pass a path under
+`~/.hostinger/`, the `src/` directory included: the deploy refuses it (see Step 2).
 
 ```json
 { "operation": "hosting_deploy",
   "params": {
     "domain": "<domain>",
-    "path": "/absolute/path/to/.hostinger/<domain>/app.zip",
+    "path": "<absolute path printed in Step 2, e.g. /var/folders/…/tmp.XXXX/app.zip>",
     "type": "nodejs",
     "appType": "<framework appType, e.g. next>",
     "outputDirectory": "<framework output dir, e.g. .next>",
@@ -224,6 +245,6 @@ still deploys as `type: "nodejs"` with its `appType` — the framework's static 
 that way, and `/cms` is preserved. If a flow ever tells you to deploy a headless site as `type:
 "static"`, you are on a stale/legacy skill copy — stop and re-pull the latest skills.
 
-`hosting_deploy` on the local server is the only path: give its `path` either the source **directory** (it archives it for
-you) or a local **archive** (`zip`, `tar`, `tar.gz`, `tgz`, `7z`) — there is no separate upload or build
-step to fall back to.
+`hosting_deploy` on the local server is the only path: give its `path` a local **archive** (`zip`, `tar`,
+`tar.gz`, `tgz`, `7z`) written outside `~/.hostinger/` as in Step 2. There is no separate upload or
+build step to fall back to.

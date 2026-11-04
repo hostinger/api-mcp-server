@@ -72,9 +72,57 @@ npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp --login
 npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp --logout
 ```
 
-Credentials live in `~/.config/hostinger-mcp/credentials.json` (macOS/Linux) or `%APPDATA%\hostinger-mcp\credentials.json` (Windows) and are shared by every Hostinger MCP binary. OAuth works only in stdio mode; `--http` needs `HOSTINGER_API_TOKEN`.
+Credentials live in `~/.config/hostinger-mcp/credentials.json` (macOS/Linux) or `%APPDATA%\hostinger-mcp\credentials.json` (Windows) and are shared by every Hostinger MCP binary. OAuth works only when the tool runs the server over its default local (stdio) transport, which is what every registration below uses; `--http` needs `HOSTINGER_API_TOKEN`.
 
 ## Phase 2 - Route to the specific tool instructions
+
+**Use the Hostinger connector only through your tool's native MCP tools** (`mcp__hostinger__*`,
+`mcp__hostinger-*__*`, or however your tool names them). Never spawn the MCP server yourself and
+never write a JSON-RPC client to talk to it: every connector call must be a visible MCP tool call
+the user can follow and approve, not a script.
+
+### Check both tool groups, not just "some Hostinger tools"
+
+The build needs **two** groups of connector operations, and they come from different servers. Having
+one group says nothing about the other:
+
+| Group | Operations | Comes from | Needed by |
+|---|---|---|---|
+| **Hosting** | `hosting_*` (websites, deploy, build report), `wordpress_*` | `hostinger` (`npx -y @hostinger/mcp@latest`), or the scoped servers such as `hostinger-hosting` + `hostinger-wordpress` | every build |
+| **Ecommerce** | `ecommerce_*` (stores, products, shipping, payments) | **only** `hostinger-ecommerce` (`npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp`), or the Ecommerce MCP in the Hostinger Connector. Neither `hostinger` nor the scoped hosting servers include it | Ecommerce backends (chosen later, in refine) |
+
+Check each group on its own, right here at connect, before anything else:
+
+- **Hosting:** a Hostinger search tool finds `hosting_websites_list` (e.g. search "list websites").
+- **Ecommerce:** a tool from the `hostinger-ecommerce` server is in the session (Claude Code:
+  `mcp__hostinger-ecommerce__*`), and its search finds `ecommerce_stores_list` (e.g. search "list stores").
+
+Only when **both** pass are the Hostinger tools "in this session". If either is missing, the tools
+are **not** in this session: follow *register, restart, resume* below for the missing server(s) now,
+even though other Hostinger tools respond. Don't wait for refine to choose a backend: the restart
+costs the least before the user has been asked anything, and finding the gap at provision forces a
+second restart in the middle of the build.
+
+### When the Hostinger tools aren't in this session: register, restart, resume
+
+Most coding tools load MCP servers only when they start, so a server registered mid-run isn't usable
+until the tool restarts. When either tool group above is missing:
+
+1. **Register the missing servers** in the tool's MCP config, as the tool route below shows: `hostinger`
+   (`npx -y @hostinger/mcp@latest`) if the hosting group is missing, and `hostinger-ecommerce`
+   (`npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp`) if the ecommerce group is missing.
+   Skip a server that is already registered under its name. When neither group is there, register
+   both: the backend isn't chosen until refine, and one restart then covers every backend.
+2. **Pull the skills and write `connect.json`** (the route's skills step and Phase 3) before you stop,
+   so the next run starts from them.
+3. **Send the first message and end your turn.** It follows *The first message* in
+   `headless/SKILL.md`: the sign-in link if one was needed, then one line saying Hostinger is set up
+   and asking the user to restart the tool (the route says how) and paste the same prompt again so the
+   build continues from there. This is a pause, not a run ending: no final report and no build report.
+4. **On the next run** the tools are loaded, so connect skips registration and check-state resumes the
+   domain's workspace.
+
+If a tool loads new servers without a restart (VS Code), use them right away and skip steps 3–4.
 
 | Tool        | Route                           |
 |-------------|---------------------------------|
@@ -85,8 +133,8 @@ Credentials live in `~/.config/hostinger-mcp/credentials.json` (macOS/Linux) or 
 | Antigravity | `connect/tools/antigravity.md`  |
 | Devin       | `connect/tools/devin.md`        |
 
-If the user's tool isn't listed yet, connect it the generic way (register the Hostinger MCP server
-for that tool, or drive `npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp` over stdio) and continue.
+If the user's tool isn't listed yet, connect it the generic way: register both Hostinger MCP servers
+in that tool's MCP config (command `npx`, args as above), then follow *register, restart, resume*.
 
 ### Always pull the latest skills (never run a stale copy)
 

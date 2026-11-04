@@ -8,30 +8,36 @@ description: "Specific Codex Hostinger MCP Server connection instructions for th
 - Make Hostinger MCP tools and Skills available in Codex.
 - Don't provision hosting, create stores, install WordPress, or deploy by hand here — the skill does all of that. This entry stops at signed in and checking that Hostinger MCP and skills are reachable.
 
-## Step 1 — Make the connector callable (no restart needed)
+## Step 1 — Make the MCP tools available
 
-The later stages drive the Hostinger connector. If its Hostinger tools already respond in this
-session, use them and move on.
+The later stages drive the Hostinger connector through Codex's native MCP tools. Check **both** tool groups (hosting and ecommerce), as *Check both tool groups* in `connect/SKILL.md`
+says: other Hostinger tools responding doesn't mean the `hostinger-ecommerce` ones are there. Both
+respond → use them and move on.
 
-If they don't, **don't rely on registering the server and restarting** — Codex loads MCP servers when
-it starts, and you can't restart it mid-run. The Hostinger MCP runs as a local **stdio** process and the
-bootstrap already signed you in, so talk to it directly for this run: spawn `npx -y @hostinger/mcp@latest`
-and speak newline-delimited JSON-RPC 2.0 over its stdin/stdout (`initialize` →
-`notifications/initialized` → `tools/call`). It reuses your cached sign-in automatically
-(`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) — no tokens to handle. It
-exposes `search`, `execute`, `multi-execute`; everything the stages need goes through `execute`, and a
-result is in `reply.result.content[0].text`. Write the little client yourself (~20 lines), keep one
-process alive for the whole run, and use it wherever a stage calls the connector.
+If either is missing, register the missing server(s); skip one already registered. The bootstrap already signed you in, so they reuse the cached
+sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are no tokens
+to handle:
 
-**To persist it for future Codex sessions** (optional), register the server with
-`codex mcp add hostinger -- npx -y @hostinger/mcp@latest`, or add it to `~/.codex/config.toml`, then
-restart Codex so it loads:
+```bash
+codex mcp add hostinger -- npx -y @hostinger/mcp@latest
+codex mcp add hostinger-ecommerce -- npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
+```
+
+or add them to `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.hostinger]
 command = "npx"
 args = ["-y", "@hostinger/mcp@latest"]
+
+[mcp_servers.hostinger-ecommerce]
+command = "npx"
+args = ["--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
 ```
+
+Codex loads MCP servers only when it starts, so follow *register, restart, resume* in
+`connect/SKILL.md`: finish Step 2 and `connect.json`, then ask the user to restart Codex and paste the
+same prompt. Never spawn the server yourself or write a JSON-RPC client to reach it.
 
 ## Step 2 — Install the skills and hand off
 

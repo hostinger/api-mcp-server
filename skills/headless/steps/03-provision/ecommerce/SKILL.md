@@ -17,26 +17,19 @@ Provision a **Hostinger Ecommerce** backend for `<domain>` and prove it is ready
 
 > ## ⚠️ Prerequisite: the `hostinger-ecommerce` MCP server must be connected
 > Store management is **not** in the `hosting`/`wordpress` MCP groups — it's the separate
-> **`hostinger-ecommerce`** group (`ecommerce_*` ops, OAuth-backed, no API token needed). If those
-> tools aren't available, add the server and **reconnect the session** before continuing:
+> **`hostinger-ecommerce`** group (`ecommerce_*` ops, OAuth-backed, no API token needed). Connect
+> registers it alongside `hostinger`, so its tools are normally already in the session. If they
+> aren't (for example, a tool connected before connect registered both servers), register it now. The
+> command for each tool is in its `connect/tools/<tool>.md`; for Claude Code:
 > ```bash
-> claude mcp add-json hostinger-ecommerce '{"command":"npx","args":["--package=@hostinger/mcp@latest","hostinger-ecommerce-mcp"],"env":{"USER_AGENT":"extension;claude-code;via-cursor;1.4.2"}}' --scope user
+> claude mcp add hostinger-ecommerce --scope user -- npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
 > ```
-> (For other tools, enable the **Ecommerce** MCP in the Hostinger Connector.) A newly added MCP server
-> only loads on a session restart/reconnect.
+> (Or enable the **Ecommerce** MCP in the Hostinger Connector.) A newly added MCP server only loads
+> after a restart, so pause the run with *register, restart, resume* from `connect/SKILL.md`: save
+> state, ask the user to restart the tool and paste the same prompt, and end your turn. Check-state then
+> resumes at provision. Never spawn the server yourself or write a JSON-RPC client to reach it.
 >
-> **Can't restart your own session? Don't block — drive the server directly.** A coding agent usually
-> can't reconnect itself, so instead of stopping, run the stdio server yourself and speak MCP to it:
-> spawn `npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp` (same `USER_AGENT` as above) and
-> send newline-delimited JSON-RPC over its stdin/stdout — `initialize` → the `notifications/initialized`
-> notification → `tools/list` → `tools/call`, where the tools are `search` / `execute` / `multi-execute`
-> (call ops exactly as in-session: `{ "name": "execute", "arguments": { "operation": "…", "params": {…} } }`).
-> It self-authenticates with the same stored Hostinger OAuth creds as the other connected servers, so
-> there is **no token to handle** (keep any secret off the command line). Your sandbox may ask the user
-> to approve spawning it — ask once, then proceed. Only fall back to asking the user to restart if
-> driving the server directly isn't permitted.
->
-> Verify the tools work (in-session or via the direct drive) with a search — e.g. "list stores" →
+> Verify the tools work in-session with a search — e.g. "list stores" →
 > `ecommerce_stores_list` — before proceeding.
 > The authoritative, always-current build guide is `ecommerce_miscellaneous_custom-storefront-setup-instructions` — read it once per build.
 

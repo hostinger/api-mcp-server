@@ -12,9 +12,9 @@ OAuth). Prices are **integers in minor units** (cents) and live on **variants**.
 **In:** `content-model.md` (prepared catalog), `site.json` (`ecommerce.store_id`). **Out:** products +
 images created in the store; ids recorded back into `content-model.md`.
 
-> If the `hostinger-ecommerce` MCP tools aren't available, don't stop — see the prerequisite in
-> `../../03-provision/ecommerce/SKILL.md` (add the server, and if you can't reconnect your session,
-> drive the stdio server directly rather than blocking).
+> If the `hostinger-ecommerce` MCP tools aren't available, follow the prerequisite in
+> `../../03-provision/ecommerce/SKILL.md`: register the server, then pause with *register, restart,
+> resume* from `connect/SKILL.md`. Never drive the server yourself over stdio.
 
 ## Step 1 — Create products (idempotent)
 
