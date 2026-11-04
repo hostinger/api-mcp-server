@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.28.4 — 2026-11-04
+
+### Also in this release
+
+- Build and packaging: `Dockerfile`
+- Bundled agent skills: `skills/headless/VERSION`
+
 ## v3.28.3 — 2026-11-04
 
 ### Also in this release

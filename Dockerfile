@@ -4,12 +4,10 @@ WORKDIR /app
 
 COPY package.json package-lock.json* ./
 
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 COPY . .
 
 ENV NODE_ENV=production
 
-RUN chmod +x server.js
-
-CMD ["node", "server.js"]
+CMD ["node", "src/servers/all.js"]
