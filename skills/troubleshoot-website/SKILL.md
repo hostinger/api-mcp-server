@@ -68,7 +68,7 @@ Batch `hosting_get-deployment` (the latest build with its log, failure analysis 
 
 ### PHP
 
-`hosting_php_get` returns every extension and option (around 25 KB), so call it only for PHP problems. `hosting_php_update-version` switches versions. `hosting_php_update-options` silently caps values at the plan maximum (`max` in `hosting_php_get`), so read the applied value back. Agency: `agency-hosting_php_list-options-for-website`, then `agency-hosting_php_replace-website-options` — a full replace, so send every custom option that should stay.
+`hosting_php_get` returns every extension and option (around 25 KB), so call it only for PHP problems. `hosting_php_update` changes the version, extensions and options in one call. Switching the version resets the extensions and options to their defaults, so pass the ones to keep in the same call. Option values are silently capped at the plan maximum (`max` in `hosting_php_get`), so read the applied value back. Agency: `agency-hosting_php_list-options-for-website`, then `agency-hosting_php_replace-website-options` — a full replace, so send every custom option that should stay.
 
 ### Agency Plan sites
 

@@ -4,6 +4,21 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.30.0 — 2026-11-05
+
+### Operations
+
+- Added `hosting_php_update` — Update website PHP version, extensions and options
+- Hid 4 operations from search (they still run through `execute`): `hosting_php_reset-extensions`, `hosting_php_update-extensions`, `hosting_php_update-options`, `hosting_php_update-version`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Bundled agent skills: `skills/headless/VERSION`, `skills/maintain-wordpress/SKILL.md`, `skills/troubleshoot-website/SKILL.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.29.0 — 2026-11-05
 
 ### Also in this release

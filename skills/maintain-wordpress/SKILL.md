@@ -65,7 +65,7 @@ When a site breaks: stop the run, deactivate the plugin updated last with `wordp
 
 - Page cache: `wordpress_litespeed-cache_show-lite-speed-status`; purge after design or content changes.
 - Object cache: `wordpress_object-cache_show-memcached-status`, then `wordpress_object-cache_toggle-memcached` with `enabled: true` — the usual quick speed-up.
-- PHP version: `hosting_php_get` is large (around 25 KB), so read it only when the user asks about PHP. PHP 8.x is markedly faster than 7.x; confirm plugin compatibility before `hosting_php_update-version`.
+- PHP version: `hosting_php_get` is large (around 25 KB), so read it only when the user asks about PHP. PHP 8.x is markedly faster than 7.x; confirm plugin compatibility before switching with `hosting_php_update` (`version`). The switch resets extensions and options to their defaults, so pass the custom ones from `hosting_php_get` in the same call.
 - wp-admin: `wordpress_login_create-links` returns temporary one-click login links. Give them to the user only; never store or reuse them.
 - Hostinger's own plugins update with `wordpress_plugins_update-hostinger` (`slug`).
 

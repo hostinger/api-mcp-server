@@ -350,6 +350,76 @@ export default [
     "group": "hosting"
   },
   {
+    "name": "hosting_php_update",
+    "title": "Update website PHP version, extensions and options",
+    "annotations": {
+      "title": "Update website PHP version, extensions and options",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
+    "topic": "hosting",
+    "description": "Change a website's PHP version, extensions and php.ini options in one call. Pass only what to change, at least one of version, resetExtensions, extensions and options. Steps run in the order version, resetExtensions, extensions, options, and the call stops at the first failure. applied lists the steps that ran. When a step fails, the call returns an error whose text is the same JSON: failed names the step and why, and skipped lists the ones not attempted; a multi-execute batch stops there too. WARNING: changing the version resets the website's extensions (PHP 8.0 and later) and its options to their defaults, so pass the extensions and options to keep in the same call; they are applied after the version. Option values above the plan limit are capped silently: read the applied values back with hosting_php_get, which also lists the available versions, extensions and options. Works for Shared and Cloud hosting websites.",
+    "method": "",
+    "path": "",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)"
+        },
+        "version": {
+          "type": "string",
+          "description": "PHP version to switch to, as major.minor (e.g. 8.3). Must be one of the supported versions in hosting_php_get."
+        },
+        "resetExtensions": {
+          "type": "boolean",
+          "description": "true resets every PHP extension to its default state; runs after version and before extensions."
+        },
+        "extensions": {
+          "type": "object",
+          "description": "Extensions to enable and disable, by name as hosting_php_get lists them. Pass at least one of enable and disable.",
+          "properties": {
+            "enable": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Extensions to enable."
+            },
+            "disable": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Extensions to disable."
+            }
+          }
+        },
+        "options": {
+          "type": "object",
+          "description": "php.ini options to change, keyed by name as hosting_php_get lists them (e.g. {\"memory_limit\": \"512M\", \"max_execution_time\": 300}). Only include options to change.",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "integer"
+            ]
+          }
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    },
+    "security": [],
+    "custom": true,
+    "replacesHidden": true,
+    "templateFile": "update-php.template.js",
+    "templateFileTS": "update-php.template.ts",
+    "handlerMethod": "handleHostingPhpUpdate",
+    "group": "hosting"
+  },
+  {
     "name": "hosting_websites_list-domains",
     "title": "List website parked (alias) domains and subdomains",
     "annotations": {
@@ -3900,7 +3970,8 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_php_get",
@@ -4022,7 +4093,8 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_php_update-options",
@@ -4064,7 +4136,8 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_php_update-version",
@@ -4105,7 +4178,8 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "hidden": true
   },
   {
     "name": "hosting_redirects_list-website",

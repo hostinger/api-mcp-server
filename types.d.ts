@@ -154,6 +154,35 @@ export interface APITools {
   };
 
   /**
+   * Change a website's PHP version, extensions and php.ini options in one call. Pass only what to change, at least one of version, resetExtensions, extensions and options. Steps run in the order version, resetExtensions, extensions, options, and the call stops at the first failure. applied lists the steps that ran. When a step fails, the call returns an error whose text is the same JSON: failed names the step and why, and skipped lists the ones not attempted; a multi-execute batch stops there too. WARNING: changing the version resets the website's extensions (PHP 8.0 and later) and its options to their defaults, so pass the extensions and options to keep in the same call; they are applied after the version. Option values above the plan limit are capped silently: read the applied values back with hosting_php_get, which also lists the available versions, extensions and options. Works for Shared and Cloud hosting websites.
+   */
+  "hosting_php_update": {
+    params: {
+      /**
+       * Domain name of the website, exactly as listed on the account and without www. (e.g., example.com)
+       */
+      domain: string;
+      /**
+       * PHP version to switch to, as major.minor (e.g. 8.3). Must be one of the supported versions in hosting_php_get.
+       */
+      version?: string;
+      /**
+       * true resets every PHP extension to its default state; runs after version and before extensions.
+       */
+      resetExtensions?: boolean;
+      /**
+       * Extensions to enable and disable, by name as hosting_php_get lists them. Pass at least one of enable and disable.
+       */
+      extensions?: object;
+      /**
+       * php.ini options to change, keyed by name as hosting_php_get lists them (e.g. {"memory_limit": "512M", "max_execution_time": 300}). Only include options to change.
+       */
+      options?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * List the extra domains of a website: its parked (alias) domains, which show the same site under another domain name, and its subdomains (e.g. blog.example.com), with each one's root directory. parked items have domain (a domain name or an IP address) and type (domain or ip); subdomains items have domain (the full name), subdomain (the prefix) and root_directory. A list that cannot be read comes back as { error } and the other is still returned. To add or remove one use hosting_websites_add-domain or hosting_websites_remove-domain. Works for Shared and Cloud hosting websites.
    */
   "hosting_websites_list-domains": {

@@ -336,6 +336,8 @@ class MCPServer {
         return await this.handleHostingWebsitesUpdateSettings(params);
       case 'hosting_cache_clear':
         return await this.handleHostingCacheClear(params);
+      case 'hosting_php_update':
+        return await this.handleHostingPhpUpdate(params);
       case 'hosting_websites_list-domains':
         return await this.handleHostingWebsitesListDomains(params);
       case 'hosting_websites_add-domain':
@@ -1641,6 +1643,100 @@ class MCPServer {
       ? await this.callOperation('hosting_cdn_purge-cache', { username, domain })
       : await this.callOperation('hosting_cache_clear-website', { username, domain, ...(directory !== null ? { directory } : {}) });
     return { domain, cleared: scope, directory, response };
+  }
+
+  // Application order, and how each step maps to its operation.
+  private hosting_phpUpdate_steps: Array<{ setting: string; run: (target: { username: string; domain: string }, value: any) => Promise<any> }> = [
+    { setting: 'version', run: (target, value) => this.callOperation('hosting_php_update-version', { ...target, version: value }) },
+    { setting: 'resetExtensions', run: (target) => this.callOperation('hosting_php_reset-extensions', target) },
+    { setting: 'extensions', run: (target, value) => this.callOperation('hosting_php_update-extensions', { ...target, ...this.hosting_phpUpdate_extensionLists(value) }) },
+    { setting: 'options', run: (target, value) => this.callOperation('hosting_php_update-options', { ...target, options: value }) },
+  ];
+
+  // The enable and disable lists to send: only the non-empty ones.
+  private hosting_phpUpdate_extensionLists(extensions: Record<string, any>): Record<string, string[]> {
+    const lists: Record<string, string[]> = {};
+    for (const key of ['enable', 'disable']) {
+      if (Array.isArray(extensions[key]) && extensions[key].length > 0) {
+        lists[key] = extensions[key];
+      }
+    }
+    return lists;
+  }
+
+  private hosting_phpUpdate_validate(params: Record<string, any>): void {
+    // Models send null for fields they leave unset.
+    const given = (name: string) => params[name] !== undefined && params[name] !== null;
+
+    if (given('version') && (typeof params.version !== 'string' || params.version.trim() === '')) {
+      throw new Error('version must be a non-empty string when provided');
+    }
+    if (given('resetExtensions') && typeof params.resetExtensions !== 'boolean') {
+      throw new Error('resetExtensions must be a boolean when provided');
+    }
+    if (given('extensions')) {
+      const extensions = params.extensions;
+      const list = (value: any) => value === undefined || value === null || (Array.isArray(value) && value.every((name: any) => typeof name === 'string' && name !== ''));
+      const valid = typeof extensions === 'object' && !Array.isArray(extensions)
+        && list(extensions.enable) && list(extensions.disable)
+        && Object.keys(this.hosting_phpUpdate_extensionLists(extensions)).length > 0;
+      if (!valid) {
+        throw new Error('extensions must be an object with a non-empty enable or disable list of extension names');
+      }
+    }
+    if (given('options')) {
+      const options = params.options;
+      const valid = typeof options === 'object' && !Array.isArray(options) && Object.keys(options).length > 0
+        && Object.values(options).every(value => typeof value === 'string' || (typeof value === 'number' && Number.isInteger(value)));
+      if (!valid) {
+        throw new Error('options must be a non-empty object of option names to string or integer values');
+      }
+    }
+  }
+
+  private async handleHostingPhpUpdate(params: Record<string, any>): Promise<any> {
+    const { domain: requestedDomain } = params;
+    this.hosting_phpUpdate_validate(params);
+
+    // resetExtensions: false asks for nothing, like null.
+    const requested = this.hosting_phpUpdate_steps.filter(step => step.setting === 'resetExtensions'
+      ? params.resetExtensions === true
+      : params[step.setting] !== undefined && params[step.setting] !== null);
+    if (requested.length === 0) {
+      throw new Error('Pass at least one of version, resetExtensions, extensions, options');
+    }
+    if (!requestedDomain || typeof requestedDomain !== 'string') {
+      throw new Error('domain is required and must be a string');
+    }
+
+    const { username, domain } = await this.findWebsite(requestedDomain);
+    const target = { username, domain };
+
+    const applied: Record<string, any> = {};
+    let failed: { setting: string; error: string } | null = null;
+    const skipped: string[] = [];
+    for (const step of requested) {
+      const value = params[step.setting];
+      if (failed) {
+        skipped.push(step.setting);
+        continue;
+      }
+      try {
+        await step.run(target, value);
+        // What was sent: for extensions, only the non-empty lists.
+        applied[step.setting] = step.setting === 'extensions' ? this.hosting_phpUpdate_extensionLists(value) : value;
+      } catch (error) {
+        failed = { setting: step.setting, error: this.formatToolError(error) };
+      }
+    }
+
+    const result = { domain, applied, failed, skipped };
+    // A failed step is a tool error carrying the same JSON, so execute reports it and a
+    // multi-execute batch stops at this step.
+    if (failed) {
+      throw new Error(JSON.stringify(result));
+    }
+    return result;
   }
 
   // A 404 means the domain is not a website on the account, which fails the whole call; any other

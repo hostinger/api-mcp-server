@@ -69,7 +69,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (412 total)
+- `hostinger-api-mcp` — unified server over every operation (409 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
@@ -78,7 +78,7 @@ This package installs the following MCP server commands:
 - `hostinger-ecommerce-mcp` — 30 operations for ecommerce
 - `hostinger-gpu-mcp` — 5 operations for gpu
 - `hostinger-horizons-mcp` — 7 operations for horizons
-- `hostinger-hosting-mcp` — 57 operations for hosting
+- `hostinger-hosting-mcp` — 54 operations for hosting
 - `hostinger-mail-mcp` — 39 operations for mail
 - `hostinger-reach-mcp` — 71 operations for reach
 - `hostinger-vps-mcp` — 68 operations for vps
@@ -1960,6 +1960,13 @@ Clear a website's server cache (the hosting server's page cache) and Hostinger C
 - **Method**: `custom`
 - **Path**: `custom`
 
+#### hosting_php_update
+
+Change a website's PHP version, extensions and php.ini options in one call. Pass only what to change, at least one of version, resetExtensions, extensions and options. Steps run in the order version, resetExtensions, extensions, options, and the call stops at the first failure. applied lists the steps that ran. When a step fails, the call returns an error whose text is the same JSON: failed names the step and why, and skipped lists the ones not attempted; a multi-execute batch stops there too. WARNING: changing the version resets the website's extensions (PHP 8.0 and later) and its options to their defaults, so pass the extensions and options to keep in the same call; they are applied after the version. Option values above the plan limit are capped silently: read the applied values back with hosting_php_get, which also lists the available versions, extensions and options. Works for Shared and Cloud hosting websites.
+
+- **Method**: `custom`
+- **Path**: `custom`
+
 #### hosting_websites_list-domains
 
 List the extra domains of a website: its parked (alias) domains, which show the same site under another domain name, and its subdomains (e.g. blog.example.com), with each one's root directory. parked items have domain (a domain name or an IP address) and type (domain or ip); subdomains items have domain (the full name), subdomain (the prefix) and root_directory. A list that cannot be read comes back as { error } and the other is still returned. To add or remove one use hosting_websites_add-domain or hosting_websites_remove-domain. Works for Shared and Cloud hosting websites.
@@ -2441,15 +2448,6 @@ or specific order IDs for more targeted results.
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/orders`
 
-#### hosting_php_reset-extensions
-
-Resets all PHP extensions of the website to their default state.
-
-Use it to recover from extension conflicts or restore the original configuration.
-
-- **Method**: `PATCH`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions/reset`
-
 #### hosting_php_get
 
 Returns the full PHP configuration for the website: current version, available versions
@@ -2469,35 +2467,6 @@ Use it to debug PHP issues or inspect the complete PHP environment of the websit
 
 - **Method**: `GET`
 - **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/php-info`
-
-#### hosting_php_update-extensions
-
-Enables or disables PHP extensions (modules) for the website.
-
-Use the Get PHP details endpoint to check the current extension states before changing them.
-
-- **Method**: `PATCH`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/extensions`
-
-#### hosting_php_update-options
-
-Updates PHP options for the website (e.g. `memory_limit`, `max_execution_time`, `upload_max_filesize`).
-Only provide the options you want to change, inside the `options` object.
-
-Values above the account plan limit are silently capped to that limit, so the request can succeed
-with a smaller applied value. Call the Get PHP details endpoint afterwards to read the applied value.
-
-- **Method**: `PATCH`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/options`
-
-#### hosting_php_update-version
-
-Changes the PHP version of the website.
-
-Use the Get PHP details endpoint to see the versions available for the website.
-
-- **Method**: `PATCH`
-- **Path**: `/api/hosting/v1/accounts/{username}/websites/{domain}/php/version`
 
 #### hosting_redirects_list-website
 
