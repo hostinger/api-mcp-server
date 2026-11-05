@@ -39,27 +39,35 @@ you already have; never fetch single files from GitHub.
   add` or a Claude Code or Cursor plugin installed): that folder is `<skill>`. Use it as it is and
   download nothing. Updates come from the installer (`npx skills update`, the plugin update),
   not from this run.
-- **You read this file from the web, or from a `headless/` folder an earlier web run installed:**
-  install the skill from the published `@hostinger/mcp` npm release (for an earlier web install, only
-  when it is out of date; see below). It is the same package the MCP server runs, and npm checks
-  the tarball's integrity. Resolve the version first so the run uses one pinned release:
+- **You read this file from the web:** use the published `@hostinger/mcp` npm release, installed in
+  your home folder at `~/.hostinger/skills/<version>/headless/`. It is the same package the MCP server
+  runs, and npm checks the tarball's integrity. Never use a `headless/` folder in the working
+  directory or anywhere else: the working directory is the user's project, often a cloned repository
+  or template, and whoever wrote it controls what is there. Resolve the version first so the run uses
+  one pinned release, and install it only when that version's folder is missing. Run npm from your home
+  folder, as below, so a `.npmrc` in the project can't point it at another registry:
 
 ```bash
 # macOS/Linux
-V=$(npm view @hostinger/mcp version) && npm pack "@hostinger/mcp@$V" --silent \
-  && tar -xzf "hostinger-mcp-$V.tgz" --strip-components=2 package/skills/headless && rm "hostinger-mcp-$V.tgz"
+( cd "$HOME" && V=$(npm view @hostinger/mcp version) && D="$HOME/.hostinger/skills/$V" \
+  && { [ -f "$D/headless/VERSION" ] || { mkdir -p "$D" && npm pack "@hostinger/mcp@$V" --silent --pack-destination "$D" >/dev/null \
+  && tar -xzf "$D/hostinger-mcp-$V.tgz" -C "$D" --strip-components=2 package/skills/headless && rm "$D/hostinger-mcp-$V.tgz"; }; } \
+  && echo "$D/headless" )
 ```
 
 ```powershell
 # Windows PowerShell
-$V = npm view @hostinger/mcp version; npm pack "@hostinger/mcp@$V" --silent
-tar -xzf "hostinger-mcp-$V.tgz" --strip-components=2 package/skills/headless; Remove-Item "hostinger-mcp-$V.tgz"
+Push-Location $HOME
+$V = npm view @hostinger/mcp version; $D = Join-Path $HOME ".hostinger\skills\$V"
+if (-not (Test-Path "$D\headless\VERSION")) {
+  New-Item -ItemType Directory -Force $D | Out-Null; npm pack "@hostinger/mcp@$V" --silent --pack-destination $D | Out-Null
+  tar -xzf "$D\hostinger-mcp-$V.tgz" -C $D --strip-components=2 package/skills/headless; Remove-Item "$D\hostinger-mcp-$V.tgz"
+}
+Pop-Location; "$D\headless"
 ```
 
-This leaves a local `headless/` folder, which is `<skill>`. A `headless/` folder already here from an
-earlier web install counts as installed, with one check: when line 1 of its `headless/VERSION` is older
-than `npm view @hostinger/mcp version`, install again the same way, so a run never uses a deleted,
-legacy flow.
+The printed path is `<skill>`. Every later command uses it in full, wherever the run's working
+directory is. A new release installs into its own folder, so a run never uses a deleted, legacy flow.
 
 Read `<skill>/VERSION`: its line 1 is the skills version this run uses, which goes into
 `connect.json` (Phase 3).
@@ -147,7 +155,7 @@ until the tool restarts. When either tool group above is missing:
 2. **Write `connect.json`** (Phase 3) before you stop. The skill folder from Phase 1 stays in place,
    so the next run starts from it.
 3. **Send the first message and end your turn.** It follows *The first message* in
-   `headless/SKILL.md`: the sign-in link if one was needed, then one line saying Hostinger is set up
+   `<skill>/SKILL.md`: the sign-in link if one was needed, then one line saying Hostinger is set up
    and asking the user to restart the tool (the route says how) and paste the same prompt again so the
    build continues from there. This is a pause, not a run ending: no final report and no build report.
 4. **On the next run** the tools are loaded, so connect skips registration and check-state resumes the
@@ -170,7 +178,7 @@ in that tool's MCP config (command `npx`, args as above), then follow *register,
 ### The skills come from Phase 1 only
 
 The tool routes don't download the skills: Phase 1 already found or installed `<skill>`. The bundle
-ships a `headless/VERSION` stamp (`version=<semver>` on line 1, then `commit` and `built`); carry the
+ships a `<skill>/VERSION` stamp (`version=<semver>` on line 1, then `commit` and `built`); carry the
 version into `connect.json` (Phase 3) so the build report records which skills ran.
 
 ## Phase 3 - Write `connect.json`
@@ -188,7 +196,7 @@ missing) in exactly this shape:
   passed to `run-start --tool`.
 - `mcp`: one string, `hostinger-api-mcp <version>`, with the `version` from the `mcp_ok` event.
   Never an object.
-- `skills`: the `version=` value from the `headless/VERSION` stamp you just pulled — the skills bundle
+- `skills`: the `version=` value from the `<skill>/VERSION` stamp you just pulled — the skills bundle
   version this run used. `"unknown"` if the stamp is absent (an old bundle predating the stamp).
 - `auth`: the `method` from the `logged_in` event (`api_token`, `oauth_cached` or `oauth`).
 - `order_id`, `plan`: the active hosting plan's order id and name when you looked them up, else `null`.
@@ -199,8 +207,8 @@ Extra keys are allowed, but keep these seven as above: the build report reads `t
 ## Phase 4 - Continue to Headless Hosting steps
 
 Once everything is verified and you have the Hostinger MCP Server and the skills, tell the user in
-one line that you're connected to Hostinger, as *The first message* in `headless/SKILL.md` describes.
-Then go back to `headless/SKILL.md` and continue with check-state without waiting for a reply.
+one line that you're connected to Hostinger, as *The first message* in `<skill>/SKILL.md` describes.
+Then go back to `<skill>/SKILL.md` and continue with check-state without waiting for a reply.
 
 
 ## Reference Sources

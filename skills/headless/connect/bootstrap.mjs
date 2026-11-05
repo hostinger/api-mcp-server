@@ -29,7 +29,7 @@ const MCP = [bin('npx'), '-y', '--package=@hostinger/mcp@latest', 'hostinger-api
 const spawnShell = isWin;
 
 function capture(cmd, args) {
-  const r = spawnSync(cmd, args, { encoding: 'utf8', shell: spawnShell });
+  const r = spawnSync(cmd, args, { encoding: 'utf8', shell: spawnShell, cwd: os.homedir() });
   return { status: r.status ?? 1, out: `${r.stdout || ''}${r.stderr || ''}`, error: r.error };
 }
 
@@ -72,7 +72,7 @@ function existingAuth() {
 // prefix — forward it so the agent can show it if the browser didn't open.
 function login() {
   return new Promise((resolve) => {
-    const child = spawn(MCP[0], [...MCP.slice(1), '--login'], { shell: spawnShell });
+    const child = spawn(MCP[0], [...MCP.slice(1), '--login'], { shell: spawnShell, cwd: os.homedir() });
     let diag = '';
     let urlSent = false;
     const collect = (chunk) => {

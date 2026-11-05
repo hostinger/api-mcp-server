@@ -14,6 +14,7 @@
 // operation to poll by hand instead).
 
 import { spawn } from 'node:child_process';
+import { homedir } from 'node:os';
 
 // ── platform-safe binary names (npm/npx are .cmd on Windows), as in connect/bootstrap.mjs ──────────
 const isWin = process.platform === 'win32';
@@ -55,7 +56,7 @@ function duration(text) {
 // One MCP server for the whole wait, spoken to over newline-delimited JSON-RPC on stdio. Once the
 // server dies every pending and later call rejects, so the wait ends with exit 2 rather than hanging.
 function connect() {
-  const child = spawn(MCP[0], MCP.slice(1), { stdio: ['pipe', 'pipe', 'pipe'], shell: spawnShell });
+  const child = spawn(MCP[0], MCP.slice(1), { stdio: ['pipe', 'pipe', 'pipe'], shell: spawnShell, cwd: homedir() });
   const pending = new Map();
   let buffer = '';
   let diag = '';

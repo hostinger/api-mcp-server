@@ -102,7 +102,7 @@ npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp --logout
 
 ## Step 3 — Hand off
 
-The skills are already in place: Phase 1 of `connect/SKILL.md` found the installed `headless/`
+The skills are already in place: Phase 1 of `connect/SKILL.md` found the installed `<skill>`
 folder or installed it from the `@hostinger/mcp` release. Don't download them again here. Read the
-`headless/VERSION` stamp (record it in `connect.json`), open `headless/SKILL.md` and follow its
+`<skill>/VERSION` stamp (record it in `connect.json`), open `<skill>/SKILL.md` and follow its
 steps. That skill owns the rest of the run.
