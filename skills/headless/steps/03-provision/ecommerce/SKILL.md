@@ -22,7 +22,7 @@ Provision a **Hostinger Ecommerce** backend for `<domain>` and prove it is ready
 > aren't (for example, a tool connected before connect registered both servers), register it now. The
 > command for each tool is in its `connect/tools/<tool>.md`; for Claude Code:
 > ```bash
-> claude mcp add hostinger-ecommerce --scope user -- npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
+> claude mcp add hostinger-ecommerce --scope user -- npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
 > ```
 > (Or enable the **Ecommerce** MCP in the Hostinger Connector.) A newly added MCP server only loads
 > after a restart, so pause the run with *register, restart, resume* from `connect/SKILL.md`: save

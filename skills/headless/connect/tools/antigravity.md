@@ -26,11 +26,11 @@ no tokens to handle:
   "mcpServers": {
     "hostinger": {
       "command": "npx",
-      "args": ["-y", "@hostinger/mcp@latest"]
+      "args": ["-y", "--prefix=<home>", "@hostinger/mcp@latest"]
     },
     "hostinger-ecommerce": {
       "command": "npx",
-      "args": ["--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
+      "args": ["--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
     }
   }
 }

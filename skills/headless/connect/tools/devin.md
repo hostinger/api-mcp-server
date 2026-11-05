@@ -21,18 +21,18 @@ tokens to handle.
 - **Devin CLI:**
 
   ```bash
-  devin mcp add hostinger -- npx -y @hostinger/mcp@latest
-  devin mcp add hostinger-ecommerce -- npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
+  devin mcp add hostinger -- npx -y --prefix="$HOME" @hostinger/mcp@latest
+  devin mcp add hostinger-ecommerce -- npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
   ```
 
 - **Devin app:** Settings → MCP Marketplace → **Add Your Own**, transport **STDIO**, once per server:
 
   ```json
-  { "command": "npx", "args": ["-y", "@hostinger/mcp@latest"] }
+  { "command": "npx", "args": ["-y", "--prefix=<home>", "@hostinger/mcp@latest"] }
   ```
 
   ```json
-  { "command": "npx", "args": ["--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"] }
+  { "command": "npx", "args": ["--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"] }
   ```
 
 If the tools still aren't in this session, follow *register, restart, resume* in `connect/SKILL.md`:

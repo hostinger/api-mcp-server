@@ -25,8 +25,8 @@ in, so they reuse the cached sign-in (`~/.config/hostinger-mcp/credentials.json`
 `HOSTINGER_API_TOKEN`) and there are no tokens to handle:
 
 ```bash
-claude mcp add hostinger --scope user -- npx -y @hostinger/mcp@latest                                     # hosting group missing
-claude mcp add hostinger-ecommerce --scope user -- npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp  # ecommerce group missing
+claude mcp add hostinger --scope user -- npx -y --prefix="$HOME" @hostinger/mcp@latest                                     # hosting group missing
+claude mcp add hostinger-ecommerce --scope user -- npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp  # ecommerce group missing
 ```
 
 Claude Code loads MCP servers only at startup, so follow *register, restart, resume* in

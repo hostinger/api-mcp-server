@@ -26,12 +26,12 @@ no tokens to handle. Add them to `.vscode/mcp.json` (workspace) or your user `se
     "hostinger": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@hostinger/mcp@latest"]
+      "args": ["-y", "--prefix=<home>", "@hostinger/mcp@latest"]
     },
     "hostinger-ecommerce": {
       "type": "stdio",
       "command": "npx",
-      "args": ["--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
+      "args": ["--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
     }
   }
 }
@@ -40,8 +40,8 @@ no tokens to handle. Add them to `.vscode/mcp.json` (workspace) or your user `se
 Or add them in two commands:
 
 ```bash
-code --add-mcp '{"name":"hostinger","command":"npx","args":["-y","@hostinger/mcp@latest"]}'
-code --add-mcp '{"name":"hostinger-ecommerce","command":"npx","args":["--package=@hostinger/mcp@latest","hostinger-ecommerce-mcp"]}'
+code --add-mcp '{"name":"hostinger","command":"npx","args":["-y","--prefix=<home>","@hostinger/mcp@latest"]}'
+code --add-mcp '{"name":"hostinger-ecommerce","command":"npx","args":["--prefix=<home>","--package=@hostinger/mcp@latest","hostinger-ecommerce-mcp"]}'
 ```
 
 VS Code picks up new servers and their tools become available right away, with no editor restart.

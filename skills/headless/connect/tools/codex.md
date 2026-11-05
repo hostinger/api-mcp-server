@@ -19,8 +19,8 @@ sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) a
 to handle:
 
 ```bash
-codex mcp add hostinger -- npx -y @hostinger/mcp@latest
-codex mcp add hostinger-ecommerce -- npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
+codex mcp add hostinger -- npx -y --prefix="$HOME" @hostinger/mcp@latest
+codex mcp add hostinger-ecommerce -- npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
 ```
 
 or add them to `~/.codex/config.toml`:
@@ -28,11 +28,11 @@ or add them to `~/.codex/config.toml`:
 ```toml
 [mcp_servers.hostinger]
 command = "npx"
-args = ["-y", "@hostinger/mcp@latest"]
+args = ["-y", "--prefix=<home>", "@hostinger/mcp@latest"]
 
 [mcp_servers.hostinger-ecommerce]
 command = "npx"
-args = ["--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
+args = ["--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
 ```
 
 Codex loads MCP servers only when it starts, so follow *register, restart, resume* in

@@ -107,8 +107,8 @@ hostinger-api-mcp --login
 hostinger-api-mcp --logout
 
 # Without a global install:
-npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp --login
-npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp --logout
+npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --login
+npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --logout
 ```
 
 Credentials live in `~/.config/hostinger-mcp/credentials.json` (macOS/Linux) or `%APPDATA%\hostinger-mcp\credentials.json` (Windows) and are shared by every Hostinger MCP binary. OAuth works only when the tool runs the server over its default local (stdio) transport, which is what every registration below uses; `--http` needs `HOSTINGER_API_TOKEN`.
@@ -127,8 +127,8 @@ one group says nothing about the other:
 
 | Group | Operations | Comes from | Needed by |
 |---|---|---|---|
-| **Hosting** | `hosting_*` (websites, deploy, build report), `wordpress_*` | `hostinger` (`npx -y @hostinger/mcp@latest`), or the scoped servers such as `hostinger-hosting` + `hostinger-wordpress` | every build |
-| **Ecommerce** | `ecommerce_*` (stores, products, shipping, payments) | **only** `hostinger-ecommerce` (`npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp`), or the Ecommerce MCP in the Hostinger Connector. Neither `hostinger` nor the scoped hosting servers include it | Ecommerce backends (chosen later, in refine) |
+| **Hosting** | `hosting_*` (websites, deploy, build report), `wordpress_*` | `hostinger` (`npx -y --prefix="$HOME" @hostinger/mcp@latest`), or the scoped servers such as `hostinger-hosting` + `hostinger-wordpress` | every build |
+| **Ecommerce** | `ecommerce_*` (stores, products, shipping, payments) | **only** `hostinger-ecommerce` (`npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp`), or the Ecommerce MCP in the Hostinger Connector. Neither `hostinger` nor the scoped hosting servers include it | Ecommerce backends (chosen later, in refine) |
 
 Check each group on its own, right here at connect, before anything else:
 
@@ -148,8 +148,8 @@ Most coding tools load MCP servers only when they start, so a server registered 
 until the tool restarts. When either tool group above is missing:
 
 1. **Register the missing servers** in the tool's MCP config, as the tool route below shows: `hostinger`
-   (`npx -y @hostinger/mcp@latest`) if the hosting group is missing, and `hostinger-ecommerce`
-   (`npx --package=@hostinger/mcp@latest hostinger-ecommerce-mcp`) if the ecommerce group is missing.
+   (`npx -y --prefix="$HOME" @hostinger/mcp@latest`) if the hosting group is missing, and `hostinger-ecommerce`
+   (`npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp`) if the ecommerce group is missing.
    Skip a server that is already registered under its name. When neither group is there, register
    both: the backend isn't chosen until refine, and one restart then covers every backend.
 2. **Write `connect.json`** (Phase 3) before you stop. The skill folder from Phase 1 stays in place,
@@ -162,6 +162,13 @@ until the tool restarts. When either tool group above is missing:
    domain's workspace.
 
 If a tool loads new servers without a restart (VS Code), use them right away and skip steps 3–4.
+
+**Every `npx` command and registration keeps `--prefix` set to the user's home folder.** The tool
+starts the server, and you run commands, in the user's project, often a cloned repository or
+template. Without `--prefix`, npm reads the `.npmrc` there, and whoever wrote it can point npx at
+another registry or run their own code. In shell commands write `--prefix="$HOME"` (the shell expands
+it when you register). In JSON or TOML configs replace `<home>` with the home folder's absolute path
+(`echo $HOME`, e.g. `/Users/me` or `C:\\Users\\me`). Never drop the flag or leave `<home>` in place.
 
 | Tool        | Route                           |
 |-------------|---------------------------------|

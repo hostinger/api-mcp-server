@@ -15,7 +15,7 @@ This is an **instance-barrier** step: run it only after `provision.status == "co
 > **Connected to the hosted server (`mcp.hostinger.com`)?** Its `hosting_deploy` deploys Git
 > repositories only and cannot read a local `path`. Run this step through the local
 > `hostinger-api-mcp` server instead (see the connect step:
-> `npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp`).
+> `npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp`).
 
 > **With a shell and the Hostinger CLI installed**, the same deploy is one command, with the build
 > settings passed exactly as the table below says. Run it from the project, since it links the current directory:

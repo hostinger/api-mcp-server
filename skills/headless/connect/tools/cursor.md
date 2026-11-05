@@ -19,7 +19,7 @@ The Hostinger MCP is the npm package `@hostinger/mcp`. You do **not** need a glo
 
 ```bash
 # Verify the package/binary is reachable
-npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp --version
+npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --version
 ```
 
 ### Option B — global install
@@ -49,11 +49,11 @@ OAuth can run:
   "mcpServers": {
     "hostinger": {
       "command": "npx",
-      "args": ["--yes", "--package=@hostinger/mcp@latest", "hostinger-api-mcp"]
+      "args": ["--yes", "--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-api-mcp"]
     },
     "hostinger-ecommerce": {
       "command": "npx",
-      "args": ["--yes", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
+      "args": ["--yes", "--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
     }
   }
 }
@@ -74,7 +74,7 @@ If the connect bootstrap already emitted `logged_in` / `success`, credentials ar
 Otherwise run the login command. It registers a dynamic OAuth client (once per machine), **opens the user's browser** to Hostinger's authorization page, listens on a localhost callback, stores tokens, and exits:
 
 ```bash
-npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp --login
+npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --login
 ```
 
 (With a global install: `hostinger-api-mcp --login`.)
@@ -95,7 +95,7 @@ They are shared across every Hostinger MCP binary. Expired access tokens refresh
 To sign out later:
 
 ```bash
-npx --yes --package=@hostinger/mcp@latest hostinger-api-mcp --logout
+npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --logout
 ```
 
 **API token (optional, CI / scripts):** set `HOSTINGER_API_TOKEN` in the environment before launching Cursor. When present it always wins and no OAuth code runs. Do not commit the token.
