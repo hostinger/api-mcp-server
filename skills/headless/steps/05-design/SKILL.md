@@ -117,7 +117,7 @@ Before inventing anything, gather what already constrains the design:
 | Brand assets | `brief.md` → *Assets* | Logo, brand colours and fonts are **fixed** in every direction. Never recolour a supplied logo; Step 6 uses it instead of drawing an icon |
 | Pages and entities | `content-model.md` → *Navigation*, *Pages*, *Articles*; if it doesn't exist yet, `brief.md` → *Pages* | Drives the component inventory and page composition |
 | Reference sites | URLs in the brief or the conversation | Cues to borrow (see below) |
-| Images already sourced | `content-model.md` → the image lines under *Articles* (skip if none yet) | Glance at a few at small size; keep accents from clashing with their dominant colours |
+| Images already sourced | `content-model.md` → the image lines under *Articles*, or the `image` URLs in `content.json` on WordPress (skip if none yet) | Glance at a few at small size; keep accents from clashing with their dominant colours |
 | Current design (redesign only) | existing `design.md` | What to keep, what to move away from |
 
 **Reference sites.** Open each one in a real browser if you have one. Static fetches are often

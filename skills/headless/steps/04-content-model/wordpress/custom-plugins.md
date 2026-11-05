@@ -13,7 +13,7 @@ custom post types — but there is **no generic `wp/v2` passthrough** (no `RestE
 
 | Need | Plugin? | Do it with |
 |---|---|---|
-| Blog posts, static pages, categories, media, nav | **no** | per-site WP MCP (`SKILL.md` Step 4) |
+| Blog posts, static pages, categories, media, nav | **no** | per-site WP MCP (`push-content.mjs`, `SKILL.md`) |
 | A **custom post type** — Team, Services, Properties, Testimonials, a restaurant's dishes | **yes** | *Custom post type* below |
 | A **custom taxonomy** — Property Type, Cuisine, Service Area | **yes** | *Custom taxonomy* below |
 | **Global site content** the frontend needs — footer text, phone, address, opening hours, social links, a CTA line | **yes** | *Settings page + public settings route* below |
@@ -25,7 +25,7 @@ custom post types — but there is **no generic `wp/v2` passthrough** (no `RestE
 > headless `/cms` with `hosting_deploy { type: "wordpress-plugin", headless: true }` (see *Deploy* below).
 > Author one only for the *structure and behaviour* the per-site MCP can't express — types, taxonomies,
 > settings, helpers. Don't write a **seed/config plugin** to load WooCommerce catalog data or page content;
-> that goes through the per-site MCP's native abilities (`woocommerce.md`, `SKILL.md` Step 4), never a plugin.
+> that goes through the per-site MCP's native abilities (`woocommerce.md`, `push-content.mjs`), never a plugin.
 
 ---
 

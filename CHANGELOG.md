@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.29.0 — 2026-11-05
+
+### Also in this release
+
+- Bundled agent skills: 12 files
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v3.28.6 — 2026-11-05
 
 ### Also in this release

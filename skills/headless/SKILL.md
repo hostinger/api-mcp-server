@@ -239,6 +239,7 @@ took from it.
 | `brief.md` | refine | refined brief, audience, tone, pages, must-haves |
 | `site.json` | provision | chosen backend, username, install id, all URLs |
 | `content-model.md` | content model | entities, fields, pages, navigation |
+| `content.json` | content model (WordPress) | the drafted content `push-content.mjs` pushes |
 | `design.md` (+ `brand/` logo files) | design | chosen design direction: tokens, type, logo, components, per-page composition, accessibility |
 | `src/` | frontend | the website source implementing `design.md`; framework choice is recorded in `state.json → frontend` |
 | `deploy.json` | deploy | build id, deployed at, live URLs |

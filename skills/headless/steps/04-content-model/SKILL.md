@@ -78,6 +78,10 @@ Guidance:
   images only generate once the instance exists, so write their brief now and generate at the barrier.
   Put any generated/own media in `~/.hostinger/<domain>/media/` and reference it by filename. Record
   alt text for every image.
+- **WordPress: drafts go straight into `content.json`.** On a WordPress backend, write the generated
+  copy, terms, menu and image details into `~/.hostinger/<domain>/content.json` (format: `wordpress/SKILL.md`
+  Step 1), not into `content-model.md`, so nothing is written twice. `content-model.md` keeps the fixed
+  values, the prompts and the image briefs.
 - **Optional sections.** Drop **Articles** if the brief has no article-like content. Drop **Products**
   for a non-commerce brief; for a commerce brief, generate the product catalog here (names, prices,
   descriptions, collections, images) — that's prepare work, and the `ecommerce` push phase then creates
@@ -148,14 +152,9 @@ runs **at the instance barrier** (after `provision.status == "completed"`), usin
 3. **Use the images before they expire.** The URLs are short-lived, so in the push phase hand each
    `url` straight to WordPress with `media-upload-from-url`, which downloads and stores WP's own copy
    (see the wordpress push `SKILL.md`). Don't persist the temporary URL as the live image. There is no
-   photographer to credit — leave `caption` empty or a short on-brand one. Record under the
-   article/product in `content-model.md`:
-
-   ```markdown
-   Image: Hostinger AI (image_type: <type>, generation_id: <uuid>)
-   Image alt: <what the image shows>
-   Image file: <site>-<subject>.jpg
-   ```
+   photographer to credit — leave `caption` empty or a short on-brand one. Generate these images last,
+   right before the push, and put each `url` in its article's or product's `image` in `content.json`
+   (with `alt` and `filename`).
 
    On `failed`, retry once with a tightened prompt; if it fails again, fall back to Option B and note
    the gap. Never block the whole push on a single image.
@@ -208,7 +207,8 @@ Source every image in a few batched calls, not a search and a fetch per photo:
    rather than mislabel it.
 4. **Write alt text from what the photo shows**, not from the article's image brief. For example,
    use "Shopfronts and parked scooters on a Hanoi street" even if the article is about rain.
-5. **Record it** under each article in `content-model.md`:
+5. **Record it** under each article in `content-model.md` (on WordPress, in the article's `image` in
+   `content.json` instead: `url`, `alt`, `filename`, and the credit as `caption`):
 
    ```markdown
    Image: https://images.unsplash.com/photo-<…>?w=1600&q=80&fm=jpg&fit=max

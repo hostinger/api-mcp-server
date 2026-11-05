@@ -13,11 +13,10 @@ the cart, coupons and checkout.
 
 ## 1 — The one rule: drive the store through the per-site WP MCP
 
-A **custom plugin cannot be installed into a headless `/cms`** from a coding agent (same limit that
-removed `wp-development.md`). So there is **no seed plugin, no WP-CLI, and no REST consumer key in this
-flow.** Instead, the **per-site WP MCP** (the Hostinger AI Assistant — the same JWT session the WordPress
-content push uses, see `SKILL.md` Step 1) exposes **native WooCommerce abilities**. Seed and manage the
-catalog through them, exactly as posts/pages are created.
+There is **no seed plugin, no WP-CLI, and no REST consumer key in this flow**: catalog data goes through
+the WP MCP. Instead, the **per-site WP MCP** (the Hostinger AI Assistant — the same JWT session the WordPress
+content push uses, see `SKILL.md`) exposes **native WooCommerce abilities**. The push seeds the
+catalog through them (§3); call them yourself only by hand or for work after the push.
 
 Relevant abilities (names from `hostinger-ai-discover-abilities`; call `get-ability-info` for each schema
 before use — they mirror the WooCommerce REST v3 shapes):
@@ -65,42 +64,18 @@ divisor: `prices.price` (e.g. `"1999"`) with `prices.currency_minor_unit` (e.g. 
 
 ## 3 — Seeding the catalog (content-model push)
 
-Run after provision installed + activated WooCommerce (`site.json → woocommerce.enabled: true`), inside
-the authenticated per-site WP MCP session (`SKILL.md` Step 1). Seed from the prepared catalog in
-`content-model.md`. **Idempotent by SKU** (products) and **code** (coupons) — list/search first, create
-only if absent, so a re-run never duplicates.
+The push seeds the catalog with the rest of the content: put product categories, products and coupons
+under `store` in `content.json` and run `push-content.mjs` (`SKILL.md` Steps 1–2). It looks categories up
+by slug, products by **SKU** and coupons by **code** before creating, so a re-run never duplicates; uploads
+each product image once; checks every SKU and category over the Store API; and records the ids under
+`## Created in WooCommerce` in `content-model.md`.
 
-1. **Product categories** — for each category: `wc-product-categories-list` (match by `slug`/`name`,
-   reuse the id) else `wc-product-categories-create { name, slug }`. Keep `name → id`.
-2. **Products** — for each product: `wc-products-search { sku: "<sku>" }`; a hit → reuse its id; empty →
-   `wc-products-create`:
-   ```json
-   { "name": "...", "type": "simple", "sku": "<unique>", "regular_price": "39.99",
-     "description": "...", "short_description": "...", "status": "publish",
-     "categories": [ { "id": <catId> } ] }
-   ```
-   - `regular_price` is a **decimal string in major units** (`"39.99"`) on the ability side — the Store
-     API re-exposes it as minor units to the storefront.
-   - **Variable products:** create the parent (`type: "variable"`) with its attributes, then the
-     variations (via the product update / variations ability that discovery lists).
-3. **Product images** — `media-upload-from-url { url, filename, alt_text, title }` (WordPress downloads
-   and stores its own copy; raster, HTTPS, direct file URL — source like the parent `SKILL.md` Unsplash
-   flow). Attach the returned media id to the product (`wc-products-update { id, images: [ { id } ] }`).
-   Idempotency: skip when the product already has images.
-4. **Coupons** — for each coupon: `wc-coupons-search { code }`; empty → `wc-coupons-create`:
-   ```json
-   { "code": "WELCOME10", "discount_type": "percent", "amount": "10" }
-   ```
-   (`discount_type`: `percent` | `fixed_cart` | `fixed_product`.)
-
-Record the SKU → id map, category ids and coupon codes into `content-model.md` under
-`## Created in WooCommerce` so the frontend and any re-run resolve references directly.
-
-**Verify over the public Store API (no auth):**
-- `GET {store_api}/products?per_page=100` → count matches the plan; each has `prices` (minor units +
-  `currency_minor_unit`) and, where seeded, an image.
-- `GET {store_api}/products/categories` → every planned category present.
-- Coupon: `wc-coupons-search { code }` returns it, or apply it to a throwaway cart and see the total drop.
+- `price` is a decimal string in **major units** (`"39.99"`); the Store API re-exposes it in minor units.
+- Any other WooCommerce product field passes through as given (`sale_price`, `stock_quantity`,
+  `attributes`, …). For a **variable product**, the push creates the parent; add its variations by hand
+  through the product update / variations ability that discovery lists.
+- Coupons: `discount_type` is `percent`, `fixed_cart` or `fixed_product`. WooCommerce stores codes in
+  lower case.
 
 ---
 
@@ -112,7 +87,7 @@ only writes standard WordPress settings (it ignores `woocommerce_*` options). So
 
 - **The catalog, product pages, client-side cart and coupon application all work headlessly.**
 - **Checkout (`POST /checkout`) does not work until the owner enables a payment method + a shipping zone
-  in wp-admin** (WooCommerce → Settings → Payments / Shipping; reach it via the one-click login in Step 9).
+  in wp-admin** (WooCommerce → Settings → Payments / Shipping; reach it via the one-click login in `steps/09-done/SKILL.md`).
   Cash on Delivery is the zero-config choice once enabled.
 - Treat this exactly like the Hostinger Ecommerce `payment_enabled: false` gate: record
   `woocommerce.payment_enabled: false`, tell the user in one line that checkout needs that one setup step,
@@ -144,10 +119,7 @@ through the per-site MCP and the storefront uses the public Store API. Document 
 
 ## 6 — Idempotency & verification checklist
 
-- **Idempotency keys:** products → **SKU** (`wc-products-search { sku }`); coupons → **code**
-  (`wc-coupons-search { code }`); categories → **slug/name**; images → skip when the product already has
-  `images`.
-- **Verify over the public Store API** (no auth) — products count + prices + categories, and a coupon via
-  a cart apply. Record the id/SKU map into `content-model.md`.
-- **Checkout** is verified only when `payment_enabled` is `true`; while `false`, confirming the catalog +
-  cart over the Store API is the whole job.
+- **Idempotency keys:** products → SKU, coupons → code, categories → slug, images → skip when the product
+  already has `images`. `push-content.mjs` applies them; follow them too when seeding by hand.
+- **Checkout** is verified only when `payment_enabled` is `true`; while `false`, the catalog and cart over
+  the Store API are the whole job.
