@@ -4,6 +4,17 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.30.2 — 2026-11-06
+
+### Also in this release
+
+- Documentation: `README.md`
+- Distribution manifests: `gemini-extension.json`
+- Bundled agent skills: 18 files
+- OAuth sign-in flow: `src/core/oauth.js`, `src/core/oauth.ts`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v3.30.1 — 2026-11-05
 
 ### Also in this release

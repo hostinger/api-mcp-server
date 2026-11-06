@@ -22,7 +22,7 @@ Provision a **Hostinger Ecommerce** backend for `<domain>` and prove it is ready
 > aren't (for example, a tool connected before connect registered both servers), register it now. The
 > command for each tool is in its `connect/tools/<tool>.md`; for Claude Code:
 > ```bash
-> claude mcp add hostinger-ecommerce --scope user -- npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
+> claude mcp add hostinger-ecommerce --scope user -- "<command>" "<launcher>" hostinger-ecommerce-mcp
 > ```
 > (Or enable the **Ecommerce** MCP in the Hostinger Connector.) A newly added MCP server only loads
 > after a restart, so pause the run with *register, restart, resume* from `connect/SKILL.md`: save
@@ -49,7 +49,7 @@ Same lifecycle as `../wordpress/SKILL.md` Steps 1–2, but `type: "headless_ecom
    call a separate subdomain op first — there's no need in this flow). The response carries the
    generated domain; if it differs from the workspace dir, move
    `~/.hostinger/<old>/` → `<new>/` (if `<new>/` already exists, stop and ask instead of moving
-   into it) and update `brief.md`. Don't wait here. At the join, `node <skill>/wait.mjs setup <domain>`
+   into it) and update `brief.md`. Don't wait here. At the join, `cd "$HOME" && node <skill>/wait.mjs setup <domain>`
    returns once the setup is `completed` (see *Waiting on Hostinger* in the top-level `SKILL.md`).
    `website_type` will be `headless`.
 

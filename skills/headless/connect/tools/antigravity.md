@@ -12,7 +12,7 @@ description: "Specific Antigravity Hostinger MCP Server connection instructions 
 
 The later stages drive the Hostinger connector through Antigravity's native MCP tools. Check **both** tool groups (hosting and ecommerce), as *Check both tool groups* in `connect/SKILL.md`
 says: other Hostinger tools responding doesn't mean the `hostinger-ecommerce` ones are there. Both
-respond → use them and move on.
+respond and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on.
 
 If either is missing, add the missing server(s) to `~/.gemini/antigravity/mcp_config.json` (Windows:
 `C:\Users\<USERNAME>\.gemini\antigravity\mcp_config.json`), which you can reach from the Agent panel's
@@ -25,12 +25,12 @@ no tokens to handle:
 {
   "mcpServers": {
     "hostinger": {
-      "command": "npx",
-      "args": ["-y", "--prefix=<home>", "@hostinger/mcp@latest"]
+      "command": "<command>",
+      "args": ["<launcher>"]
     },
     "hostinger-ecommerce": {
-      "command": "npx",
-      "args": ["--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
+      "command": "<command>",
+      "args": ["<launcher>", "hostinger-ecommerce-mcp"]
     }
   }
 }

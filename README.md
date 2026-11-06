@@ -133,11 +133,14 @@ hostinger-api-mcp --logout
 
 ### JSON configuration for Claude, Cursor, etc.
 
+Register Node and the server script by absolute path, never `npx` or a bare `node`/`hostinger-api-mcp`: tools start the server in your project, where `npx` puts the project's `node_modules/.bin` first on `PATH`, a version manager (asdf, mise) runs whatever Node the project's `.tool-versions` names, and Windows looks a bare name up in the project folder first. Any of these lets a cloned repository run its own code with your Hostinger credentials. After the global install, `node -p process.execPath` prints the Node path and `npm root -g` the folder that holds `@hostinger/mcp`. Run both from your home folder.
+
 ```json
 {
     "mcpServers": {
         "hostinger-api": {
-            "command": "hostinger-api-mcp",
+            "command": "/absolute/path/to/node",
+            "args": ["/absolute/path/to/global/node_modules/@hostinger/mcp/src/servers/all.js"],
             "env": {
                 "DEBUG": "false",
                 "HOSTINGER_API_TOKEN": "YOUR API TOKEN"

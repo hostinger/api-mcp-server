@@ -77,10 +77,10 @@ Read `<skill>/VERSION`: its line 1 is the skills version this run uses, which go
 Run the bundled script. It verifies the MCP server and handles sign-in, emitting one JSON event per line on stdout. Run it as a background/streaming process. Show the user only the sign-in URL (`awaiting_user`) or a
 failure's `detail`, and handle the other events silently (table below).
 
-The script is safe and inspectable: it only checks the MCP server via `npx` and drives the OAuth sign-in (a browser flow with a localhost callback) — no other network calls, no filesystem writes.
+The script is safe and inspectable: it copies the launcher to `~/.hostinger/mcp/launch.mjs`, checks the MCP server through it and drives the OAuth sign-in (a browser flow with a localhost callback) — no other network calls, no other filesystem writes.
 
 ```bash
-node <skill>/connect/bootstrap.mjs
+cd "$HOME" && node <skill>/connect/bootstrap.mjs
 ```
 
 ### Relay these events
@@ -89,11 +89,12 @@ The script emits one JSON object per line:
 
 | Event | What to do                                                                                                                                                                                                                           |
 | --- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `launcher` (`command`, `args`) | How to start the MCP server: use these for every registration (Phase 2). |
 | `mcp_ok` | MCP server reachable — continue.                                                                                                                                                                                                     |
 | `logged_in` | Already authenticated (env token or a previous sign-in) — continue.                                                                                                                                                                  |
 | `awaiting_user` (`verificationUri`) | A browser window should have opened on the user's machine. Show the URL in plain prose and wait for the user to finish signing in. The OAuth callback lands on a localhost port, so the sign-in must be completed on this same machine. |
 | `success` | Bootstrap done — continue to Phase 2. |
-| `mcp_unreachable` / `login_failed` (with `detail`) | Stop and show the user the `detail`. Do not improvise a parallel setup by hand. |
+| `launcher_failed` / `mcp_unreachable` / `login_failed` (with `detail`) | Stop and show the user the `detail`. Do not improvise a parallel setup by hand. |
 
 If the environment has a `HOSTINGER_API_TOKEN` set (for example CI), the bootstrap reports `logged_in` immediately — no browser needed.
 
@@ -107,8 +108,8 @@ hostinger-api-mcp --login
 hostinger-api-mcp --logout
 
 # Without a global install:
-npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --login
-npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --logout
+cd "$HOME" && node "$HOME/.hostinger/mcp/launch.mjs" --login
+cd "$HOME" && node "$HOME/.hostinger/mcp/launch.mjs" --logout
 ```
 
 Credentials live in `~/.config/hostinger-mcp/credentials.json` (macOS/Linux) or `%APPDATA%\hostinger-mcp\credentials.json` (Windows) and are shared by every Hostinger MCP binary. OAuth works only when the tool runs the server over its default local (stdio) transport, which is what every registration below uses; `--http` needs `HOSTINGER_API_TOKEN`.
@@ -127,8 +128,8 @@ one group says nothing about the other:
 
 | Group | Operations | Comes from | Needed by |
 |---|---|---|---|
-| **Hosting** | `hosting_*` (websites, deploy, build report), `wordpress_*` | `hostinger` (`npx -y --prefix="$HOME" @hostinger/mcp@latest`), or the scoped servers such as `hostinger-hosting` + `hostinger-wordpress` | every build |
-| **Ecommerce** | `ecommerce_*` (stores, products, shipping, payments) | **only** `hostinger-ecommerce` (`npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp`), or the Ecommerce MCP in the Hostinger Connector. Neither `hostinger` nor the scoped hosting servers include it | Ecommerce backends (chosen later, in refine) |
+| **Hosting** | `hosting_*` (websites, deploy, build report), `wordpress_*` | `hostinger` (`<command> <launcher>`), or the scoped servers such as `hostinger-hosting` + `hostinger-wordpress` | every build |
+| **Ecommerce** | `ecommerce_*` (stores, products, shipping, payments) | **only** `hostinger-ecommerce` (`<command> <launcher> hostinger-ecommerce-mcp`), or the Ecommerce MCP in the Hostinger Connector. Neither `hostinger` nor the scoped hosting servers include it | Ecommerce backends (chosen later, in refine) |
 
 Check each group on its own, right here at connect, before anything else:
 
@@ -148,8 +149,8 @@ Most coding tools load MCP servers only when they start, so a server registered 
 until the tool restarts. When either tool group above is missing:
 
 1. **Register the missing servers** in the tool's MCP config, as the tool route below shows: `hostinger`
-   (`npx -y --prefix="$HOME" @hostinger/mcp@latest`) if the hosting group is missing, and `hostinger-ecommerce`
-   (`npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp`) if the ecommerce group is missing.
+   (`<command> <launcher>`) if the hosting group is missing, and `hostinger-ecommerce`
+   (`<command> <launcher> hostinger-ecommerce-mcp`) if the ecommerce group is missing.
    Skip a server that is already registered under its name. When neither group is there, register
    both: the backend isn't chosen until refine, and one restart then covers every backend.
 2. **Write `connect.json`** (Phase 3) before you stop. The skill folder from Phase 1 stays in place,
@@ -163,12 +164,28 @@ until the tool restarts. When either tool group above is missing:
 
 If a tool loads new servers without a restart (VS Code), use them right away and skip steps 3–4.
 
-**Every `npx` command and registration keeps `--prefix` set to the user's home folder.** The tool
-starts the server, and you run commands, in the user's project, often a cloned repository or
-template. Without `--prefix`, npm reads the `.npmrc` there, and whoever wrote it can point npx at
-another registry or run their own code. In shell commands write `--prefix="$HOME"` (the shell expands
-it when you register). In JSON or TOML configs replace `<home>` with the home folder's absolute path
-(`echo $HOME`, e.g. `/Users/me` or `C:\\Users\\me`). Never drop the flag or leave `<home>` in place.
+**Every registration and every command that starts the MCP server goes through the launcher**
+(`~/.hostinger/mcp/launch.sh` and `launch.mjs`, which the bootstrap writes): never `npx` directly, with or without
+`--prefix`. The tool starts the server, and you run commands, in the user's project, often a cloned
+repository or template. npx run there puts the project's `node_modules/.bin` first on PATH and reads
+its `.npmrc`, so whoever wrote the project runs their own `node` with the user's Hostinger sign-in.
+The launcher runs npx from the home folder instead. A registration runs exactly the bootstrap's
+`launcher` event, never a bare `node`: a version manager (asdf, mise) picks the Node that the project's
+own `.tool-versions` names. On macOS and Linux the event is `/bin/sh` with `launch.sh`, which finds
+Node only after moving to the home folder, so Node upgrades don't break it; on Windows it is the
+absolute path of `node.exe` with `launch.mjs`. Replace `<command>` and `<launcher>` with that event's
+`command` and `args[0]`, in shell commands and in JSON or TOML configs alike, and never leave a
+placeholder in place. In JSON and TOML configs, double every backslash of a Windows path
+(`C:\\Program Files\\nodejs\\node.exe`); a single one is an escape there (`\n` in `\nodejs` becomes a
+newline). Commands you run yourself start in the home folder
+(`cd "$HOME" && node …`) for the same reason.
+
+**An existing Hostinger registration is "already registered" only when it runs exactly the
+bootstrap's `launcher` event** (same `command`, `args[0]` the launcher, plus `hostinger-ecommerce-mcp`
+for that server). Before you trust one (both groups present, or a name the tool lists), check its
+command (Claude Code: `claude mcp get <name>`; otherwise the tool's MCP config). Anything else, such as
+`npx`, a bare `node` or `hostinger-api-mcp`, or any other command or path than the event's:
+remove it and register it again through the launcher, then follow *register, restart, resume*.
 
 | Tool        | Route                           |
 |-------------|---------------------------------|
@@ -180,7 +197,7 @@ it when you register). In JSON or TOML configs replace `<home>` with the home fo
 | Devin       | `connect/tools/devin.md`        |
 
 If the user's tool isn't listed yet, connect it the generic way: register both Hostinger MCP servers
-in that tool's MCP config (command `npx`, args as above), then follow *register, restart, resume*.
+in that tool's MCP config (command `<command>`, args `<launcher>` as above), then follow *register, restart, resume*.
 
 ### The skills come from Phase 1 only
 

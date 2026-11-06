@@ -19,14 +19,14 @@ groups as *Check both tool groups* in `connect/SKILL.md` says:
   `hostinger-wordpress`, `hostinger-domains`, …) never include it, so a session full of
   `mcp__hostinger-*__*` tools can still be missing it.
 
-Both present → use them and move on. Either missing → register the missing server(s) at user scope
+Both present and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on. Either missing → register the missing server(s) at user scope
 now (`claude mcp list` shows what's already registered; skip those). The bootstrap already signed you
 in, so they reuse the cached sign-in (`~/.config/hostinger-mcp/credentials.json`, or
 `HOSTINGER_API_TOKEN`) and there are no tokens to handle:
 
 ```bash
-claude mcp add hostinger --scope user -- npx -y --prefix="$HOME" @hostinger/mcp@latest                                     # hosting group missing
-claude mcp add hostinger-ecommerce --scope user -- npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp  # ecommerce group missing
+claude mcp add hostinger --scope user -- "<command>" "<launcher>"                                     # hosting group missing
+claude mcp add hostinger-ecommerce --scope user -- "<command>" "<launcher>" hostinger-ecommerce-mcp  # ecommerce group missing
 ```
 
 Claude Code loads MCP servers only at startup, so follow *register, restart, resume* in

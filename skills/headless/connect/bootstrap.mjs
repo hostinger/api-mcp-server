@@ -2,10 +2,10 @@
 // Hostinger Headless — bootstrap.
 // Verifies the Hostinger MCP server is reachable and drives the OAuth sign-in,
 // emitting one JSON event per line on stdout so a coding agent can relay
-// progress to the user. No filesystem writes besides what the MCP itself
-// stores (OAuth credentials); no network calls of its own.
+// progress to the user. Its only writes are the launcher (~/.hostinger/mcp/launch.mjs, which
+// coding tools register) and what the MCP itself stores (OAuth credentials); no network calls of its own.
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 
@@ -17,19 +17,30 @@ const fail = (event, extra = {}) => {
   process.exit(1);
 };
 
-// ── platform-safe binary names (npm/npx are .cmd on Windows) ─────────────────
+// ── the MCP server, always through the launcher ──────────────────────────────
+// launch.mjs runs the latest published package via npx from the home folder (see its header for why
+// npx must never run in the project). Coding tools register the home copy, which every run refreshes,
+// so a registration keeps working when the skill folder moves to a new version.
 const isWin = process.platform === 'win32';
-const bin = (name) => (isWin ? `${name}.cmd` : name);
-// Run the MCP via npx — no global install, always the latest published version.
-// Use --package so npx resolves the published package, then invoke the unified binary.
-const MCP = [bin('npx'), '-y', '--package=@hostinger/mcp@latest', 'hostinger-api-mcp'];
-// Node >= 18.20.2 / 20.12.2 refuses to spawn a .cmd/.bat without a shell
-// (CVE-2024-27980), so npx.cmd needs shell:true on Windows. Our args are all
-// fixed literals, so enabling the shell introduces no injection risk.
-const spawnShell = isWin;
+const LAUNCHER = path.join(os.homedir(), '.hostinger', 'mcp', 'launch.mjs');
+try {
+  mkdirSync(path.dirname(LAUNCHER), { recursive: true });
+  copyFileSync(new URL('./launch.mjs', import.meta.url), LAUNCHER);
+  copyFileSync(new URL('./launch.sh', import.meta.url), LAUNCHER.replace(/\.mjs$/, '.sh'));
+} catch (e) {
+  fail('launcher_failed', { detail: String(e) });
+}
+const MCP = [process.execPath, LAUNCHER];
+// A registration never names a bare `node`: Windows looks it up in the working directory (the project)
+// first, and a version manager's shim (asdf, mise) runs the Node the project's .tool-versions names.
+// macOS/Linux register /bin/sh with launch.sh, which finds node only after moving to home, so Node
+// upgrades keep working. Windows names this Node by absolute path (this script runs from home).
+emit('launcher', isWin
+  ? { command: process.execPath, args: [LAUNCHER] }
+  : { command: '/bin/sh', args: [LAUNCHER.replace(/\.mjs$/, '.sh')] });
 
 function capture(cmd, args) {
-  const r = spawnSync(cmd, args, { encoding: 'utf8', shell: spawnShell, cwd: os.homedir() });
+  const r = spawnSync(cmd, args, { encoding: 'utf8', cwd: os.homedir() });
   return { status: r.status ?? 1, out: `${r.stdout || ''}${r.stderr || ''}`, error: r.error };
 }
 
@@ -72,7 +83,7 @@ function existingAuth() {
 // prefix — forward it so the agent can show it if the browser didn't open.
 function login() {
   return new Promise((resolve) => {
-    const child = spawn(MCP[0], [...MCP.slice(1), '--login'], { shell: spawnShell, cwd: os.homedir() });
+    const child = spawn(MCP[0], [...MCP.slice(1), '--login'], { cwd: os.homedir() });
     let diag = '';
     let urlSent = false;
     const collect = (chunk) => {

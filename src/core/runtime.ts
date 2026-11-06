@@ -4170,6 +4170,12 @@ class MCPServer {
 }
 
 export async function startServer({ name, version, tools, instructions, skills }: { name: string; version: string; tools: OpenApiTool[]; instructions?: string; skills?: Skill[] }): Promise<void> {
+  // The headless skill's launcher starts this server from the home folder (npx run in the project would
+  // put the project's node_modules/.bin first on PATH) and names the project here, so relative paths in
+  // tool arguments still resolve against it. Everything that runs from PATH is resolved by now.
+  if (process.env.MCP_PROJECT_DIR) {
+    try { process.chdir(process.env.MCP_PROJECT_DIR); } catch { /* stay in the home folder */ }
+  }
   const argv = minimist(process.argv.slice(2), {
     string: ['host'],
     boolean: ['stdio', 'http', 'help', 'version', 'login', 'logout'],

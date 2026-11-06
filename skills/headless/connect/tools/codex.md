@@ -12,27 +12,27 @@ description: "Specific Codex Hostinger MCP Server connection instructions for th
 
 The later stages drive the Hostinger connector through Codex's native MCP tools. Check **both** tool groups (hosting and ecommerce), as *Check both tool groups* in `connect/SKILL.md`
 says: other Hostinger tools responding doesn't mean the `hostinger-ecommerce` ones are there. Both
-respond → use them and move on.
+respond and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on.
 
 If either is missing, register the missing server(s); skip one already registered. The bootstrap already signed you in, so they reuse the cached
 sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are no tokens
 to handle:
 
 ```bash
-codex mcp add hostinger -- npx -y --prefix="$HOME" @hostinger/mcp@latest
-codex mcp add hostinger-ecommerce -- npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
+codex mcp add hostinger -- "<command>" "<launcher>"
+codex mcp add hostinger-ecommerce -- "<command>" "<launcher>" hostinger-ecommerce-mcp
 ```
 
 or add them to `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.hostinger]
-command = "npx"
-args = ["-y", "--prefix=<home>", "@hostinger/mcp@latest"]
+command = "<command>"
+args = ["<launcher>"]
 
 [mcp_servers.hostinger-ecommerce]
-command = "npx"
-args = ["--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
+command = "<command>"
+args = ["<launcher>", "hostinger-ecommerce-mcp"]
 ```
 
 Codex loads MCP servers only when it starts, so follow *register, restart, resume* in

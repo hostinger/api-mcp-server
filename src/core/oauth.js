@@ -85,11 +85,21 @@ function parseIssuer(raw) {
   return u.origin;
 }
 
+// Keeps the absolute PATH entries outside any node_modules folder. npx run in a project puts its
+// node_modules/.bin (and each parent's) first on PATH, and a relative entry resolves against the project,
+// so either would let the project supply xdg-open.
+export function safePath(value, delimiter = path.delimiter) {
+  return value
+    .split(delimiter)
+    .filter((p) => path.isAbsolute(p) && !p.split(/[\\/]/).includes("node_modules"))
+    .join(delimiter);
+}
+
 // No shell: the URL is a single argv entry, never parsed by sh or cmd.
-// Windows resolves a bare program name from the working directory before PATH,
-// so rundll32 is launched by absolute path to never pick up a planted copy.
+// rundll32 and macOS open are launched by absolute path, so neither a PATH entry nor (on Windows,
+// which looks a bare name up in the working directory first) a planted copy can stand in for them.
 export function browserCommand(platform, url, systemRoot = process.env.SystemRoot) {
-  if (platform === "darwin") return ["open", [url]];
+  if (platform === "darwin") return ["/usr/bin/open", [url]];
   if (platform === "win32") {
     return [
       path.win32.join(systemRoot || "C:\\Windows", "System32", "rundll32.exe"),
@@ -435,7 +445,7 @@ export class OAuthProvider {
       "[OAuth] If the browser does not open, copy the URL above into one manually.\n\n",
     );
     const [cmd, args] = browserCommand(process.platform, url);
-    execFile(cmd, args, (err) => {
+    execFile(cmd, args, { cwd: os.homedir(), env: { ...process.env, PATH: safePath(process.env.PATH ?? "") } }, (err) => {
       if (err) {
         process.stderr.write(
           `[OAuth] Could not auto-launch browser: ${err.message}\n`,

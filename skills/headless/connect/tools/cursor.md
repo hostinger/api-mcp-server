@@ -13,13 +13,13 @@ description: "Specific Cursor Hostinger MCP Server connection instructions for t
 
 **Prerequisite:** Node.js 20 or newer on `PATH` (`node -v`). The published package engines require `>=20`; use Node 24 if you follow the package README.
 
-The Hostinger MCP is the npm package `@hostinger/mcp`. You do **not** need a global install — Cursor (and this session) can run it through `npx`. Prefer the unified binary `hostinger-api-mcp` (every operation). Scoped binaries such as `hostinger-hosting-mcp` are optional.
+The Hostinger MCP is the npm package `@hostinger/mcp`. You do **not** need a global install — Cursor (and this session) run it through the launcher (`~/.hostinger/mcp/`, written by the connect bootstrap), which starts the latest release with `npx` from your home folder. Never run `npx` for it directly: from the project, npx would run the project's own `node`. `<command>` and `<launcher>` below come from the bootstrap's `launcher` event (see `connect/SKILL.md`). Prefer the unified binary `hostinger-api-mcp` (every operation). Scoped binaries such as `hostinger-hosting-mcp` are optional.
 
 ### Option A — no global install (recommended)
 
 ```bash
 # Verify the package/binary is reachable
-npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --version
+cd "$HOME" && node "$HOME/.hostinger/mcp/launch.mjs" --version
 ```
 
 ### Option B — global install
@@ -37,7 +37,7 @@ hostinger-api-mcp --version
 Check **both** tool groups, as *Check both tool groups* in `connect/SKILL.md` says: hosting
 (`mcp__hostinger__*` or `mcp__hostinger-hosting__*`) **and** ecommerce (`mcp__hostinger-ecommerce__*`).
 The scoped `mcp__hostinger-*__*` servers never include ecommerce, so they alone don't count. Both
-present → skip registration: go to Step 2 only if you still need sign-in, otherwise go to Step 3.
+present and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → skip registration: go to Step 2 only if you still need sign-in, otherwise go to Step 3.
 
 If either is missing, register the missing server(s) in `~/.cursor/mcp.json` (global, so every project and every
 later run has them). Merge them into any existing `mcpServers` rather than replacing the file.
@@ -48,12 +48,12 @@ OAuth can run:
 {
   "mcpServers": {
     "hostinger": {
-      "command": "npx",
-      "args": ["--yes", "--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-api-mcp"]
+      "command": "<command>",
+      "args": ["<launcher>"]
     },
     "hostinger-ecommerce": {
-      "command": "npx",
-      "args": ["--yes", "--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
+      "command": "<command>",
+      "args": ["<launcher>", "hostinger-ecommerce-mcp"]
     }
   }
 }
@@ -74,7 +74,7 @@ If the connect bootstrap already emitted `logged_in` / `success`, credentials ar
 Otherwise run the login command. It registers a dynamic OAuth client (once per machine), **opens the user's browser** to Hostinger's authorization page, listens on a localhost callback, stores tokens, and exits:
 
 ```bash
-npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --login
+cd "$HOME" && node "$HOME/.hostinger/mcp/launch.mjs" --login
 ```
 
 (With a global install: `hostinger-api-mcp --login`.)
@@ -95,7 +95,7 @@ They are shared across every Hostinger MCP binary. Expired access tokens refresh
 To sign out later:
 
 ```bash
-npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp --logout
+cd "$HOME" && node "$HOME/.hostinger/mcp/launch.mjs" --logout
 ```
 
 **API token (optional, CI / scripts):** set `HOSTINGER_API_TOKEN` in the environment before launching Cursor. When present it always wins and no OAuth code runs. Do not commit the token.

@@ -192,13 +192,15 @@ has usually outlasted the job, so it returns at once. The single rule that makes
 ### Waiting on Hostinger: `wait.mjs`
 
 `wait.mjs` (next to this file) waits for a slow Hostinger job in one command, so you don't spend a turn
-on every check:
+on every check. Run it, like `push-content.mjs`, from the home folder (`cd "$HOME" && …`): both
+start the Hostinger MCP server with the user's sign-in, and a version manager's `node` (asdf, mise)
+runs whatever Node the current project's `.tool-versions` names:
 
 ```bash
-node <skill>/wait.mjs setup <domain>              # a fresh site's setup → completed
-node <skill>/wait.mjs cms <domain> <username>     # a shell swap's WordPress install at /cms → valid
-node <skill>/wait.mjs build <domain> <buildUuid>  # the deploy build → completed, then the root serves 200
-node <skill>/wait.mjs live <domain>               # the root serves 200
+cd "$HOME" && node <skill>/wait.mjs setup <domain>              # a fresh site's setup → completed
+cd "$HOME" && node <skill>/wait.mjs cms <domain> <username>     # a shell swap's WordPress install at /cms → valid
+cd "$HOME" && node <skill>/wait.mjs build <domain> <buildUuid>  # the deploy build → completed, then the root serves 200
+cd "$HOME" && node <skill>/wait.mjs live <domain>               # the root serves 200
 ```
 
 Run it in the foreground, with a `--timeout` just under your tool's command limit (e.g. `--timeout 9m`

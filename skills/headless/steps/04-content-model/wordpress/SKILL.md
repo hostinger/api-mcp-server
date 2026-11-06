@@ -78,7 +78,7 @@ else is refused, with the field named.
 ## Step 2 — Run the push
 
 ```bash
-node <skill>/push-content.mjs <domain>
+cd "$HOME" && node <skill>/push-content.mjs <domain>
 ```
 
 It mints the token itself (never printed), removes WordPress's "Hello world!" post and "Sample Page",

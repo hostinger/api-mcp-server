@@ -15,13 +15,13 @@ This is an **instance-barrier** step: run it only after `provision.status == "co
 > **Connected to the hosted server (`mcp.hostinger.com`)?** Its `hosting_deploy` deploys Git
 > repositories only and cannot read a local `path`. Run this step through the local
 > `hostinger-api-mcp` server instead (see the connect step:
-> `npx --yes --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-api-mcp`).
+> `<command> <launcher>`).
 
 > **With a shell and the Hostinger CLI installed**, the same deploy is one command, with the build
 > settings passed exactly as the table below says. Run it from the project, since it links the current directory:
 > `cd ~/.hostinger/<domain>/src && hostinger up --domain <domain> --type nodejs --app-type <appType> --output-directory <dir> --build-script build --node-version 22 --package-manager npm --yes --format json`.
 > It uploads, builds, waits and returns `data.buildUuid` and `data.buildState`; add `--no-wait` to
-> return at once and wait with `node <skill>/wait.mjs build <domain> <uuid>`. Then continue at
+> return at once and wait with `cd "$HOME" && node <skill>/wait.mjs build <domain> <uuid>`. Then continue at
 > "Verify" below. Recent CLI versions see that the site is headless (`data.headless: true`) and
 > deploy only its Node.js frontend, leaving `/cms` alone; still pass the settings above.
 
@@ -156,7 +156,7 @@ keeps the root from serving 403 (see the rule above).
 Wait for it in one command (see *Waiting on Hostinger* in the top-level `SKILL.md`):
 
 ```bash
-node <skill>/wait.mjs build <domain> <buildUuid>
+cd "$HOME" && node <skill>/wait.mjs build <domain> <buildUuid>
 ```
 
 It waits for `hosting_get-deployment` to report the build `completed`, then for `https://<domain>/` to

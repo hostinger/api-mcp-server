@@ -12,7 +12,7 @@ description: "Specific VS Code Hostinger MCP Server connection instructions for 
 
 The later stages drive the Hostinger connector through VS Code's native MCP tools. Check **both** tool groups (hosting and ecommerce), as *Check both tool groups* in `connect/SKILL.md`
 says: other Hostinger tools responding doesn't mean the `hostinger-ecommerce` ones are there. Both
-respond → use them and move on.
+respond and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on.
 
 If either is missing, register the missing server(s) for VS Code; skip one already registered. The bootstrap already signed you in, so they reuse
 the cached sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are
@@ -25,13 +25,13 @@ no tokens to handle. Add them to `.vscode/mcp.json` (workspace) or your user `se
   "servers": {
     "hostinger": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "--prefix=<home>", "@hostinger/mcp@latest"]
+      "command": "<command>",
+      "args": ["<launcher>"]
     },
     "hostinger-ecommerce": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"]
+      "command": "<command>",
+      "args": ["<launcher>", "hostinger-ecommerce-mcp"]
     }
   }
 }
@@ -40,8 +40,8 @@ no tokens to handle. Add them to `.vscode/mcp.json` (workspace) or your user `se
 Or add them in two commands:
 
 ```bash
-code --add-mcp '{"name":"hostinger","command":"npx","args":["-y","--prefix=<home>","@hostinger/mcp@latest"]}'
-code --add-mcp '{"name":"hostinger-ecommerce","command":"npx","args":["--prefix=<home>","--package=@hostinger/mcp@latest","hostinger-ecommerce-mcp"]}'
+code --add-mcp '{"name":"hostinger","command":"<command>","args":["<launcher>"]}'
+code --add-mcp '{"name":"hostinger-ecommerce","command":"<command>","args":["<launcher>","hostinger-ecommerce-mcp"]}'
 ```
 
 VS Code picks up new servers and their tools become available right away, with no editor restart.

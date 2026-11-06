@@ -12,7 +12,7 @@ description: "Specific Devin Hostinger MCP Server connection instructions for th
 
 The later stages drive the Hostinger connector through Devin's native MCP tools. Check **both** tool groups (hosting and ecommerce), as *Check both tool groups* in `connect/SKILL.md`
 says: other Hostinger tools responding doesn't mean the `hostinger-ecommerce` ones are there. Both
-respond → use them and move on.
+respond and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on.
 
 If either is missing, register the missing server(s) for Devin; skip one already registered. The bootstrap already signed you in, so they reuse the
 cached sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are no
@@ -21,18 +21,18 @@ tokens to handle.
 - **Devin CLI:**
 
   ```bash
-  devin mcp add hostinger -- npx -y --prefix="$HOME" @hostinger/mcp@latest
-  devin mcp add hostinger-ecommerce -- npx --prefix="$HOME" --package=@hostinger/mcp@latest hostinger-ecommerce-mcp
+  devin mcp add hostinger -- "<command>" "<launcher>"
+  devin mcp add hostinger-ecommerce -- "<command>" "<launcher>" hostinger-ecommerce-mcp
   ```
 
 - **Devin app:** Settings → MCP Marketplace → **Add Your Own**, transport **STDIO**, once per server:
 
   ```json
-  { "command": "npx", "args": ["-y", "--prefix=<home>", "@hostinger/mcp@latest"] }
+  { "command": "<command>", "args": ["<launcher>"] }
   ```
 
   ```json
-  { "command": "npx", "args": ["--prefix=<home>", "--package=@hostinger/mcp@latest", "hostinger-ecommerce-mcp"] }
+  { "command": "<command>", "args": ["<launcher>", "hostinger-ecommerce-mcp"] }
   ```
 
 If the tools still aren't in this session, follow *register, restart, resume* in `connect/SKILL.md`:
