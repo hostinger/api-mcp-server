@@ -199,7 +199,7 @@ runs whatever Node the current project's `.tool-versions` names:
 ```bash
 cd "$HOME" && node <skill>/wait.mjs setup <domain>              # a fresh site's setup → completed
 cd "$HOME" && node <skill>/wait.mjs cms <domain> <username>     # a shell swap's WordPress install at /cms → valid
-cd "$HOME" && node <skill>/wait.mjs build <domain> <buildUuid>  # the deploy build → completed, then the root serves 200
+cd "$HOME" && node <skill>/wait.mjs build <domain> <buildUuid>  # the deploy build → completed, then the root serves 200 (http:// while SSL is pending)
 cd "$HOME" && node <skill>/wait.mjs live <domain>               # the root serves 200
 ```
 

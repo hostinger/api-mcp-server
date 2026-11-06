@@ -159,10 +159,14 @@ Wait for it in one command (see *Waiting on Hostinger* in the top-level `SKILL.m
 cd "$HOME" && node <skill>/wait.mjs build <domain> <buildUuid>
 ```
 
-It waits for `hosting_get-deployment` to report the build `completed`, then for `https://<domain>/` to
-serve 200. What its result means here:
+It waits for `hosting_get-deployment` to report the build `completed`, then up to 5 minutes for
+`https://<domain>/` (or `http://` while the certificate is pending) to serve 200. What its result means here:
 
 - `ok: true`: the build is done and the root serves 200. Go on to Step 5.
+- `ok: true` with `https_pending: true`: the build is done and `http://<domain>/` serves 200, but the
+  new domain's SSL certificate is still installing (this can take the better part of an hour). The
+  deploy worked: tell the user HTTPS will follow on its own, run Step 5 over `http://`, and don't
+  wait for the certificate.
 - `ok: false` with `build.state: failed`: read `log_tail` (the end of the build log) and `analysis`, fix
   locally, re-archive and redeploy (pass `fromLine` to `hosting_get-deployment` to read only new log
   output).

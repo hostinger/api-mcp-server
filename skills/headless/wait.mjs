@@ -4,8 +4,8 @@
 //
 //   node wait.mjs setup <domain>              # hosting_websites_list-setups row → completed (fresh site)
 //   node wait.mjs cms <domain> <username>     # wordpress_installations_list → /cms row is_valid (shell swap)
-//   node wait.mjs build <domain> <buildUuid>  # hosting_get-deployment → build completed, then the root serves 200
-//   node wait.mjs live <domain>               # https://<domain>/ serves 200
+//   node wait.mjs build <domain> <buildUuid>  # hosting_get-deployment → build completed, then the root serves 200 (http:// while SSL is pending)
+//   node wait.mjs live <domain>               # https://<domain>/ serves 200 (http:// while SSL is pending)
 //   any of them: [--timeout 10m]
 //
 // It talks to the local Hostinger MCP server, which reuses the sign-in from the connect step. Progress
@@ -78,11 +78,19 @@ const isTerminal = ({ error, status }) => (status >= 400 && status < 500 && ![40
 const rowsFor = (data, domain) =>
   (Array.isArray(data) ? data : data?.data ?? []).filter((r) => r.domain?.toLowerCase() === domain.toLowerCase());
 
+// A new domain's SSL certificate can take far longer than the build, and until then HTTPS fails at the
+// TLS handshake. When plain HTTP serves the app, the deploy is done; HTTPS follows on its own.
 const waitLive = (domain, timeoutMs) =>
   poll('live', timeoutMs, async () => {
     const status = await httpStatus(`https://${domain}/`);
-    return status === 200 ? { done: { ok: true, live: `https://${domain}/` } } : { status: `root ${status || 'unreachable'}` };
+    if (status === 200) return { done: { ok: true, live: `https://${domain}/` } };
+    if (status !== 0) return { status: `root ${status}` };
+    const plain = await httpStatus(`http://${domain}/`);
+    if (plain === 200) return { done: { ok: true, live: `http://${domain}/`, https_pending: true } };
+    return { status: `root unreachable over https, http ${plain || 'unreachable'}` };
   });
+
+const LIVE_TIMEOUT = '5m';
 
 const KINDS = {
   setup: {
@@ -140,14 +148,15 @@ const KINDS = {
       // Settings that didn't take make the root 403 for good, so don't wait for it to go live.
       const missing = ['app_type', 'output_directory', 'node_version'].filter((k) => build.buildSettings?.[k] == null);
       if (missing.length) return { ...build, ok: false, error: `build settings missing: ${missing.join(', ')}; pass them on hosting_deploy and redeploy` };
-      const live = await waitLive(domain, timeoutMs - (Date.now() - started));
+      const left = timeoutMs - (Date.now() - started);
+      const live = await waitLive(domain, Math.min(left, duration(LIVE_TIMEOUT)));
       return { ...build, ...live, waited_s: Math.round((Date.now() - started) / 1000) };
     },
   },
 
   live: {
     args: [],
-    timeout: '5m',
+    timeout: LIVE_TIMEOUT,
     run: (_mcp, { domain }, timeoutMs) => waitLive(domain, timeoutMs),
   },
 };
