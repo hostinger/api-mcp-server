@@ -270,7 +270,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Get the link for the user to open their website in Hostinger Horizons interface.\\n\nUse this tool when the user wants the link to an existing website, or when you need its\nwebsite URL before or after editing it.\\n\n`is_in_progress` is true while changes are being generated or the website is being published;\nwait until it is false before publishing. `published_at` is when the website was last published,\n`is_template` is whether its published pages show the \"Use template\" banner, and\n`has_ecommerce_store` is whether it has an online store.\\n\nWebsites can be edited with the `Edit website` tool, or by the user in Hostinger Horizons\ninterface in the provided website URL.",
+    "description": "Get the link for the user to open their website in Hostinger Horizons interface.\\n\nUse this tool when the user wants the link to an existing website, or when you need its\nwebsite URL before or after editing it.\\n\n`is_in_progress` is true while changes are being generated or the website is being published;\nwait until it is false before publishing. `is_generating` is true while changes are being generated,\nand `actions_in_progress` has `website_publish` while the website is being published.\n`published_at` is when the website was last published,\n`is_template` is whether its published pages show the \"Use template\" banner, and\n`has_ecommerce_store` is whether it has an online store.\\n\nWebsites can be edited with the `Edit website` tool, or by the user in Hostinger Horizons\ninterface in the provided website URL.",
     "method": "GET",
     "path": "/api/horizons/v1/websites/{websiteId}",
     "inputSchema": {
