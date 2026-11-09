@@ -4,6 +4,20 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.31.4 — 2026-11-09
+
+### Operations
+
+- Changed the description of `domains_portfolio_claim-free`
+- Changed the description of `domains_portfolio_list`
+- Changed the description of `domains_transfer_claim-free`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.31.3 — 2026-11-09
 
 ### Also in this release

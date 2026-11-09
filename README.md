@@ -1200,6 +1200,13 @@ Claim a free domain available on your account and register it.
 Unlike purchasing a domain, this consumes a free domain you already have,
 so no payment method is required.
 
+A free domain and a free domain transfer from the same plan are alternatives:
+claiming the free domain removes the plan's free domain transfer
+(`type: free_domain_transfer`). Before making request, confirm with the user which
+of the two they want. Right after a claim, the removed free domain transfer may
+still appear in the [domain list endpoint](#tag/domains-portfolio) for a short
+time; do not claim it.
+
 A successful response means the domain is registered. If registration fails, login to
 [hPanel](https://hpanel.hostinger.com/) and check domain registration status.
 
@@ -1251,6 +1258,10 @@ Use this endpoint to view comprehensive domain configuration and status.
 #### domains_portfolio_list
 
 Retrieve all domains associated with your account.
+
+A plan can include both a free domain (`type: free_domain`) and a free domain
+transfer (`type: free_domain_transfer`). They are alternatives: claiming one
+removes the other, which may still be listed for a short time after the claim.
 
 Use this endpoint to view user's domain portfolio.
 
@@ -1361,6 +1372,12 @@ Claim a free domain transfer available on your account and start the transfer.
 
 Unlike purchasing a transfer, this consumes a free domain transfer you already have,
 so no payment method is required.
+
+A free domain and a free domain transfer from the same plan are alternatives:
+claiming the free domain transfer removes the plan's free domain
+(`type: free_domain`). Before making request, confirm with the user which of the
+two they want. Right after a claim, the removed free domain may still appear in
+the [domain list endpoint](#tag/domains-portfolio) for a short time; do not claim it.
 
 Before making request, unlock the domain at the current registrar and get its authorization
 code. The transfer is validated first, so domains which cannot be transferred are rejected
