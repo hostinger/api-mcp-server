@@ -586,6 +586,23 @@ class MCPServer {
     }
   }
 
+  // upload-urls fails for a few seconds while the server's file browser starts or is under maintenance, and a retry
+  // usually succeeds, so 5xx responses and connection errors are retried; a 4xx and our own timeout are not.
+  private async retryUploadCredentialsRequest<T>(request: () => Promise<T>): Promise<T> {
+    const delays = [1000, 3000];
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await request();
+      } catch (error) {
+        if (!axios.isAxiosError(error) || error.code === 'ECONNABORTED' || (error.response && error.response.status < 500) || attempt >= delays.length) {
+          throw error;
+        }
+        this.log('warning', 'Upload credentials request failed, retrying: ' + error.message);
+        await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+      }
+    }
+  }
+
   private async fetchUploadCredentials(username: string, domain: string): Promise<{ uploadUrl: string; authRestToken: string; authToken: string }> {
     const baseUrl = this.baseUrl.endsWith("/") ? this.baseUrl : `${this.baseUrl}/`;
     const url = new URL('api/hosting/v1/files/upload-urls', baseUrl).toString();
@@ -611,7 +628,7 @@ class MCPServer {
         }
       };
 
-      const response = await axios(config);
+      const response = await this.retryUploadCredentialsRequest(() => axios(config));
 
       if (response.status !== 200) {
         throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
@@ -630,6 +647,13 @@ class MCPServer {
           status: responseStatus,
           data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
         });
+        // Only the API's message and correlation_id are passed on: a 5xx body can carry a stack trace or an
+        // upstream page (debug mode), which must not reach the user. The correlation_id lets support trace it.
+        if (error.response) {
+          const message = typeof responseData?.message === 'string' ? responseData.message.slice(0, 200) : 'no message';
+          const correlationId = typeof responseData?.correlation_id === 'string' ? ' (correlation_id: ' + responseData.correlation_id.slice(0, 100) + ')' : '';
+          throw new Error('API returned status ' + responseStatus + ': ' + message + correlationId);
+        }
       }
 
       throw error;
@@ -3463,6 +3487,23 @@ class MCPServer {
     }
   }
 
+  // upload-urls fails for a few seconds while the server's file browser starts or is under maintenance, and a retry
+  // usually succeeds, so 5xx responses and connection errors are retried; a 4xx and our own timeout are not.
+  private async agencyHosting_retryUploadCredentialsRequest<T>(request: () => Promise<T>): Promise<T> {
+    const delays = [1000, 3000];
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await request();
+      } catch (error) {
+        if (!axios.isAxiosError(error) || error.code === 'ECONNABORTED' || (error.response && error.response.status < 500) || attempt >= delays.length) {
+          throw error;
+        }
+        this.log('warning', 'Upload credentials request failed, retrying: ' + error.message);
+        await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+      }
+    }
+  }
+
   private async agencyHosting_fetchUploadCredentials(
     websiteUid: string
   ): Promise<{ url: string; auth_key: string; rest_auth_key: string }> {
@@ -3486,7 +3527,7 @@ class MCPServer {
         }
       };
 
-      const response = await axios(config);
+      const response = await this.agencyHosting_retryUploadCredentialsRequest(() => axios(config));
 
       if (response.status !== 200) {
         throw new Error(`API returned status ${response.status}: ${JSON.stringify(response.data)}`);
@@ -3505,6 +3546,13 @@ class MCPServer {
           status: responseStatus,
           data: typeof responseData === 'object' ? JSON.stringify(responseData) : responseData
         });
+        // Only the API's message and correlation_id are passed on: a 5xx body can carry a stack trace or an
+        // upstream page (debug mode), which must not reach the user. The correlation_id lets support trace it.
+        if (error.response) {
+          const message = typeof responseData?.message === 'string' ? responseData.message.slice(0, 200) : 'no message';
+          const correlationId = typeof responseData?.correlation_id === 'string' ? ' (correlation_id: ' + responseData.correlation_id.slice(0, 100) + ')' : '';
+          throw new Error('API returned status ' + responseStatus + ': ' + message + correlationId);
+        }
       }
 
       throw error;
