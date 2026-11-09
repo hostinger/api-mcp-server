@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.31.3 — 2026-11-09
+
+### Also in this release
+
+- Documentation: `README.md`
+- Bundled agent skills: `skills/headless/VERSION`
+
 ## v3.31.2 — 2026-11-09
 
 ### Also in this release

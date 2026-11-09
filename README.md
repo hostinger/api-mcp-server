@@ -18,6 +18,15 @@ claude mcp add --transport http hostinger https://mcp.hostinger.com
 
 This opens a browser window to authorize via OAuth. Once approved, the operations below are reachable through `execute` in your session.
 
+### Codex
+
+```bash
+codex mcp add hostinger --url https://mcp.hostinger.com
+codex mcp login hostinger
+```
+
+`login` opens the same OAuth flow in your browser.
+
 ### Other MCP-compatible clients
 
 Add `https://mcp.hostinger.com` as a remote Streamable HTTP MCP server in your client's configuration and complete the OAuth prompt when it appears. Refer to your client's docs for how it exposes "add remote MCP server" / "custom connector" settings.
