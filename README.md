@@ -1379,9 +1379,10 @@ claiming the free domain transfer removes the plan's free domain
 two they want. Right after a claim, the removed free domain may still appear in
 the [domain list endpoint](#tag/domains-portfolio) for a short time; do not claim it.
 
-Before making request, unlock the domain at the current registrar and get its authorization
-code. The transfer is validated first, so domains which cannot be transferred are rejected
-before the free domain transfer is consumed.
+Before making request, unlock the domain at the current registrar and, if its TLD uses one,
+get its authorization code. The transfer is validated first, so domains which cannot be
+transferred, or are missing a required authorization code, are rejected before the free
+domain transfer is consumed.
 
 A successful response means the transfer has been started. Completion depends on the current
 registrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).
@@ -1420,8 +1421,8 @@ Transfer a domain from another registrar to your account.
 
 The transfer runs on a domain transfer service you have already purchased.
 
-Before making request, unlock the domain at the current registrar and get its authorization
-code.
+Before making request, unlock the domain at the current registrar and, if its TLD uses one,
+get its authorization code.
 
 A successful response means the transfer has been started. Completion depends on the current
 registrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).

@@ -4475,7 +4475,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Claim a free domain transfer available on your account and start the transfer.\n\nUnlike purchasing a transfer, this consumes a free domain transfer you already have,\nso no payment method is required.\n\nA free domain and a free domain transfer from the same plan are alternatives:\nclaiming the free domain transfer removes the plan's free domain\n(`type: free_domain`). Before making request, confirm with the user which of the\ntwo they want. Right after a claim, the removed free domain may still appear in\nthe [domain list endpoint](#tag/domains-portfolio) for a short time; do not claim it.\n\nBefore making request, unlock the domain at the current registrar and get its authorization\ncode. The transfer is validated first, so domains which cannot be transferred are rejected\nbefore the free domain transfer is consumed.\n\nA successful response means the transfer has been started. Completion depends on the current\nregistrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nRequests which cannot be fulfilled are rejected with an error code in the response body.\n\nUse this endpoint to transfer a domain using a free domain transfer from your account.",
+    "description": "Claim a free domain transfer available on your account and start the transfer.\n\nUnlike purchasing a transfer, this consumes a free domain transfer you already have,\nso no payment method is required.\n\nA free domain and a free domain transfer from the same plan are alternatives:\nclaiming the free domain transfer removes the plan's free domain\n(`type: free_domain`). Before making request, confirm with the user which of the\ntwo they want. Right after a claim, the removed free domain may still appear in\nthe [domain list endpoint](#tag/domains-portfolio) for a short time; do not claim it.\n\nBefore making request, unlock the domain at the current registrar and, if its TLD uses one,\nget its authorization code. The transfer is validated first, so domains which cannot be\ntransferred, or are missing a required authorization code, are rejected before the free\ndomain transfer is consumed.\n\nA successful response means the transfer has been started. Completion depends on the current\nregistrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nRequests which cannot be fulfilled are rejected with an error code in the response body.\n\nUse this endpoint to transfer a domain using a free domain transfer from your account.",
     "method": "POST",
     "path": "/api/domains/v1/transfers/claim",
     "inputSchema": {
@@ -4487,7 +4487,7 @@ export default [
         },
         "auth_code": {
           "type": "string",
-          "description": "Authorization code from the current registrar"
+          "description": "EPP code that authorizes this transfer, which the domain owner gets from the current registrar. Required only for TLDs whose transfers use one."
         },
         "domain_contacts": {
           "type": "object",
@@ -4517,8 +4517,7 @@ export default [
         }
       },
       "required": [
-        "domain",
-        "auth_code"
+        "domain"
       ]
     },
     "security": [
@@ -4589,7 +4588,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Transfer a domain from another registrar to your account.\n\nThe transfer runs on a domain transfer service you have already purchased.\n\nBefore making request, unlock the domain at the current registrar and get its authorization\ncode.\n\nA successful response means the transfer has been started. Completion depends on the current\nregistrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nUse this endpoint to bring domains registered elsewhere into your account.",
+    "description": "Transfer a domain from another registrar to your account.\n\nThe transfer runs on a domain transfer service you have already purchased.\n\nBefore making request, unlock the domain at the current registrar and, if its TLD uses one,\nget its authorization code.\n\nA successful response means the transfer has been started. Completion depends on the current\nregistrar and can be followed with the [transfer list endpoint](#tag/domains-transfer).\n\nIf no WHOIS information is provided, default contact information for that TLD will be used.\nBefore making request, ensure WHOIS information for desired TLD exists in your account.\n\nUse this endpoint to bring domains registered elsewhere into your account.",
     "method": "POST",
     "path": "/api/domains/v1/transfers",
     "inputSchema": {
@@ -4601,7 +4600,7 @@ export default [
         },
         "auth_code": {
           "type": "string",
-          "description": "Authorization code from the current registrar"
+          "description": "EPP code that authorizes this transfer, which the domain owner gets from the current registrar. Required only for TLDs whose transfers use one."
         },
         "domain_contacts": {
           "type": "object",
@@ -4631,8 +4630,7 @@ export default [
         }
       },
       "required": [
-        "domain",
-        "auth_code"
+        "domain"
       ]
     },
     "security": [
