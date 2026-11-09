@@ -1021,6 +1021,8 @@ Use this endpoint to verify domain availability before purchase.
 
 Retrieve domain forwarding data.
 
+Returns 404 when the domain has no forwarding.
+
 Use this endpoint to view current redirect configuration for domains.
 
 - **Method**: `GET`

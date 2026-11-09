@@ -212,7 +212,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve domain forwarding data.\n\nUse this endpoint to view current redirect configuration for domains.",
+    "description": "Retrieve domain forwarding data.\n\nReturns 404 when the domain has no forwarding.\n\nUse this endpoint to view current redirect configuration for domains.",
     "method": "GET",
     "path": "/api/domains/v1/forwarding/{domain}",
     "inputSchema": {
