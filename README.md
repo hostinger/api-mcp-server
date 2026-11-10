@@ -1009,6 +1009,7 @@ Check availability of domain names across multiple TLDs.
 Multiple TLDs can be checked at once.
 If you want alternative domains with response, provide only one TLD and set `with_alternatives` to `true`.
 TLDs should be provided without leading dot (e.g. `com`, `net`, `org`).
+Premium domains are included: an available premium domain has `is_available` and `is_premium` set to `true`.
 
 Endpoint has rate limit of 90 requests per minute.
 
