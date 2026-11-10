@@ -1028,7 +1028,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve renewal information for a specified domain, including its status and current\nexpiration date.\n\nUse this endpoint to build renewal automation and expiry monitoring for a single domain.",
+    "description": "Retrieve renewal information for a specified domain, including its status, current\nexpiration date, whether it can be renewed, whether it is in its grace or redemption period,\nand when each of those periods ends.\n\nUse this endpoint to build renewal automation and expiry monitoring for a single domain.",
     "method": "GET",
     "path": "/api/domains/v1/portfolio/{domain}/renewal",
     "inputSchema": {

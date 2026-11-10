@@ -4,6 +4,20 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.33.0 — 2026-11-10
+
+### Operations
+
+- Changed the description of `domains_portfolio_renewal-information`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Bundled agent skills: `skills/headless/VERSION`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.32.1 — 2026-11-09
 
 ### Operations

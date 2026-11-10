@@ -2348,8 +2348,9 @@ Use this endpoint to make domain owner's information publicly visible.
   };
 
   /**
-   * Retrieve renewal information for a specified domain, including its status and current
-expiration date.
+   * Retrieve renewal information for a specified domain, including its status, current
+expiration date, whether it can be renewed, whether it is in its grace or redemption period,
+and when each of those periods ends.
 
 Use this endpoint to build renewal automation and expiry monitoring for a single domain.
    */
