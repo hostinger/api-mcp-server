@@ -2253,7 +2253,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve snapshot for a specified virtual machine.\n\nUse this endpoint to view current VPS snapshot information.",
+    "description": "Retrieve snapshot for a specified virtual machine.\n\nUse this endpoint to view current VPS snapshot information.\n\nReturns 404 when the virtual machine has no snapshot.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot",
     "inputSchema": {

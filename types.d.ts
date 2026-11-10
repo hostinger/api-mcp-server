@@ -1965,6 +1965,8 @@ Use this endpoint to set up domain redirects to other URLs.
 
 Both the old and new registrant must confirm it before the WHOIS change takes effect.
 
+Returns 404 when the domain has no pending IRTP verification.
+
 Use this endpoint to check the status of a WHOIS change awaiting registrant confirmation.
    */
   "domains_whois_pending-irtp-verification": {
@@ -10186,6 +10188,8 @@ Password will not be shown in the response.
    * Retrieve snapshot for a specified virtual machine.
 
 Use this endpoint to view current VPS snapshot information.
+
+Returns 404 when the virtual machine has no snapshot.
    */
   "vps_snapshots_get": {
     params: {

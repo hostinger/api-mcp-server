@@ -1078,6 +1078,8 @@ Retrieve a pending IRTP verification for a domain.
 
 Both the old and new registrant must confirm it before the WHOIS change takes effect.
 
+Returns 404 when the domain has no pending IRTP verification.
+
 Use this endpoint to check the status of a WHOIS change awaiting registrant confirmation.
 
 - **Method**: `GET`
@@ -4561,6 +4563,8 @@ Use this endpoint to configure and initialize purchased VPS instances.
 Retrieve snapshot for a specified virtual machine.
 
 Use this endpoint to view current VPS snapshot information.
+
+Returns 404 when the virtual machine has no snapshot.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/snapshot`
