@@ -1153,6 +1153,19 @@ The domain must be active. The subscription it belongs to is resolved automatica
 and the request is rejected with a 404 status code when the domain has no domain
 subscription of its own.
 
+The move is also refused unless the domain:
+- was registered at least 4 days ago
+- does not expire within the next 10 days
+- has an extension that supports moves
+- has no move already in progress
+- was not moved in the last 10 days
+- is not a premium domain
+- is not still processing a recent renewal
+
+A move refused for one of these rules is rejected with a 404 status code and error code 2048,
+with a message naming the rule. The receiving account is checked first, and when it cannot
+be used the message stays generic.
+
 Domains protected by premium protection require an additional verification step,
 such requests are rejected with a 428 status code.
 
