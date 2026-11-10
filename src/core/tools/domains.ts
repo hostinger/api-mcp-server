@@ -243,7 +243,7 @@ const tools: OpenApiTool[] = [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Update domain forwarding configuration.\n\nUse this endpoint to modify existing redirect configuration for domains.",
+    "description": "Update domain forwarding configuration.\n\nUpdating a forwarding changes the domain's DNS. If the domain does not use Hostinger nameservers, they are\nswitched to Hostinger's nameservers automatically, so website, email and other services whose DNS is hosted\nelsewhere stop working. The root (@) A and AAAA records in the domain's Hostinger DNS zone are also replaced\nwith records pointing to Hostinger, even when the domain already uses Hostinger nameservers. The domain's\ncurrent nameservers are returned by the [domain details endpoint](#tag/domains-portfolio); confirm with the\nuser before updating a forwarding on a domain that uses other nameservers. DNS changes can take some time to\npropagate.\n\nUse this endpoint to modify existing redirect configuration for domains.",
     "method": "PUT",
     "path": "/api/domains/v1/forwarding/{domain}",
     "inputSchema": {
@@ -318,7 +318,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create domain forwarding configuration.\n\nUse this endpoint to set up domain redirects to other URLs.",
+    "description": "Create domain forwarding configuration.\n\nCreating a forwarding changes the domain's DNS. If the domain does not use Hostinger nameservers, they are\nswitched to Hostinger's nameservers automatically, so website, email and other services whose DNS is hosted\nelsewhere stop working. The root (@) A and AAAA records in the domain's Hostinger DNS zone are also replaced\nwith records pointing to Hostinger, even when the domain already uses Hostinger nameservers. The domain's\ncurrent nameservers are returned by the [domain details endpoint](#tag/domains-portfolio); confirm with the\nuser before creating a forwarding on a domain that uses other nameservers. DNS changes can take some time to\npropagate.\n\nUse this endpoint to set up domain redirects to other URLs.",
     "method": "POST",
     "path": "/api/domains/v1/forwarding",
     "inputSchema": {
