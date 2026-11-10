@@ -2717,6 +2717,13 @@ Use this endpoint to view available contact profiles for domain registration.
    * Create WHOIS contact profile.
 
 Use this endpoint to add new contact information for domain registration.
+
+The keys required in `whois_details` and `tld_details` depend on the TLD, country and entity type, and can be
+country-specific: for Lithuania, for example, `state_lt` and `zip_lt` are required instead of `state` and
+`zip`. A 422 response lists every required key that is missing or has an invalid value under
+`errors.whois_details`, and under `errors.tld_details` when `tld_details` is sent. Each error states the
+key's constraint and, where the key takes a fixed set of values, the allowed values, so all of them can be
+corrected in one retry.
    */
   "domains_whois_create": {
     params: {
@@ -2733,11 +2740,11 @@ Use this endpoint to add new contact information for domain registration.
        */
       entity_type: string;
       /**
-       * TLD details
+       * TLD-specific details. The required keys depend on the TLD, country and entity type.
        */
       tld_details?: object;
       /**
-       * WHOIS details
+       * WHOIS contact details. The required keys depend on the TLD, country and entity type, and can be country-specific (e.g. `state_lt` and `zip_lt` instead of `state` and `zip` for Lithuania).
        */
       whois_details: object;
     };

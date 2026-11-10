@@ -1522,7 +1522,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create WHOIS contact profile.\n\nUse this endpoint to add new contact information for domain registration.",
+    "description": "Create WHOIS contact profile.\n\nUse this endpoint to add new contact information for domain registration.\n\nThe keys required in `whois_details` and `tld_details` depend on the TLD, country and entity type, and can be\ncountry-specific: for Lithuania, for example, `state_lt` and `zip_lt` are required instead of `state` and\n`zip`. A 422 response lists every required key that is missing or has an invalid value under\n`errors.whois_details`, and under `errors.tld_details` when `tld_details` is sent. Each error states the\nkey's constraint and, where the key takes a fixed set of values, the allowed values, so all of them can be\ncorrected in one retry.",
     "method": "POST",
     "path": "/api/domains/v1/whois",
     "inputSchema": {
@@ -1546,12 +1546,12 @@ export default [
         },
         "tld_details": {
           "type": "object",
-          "description": "TLD details",
+          "description": "TLD-specific details. The required keys depend on the TLD, country and entity type.",
           "properties": {}
         },
         "whois_details": {
           "type": "object",
-          "description": "WHOIS details",
+          "description": "WHOIS contact details. The required keys depend on the TLD, country and entity type, and can be country-specific (e.g. `state_lt` and `zip_lt` instead of `state` and `zip` for Lithuania).",
           "properties": {}
         }
       },
