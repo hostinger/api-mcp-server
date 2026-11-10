@@ -822,7 +822,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve detailed information for specified domain.\n\nA domain is found here only once it is registered. Until then, `Get domain list` shows it, and\nits `verification` field says what registration waits for when the domain is held for\nverification.\n\nUse this endpoint to view comprehensive domain configuration and status.",
+    "description": "Retrieve detailed information for specified domain.\n\nA domain is found here only once it is registered. Until then, `Get domain list` shows it, and\nits `verification` field says what registration waits for when the domain is held for\nverification.\n\nAfter registration, the registry may require the owner contact to be verified by email, phone\nnumber or contact name before a deadline, after which the domain is suspended. The\n`contact_verification` field shows what needs verifying, its state and the deadline.\n\nUse this endpoint to view comprehensive domain configuration and status.",
     "method": "GET",
     "path": "/api/domains/v1/portfolio/{domain}",
     "inputSchema": {
