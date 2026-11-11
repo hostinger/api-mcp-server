@@ -4,6 +4,14 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.38.1 — 2026-11-11
+
+### Also in this release
+
+- Dependencies: `package-lock.json`
+- Bundled agent skills: `skills/headless/VERSION`, `skills/headless/steps/04-content-model/SKILL.md`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v3.38.0 — 2026-11-11
 
 ### Operations

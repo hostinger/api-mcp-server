@@ -170,30 +170,38 @@ Source every image in a few batched calls, not a search and a fetch per photo:
    "sourdough bread", "bakery interior", "Lisbon street").
    - With an `UNSPLASH_ACCESS_KEY` in the environment, use the official API, one call per theme:
      `GET https://api.unsplash.com/search/photos?query=<theme>&orientation=landscape&per_page=20` with
-     header `Authorization: Client-ID <key>`. Each result's `urls.raw` is the file, `alt_description`
-     what it shows and `user.name` the photographer; for each photo you keep, also `GET` its
+     header `Authorization: Client-ID <key>`. Each result's `urls.raw` is the file (its `photo-…`
+     part, before `?`, is the `<file id>`), `id` the `<page id>`, `alt_description` what it shows and
+     `user.name` the photographer; for each photo you keep, also `GET` its
      `links.download_location` (same header), as the API terms require.
    - Without a key, open the theme's search page `https://unsplash.com/s/photos/<theme-with-dashes>`
-     with your **web-fetch tool**, once per theme, and ask it to list every free photo on the page with
-     its `images.unsplash.com/photo-<…>` URL quoted exactly (the part before `?`), the photo page
-     link, the alt text and the photographer. One fetch returns 10–20 candidates. Skip the
-     `plus.unsplash.com/premium_photo-…` results: they are Unsplash+ and not free. Fetch the themes in
-     parallel when your tool allows several calls at once. Fall back to a web search limited to
-     `unsplash.com` plus a fetch of one photo page (`https://unsplash.com/photos/<…>`) only for a
-     subject no search page covers.
+     with your **web-fetch tool**, once per theme, with this prompt (a short fixed answer keeps the
+     fetch fast):
+
+     ```text
+     List up to 12 free photos on this page, one line each, in this exact format and nothing else:
+     <file id> | <page id> | <alt text> | <photographer>
+     <file id> is the photo-… part of its images.unsplash.com URL, copied exactly, before any "?".
+     <page id> is the part after unsplash.com/photos/ in its photo page link.
+     Skip plus.unsplash.com/premium_photo-… results: they are Unsplash+ and not free.
+     ```
+
+     Fetch the themes in parallel when your tool allows several calls at once. Fall back to a web
+     search limited to `unsplash.com` plus a fetch of one photo page (`https://unsplash.com/photos/<…>`)
+     only for a subject no search page covers.
    - Every other `unsplash.com` request (curl on any page, `/photos/<id>/download`, `/napi/…`,
      `/oembed`) hits a bot challenge: a `307` to `/.within.website` (Anubis) or a 401. If your fetch
      tool gets the challenge page too, stop: no user-agent spoofing or other workarounds. On a
      WordPress backend where Option A hasn't already failed, offer it; otherwise ask the user for an
      `UNSPLASH_ACCESS_KEY` or record the gap (step 5).
-2. **Check them all in one command.** Pick a candidate per image brief from the alt text, then in one
+2. **Check them all in one command.** Pick a candidate per image brief from its alt text, then in one
    shell command request each web-size URL
-   (`https://images.unsplash.com/photo-<…>?w=1600&q=80&fm=jpg&fit=max`, query string replaced) and
+   (`https://images.unsplash.com/<file id>?w=1600&q=80&fm=jpg&fit=max`, query string replaced) and
    confirm 200 `image/jpeg`, and save a small preview (`?w=500`) of each into one folder, e.g.:
 
    ```bash
    mkdir -p ~/.hostinger/<domain>/media/previews && cd ~/.hostinger/<domain>/media/previews && \
-   for id in photo-<a> photo-<b>; do
+   for id in <file id> <file id>; do
      curl -s -o /dev/null -w "$id %{http_code} %{content_type}\n" "https://images.unsplash.com/$id?w=1600&q=80&fm=jpg&fit=max"
      curl -s -o "$id.jpg" "https://images.unsplash.com/$id?w=500&q=60&fm=jpg&fit=max"
    done
@@ -211,8 +219,8 @@ Source every image in a few batched calls, not a search and a fetch per photo:
    `content.json` instead: `url`, `alt`, `filename`, and the credit as `caption`):
 
    ```markdown
-   Image: https://images.unsplash.com/photo-<…>?w=1600&q=80&fm=jpg&fit=max
-   Image credit: <Photographer> — https://unsplash.com/photos/<id> (Unsplash License)
+   Image: https://images.unsplash.com/<file id>?w=1600&q=80&fm=jpg&fit=max
+   Image credit: <Photographer> — https://unsplash.com/photos/<page id> (Unsplash License)
    Image alt: <what the photo shows>
    Image file: <site>-<subject>.jpg
    ```
