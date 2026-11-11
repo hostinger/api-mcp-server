@@ -2479,7 +2479,12 @@ class MCPServer {
     Object.entries(requestParams).forEach(([key, value]) => {
       const placeholder = `{${key}}`;
       if (path.includes(placeholder)) {
-        path = path.replace(placeholder, encodeURIComponent(String(value)));
+        // Encoding keeps dot segments and new URL() resolves them away, which would call another endpoint.
+        const segment = String(value);
+        if (segment === '' || segment === '.' || segment === '..') {
+          throw new Error(`Invalid value for path parameter ${key}.`);
+        }
+        path = path.replace(placeholder, encodeURIComponent(segment));
         delete requestParams[key]; // Remove used parameter
       }
     });

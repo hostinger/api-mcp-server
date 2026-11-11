@@ -96,6 +96,9 @@ Zip the project **source** with `package.json` at the archive root. **Include** 
 `public/`, the framework config (`next.config.mjs` / `astro.config.mjs`), `tsconfig.json`,
 `package.json`, `package-lock.json`, `.nvmrc`. **Exclude** `node_modules/`, the build output
 (`.next/`, `dist/`, `out/`), `.git/`, and any `.htaccess` — the server installs and builds from source.
+**Never archive secrets:** the commands below also leave out `.env*` files, `.npmrc` and key/certificate
+files (`*.pem`, `*.key`, `*.p12`, `*.pfx`). A brought-in project often has a `.env.local`; its values go in
+as environment variables (Step 1), never in the archive.
 
 > ## ⚠️ Write the archive outside `~/.hostinger/` (the deploy refuses it there)
 > `hosting_deploy` refuses any `path` under a hidden folder at the top of the home directory
@@ -110,7 +113,8 @@ Zip the project **source** with `package.json` at the archive root. **Include** 
 # macOS/Linux — the OS temp dir is outside the home directory
 cd ~/.hostinger/<domain>/src
 DEPLOY_DIR=$(mktemp -d)
-zip -r -X "$DEPLOY_DIR/app.zip" . -x 'node_modules/*' '.next/*' 'dist/*' 'out/*' '.git/*' '**/.htaccess'
+zip -r -X "$DEPLOY_DIR/app.zip" . -x 'node_modules/*' '.next/*' 'dist/*' 'out/*' '.git/*' '**/.htaccess' \
+  '.env*' '*/.env*' '.npmrc' '*/.npmrc' '*.pem' '*.key' '*.p12' '*.pfx'
 echo "$DEPLOY_DIR/app.zip"   # the absolute path to pass as `path` in Step 3
 ```
 
@@ -119,7 +123,8 @@ echo "$DEPLOY_DIR/app.zip"   # the absolute path to pass as `path` in Step 3
 # profile, which only you can write to (never a folder under C:\, which every local account can write into)
 cd $HOME\.hostinger\<domain>\src
 $DeployDir = Join-Path $HOME "hostinger-deploy\<domain>"; New-Item -ItemType Directory -Force $DeployDir | Out-Null
-tar -a -cf "$DeployDir\app.zip" --exclude=node_modules --exclude=.next --exclude=dist --exclude=out --exclude=.git --exclude=.htaccess .
+tar -a -cf "$DeployDir\app.zip" --exclude=node_modules --exclude=.next --exclude=dist --exclude=out --exclude=.git --exclude=.htaccess `
+  --exclude=.env* --exclude=.npmrc --exclude=*.pem --exclude=*.key --exclude=*.p12 --exclude=*.pfx .
 "$DeployDir\app.zip"        # the absolute path to pass as `path` in Step 3
 ```
 
