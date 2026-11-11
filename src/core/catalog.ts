@@ -1,7 +1,9 @@
 // Typed mirror of catalog.js. Keep both files, and api-remote-mcp's PHP
 // implementation, behaviourally identical. Both servers honour `hidden`: search skips the
-// entry, execute and multi-execute still run it. Each server has its own list
-// (the files generators.mcp.hiddenFile and generators.remote-mcp.hiddenFile point to).
+// entry, execute and multi-execute still run it. They also honour `internal` (always hidden
+// too): execute and multi-execute refuse the entry, naming its `replacedBy`, while the tool that
+// replaced it still calls it. Each server has its own lists (the files generators.mcp.hiddenFile
+// and generators.remote-mcp.hiddenFile point to).
 
 export const DEFAULT_SEARCH_LIMIT = 5;
 export const MAX_SEARCH_LIMIT = 20;
@@ -15,6 +17,8 @@ export interface CatalogOperation {
   description?: string;
   group?: string;
   hidden?: boolean;
+  internal?: boolean;
+  replacedBy?: string;
   annotations?: { readOnlyHint?: boolean; destructiveHint?: boolean; [key: string]: unknown };
   inputSchema: { type: 'object'; properties?: Record<string, unknown>; required?: string[]; [key: string]: unknown };
 }
@@ -150,6 +154,11 @@ export function findOperation<T extends CatalogOperation>(operations: Map<string
   const op = typeof name === 'string' ? operations.get(name) : undefined;
   if (!op) {
     throw new ToolInputError(`Unknown operation "${String(name)}". Use search to find operations.`);
+  }
+  if (op.internal === true) {
+    throw new ToolInputError(op.replacedBy
+      ? `Operation ${op.name} was replaced by ${op.replacedBy} and can no longer be run directly. Use ${op.replacedBy} instead.`
+      : `Operation ${op.name} can no longer be run directly. Use search to find its replacement.`);
   }
   if (params === null || typeof params !== 'object' || Array.isArray(params)) {
     throw new ToolInputError('params must be an object');

@@ -112,7 +112,7 @@ Agency Plan sites have no Git operations; deploy archives.
 
 1. `hosting_nodejs_list-environment-variables` for the current keys. Values come back as `********`; never send those back.
 2. Build the full set: every current key plus the new ones, with real values from the project's `.env` or the user. When the real value of an existing key is unknown, ask — do not drop it.
-3. Send it once; the app restarts. Values baked in at build time (Next.js `NEXT_PUBLIC_*`, Vite `VITE_*`) need a new `hosting_nodejs_start-build`.
+3. Send it once; the app restarts. Values baked in at build time (Next.js `NEXT_PUBLIC_*`, Vite `VITE_*`) need a new build: deploy again with `hosting_deploy`; for local files uploaded to the hosted server, run `hosting_nodejs_start-build` again as in step 2.
 
 Keys use uppercase letters, digits and underscores. Never commit `.env` files or repeat secret values back to the user.
 

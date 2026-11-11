@@ -4,6 +4,32 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.38.0 — 2026-11-11
+
+### Operations
+
+- Removed `hosting_import-wordpress-website`
+- Removed `hosting_deploy-wordpress-plugin`
+- Removed `hosting_deploy-wordpress-theme`
+- Removed `hosting_deploy-js-application`
+- Removed `hosting_deploy-static-website`
+- Removed `hosting_list-js-deployments`
+- Removed `hosting_show-js-deployment-logs`
+- `execute` no longer runs 2 operations that `hosting_cache_clear` replaced: `hosting_cache_clear-website`, `hosting_cdn_purge-cache`
+- `execute` no longer runs 3 operations that `hosting_websites_get-settings` replaced: `hosting_cache_status`, `hosting_cdn_status`, `hosting_ssl_status`
+- `execute` no longer runs 5 operations that `hosting_websites_update-settings` replaced: `hosting_cache_toggle-cacheless`, `hosting_cache_toggle-website`, `hosting_cdn_disable`, `hosting_cdn_enable`, `hosting_ssl_toggle-https-redirect`
+- `execute` no longer runs 6 operations that `hosting_get-deployment` replaced: `hosting_git_auto-deployment-settings`, `hosting_nodejs_list-builds`, `hosting_nodejs_build-settings`, `hosting_nodejs_analyse-failed-build`, `hosting_nodejs_build`, `hosting_nodejs_build-logs`
+- `execute` no longer runs 8 operations that `hosting_deploy` replaced: `hosting_nodejs_start-build`, `hosting_nodejs_update-build-settings`, `hosting_nodejs_build-settings-from-archive`, `hosting_nodejs_build-settings-from-repository`, `hosting_websites_deploy-static-site-archive`, `wordpress_installations_import-website`, `wordpress_plugins_deploy`, `wordpress_themes_deploy`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Bundled agent skills: `skills/deploy-to-hosting/SKILL.md`, `skills/headless/VERSION`
+- Request handling and authentication: 4 files
+- Server instructions: 4 files
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.37.1 — 2026-11-10
 
 ### Operations

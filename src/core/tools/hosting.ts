@@ -7,6 +7,8 @@ export interface OpenApiTool extends Tool {
   security: unknown[];
   custom?: boolean;
   hidden?: boolean;
+  internal?: boolean;
+  replacedBy?: string;
   replacesHidden?: boolean;
   group?: string;
   everyServer?: boolean;
@@ -608,312 +610,6 @@ const tools: OpenApiTool[] = [
     "hidden": true
   },
   {
-    "name": "hosting_import-wordpress-website",
-    "title": "Import WordPress website",
-    "annotations": {
-      "title": "Import WordPress website",
-      "readOnlyHint": false,
-      "destructiveHint": true
-    },
-    "topic": "hosting",
-    "description": "Import a WordPress website from an archive file to a hosting server. This tool uploads a website archive (zip, tar, tar.gz, etc.) and a database dump (.sql file) to deploy a complete WordPress website. The archive will be extracted on the server automatically. Note: This process may take a while for larger sites. After upload completion, files are being extracted and the site will be available in a few minutes. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
-    "method": "",
-    "path": "",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "domain": {
-          "type": "string",
-          "description": "Domain name associated with the hosting account (e.g., example.com)"
-        },
-        "archivePath": {
-          "type": "string",
-          "description": "Absolute or relative path to the website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mywebsite_20250115_143022.zip)"
-        },
-        "databaseDump": {
-          "type": "string",
-          "description": "Absolute or relative path to a database dump file (.sql)"
-        }
-      },
-      "required": [
-        "domain",
-        "archivePath",
-        "databaseDump"
-      ]
-    },
-    "security": [],
-    "custom": true,
-    "templateFile": "import-wordpress.template.js",
-    "templateFileTS": "import-wordpress.template.ts",
-    "handlerMethod": "handleWordpressWebsiteImport",
-    "group": "hosting",
-    "hidden": true
-  },
-  {
-    "name": "hosting_deploy-wordpress-plugin",
-    "title": "Deploy WordPress plugin",
-    "annotations": {
-      "title": "Deploy WordPress plugin",
-      "readOnlyHint": false,
-      "destructiveHint": true
-    },
-    "topic": "hosting",
-    "description": "Deploy a WordPress plugin from a directory to a hosting server. This tool uploads all plugin files and triggers plugin deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.",
-    "method": "",
-    "path": "",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "domain": {
-          "type": "string",
-          "description": "Domain name associated with the hosting account (e.g., example.com)"
-        },
-        "slug": {
-          "type": "string",
-          "description": "WordPress plugin slug (e.g., omnisend)"
-        },
-        "pluginPath": {
-          "type": "string",
-          "description": "Absolute or relative path to the plugin directory containing all plugin files. node_modules, .git, symlinks and secret files (.env, keys, credentials) are not uploaded."
-        }
-      },
-      "required": [
-        "domain",
-        "slug",
-        "pluginPath"
-      ]
-    },
-    "security": [],
-    "custom": true,
-    "templateFile": "deploy-wordpress-plugin.template.js",
-    "templateFileTS": "deploy-wordpress-plugin.template.ts",
-    "handlerMethod": "handleWordpressPluginDeploy",
-    "group": "hosting",
-    "hidden": true
-  },
-  {
-    "name": "hosting_deploy-wordpress-theme",
-    "title": "Deploy WordPress theme",
-    "annotations": {
-      "title": "Deploy WordPress theme",
-      "readOnlyHint": false,
-      "destructiveHint": true
-    },
-    "topic": "hosting",
-    "description": "Deploy a WordPress theme from a directory to a hosting server. This tool uploads all theme files and triggers theme deployment. The uploaded theme can optionally be activated after deployment. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the files yourself, this tool does it end-to-end.",
-    "method": "",
-    "path": "",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "domain": {
-          "type": "string",
-          "description": "Domain name associated with the hosting account (e.g., example.com)"
-        },
-        "slug": {
-          "type": "string",
-          "description": "WordPress theme slug (e.g., twentytwentyfive)"
-        },
-        "themePath": {
-          "type": "string",
-          "description": "Absolute or relative path to the theme directory containing all theme files. node_modules, .git, symlinks and secret files (.env, keys, credentials) are not uploaded."
-        },
-        "activate": {
-          "type": "boolean",
-          "description": "Whether to activate the theme after deployment (default: false)"
-        }
-      },
-      "required": [
-        "domain",
-        "slug",
-        "themePath"
-      ]
-    },
-    "security": [],
-    "custom": true,
-    "templateFile": "deploy-wordpress-theme.template.js",
-    "templateFileTS": "deploy-wordpress-theme.template.ts",
-    "handlerMethod": "handleWordpressThemeDeploy",
-    "group": "hosting",
-    "hidden": true
-  },
-  {
-    "name": "hosting_deploy-js-application",
-    "title": "Deploy JavaScript application",
-    "annotations": {
-      "title": "Deploy JavaScript application",
-      "readOnlyHint": false,
-      "destructiveHint": true
-    },
-    "topic": "hosting",
-    "description": "Deploy a JavaScript application from an archive file to a hosting server. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory; also exclude all files matched by .gitignore if the ignore file exists. The build process will be triggered automatically on the server after the archive is uploaded. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. After deployment, use the hosting_list-js-deployments tool to check deployment status and track build progress.",
-    "method": "",
-    "path": "",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "domain": {
-          "type": "string",
-          "description": "Domain name associated with the hosting account (e.g., example.com)"
-        },
-        "archivePath": {
-          "type": "string",
-          "description": "Absolute or relative path to the application archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding. IMPORTANT: the archive must ONLY contain application source files, not the build output, skip node_modules directory."
-        },
-        "removeArchive": {
-          "type": "boolean",
-          "description": "Whether to remove the archive file after successful deployment (default: false)"
-        }
-      },
-      "required": [
-        "domain",
-        "archivePath"
-      ]
-    },
-    "security": [],
-    "custom": true,
-    "templateFile": "deploy-javascript-app.template.js",
-    "templateFileTS": "deploy-javascript-app.template.ts",
-    "handlerMethod": "handleJavascriptApplicationDeploy",
-    "group": "hosting",
-    "hidden": true
-  },
-  {
-    "name": "hosting_deploy-static-website",
-    "title": "Deploy static website",
-    "annotations": {
-      "title": "Deploy static website",
-      "readOnlyHint": false,
-      "destructiveHint": true
-    },
-    "topic": "hosting",
-    "description": "Deploy a static website from an archive file to a hosting server. IMPORTANT: This tool only works for static websites with no build process. The archive must contain pre-built static files (HTML, CSS, JavaScript, images, etc.) ready to be served. If the website has a package.json file or requires a build command, use hosting_deploy-js-application instead. The tool uploads the archive to the website's file browser over TUS and triggers deployment; the archive is extracted and deployed directly without any build steps. Upload credentials are generated and used internally — do not call a separate upload-url endpoint or upload the archive yourself, this tool does it end-to-end. The username will be automatically resolved from the domain.",
-    "method": "",
-    "path": "",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "domain": {
-          "type": "string",
-          "description": "Domain name associated with the hosting account (e.g., example.com)"
-        },
-        "archivePath": {
-          "type": "string",
-          "description": "Absolute or relative path to the static website archive file. Supported formats: zip, tar, tar.gz, tgz, 7z, gz, gzip. If user provides directory path, create archive from it before proceeding using EXACTLY this naming pattern: directoryname_YYYYMMDD_HHMMSS.zip (e.g., mystaticwebsite_20250115_143022.zip)"
-        },
-        "removeArchive": {
-          "type": "boolean",
-          "description": "Whether to remove the archive file after successful deployment (default: false)"
-        }
-      },
-      "required": [
-        "domain",
-        "archivePath"
-      ]
-    },
-    "security": [],
-    "custom": true,
-    "templateFile": "deploy-static-website.template.js",
-    "templateFileTS": "deploy-static-website.template.ts",
-    "handlerMethod": "handleStaticWebsiteDeploy",
-    "group": "hosting",
-    "hidden": true
-  },
-  {
-    "name": "hosting_list-js-deployments",
-    "title": "List JavaScript deployments",
-    "annotations": {
-      "title": "List JavaScript deployments",
-      "readOnlyHint": true,
-      "destructiveHint": false
-    },
-    "topic": "hosting",
-    "description": "List javascript application deployments for checking their status. Use this tool when customer asks for the status of the deployment. This tool retrieves a paginated list of Node.js application deployments for a domain with optional filtering by deployment states.",
-    "method": "",
-    "path": "",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "domain": {
-          "type": "string",
-          "description": "Domain name associated with the hosting account (e.g., example.com)"
-        },
-        "page": {
-          "type": "integer",
-          "description": "Page number for pagination (optional)"
-        },
-        "perPage": {
-          "type": "integer",
-          "description": "Number of items per page (optional)"
-        },
-        "states": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "pending",
-              "completed",
-              "running",
-              "failed"
-            ]
-          },
-          "description": "Filter by deployment states (optional). Valid values: pending, completed, running, failed"
-        }
-      },
-      "required": [
-        "domain"
-      ]
-    },
-    "security": [],
-    "custom": true,
-    "templateFile": "list-javascript-deployments.template.js",
-    "templateFileTS": "list-javascript-deployments.template.ts",
-    "handlerMethod": "handleListJavascriptDeployments",
-    "group": "hosting",
-    "hidden": true
-  },
-  {
-    "name": "hosting_show-js-deployment-logs",
-    "title": "Show JavaScript deployment logs",
-    "annotations": {
-      "title": "Show JavaScript deployment logs",
-      "readOnlyHint": true,
-      "destructiveHint": false
-    },
-    "topic": "hosting",
-    "description": "Retrieve logs for a specified JavaScript application deployment for debugging purposes in case of failure.",
-    "method": "",
-    "path": "",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "domain": {
-          "type": "string",
-          "description": "Domain name associated with the hosting account (e.g., example.com)"
-        },
-        "fromLine": {
-          "type": "integer",
-          "description": "Line from which to retrieve logs (optional, default 0)"
-        },
-        "buildUuid": {
-          "type": "string",
-          "description": "UUID of the JavaScript deployment build"
-        }
-      },
-      "required": [
-        "domain",
-        "buildUuid"
-      ]
-    },
-    "security": [],
-    "custom": true,
-    "templateFile": "show-javascript-deployment-logs.template.js",
-    "templateFileTS": "show-javascript-deployment-logs.template.ts",
-    "handlerMethod": "handleShowJsDeploymentLogs",
-    "group": "hosting",
-    "hidden": true
-  },
-  {
     "name": "hosting_websites_trigger-event",
     "title": "Trigger website event",
     "annotations": {
@@ -1022,7 +718,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_cache_clear"
   },
   {
     "name": "hosting_cache_status",
@@ -1058,7 +756,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_websites_get-settings"
   },
   {
     "name": "hosting_cache_toggle-cacheless",
@@ -1100,7 +800,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_websites_update-settings"
   },
   {
     "name": "hosting_cache_toggle-website",
@@ -1142,7 +844,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_websites_update-settings"
   },
   {
     "name": "hosting_cdn_disable",
@@ -1178,7 +882,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_websites_update-settings"
   },
   {
     "name": "hosting_cdn_enable",
@@ -1214,7 +920,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_websites_update-settings"
   },
   {
     "name": "hosting_cdn_purge-cache",
@@ -1251,7 +959,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_cache_clear"
   },
   {
     "name": "hosting_cdn_status",
@@ -1287,7 +997,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_websites_get-settings"
   },
   {
     "name": "hosting_cron-jobs_list",
@@ -2349,7 +2061,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_get-deployment"
   },
   {
     "name": "hosting_git_update-auto-deployment-settings",
@@ -2949,7 +2663,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_get-deployment"
   },
   {
     "name": "hosting_nodejs_start-build",
@@ -3086,7 +2802,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_deploy"
   },
   {
     "name": "hosting_nodejs_build-settings",
@@ -3122,7 +2840,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_get-deployment"
   },
   {
     "name": "hosting_nodejs_update-build-settings",
@@ -3220,7 +2940,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_deploy"
   },
   {
     "name": "hosting_nodejs_build-settings-from-archive",
@@ -3261,7 +2983,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_deploy"
   },
   {
     "name": "hosting_nodejs_build-settings-from-repository",
@@ -3317,7 +3041,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_deploy"
   },
   {
     "name": "hosting_nodejs_list-environment-variables",
@@ -3452,7 +3178,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_get-deployment"
   },
   {
     "name": "hosting_nodejs_build",
@@ -3493,7 +3221,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_get-deployment"
   },
   {
     "name": "hosting_nodejs_build-logs",
@@ -3538,7 +3268,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_get-deployment"
   },
   {
     "name": "hosting_nodejs_runtime-logs",
@@ -4396,7 +4128,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_websites_get-settings"
   },
   {
     "name": "hosting_ssl_toggle-https-redirect",
@@ -4438,7 +4172,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_websites_update-settings"
   },
   {
     "name": "hosting_ssl_uninstall",
@@ -4618,7 +4354,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
-    "hidden": true
+    "hidden": true,
+    "internal": true,
+    "replacedBy": "hosting_deploy"
   },
   {
     "name": "hosting_websites_delete",

@@ -3,7 +3,9 @@
 // runtime supplies the catalog and the function that performs a call.
 // Keep in sync with catalog.ts and with api-remote-mcp's PHP implementation.
 // Both servers honour `hidden`: search skips the entry, execute and multi-execute still run
-// it. Each server has its own list (generators.mcp.hiddenFile and generators.remote-mcp.hiddenFile).
+// it. They also honour `internal` (always hidden too): execute and multi-execute refuse the entry,
+// naming its `replacedBy`, while the tool that replaced it still calls it. Each server has its own
+// lists (generators.mcp.hiddenFile and generators.remote-mcp.hiddenFile).
 
 export const DEFAULT_SEARCH_LIMIT = 5;
 export const MAX_SEARCH_LIMIT = 20;
@@ -129,6 +131,12 @@ export function renderSearch(query, results) {
 export function findOperation(operations, name, params) {
     if (typeof name !== 'string' || !operations.has(name)) {
         throw new ToolInputError(`Unknown operation "${name}". Use search to find operations.`);
+    }
+    const replaced = operations.get(name);
+    if (replaced.internal === true) {
+        throw new ToolInputError(replaced.replacedBy
+            ? `Operation ${name} was replaced by ${replaced.replacedBy} and can no longer be run directly. Use ${replaced.replacedBy} instead.`
+            : `Operation ${name} can no longer be run directly. Use search to find its replacement.`);
     }
     if (params === null || typeof params !== 'object' || Array.isArray(params)) {
         throw new ToolInputError('params must be an object');
