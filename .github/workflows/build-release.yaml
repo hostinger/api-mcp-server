@@ -7,10 +7,13 @@ on:
       - main
 
 jobs:
+  # npm trusted publishing trusts this whole workflow file, so any job here holding id-token: write can publish
+  # the package. Only the publish jobs hold it, and besides GitHub's own actions they run no downloaded code:
+  # no npm update and no dependency install (npm publish packs the files and runs no scripts), and a pinned,
+  # checksummed mcp-publisher.
   release:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: write
     outputs:
       new_version: ${{ steps.version.outputs.version }}
@@ -77,12 +80,6 @@ jobs:
           node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Update NPM
-        run: npm install -g npm@latest
-
-      - name: Install dependencies
-        run: npm install
-
       - name: Publish package
         run: npm publish --provenance --access public
 
@@ -119,9 +116,6 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@hostinger'
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Publish package
         run: |
           sed -i 's+"name": ".*+"name": "@${{ github.repository }}",+gI' ./package.json
@@ -145,9 +139,16 @@ jobs:
         with:
           node-version: '24.x'
 
+      # Pinned and checksummed: this job can mint the npm publishing identity. To upgrade, take the
+      # sha256 digest of mcp-publisher_linux_amd64.tar.gz from the registry release's assets.
       - name: Install MCP Publisher
+        env:
+          MCP_PUBLISHER_VERSION: v1.8.7
+          MCP_PUBLISHER_SHA256: 00b21004149a4ce66f0782508ae4a2bce67d1bea395a8da0bd8028159fb59579
         run: |
-          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+          curl -fsSL -o mcp-publisher.tar.gz "https://github.com/modelcontextprotocol/registry/releases/download/$MCP_PUBLISHER_VERSION/mcp-publisher_linux_amd64.tar.gz"
+          echo "$MCP_PUBLISHER_SHA256  mcp-publisher.tar.gz" | sha256sum -c -
+          tar xzf mcp-publisher.tar.gz mcp-publisher
           chmod +x ./mcp-publisher
 
       - name: Login to MCP Registry using GitHub OIDC

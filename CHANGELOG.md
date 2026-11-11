@@ -4,6 +4,15 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.38.2 — 2026-11-11
+
+### Also in this release
+
+- Release automation: `.github/workflows/build-release.yaml`
+- Bundled agent skills: `skills/headless/VERSION`
+- OAuth sign-in flow: `src/core/oauth.js`, `src/core/oauth.ts`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+
 ## v3.38.1 — 2026-11-11
 
 ### Also in this release

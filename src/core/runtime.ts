@@ -384,7 +384,9 @@ class MCPServer {
     // Container secrets (Docker's /run/secrets, the Kubernetes service-account token under /var/run/secrets) and runtime state.
     '/run', '/var/run', '/private/var/run',
     // Every user's home directory, whatever the current home is (root's is /root, a container's can be /).
-    '/home', '/Users', ...(process.platform === 'win32' ? [path.join(process.env.SystemDrive || 'C:', 'Users')] : [])];
+    '/home', '/Users',
+    // Windows: the profiles, the system, installed programs and their machine-wide data.
+    ...(process.platform === 'win32' ? [path.join(process.env.SystemDrive || 'C:', 'Users'), process.env.SystemRoot, process.env.ProgramData, process.env.ProgramFiles, process.env['ProgramFiles(x86)']].filter((dir): dir is string => !!dir) : [])];
 
   // A deploy publishes what it reads, and the path comes from the model, so prompt-injected arguments could
   // publish any readable file. Refused, before anything is read or sent: the home directory and every directory
@@ -394,6 +396,11 @@ class MCPServer {
   // os is imported by deploy.template: the JS generator dedupes import blocks by their whole text, and this block
   // must stay identical to agency-hosting/shared's, or tus and fs are imported twice.
   private assertDeployablePath(localPath: string): void {
+    // A UNC or device path (\\host\share, //host/share, \\?\UNC\…) is opened over SMB by the realpath below, which on
+    // Windows sends the user's NTLM credentials to that host: refused before anything touches it.
+    if (/^[\\/]{2}/.test(localPath)) {
+      throw new Error('Refusing to deploy ' + localPath + ': it is a network path. Pass a local project directory or archive.');
+    }
     let real: string;
     try {
       real = fs.realpathSync.native(localPath);
@@ -447,7 +454,8 @@ class MCPServer {
     const inSystem = !inHome && this.systemDirectories.some((dir: string) => inside(dir, real) || inside(real, dir));
     // Windows drops trailing dots and spaces from a name: .ssh. is .ssh.
     const inCredentials = real.split(path.sep).some((segment: string) => this.credentialDirectories.includes((process.platform === 'win32' ? segment.replace(/[. ]+$/, '') : segment).toLowerCase()));
-    if (inside(real, home) || otherHome || inHomeData || inProfile || inSystem || inCredentials || (fs.statSync(real).isFile() && this.isSecretFile(path.basename(real)))) {
+    // A drive or filesystem root (D:\ on Windows) holds everything on it.
+    if (real === path.parse(real).root || /^[\\/]{2}/.test(real) || inside(real, home) || otherHome || inHomeData || inProfile || inSystem || inCredentials || (fs.statSync(real).isFile() && this.isSecretFile(path.basename(real)))) {
       throw new Error('Refusing to deploy ' + localPath + ': it is, or contains, a home, system or credentials location. Pass the project directory or archive.');
     }
   }

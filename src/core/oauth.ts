@@ -320,8 +320,15 @@ export class OAuthProvider {
   private _listenForCallback(expectedState: string, port: number): Promise<{ code: string; port: number }> {
     return new Promise((resolve, reject) => {
       const server: Server = createServer((req, res) => {
-        const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
-        if (url.pathname !== CALLBACK_PATH) {
+        // Any local process or web page can reach this port: a request target that does not parse (GET //)
+        // gets a 404 instead of an exception, which would crash the server.
+        let url: URL | null;
+        try {
+          url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
+        } catch {
+          url = null;
+        }
+        if (!url || url.pathname !== CALLBACK_PATH) {
           res.writeHead(404);
           res.end();
           return;
