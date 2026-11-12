@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.38.4 — 2026-11-12
+
+### Also in this release
+
+- Dependencies: `package-lock.json`
+- Bundled agent skills: `skills/headless/VERSION`
+
 ## v3.38.3 — 2026-11-11
 
 ### Also in this release
