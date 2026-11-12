@@ -6,9 +6,9 @@ description: "Step 7 (validate) of the Hostinger Headless flow. OPTIONAL quick g
 # headless-step-validate
 
 > **Optional / fast.** Every stage before this one already verifies its own work (provision checks the
-> backend, content-model push checks the REST counts, frontend builds clean), and **deploy verifies the
-> live result**. So validate is **not** a re-run of all that — it's a quick confirmation, plus the
-> optional human preview/sign-off. **Skip Steps 3–4 (rebuild + approval) entirely** on an autonomous or
+> backend, content-model push checks the REST counts, frontend builds clean and looks right at desktop
+> and phone width), and **deploy verifies the live result**. So validate is **not** a re-run of all
+> that — it's a quick confirmation, plus the optional human preview/sign-off. **Skip Steps 3–4 (rebuild + approval) entirely** on an autonomous or
 > temp-domain run where no one is signing off; just do the two 10-second checks below and move on. Spend
 > time here only when a person wants to see it before it goes live.
 
@@ -61,9 +61,10 @@ fixtures, placeholder copy or `.htaccess` in the output).
 ## 4 — Preview & approval (optional — only when a person is signing off)
 
 When someone wants to see it first: start the local preview (Astro: `npm run preview`; Next.js:
-`npx next start`), check desktop and mobile widths, navigation and a couple of key routes, and present
-it for **explicit approval**. If preview tooling is unavailable, give the user the command and URL.
-On an autonomous or temp-domain run, skip this — deploy will verify the live result anyway.
+`npx next start`), show the user a couple of key routes at desktop and phone width (capture phone width
+as in frontend's *Visual check*; frontend already caught the layout bugs, so this is for the user, not a
+re-review) and navigation, and present it for **explicit approval**. If preview tooling is unavailable,
+give the user the command and URL. On an autonomous or temp-domain run, skip this — deploy will verify the live result anyway.
 
 Then (after approval, or immediately if 3–4 were skipped): `state.json` → `stage: "deploy"`, fresh
 `updated_at`; leave `provision` unchanged.

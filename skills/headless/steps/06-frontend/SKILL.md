@@ -182,10 +182,22 @@ Guidelines (framework-agnostic):
 
 ## Step 4 — Hand off
 
-Confirm the project builds clean locally against the live backend, no placeholder/fixture content
-remains, and `state.json → frontend` matches what you built. Update `state.json` (`stage: "validate"`).
+Confirm the project builds clean locally against the live backend, looks right at desktop and phone
+width (below), no placeholder/fixture content remains, and `state.json → frontend` matches what you
+built. Update `state.json` (`stage: "validate"`).
 Validate (Step 7) owns the clean rebuild + user preview; deploy (Step 8) ships it with the `app_type`
 and output directory that match the chosen framework + rendering.
+
+**Visual check.** With the site running locally against the live backend, look at the home page and one
+page of each template (e.g. a post, a product, the contact page) at desktop and phone width. Take all the
+screenshots first, then open them all in one turn where your tool can open several images at once, since
+each separate look costs a model turn. Don't tile several pages onto one image or take one tall
+full-page shot: the viewer shrinks big images, and a shrunk page hides small bugs like a wrapped line.
+After a fix, re-shoot only what changed. Phone width is where most layout bugs show. Headless Chrome
+won't size a window below ~500 px, so a phone-width window comes back cropped: set a 390 px viewport
+(e.g. Playwright), or put one route in 1280 px and 390 px iframes side by side on a local page to get
+both widths in one image. The live site runs this same build, so it needs no screenshots; deploy checks
+that it serves.
 
 > **Webapp:** just confirm the app builds clean and `state.json → frontend` is right — there's no
 > `content-model.md` or headless backend to check. A DB-backed app can't reach its database locally
