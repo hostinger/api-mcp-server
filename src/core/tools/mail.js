@@ -163,7 +163,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create an API token for the given mail order. The token grants access\nto the [Hostinger Email API](https://api.mail.hostinger.com/), where\nyou can provision and manage the mailboxes it is scoped to.\n\nThe plaintext token is returned only in this response, never again.\nA maximum of 10 tokens can exist per order. Use\n`scope.has_all_mailboxes` to cover all current and future mailboxes,\nor list specific mailboxes in `scope.mailbox_ids`.",
+    "description": "Create an API token for the given mail order. Through the\n[Hostinger Mail API](https://api.mail.hostinger.com/), the token\ngrants access to the mailboxes it is scoped to (for example, to read,\nsearch, send and organise email messages), without signing in with a\nmailbox password over IMAP, SMTP or webmail.\n\nA token covers either all mailboxes of the order or only the ones you\nchoose. Set `scope.has_all_mailboxes` to `true` to cover all current\nand future mailboxes, or to `false` and list specific mailboxes in\n`scope.mailbox_ids`.\n\nThe plaintext token is returned only in this response, never again.\nStore it securely, because anyone who has it gets the same access. A\nmaximum of 10 tokens can exist per order.",
     "method": "POST",
     "path": "/api/mail/v1/orders/{orderId}/api-tokens",
     "inputSchema": {
@@ -221,7 +221,7 @@ export default [
       "destructiveHint": true,
       "idempotentHint": true
     },
-    "description": "Revoke an API token. The token immediately loses access to the\n[Hostinger Email API](https://api.mail.hostinger.com/). This action\ncannot be undone.",
+    "description": "Revoke an API token. The token immediately loses access to the\n[Hostinger Mail API](https://api.mail.hostinger.com/). This action\ncannot be undone.",
     "method": "DELETE",
     "path": "/api/mail/v1/api-tokens/{tokenId}",
     "inputSchema": {
@@ -251,7 +251,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Retrieve a paginated list of\n[Hostinger Email API](https://api.mail.hostinger.com/) tokens across\nall your mail orders, optionally filtered by order. Plaintext tokens\nare never included; they are returned only when a token is created.",
+    "description": "Retrieve a paginated list of\n[Hostinger Mail API](https://api.mail.hostinger.com/) tokens across\nall your mail orders, optionally filtered by order. Plaintext tokens\nare never included; they are returned only when a token is created.",
     "method": "GET",
     "path": "/api/mail/v1/api-tokens",
     "inputSchema": {
