@@ -4,6 +4,24 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.39.0 — 2026-11-12
+
+### Operations
+
+- Added `hosting_pocketbase_backend` — Get PocketBase backend
+- Added `hosting_pocketbase_create-backend` — Create PocketBase backend
+- Added `hosting_pocketbase_delete-backend` — Delete PocketBase backend
+- Added `hosting_pocketbase_list-backends` — List account PocketBase backends
+- Added `hosting_pocketbase_set-superuser` — Set PocketBase superuser
+- Changed the description and input schema of `hosting_websites_create`
+- Changed the description and input schema of `wordpress_installations_install`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.38.4 — 2026-11-12
 
 ### Also in this release

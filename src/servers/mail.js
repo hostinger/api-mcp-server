@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/mail.js';
 
-startServer({ name: 'hostinger-mail-mcp', version: '3.38.4', tools });
+startServer({ name: 'hostinger-mail-mcp', version: '3.39.0', tools });

@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/wordpress.js';
 
-startServer({ name: 'hostinger-wordpress-mcp', version: '3.38.4', tools });
+startServer({ name: 'hostinger-wordpress-mcp', version: '3.39.0', tools });

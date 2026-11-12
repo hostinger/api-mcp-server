@@ -3550,7 +3550,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Starts a website setup on a Web or Cloud hosting order and returns the created setup\nright away; the website itself is provisioned asynchronously. Poll the list website\nsetups endpoint (`hosting_websites_list-setups`) with the `domain` filter every 10 to 15\nseconds and wait for `status: completed` before uploading files, deploying or creating\ndatabases.\n\nOmit `type` for an empty website. `type: wordpress` installs WordPress in the website\nroot with the admin user, email and password from `wordpress`, the domain as the site\ntitle, and `en_US` when `wordpress.language` is omitted. The headless types\n(`headless_empty`, `headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`)\ncreate a headless website; `headless_wordpress` additionally installs WordPress into the\n`cms` directory of the website root with generated credentials. `headless_empty` installs\nnothing: WordPress can be added later through\n`POST /api/hosting/v1/accounts/{username}/wordpress/installations`\n(`wordpress_installations_install`) with `type: headless`.\n\nOmit `domain` to set the website up on a generated temporary free subdomain; the created\nsetup returns it as `domain`. REST clients that need to know the free subdomain before the\ncall, so a timed-out call can be looked up and retried on the same domain, can generate\none through `POST /api/hosting/v1/domains/free-subdomains` and send it as `domain`. It is\naccepted for 24 hours, only from the client that generated it.\n\nWhen the order has no hosting account yet, the setup creates one first, in the datacenter\ngiven by `datacenter_code` or the order's default datacenter when it is omitted.\nReturns 404 when the order does not exist or is not accessible to the authenticated\nclient, and 409 with a `Retry-After` header while a setup for the same domain is still\nrunning.",
+    "description": "Starts a website setup on a Web or Cloud hosting order and returns the created setup\nright away; the website itself is provisioned asynchronously. Poll the list website\nsetups endpoint (`hosting_websites_list-setups`) with the `domain` filter every 10 to 15\nseconds and wait for `status: completed` before uploading files, deploying or creating\ndatabases.\n\nOmit `type` for an empty website. `type: wordpress` installs WordPress in the website\nroot with the admin user, email and password from `wordpress`, the domain as the site\ntitle, and `en_US` when `wordpress.language` is omitted. The headless types\n(`headless_empty`, `headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`)\ncreate a headless website; `headless_wordpress` additionally installs WordPress into the\n`cms` directory of the website root with generated credentials. `headless_pocketbase`\nmarks the website as a headless PocketBase website but installs nothing: create its\nPocketBase backend with `Create PocketBase backend`\n(`POST /api/hosting/v1/accounts/{username}/websites/{domain}/pocketbase`) once the setup\nis `completed`. `headless_empty` installs nothing either: WordPress can be added later\nthrough `POST /api/hosting/v1/accounts/{username}/wordpress/installations`\n(`wordpress_installations_install`) with `type: headless`, or a PocketBase backend through\nthe same PocketBase endpoint.\n\nOmit `domain` to set the website up on a generated temporary free subdomain; the created\nsetup returns it as `domain`. REST clients that need to know the free subdomain before the\ncall, so a timed-out call can be looked up and retried on the same domain, can generate\none through `POST /api/hosting/v1/domains/free-subdomains` and send it as `domain`. It is\naccepted for 24 hours, only from the client that generated it.\n\nWhen the order has no hosting account yet, the setup creates one first, in the datacenter\ngiven by `datacenter_code` or the order's default datacenter when it is omitted.\nReturns 404 when the order does not exist or is not accessible to the authenticated\nclient, and 409 with a `Retry-After` header while a setup for the same domain is still\nrunning.",
     "method": "POST",
     "path": "/api/hosting/v1/orders/{order_id}/onboardings",
     "inputSchema": {
@@ -3562,7 +3562,7 @@ const tools: OpenApiTool[] = [
         },
         "type": {
           "type": "string",
-          "description": "Website type. Omit or `null` for an empty website. `wordpress` installs WordPress in the website root and requires `wordpress`. The headless types (`headless_empty`, `headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless website; `headless_wordpress` additionally installs WordPress into the `cms` directory with generated credentials. `headless_empty` installs nothing, so WordPress can be added later through `POST /api/hosting/v1/accounts/{username}/wordpress/installations` (`wordpress_installations_install`) with `type: headless`.",
+          "description": "Website type. Omit or `null` for an empty website. `wordpress` installs WordPress in the website root and requires `wordpress`. The headless types (`headless_empty`, `headless_wordpress`, `headless_ecommerce`, `headless_pocketbase`) create a headless website; `headless_wordpress` additionally installs WordPress into the `cms` directory with generated credentials. `headless_pocketbase` only marks the website as a headless PocketBase website: create the backend afterwards with `Create PocketBase backend` (`POST /api/hosting/v1/accounts/{username}/websites/{domain}/pocketbase`). `headless_empty` installs nothing, so WordPress can be added later through `POST /api/hosting/v1/accounts/{username}/wordpress/installations` (`wordpress_installations_install`) with `type: headless`, or a PocketBase backend through the PocketBase endpoint.",
           "enum": [
             "wordpress",
             "headless_empty",
@@ -3929,6 +3929,194 @@ const tools: OpenApiTool[] = [
     ],
     "group": "hosting",
     "hidden": true
+  },
+  {
+    "name": "hosting_pocketbase_backend",
+    "title": "Get PocketBase backend",
+    "annotations": {
+      "title": "Get PocketBase backend",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Returns the PocketBase backend of a website: its REST API and dashboard URLs, live state\nand version. A PocketBase backend gives the website a database, authentication, file\nstorage and a realtime REST API, served from the website's own domain under `/api` and\n`/_`. Returns 404 when the website has no PocketBase backend.\n\nThe superuser password is only shown once, when it is set, and is never returned here. If it\nis lost, set a new one with the `Set PocketBase superuser` endpoint.\n\nThe instance sleeps when idle and wakes on the first request, so `asleep` is a normal state\nand the first call to a sleeping instance can take a few seconds. `starting`, `running` and\n`stopping` are healthy; `failed` or `unregistered` mean the instance is broken; `missing`\nmeans its files are gone from the server, and creating the PocketBase backend again sets up\na new, empty one. `state` is null when the server could not be reached; retry later.\n\nPocketBase is rolling out gradually: an account without access yet gets 422.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/pocketbase",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_pocketbase_create-backend",
+    "title": "Create PocketBase backend",
+    "annotations": {
+      "title": "Create PocketBase backend",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Creates a PocketBase backend for a website: a database, authentication, file storage and a\nrealtime REST API, served from the website's own domain. A website has at most one\nPocketBase backend. Creation usually takes a few seconds.\n\nThe backend takes over the `/api` and `/_` paths of the website: from then on requests to\nthese paths and everything below them go to PocketBase, while every other path keeps\nserving the website. Do not create a backend for a website that serves its own `/api` or\n`/_` paths, because they stop working; confirm with the user before calling it. Deleting\nthe backend gives both paths back to the website. Headless WordPress websites and parked\ndomains are not supported; for a parked domain, use the website it is parked on. A website\nthat already has a backend is rejected with 422, unless that backend is in state\n`missing`: then it is replaced with a new, empty one. A website set up with\n`type: headless_empty` becomes `headless_pocketbase`; any other website keeps its type.\n\n`superuser_password` is optional: leave it out to get a strong generated password, or send\nyour own (10-128 characters). The response returns it in `superuser_password` once and\nHostinger never stores it, so save it in your app secrets right away; you need it to manage\nthe backend through the PocketBase REST API. If it is lost, set a new one with the\n`Set PocketBase superuser` endpoint. `superuser_email` defaults to the email of the\nwebsite owner.\n\nThe instance sleeps when idle and wakes on the first request, so the first call after a\nquiet period can take a few seconds. `next_steps` in the response lists what to do next.\n\nPocketBase is rolling out gradually: an account without access yet gets 422.",
+    "method": "POST",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/pocketbase",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "superuser_email": {
+          "type": "string",
+          "description": "Email of the PocketBase superuser. Defaults to the email of the website owner."
+        },
+        "superuser_password": {
+          "type": "string",
+          "description": "Password for the PocketBase superuser, 10-128 characters. Leave it out to have a strong one\ngenerated. Either way it is returned once in the response and never stored."
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_pocketbase_delete-backend",
+    "title": "Delete PocketBase backend",
+    "annotations": {
+      "title": "Delete PocketBase backend",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Permanently deletes the PocketBase backend of a website with all its data (collections,\nrecords, users and uploaded files) and gives the `/api` and `/_` paths back to the website;\na `headless_pocketbase` website becomes `headless_empty`. This cannot be undone and every\napp using this backend stops working, so confirm with the user before calling it and\nexport the data you need from the dashboard (`admin_url`) first.\n\nReturns success also when the website has no PocketBase backend; then it only clears a\n`headless_pocketbase` mark. To regain access after losing the superuser password, use the\n`Set PocketBase superuser` endpoint instead of deleting the backend.\n\nPocketBase is rolling out gradually: an account without access yet gets 422; an unknown\nwebsite gets 404.",
+    "method": "DELETE",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/pocketbase",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_pocketbase_list-backends",
+    "title": "List account PocketBase backends",
+    "annotations": {
+      "title": "List account PocketBase backends",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Lists the PocketBase backends of all websites of a hosting account with their URLs, live\nstate, version and disk usage. A PocketBase backend gives a website a database,\nauthentication, file storage and a realtime REST API, served from the website's own\ndomain. An empty list means no website of the account has a PocketBase backend.\n\nStates: `asleep` is normal (the instance sleeps when idle and wakes on the first request);\n`starting`, `running` and `stopping` are healthy; `failed` or `unregistered` mean the\ninstance is broken; `missing` means its files are gone from the server, and creating the\nPocketBase backend again sets up a new, empty one. `state` is null when the server could\nnot be reached; retry later.\n\nPocketBase is rolling out gradually: an account without access yet gets 422.",
+    "method": "GET",
+    "path": "/api/hosting/v1/accounts/{username}/pocketbase",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        }
+      },
+      "required": [
+        "username"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
+  },
+  {
+    "name": "hosting_pocketbase_set-superuser",
+    "title": "Set PocketBase superuser",
+    "annotations": {
+      "title": "Set PocketBase superuser",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Sets the password of a superuser of the website's PocketBase backend, and creates that\nsuperuser when there is none with the given email. The old password of that superuser stops\nworking at once, so apps and scripts still using it lose superuser access; confirm with the\nuser before calling it.\n\nUse it when the superuser password is lost (Hostinger never stores it), when it leaked and\nmust be rotated, or to add another superuser with a different email. Returns 404 when the\nwebsite has no PocketBase backend; create one first. App user accounts are managed through\nthe PocketBase REST API, not here.\n\n`superuser_password` is optional: leave it out to get a strong generated password, or send\nyour own (10-128 characters). The response returns it in `superuser_password` once and\nHostinger never stores it, so save it in your app secrets right away, then authenticate\nagain with `pb.collection('_superusers').authWithPassword`. `superuser_email` defaults to\nthe email of the website owner.\n\nPocketBase is rolling out gradually: an account without access yet gets 422.",
+    "method": "PUT",
+    "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/pocketbase/superuser",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "username parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "superuser_email": {
+          "type": "string",
+          "description": "Email of the superuser to create or update. Defaults to the email of the website owner."
+        },
+        "superuser_password": {
+          "type": "string",
+          "description": "New password of the PocketBase superuser, 10-128 characters. Leave it out to have a strong\none generated. Either way it is returned once in the response and never stored."
+        }
+      },
+      "required": [
+        "username",
+        "domain"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "hosting"
   },
   {
     "name": "hosting_redirects_list-website",
