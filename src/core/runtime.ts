@@ -201,6 +201,16 @@ class MCPServer {
       if (clientName) {
         this.headers["X-MCP-Client"] = clientName;
       }
+
+      const clientVersion = String(this.server.getClientVersion()?.version ?? "")
+        .replace(/\r|\n/g, "")
+        .replace(/[^A-Za-z0-9._\/ -]/g, "")
+        .trim()
+        .slice(0, 32)
+        .trim();
+      if (clientVersion) {
+        this.headers["X-MCP-Client-Version"] = clientVersion;
+      }
     };
 
     // Handle tool listing requests
