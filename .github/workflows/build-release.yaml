@@ -151,30 +151,42 @@ jobs:
           tar xzf mcp-publisher.tar.gz mcp-publisher
           chmod +x ./mcp-publisher
 
+      # The registry validates the npm version in server.json by fetching
+      # registry.npmjs.org/<package>/<version>, and a fresh npm publish takes
+      # minutes to show up there. Poll that same URL ourselves instead of
+      # retrying the publish: the registry login token expires after ~5 minutes,
+      # so logging in before the wait made late retries fail with 401.
+      - name: Wait for the npm version to be available
+        run: |
+          PKG=$(jq -r '.packages[] | select(.registryType == "npm") | .identifier' server.json)
+          VERSION=$(jq -r '.packages[] | select(.registryType == "npm") | .version' server.json)
+          URL="https://registry.npmjs.org/${PKG/\//%2F}/$VERSION"
+          for _ in $(seq 1 60); do
+            if curl -fsS -o /dev/null "$URL"; then
+              echo "$PKG@$VERSION is available on npm."
+              exit 0
+            fi
+            echo "$PKG@$VERSION not on npm yet. Checking again in 15s."
+            sleep 15
+          done
+          echo "$PKG@$VERSION still not on npm after 15 minutes."
+          exit 1
+
       - name: Login to MCP Registry using GitHub OIDC
         run: ./mcp-publisher login github-oidc
 
-      # The registry validates that the npm version in server.json actually
-      # exists, and npm says a fresh publish "may take a few minutes to become
-      # available" — so this job reliably loses the race with the publish-npmjs
-      # job it depends on and 400s with "version was not found (status: 404)".
-      # Retry until npm catches up. The backoff totals ~7.5 minutes, well past
-      # the propagation delays seen in practice (~3 minutes); if it is still
-      # failing by then it is not a propagation problem and notify-failure
-      # should page.
+      # npm is served from a CDN, so the registry's edge can lag the one we
+      # polled by a little. Retry briefly, well inside the login token lifetime.
       - name: Publish to MCP Registry
         run: |
-          for delay in 30 60 120 240 0; do
+          for delay in 30 30 0; do
             if ./mcp-publisher publish; then
               exit 0
             fi
-            if [ "$delay" -eq 0 ]; then
-              break
-            fi
-            echo "Publish failed — npm may not have propagated yet. Retrying in ${delay}s."
+            [ "$delay" -eq 0 ] && break
+            echo "Publish failed. Retrying in ${delay}s."
             sleep "$delay"
           done
-          echo "MCP registry publish still failing after all retries."
           exit 1
 
   notify-failure:

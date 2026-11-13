@@ -17,12 +17,12 @@
     "url": "https://github.com/hostinger/api-mcp-server",
     "source": "github"
   },
-  "version": "4.0.0",
+  "version": "4.0.1",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@hostinger/mcp",
-      "version": "4.0.0",
+      "version": "4.0.1",
       "transport": {
         "type": "stdio"
       },

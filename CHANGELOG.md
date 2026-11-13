@@ -4,6 +4,13 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.0.1 — 2026-11-13
+
+### Also in this release
+
+- Release automation: `.github/workflows/build-release.yaml`
+- Bundled agent skills: `skills/headless/VERSION`
+
 ## v4.0.0 — 2026-11-13
 
 ### Operations
