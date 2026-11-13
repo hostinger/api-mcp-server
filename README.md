@@ -2571,9 +2571,16 @@ is lost, set a new one with the `Set PocketBase superuser` endpoint.
 
 The instance sleeps when idle and wakes on the first request, so `asleep` is a normal state
 and the first call to a sleeping instance can take a few seconds. `starting`, `running` and
-`stopping` are healthy; `failed` or `unregistered` mean the instance is broken; `missing`
-means its files are gone from the server, and creating the PocketBase backend again sets up
-a new, empty one. `state` is null when the server could not be reached; retry later.
+`stopping` are healthy.
+
+`failed` means the last start did not succeed. Hostinger starts it again on its own after
+`retry_after_seconds`, and the data is intact: wait and call again, do not delete the
+backend. `failure_reason` says why: `process_limit` means the hosting account has no free
+process slots, usually because its Node.js apps are running.
+
+`unregistered` means the instance is broken. `missing` means its files are gone from the
+server, and creating the PocketBase backend again sets up a new, empty one. `state` is null
+when the server could not be reached; retry later.
 
 PocketBase is rolling out gradually: an account without access yet gets 422.
 
@@ -2637,10 +2644,16 @@ authentication, file storage and a realtime REST API, served from the website's 
 domain. An empty list means no website of the account has a PocketBase backend.
 
 States: `asleep` is normal (the instance sleeps when idle and wakes on the first request);
-`starting`, `running` and `stopping` are healthy; `failed` or `unregistered` mean the
-instance is broken; `missing` means its files are gone from the server, and creating the
-PocketBase backend again sets up a new, empty one. `state` is null when the server could
-not be reached; retry later.
+`starting`, `running` and `stopping` are healthy.
+
+`failed` means the last start did not succeed. Hostinger starts it again on its own after
+`retry_after_seconds`, and the data is intact: wait and call again, do not delete the
+backend. `failure_reason` says why: `process_limit` means the hosting account has no free
+process slots, usually because its Node.js apps are running.
+
+`unregistered` means the instance is broken. `missing` means its files are gone from the
+server, and creating the PocketBase backend again sets up a new, empty one. `state` is null
+when the server could not be reached; retry later.
 
 PocketBase is rolling out gradually: an account without access yet gets 422.
 
