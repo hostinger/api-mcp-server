@@ -78,14 +78,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (414 total)
+- `hostinger-api-mcp` — unified server over every operation (419 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
 - `hostinger-dns-mcp` — 9 operations for dns
 - `hostinger-domains-mcp` — 43 operations for domains
 - `hostinger-ecommerce-mcp` — 30 operations for ecommerce
-- `hostinger-gpu-mcp` — 5 operations for gpu
+- `hostinger-gpu-mcp` — 10 operations for gpu
 - `hostinger-horizons-mcp` — 7 operations for horizons
 - `hostinger-hosting-mcp` — 59 operations for hosting
 - `hostinger-mail-mcp` — 39 operations for mail
@@ -1834,6 +1834,65 @@ What's new and what's coming at Hostinger: list entries of the public Hostinger 
 
 - **Method**: `custom`
 - **Path**: `custom`
+
+#### gpu_instances_get
+
+Retrieve detailed information about a specified GPU instance, including its SSH keys.
+
+Use this endpoint to follow the instance `status` after creating or deleting it.
+
+- **Method**: `GET`
+- **Path**: `/api/gpu/v1/instances/{instanceId}`
+
+#### gpu_instances_delete
+
+Delete a specified GPU instance.
+
+The instance is destroyed asynchronously: a successful request returns immediately and the instance
+`status` moves to `destroying`. Deleting fails while the instance is in `created`, `destroying`,
+`destroyed` or `abuse` status, or while another action is in progress on it.
+
+Use this endpoint to stop billing for a GPU instance you no longer need.
+
+- **Method**: `DELETE`
+- **Path**: `/api/gpu/v1/instances/{instanceId}`
+
+#### gpu_instances_list
+
+Retrieve all GPU instances of your account.
+
+Use this endpoint to view your GPU instances with their status, pool, instance type and OS template.
+
+- **Method**: `GET`
+- **Path**: `/api/gpu/v1/instances`
+
+#### gpu_instances_create
+
+Create a new GPU instance.
+
+Pick `pool_instance_id` from the pool instance types list and `os_template_id` from the OS templates
+available for that instance type. Your account must have enough credits to run the instance for its
+first hour.
+
+The instance is created asynchronously: a successful request returns immediately, and the instance
+appears in the instance list while its `status` moves from `created` through `creating` to `running`.
+
+Use this endpoint to provision GPU compute.
+
+- **Method**: `POST`
+- **Path**: `/api/gpu/v1/instances`
+
+#### gpu_instances_metrics
+
+Retrieve utilisation metrics of a specified GPU instance for the last hour.
+
+Each data point contains CPU, memory and GPU utilisation, used GPU memory and GPU throughput.
+The list is empty until the instance is provisioned.
+
+Use this endpoint to monitor GPU instance load.
+
+- **Method**: `GET`
+- **Path**: `/api/gpu/v1/instances/{instanceId}/metrics`
 
 #### gpu_catalog_pool-groups
 

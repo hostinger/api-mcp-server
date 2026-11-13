@@ -71,6 +71,168 @@ const tools: OpenApiTool[] = [
     "everyServer": true
   },
   {
+    "name": "gpu_instances_get",
+    "title": "Get instance details",
+    "annotations": {
+      "title": "Get instance details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Retrieve detailed information about a specified GPU instance, including its SSH keys.\n\nUse this endpoint to follow the instance `status` after creating or deleting it.",
+    "method": "GET",
+    "path": "/api/gpu/v1/instances/{instanceId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "instanceId": {
+          "type": "integer",
+          "description": "GPU instance ID"
+        }
+      },
+      "required": [
+        "instanceId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "gpu"
+  },
+  {
+    "name": "gpu_instances_delete",
+    "title": "Delete instance",
+    "annotations": {
+      "title": "Delete instance",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Delete a specified GPU instance.\n\nThe instance is destroyed asynchronously: a successful request returns immediately and the instance\n`status` moves to `destroying`. Deleting fails while the instance is in `created`, `destroying`,\n`destroyed` or `abuse` status, or while another action is in progress on it.\n\nUse this endpoint to stop billing for a GPU instance you no longer need.",
+    "method": "DELETE",
+    "path": "/api/gpu/v1/instances/{instanceId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "instanceId": {
+          "type": "integer",
+          "description": "GPU instance ID"
+        }
+      },
+      "required": [
+        "instanceId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "gpu"
+  },
+  {
+    "name": "gpu_instances_list",
+    "title": "Get instances",
+    "annotations": {
+      "title": "Get instances",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Retrieve all GPU instances of your account.\n\nUse this endpoint to view your GPU instances with their status, pool, instance type and OS template.",
+    "method": "GET",
+    "path": "/api/gpu/v1/instances",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "gpu"
+  },
+  {
+    "name": "gpu_instances_create",
+    "title": "Create instance",
+    "annotations": {
+      "title": "Create instance",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Create a new GPU instance.\n\nPick `pool_instance_id` from the pool instance types list and `os_template_id` from the OS templates\navailable for that instance type. Your account must have enough credits to run the instance for its\nfirst hour.\n\nThe instance is created asynchronously: a successful request returns immediately, and the instance\nappears in the instance list while its `status` moves from `created` through `creating` to `running`.\n\nUse this endpoint to provision GPU compute.",
+    "method": "POST",
+    "path": "/api/gpu/v1/instances",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "pool_instance_id": {
+          "type": "integer",
+          "description": "Instance type ID from the pool instance types list"
+        },
+        "os_template_id": {
+          "type": "integer",
+          "description": "OS template ID available for the selected instance type"
+        },
+        "name": {
+          "type": "string",
+          "description": "Instance name, unique among your instances. Letters, numbers, dashes and underscores only"
+        },
+        "public_keys": {
+          "type": "array",
+          "description": "SSH public keys to add to the instance",
+          "items": {
+            "type": "string",
+            "description": "public_keys parameter"
+          }
+        }
+      },
+      "required": [
+        "pool_instance_id",
+        "os_template_id",
+        "name"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "gpu"
+  },
+  {
+    "name": "gpu_instances_metrics",
+    "title": "Get instance metrics",
+    "annotations": {
+      "title": "Get instance metrics",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Retrieve utilisation metrics of a specified GPU instance for the last hour.\n\nEach data point contains CPU, memory and GPU utilisation, used GPU memory and GPU throughput.\nThe list is empty until the instance is provisioned.\n\nUse this endpoint to monitor GPU instance load.",
+    "method": "GET",
+    "path": "/api/gpu/v1/instances/{instanceId}/metrics",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "instanceId": {
+          "type": "integer",
+          "description": "GPU instance ID"
+        }
+      },
+      "required": [
+        "instanceId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "gpu"
+  },
+  {
     "name": "gpu_catalog_pool-groups",
     "title": "Get pool groups",
     "annotations": {

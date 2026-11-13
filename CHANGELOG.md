@@ -4,6 +4,22 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.41.0 — 2026-11-13
+
+### Operations
+
+- Added `gpu_instances_get` — Get instance details
+- Added `gpu_instances_delete` — Delete instance
+- Added `gpu_instances_list` — Get instances
+- Added `gpu_instances_create` — Create instance
+- Added `gpu_instances_metrics` — Get instance metrics
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.40.1 — 2026-11-13
 
 ### Operations

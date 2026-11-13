@@ -3373,6 +3373,104 @@ store currency. Returns the created variant.
   };
 
   /**
+   * Retrieve detailed information about a specified GPU instance, including its SSH keys.
+
+Use this endpoint to follow the instance `status` after creating or deleting it.
+   */
+  "gpu_instances_get": {
+    params: {
+      /**
+       * GPU instance ID
+       */
+      instanceId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a specified GPU instance.
+
+The instance is destroyed asynchronously: a successful request returns immediately and the instance
+`status` moves to `destroying`. Deleting fails while the instance is in `created`, `destroying`,
+`destroyed` or `abuse` status, or while another action is in progress on it.
+
+Use this endpoint to stop billing for a GPU instance you no longer need.
+   */
+  "gpu_instances_delete": {
+    params: {
+      /**
+       * GPU instance ID
+       */
+      instanceId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve all GPU instances of your account.
+
+Use this endpoint to view your GPU instances with their status, pool, instance type and OS template.
+   */
+  "gpu_instances_list": {
+    params: {
+
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Create a new GPU instance.
+
+Pick `pool_instance_id` from the pool instance types list and `os_template_id` from the OS templates
+available for that instance type. Your account must have enough credits to run the instance for its
+first hour.
+
+The instance is created asynchronously: a successful request returns immediately, and the instance
+appears in the instance list while its `status` moves from `created` through `creating` to `running`.
+
+Use this endpoint to provision GPU compute.
+   */
+  "gpu_instances_create": {
+    params: {
+      /**
+       * Instance type ID from the pool instance types list
+       */
+      pool_instance_id: number;
+      /**
+       * OS template ID available for the selected instance type
+       */
+      os_template_id: number;
+      /**
+       * Instance name, unique among your instances. Letters, numbers, dashes and underscores only
+       */
+      name: string;
+      /**
+       * SSH public keys to add to the instance
+       */
+      public_keys?: array;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve utilisation metrics of a specified GPU instance for the last hour.
+
+Each data point contains CPU, memory and GPU utilisation, used GPU memory and GPU throughput.
+The list is empty until the instance is provisioned.
+
+Use this endpoint to monitor GPU instance load.
+   */
+  "gpu_instances_metrics": {
+    params: {
+      /**
+       * GPU instance ID
+       */
+      instanceId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve GPU pool groups, ordered by name.
 
 Each group bundles the pools of one GPU model and lists its currently available pools,
