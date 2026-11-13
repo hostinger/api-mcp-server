@@ -3407,6 +3407,80 @@ Use this endpoint to stop billing for a GPU instance you no longer need.
   };
 
   /**
+   * Delete a specified exposed service of a GPU instance.
+
+The service is removed asynchronously: a successful request returns immediately and the service
+stops being reachable from the internet shortly after.
+
+Use this endpoint to close public access to a service on your GPU instance.
+   */
+  "gpu_exposed-services_delete": {
+    params: {
+      /**
+       * GPU instance ID
+       */
+      instanceId: number;
+      /**
+       * Exposed service ID
+       */
+      exposedServiceId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Retrieve the services exposed on a specified GPU instance.
+
+A newly created service is listed once it gets its public hostname and external port.
+
+Use this endpoint to find the public address of services running on your GPU instance.
+   */
+  "gpu_exposed-services_list": {
+    params: {
+      /**
+       * GPU instance ID
+       */
+      instanceId: number;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Expose a service running on a specified GPU instance to the internet.
+
+The service is exposed asynchronously: a successful request returns immediately, and the service
+appears in the exposed services list once it gets its public hostname and external port.
+Fails when the instance already has the maximum of 4 exposed services.
+
+Use this endpoint to make an application on your GPU instance publicly reachable.
+   */
+  "gpu_exposed-services_create": {
+    params: {
+      /**
+       * GPU instance ID
+       */
+      instanceId: number;
+      /**
+       * Service name, unique within the instance
+       */
+      name: string;
+      /**
+       * Port the service listens on inside the instance, unique within the instance
+       */
+      internal_port: number;
+      /**
+       * protocol parameter
+       */
+      protocol: string;
+      /**
+       * type parameter
+       */
+      type: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve all GPU instances of your account.
 
 Use this endpoint to view your GPU instances with their status, pool, instance type and OS template.

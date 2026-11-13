@@ -78,14 +78,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (419 total)
+- `hostinger-api-mcp` — unified server over every operation (422 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
 - `hostinger-dns-mcp` — 9 operations for dns
 - `hostinger-domains-mcp` — 43 operations for domains
 - `hostinger-ecommerce-mcp` — 30 operations for ecommerce
-- `hostinger-gpu-mcp` — 10 operations for gpu
+- `hostinger-gpu-mcp` — 13 operations for gpu
 - `hostinger-horizons-mcp` — 7 operations for horizons
 - `hostinger-hosting-mcp` — 59 operations for hosting
 - `hostinger-mail-mcp` — 39 operations for mail
@@ -1856,6 +1856,42 @@ Use this endpoint to stop billing for a GPU instance you no longer need.
 
 - **Method**: `DELETE`
 - **Path**: `/api/gpu/v1/instances/{instanceId}`
+
+#### gpu_exposed-services_delete
+
+Delete a specified exposed service of a GPU instance.
+
+The service is removed asynchronously: a successful request returns immediately and the service
+stops being reachable from the internet shortly after.
+
+Use this endpoint to close public access to a service on your GPU instance.
+
+- **Method**: `DELETE`
+- **Path**: `/api/gpu/v1/instances/{instanceId}/exposed-services/{exposedServiceId}`
+
+#### gpu_exposed-services_list
+
+Retrieve the services exposed on a specified GPU instance.
+
+A newly created service is listed once it gets its public hostname and external port.
+
+Use this endpoint to find the public address of services running on your GPU instance.
+
+- **Method**: `GET`
+- **Path**: `/api/gpu/v1/instances/{instanceId}/exposed-services`
+
+#### gpu_exposed-services_create
+
+Expose a service running on a specified GPU instance to the internet.
+
+The service is exposed asynchronously: a successful request returns immediately, and the service
+appears in the exposed services list once it gets its public hostname and external port.
+Fails when the instance already has the maximum of 4 exposed services.
+
+Use this endpoint to make an application on your GPU instance publicly reachable.
+
+- **Method**: `POST`
+- **Path**: `/api/gpu/v1/instances/{instanceId}/exposed-services`
 
 #### gpu_instances_list
 

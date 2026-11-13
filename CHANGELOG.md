@@ -4,6 +4,20 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v3.42.0 — 2026-11-13
+
+### Operations
+
+- Added `gpu_exposed-services_delete` — Delete exposed service
+- Added `gpu_exposed-services_list` — Get exposed services
+- Added `gpu_exposed-services_create` — Create exposed service
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v3.41.0 — 2026-11-13
 
 ### Operations

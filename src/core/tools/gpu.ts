@@ -132,6 +132,130 @@ const tools: OpenApiTool[] = [
     "group": "gpu"
   },
   {
+    "name": "gpu_exposed-services_delete",
+    "title": "Delete exposed service",
+    "annotations": {
+      "title": "Delete exposed service",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Delete a specified exposed service of a GPU instance.\n\nThe service is removed asynchronously: a successful request returns immediately and the service\nstops being reachable from the internet shortly after.\n\nUse this endpoint to close public access to a service on your GPU instance.",
+    "method": "DELETE",
+    "path": "/api/gpu/v1/instances/{instanceId}/exposed-services/{exposedServiceId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "instanceId": {
+          "type": "integer",
+          "description": "GPU instance ID"
+        },
+        "exposedServiceId": {
+          "type": "integer",
+          "description": "Exposed service ID"
+        }
+      },
+      "required": [
+        "instanceId",
+        "exposedServiceId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "gpu"
+  },
+  {
+    "name": "gpu_exposed-services_list",
+    "title": "Get exposed services",
+    "annotations": {
+      "title": "Get exposed services",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Retrieve the services exposed on a specified GPU instance.\n\nA newly created service is listed once it gets its public hostname and external port.\n\nUse this endpoint to find the public address of services running on your GPU instance.",
+    "method": "GET",
+    "path": "/api/gpu/v1/instances/{instanceId}/exposed-services",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "instanceId": {
+          "type": "integer",
+          "description": "GPU instance ID"
+        }
+      },
+      "required": [
+        "instanceId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "gpu"
+  },
+  {
+    "name": "gpu_exposed-services_create",
+    "title": "Create exposed service",
+    "annotations": {
+      "title": "Create exposed service",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Expose a service running on a specified GPU instance to the internet.\n\nThe service is exposed asynchronously: a successful request returns immediately, and the service\nappears in the exposed services list once it gets its public hostname and external port.\nFails when the instance already has the maximum of 4 exposed services.\n\nUse this endpoint to make an application on your GPU instance publicly reachable.",
+    "method": "POST",
+    "path": "/api/gpu/v1/instances/{instanceId}/exposed-services",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "instanceId": {
+          "type": "integer",
+          "description": "GPU instance ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Service name, unique within the instance"
+        },
+        "internal_port": {
+          "type": "integer",
+          "description": "Port the service listens on inside the instance, unique within the instance"
+        },
+        "protocol": {
+          "type": "string",
+          "description": "protocol parameter",
+          "enum": [
+            "tcp",
+            "udp"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "description": "type parameter",
+          "enum": [
+            "http",
+            "https"
+          ]
+        }
+      },
+      "required": [
+        "instanceId",
+        "name",
+        "internal_port",
+        "protocol",
+        "type"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "gpu"
+  },
+  {
     "name": "gpu_instances_list",
     "title": "Get instances",
     "annotations": {
