@@ -12498,6 +12498,96 @@ export default [
     "group": "reach"
   },
   {
+    "name": "reach_campaigns_update",
+    "title": "Update campaign",
+    "annotations": {
+      "title": "Update campaign",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Update a campaign's content, sender, template and audience.\n\nOnly `draft`, `scheduled` and `failed` campaigns can be updated; a campaign that is sending or\nalready sent is rejected. Updating a `failed` campaign moves it back to `draft`. Audience changes\nreplace rather than merge: `all_contacts: true` targets every contact of the profile, while\n`segment_uuids` replaces the segments currently targeted. Leave both out to keep the audience as\nit is. This does not send the campaign - use the send endpoint for that.",
+    "method": "PATCH",
+    "path": "/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "campaignUuid": {
+          "type": "string",
+          "description": "Campaign uuid parameter"
+        },
+        "title": {
+          "type": "string",
+          "description": "Name the campaign is listed under. Not shown to the recipients."
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject line of the email."
+        },
+        "sender_name": {
+          "type": "string",
+          "description": "From name shown to the recipients."
+        },
+        "sender_email": {
+          "type": "string",
+          "description": "From address of the campaign. Its domain has to be verified on the profile before\nthe campaign can be sent."
+        },
+        "template_uuid": {
+          "type": "string",
+          "description": "Template to send, as returned by the template endpoints."
+        },
+        "all_contacts": {
+          "type": "boolean",
+          "description": "`true` targets every contact of the profile, `false` targets only `segment_uuids`.\nRequired when `segment_uuids` or `excluded_segment_uuids` is sent."
+        },
+        "segment_uuids": {
+          "type": "array",
+          "description": "Segments to target. Replaces the segments currently targeted.",
+          "items": {
+            "type": "string",
+            "description": "segment_uuids parameter"
+          }
+        },
+        "excluded_segment_uuids": {
+          "type": "array",
+          "description": "Segments to leave out. Only allowed together with `all_contacts: true`.",
+          "items": {
+            "type": "string",
+            "description": "excluded_segment_uuids parameter"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Extra campaign fields. Any key outside the listed ones is rejected.",
+          "properties": {
+            "preheader": {
+              "type": "string",
+              "description": "Preview text shown after the subject line in the inbox."
+            },
+            "source": {
+              "type": "string",
+              "description": "Where the campaign was created from."
+            }
+          }
+        }
+      },
+      "required": [
+        "profileUuid",
+        "campaignUuid"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
     "name": "reach_campaigns_list",
     "title": "List campaigns",
     "annotations": {
@@ -12620,6 +12710,41 @@ export default [
         "profileUuid",
         "sender_name",
         "sender_email"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "reach"
+  },
+  {
+    "name": "reach_campaigns_send",
+    "title": "Send campaign",
+    "annotations": {
+      "title": "Send campaign",
+      "readOnlyHint": false,
+      "destructiveHint": false
+    },
+    "description": "Send a campaign now to the audience stored on it.\n\nThis is irreversible: once accepted, the emails go out and cannot be recalled. Confirm with the\ncustomer before calling. The campaign needs a subject, sender, template and audience first - set\nthem with the update endpoint. Delivery is asynchronous, so success means accepted, not delivered:\nthe campaign moves to `sending` and later to `publish`, or to `failed`. Read the campaign to follow\nit. The request is rejected when the campaign has no recipients, its sender domain is not verified\nor is blocked, the plan's sending limits would be exceeded, or the campaign is already being sent.",
+    "method": "POST",
+    "path": "/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}/send",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profileUuid": {
+          "type": "string",
+          "description": "Profile uuid parameter"
+        },
+        "campaignUuid": {
+          "type": "string",
+          "description": "Campaign uuid parameter"
+        }
+      },
+      "required": [
+        "profileUuid",
+        "campaignUuid"
       ]
     },
     "security": [

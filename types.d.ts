@@ -7343,6 +7343,67 @@ unsubscribes use the campaign statistics endpoint. The email content is not incl
   };
 
   /**
+   * Update a campaign's content, sender, template and audience.
+
+Only `draft`, `scheduled` and `failed` campaigns can be updated; a campaign that is sending or
+already sent is rejected. Updating a `failed` campaign moves it back to `draft`. Audience changes
+replace rather than merge: `all_contacts: true` targets every contact of the profile, while
+`segment_uuids` replaces the segments currently targeted. Leave both out to keep the audience as
+it is. This does not send the campaign - use the send endpoint for that.
+   */
+  "reach_campaigns_update": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Campaign uuid parameter
+       */
+      campaignUuid: string;
+      /**
+       * Name the campaign is listed under. Not shown to the recipients.
+       */
+      title?: string;
+      /**
+       * Subject line of the email.
+       */
+      subject?: string;
+      /**
+       * From name shown to the recipients.
+       */
+      sender_name?: string;
+      /**
+       * From address of the campaign. Its domain has to be verified on the profile before
+the campaign can be sent.
+       */
+      sender_email?: string;
+      /**
+       * Template to send, as returned by the template endpoints.
+       */
+      template_uuid?: string;
+      /**
+       * `true` targets every contact of the profile, `false` targets only `segment_uuids`.
+Required when `segment_uuids` or `excluded_segment_uuids` is sent.
+       */
+      all_contacts?: boolean;
+      /**
+       * Segments to target. Replaces the segments currently targeted.
+       */
+      segment_uuids?: array;
+      /**
+       * Segments to leave out. Only allowed together with `all_contacts: true`.
+       */
+      excluded_segment_uuids?: array;
+      /**
+       * Extra campaign fields. Any key outside the listed ones is rejected.
+       */
+      metadata?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Get a paginated list of the campaigns in a profile.
 
 Each campaign carries its headline engagement rates. Filter by status to find drafts,
@@ -7425,6 +7486,30 @@ attached later, but the campaign cannot be sent without one.
        * Extra campaign fields. Any key outside the listed ones is rejected.
        */
       metadata?: object;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Send a campaign now to the audience stored on it.
+
+This is irreversible: once accepted, the emails go out and cannot be recalled. Confirm with the
+customer before calling. The campaign needs a subject, sender, template and audience first - set
+them with the update endpoint. Delivery is asynchronous, so success means accepted, not delivered:
+the campaign moves to `sending` and later to `publish`, or to `failed`. Read the campaign to follow
+it. The request is rejected when the campaign has no recipients, its sender domain is not verified
+or is blocked, the plan's sending limits would be exceeded, or the campaign is already being sent.
+   */
+  "reach_campaigns_send": {
+    params: {
+      /**
+       * Profile uuid parameter
+       */
+      profileUuid: string;
+      /**
+       * Campaign uuid parameter
+       */
+      campaignUuid: string;
     };
     response: any; // Response structure will depend on the API
   };

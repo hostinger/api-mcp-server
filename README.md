@@ -78,7 +78,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (422 total)
+- `hostinger-api-mcp` — unified server over every operation (424 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
@@ -89,7 +89,7 @@ This package installs the following MCP server commands:
 - `hostinger-horizons-mcp` — 7 operations for horizons
 - `hostinger-hosting-mcp` — 59 operations for hosting
 - `hostinger-mail-mcp` — 39 operations for mail
-- `hostinger-reach-mcp` — 71 operations for reach
+- `hostinger-reach-mcp` — 73 operations for reach
 - `hostinger-vps-mcp` — 68 operations for vps
 - `hostinger-wordpress-mcp` — 41 operations for wordpress
 
@@ -3290,6 +3290,19 @@ unsubscribes use the campaign statistics endpoint. The email content is not incl
 - **Method**: `GET`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}`
 
+#### reach_campaigns_update
+
+Update a campaign's content, sender, template and audience.
+
+Only `draft`, `scheduled` and `failed` campaigns can be updated; a campaign that is sending or
+already sent is rejected. Updating a `failed` campaign moves it back to `draft`. Audience changes
+replace rather than merge: `all_contacts: true` targets every contact of the profile, while
+`segment_uuids` replaces the segments currently targeted. Leave both out to keep the audience as
+it is. This does not send the campaign - use the send endpoint for that.
+
+- **Method**: `PATCH`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}`
+
 #### reach_campaigns_list
 
 Get a paginated list of the campaigns in a profile.
@@ -3312,6 +3325,20 @@ finished and sent from the Reach interface.
 
 - **Method**: `POST`
 - **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns`
+
+#### reach_campaigns_send
+
+Send a campaign now to the audience stored on it.
+
+This is irreversible: once accepted, the emails go out and cannot be recalled. Confirm with the
+customer before calling. The campaign needs a subject, sender, template and audience first - set
+them with the update endpoint. Delivery is asynchronous, so success means accepted, not delivered:
+the campaign moves to `sending` and later to `publish`, or to `failed`. Read the campaign to follow
+it. The request is rejected when the campaign has no recipients, its sender domain is not verified
+or is blocked, the plan's sending limits would be exceeded, or the campaign is already being sent.
+
+- **Method**: `POST`
+- **Path**: `/api/reach/v1/profiles/{profileUuid}/campaigns/{campaignUuid}/send`
 
 #### reach_campaigns_performance
 
