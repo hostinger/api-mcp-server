@@ -234,7 +234,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "gpu"
+    "group": "gpu",
+    "bodyParameters": [
+      "name",
+      "internal_port",
+      "protocol",
+      "type"
+    ]
   },
   {
     "name": "gpu_instances_list",
@@ -305,7 +311,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "gpu"
+    "group": "gpu",
+    "bodyParameters": [
+      "pool_instance_id",
+      "os_template_id",
+      "name",
+      "public_keys"
+    ]
   },
   {
     "name": "gpu_instances_metrics",

@@ -4,6 +4,18 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.0.2 — 2026-11-16
+
+### Operations
+
+- Updated the bodyParameters of 160 tools (of 465)
+
+### Also in this release
+
+- Bundled agent skills: `skills/headless/VERSION`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v4.0.1 — 2026-11-13
 
 ### Also in this release

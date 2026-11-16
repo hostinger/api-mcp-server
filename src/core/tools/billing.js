@@ -146,7 +146,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "billing"
+    "group": "billing",
+    "bodyParameters": [
+      "payment_method_id",
+      "items",
+      "coupons"
+    ]
   },
   {
     "name": "billing_payment-methods_set-default",
@@ -357,6 +362,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "billing"
+    "group": "billing",
+    "bodyParameters": [
+      "payment_method_id",
+      "coupons"
+    ]
   }
 ];

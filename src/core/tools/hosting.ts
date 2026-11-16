@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -800,6 +801,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "enabled"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_websites_update-settings"
@@ -844,6 +848,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "enabled"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_websites_update-settings"
@@ -1069,7 +1076,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "time",
+      "command"
+    ]
   },
   {
     "name": "hosting_cron-jobs_delete",
@@ -1181,7 +1192,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "hosting_databases_list",
@@ -1281,7 +1295,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "name",
+      "user",
+      "password",
+      "website_domain"
+    ]
   },
   {
     "name": "hosting_databases_delete",
@@ -1357,7 +1377,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "ip"
+    ]
   },
   {
     "name": "hosting_databases_delete-remote-connection",
@@ -1511,7 +1534,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "name",
+      "user"
+    ]
   },
   {
     "name": "hosting_databases_phpmyadmin-link",
@@ -1677,6 +1704,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "parked_domain"
+    ],
     "hidden": true
   },
   {
@@ -1804,6 +1834,11 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "subdomain",
+      "directory",
+      "is_using_public_directory"
+    ],
     "hidden": true
   },
   {
@@ -1876,7 +1911,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "hosting_files_generate-upload-url",
@@ -1912,6 +1950,10 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "username",
+      "domain"
+    ],
     "hidden": true
   },
   {
@@ -2128,6 +2170,14 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "installation_uuid",
+      "owner",
+      "repository",
+      "branch",
+      "directory",
+      "is_enabled"
+    ],
     "hidden": true
   },
   {
@@ -2287,7 +2337,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "repository_url",
+      "branch",
+      "directory"
+    ]
   },
   {
     "name": "hosting_git_list-website-repositories",
@@ -2605,7 +2660,22 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "schema_version",
+      "generated_at",
+      "consent",
+      "run",
+      "info",
+      "timing",
+      "tokens",
+      "issues",
+      "user_feedback",
+      "skill_gaps",
+      "what_went_well",
+      "logging_gaps",
+      "previous_runs"
+    ]
   },
   {
     "name": "hosting_nodejs_list-builds",
@@ -2802,6 +2872,17 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "node_version",
+      "app_type",
+      "root_directory",
+      "output_directory",
+      "build_script",
+      "entry_file",
+      "package_manager",
+      "source_type",
+      "source_options"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_deploy"
@@ -2940,6 +3021,15 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "node_version",
+      "app_type",
+      "root_directory",
+      "output_directory",
+      "build_script",
+      "entry_file",
+      "package_manager"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_deploy"
@@ -3137,7 +3227,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "env_vars"
+    ]
   },
   {
     "name": "hosting_nodejs_analyse-failed-build",
@@ -3504,7 +3597,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "vulnerability_ids"
+    ]
   },
   {
     "name": "hosting_websites_list-setups",
@@ -3629,7 +3725,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "type",
+      "domain",
+      "datacenter_code",
+      "wordpress"
+    ]
   },
   {
     "name": "hosting_orders_list",
@@ -3843,6 +3945,10 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "enable",
+      "disable"
+    ],
     "hidden": true
   },
   {
@@ -3886,6 +3992,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "options"
+    ],
     "hidden": true
   },
   {
@@ -3928,6 +4037,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "version"
+    ],
     "hidden": true
   },
   {
@@ -4006,7 +4118,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "superuser_email",
+      "superuser_password"
+    ]
   },
   {
     "name": "hosting_pocketbase_delete-backend",
@@ -4116,7 +4232,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "superuser_email",
+      "superuser_password"
+    ]
   },
   {
     "name": "hosting_redirects_list-website",
@@ -4204,7 +4324,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "from",
+      "to"
+    ]
   },
   {
     "name": "hosting_redirects_delete-website",
@@ -4360,6 +4484,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "is_enabled"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_websites_update-settings"
@@ -4501,6 +4628,11 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "domain",
+      "order_id",
+      "datacenter_code"
+    ],
     "hidden": true
   },
   {
@@ -4542,6 +4674,9 @@ const tools: OpenApiTool[] = [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "archive_path"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_deploy"

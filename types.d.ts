@@ -1566,6 +1566,10 @@ Use this endpoint to remove specific DNS records from domains.
        * Domain name
        */
       domain: string;
+      /**
+       * Filter records for deletion
+       */
+      filters: array;
     };
     response: any; // Response structure will depend on the API
   };
@@ -8366,6 +8370,14 @@ finished. The tag itself and the contacts are not deleted.
        * Tag uuid parameter
        */
       tagUuid: string;
+      /**
+       * Contacts to apply the change to. Required unless all_contacts is true.
+       */
+      contact_uuids?: array;
+      /**
+       * Apply to every contact in the profile
+       */
+      all_contacts?: boolean;
     };
     response: any; // Response structure will depend on the API
   };
@@ -8634,6 +8646,10 @@ a conflict.
        * Form uuid parameter
        */
       formUuid: string;
+      /**
+       * tag_uuid parameter
+       */
+      tag_uuid: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -8736,6 +8752,10 @@ before calling.
        * Profile uuid parameter
        */
       profileUuid: string;
+      /**
+       * domain parameter
+       */
+      domain: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -9125,6 +9145,10 @@ it is connected again, so confirm the site and the plan with the customer before
        * Profile uuid parameter
        */
       profileUuid: string;
+      /**
+       * domain parameter
+       */
+      domain: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -9144,6 +9168,10 @@ from the WordPress plugin - so confirm the site and the plan with the customer b
        * Profile uuid parameter
        */
       profileUuid: string;
+      /**
+       * domain parameter
+       */
+      domain: string;
     };
     response: any; // Response structure will depend on the API
   };
@@ -9882,6 +9910,10 @@ Use this endpoint to revoke SSH key access to VPS instances.
        * Virtual Machine ID
        */
       virtualMachineId: number;
+      /**
+       * SSH public keys in OpenSSH format to remove
+       */
+      keys: array;
     };
     response: any; // Response structure will depend on the API
   };
@@ -10799,6 +10831,14 @@ be obtained from GET /api/hosting/v1/wordpress/installations (the `id` field).
        * WordPress installation (software) identifier
        */
       software: string;
+      /**
+       * Delete installation files from disk.
+       */
+      delete_files?: boolean;
+      /**
+       * Delete the installation database.
+       */
+      delete_database?: boolean;
     };
     response: any; // Response structure will depend on the API
   };

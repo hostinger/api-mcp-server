@@ -84,7 +84,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "local_part"
+    ]
   },
   {
     "name": "mail_aliases_delete-alias",
@@ -210,7 +213,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "name",
+      "scope"
+    ]
   },
   {
     "name": "mail_api-tokens_revoke",
@@ -329,7 +336,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "subject",
+      "body",
+      "display_name",
+      "starts_at",
+      "ends_at"
+    ]
   },
   {
     "name": "mail_autoreplies_update",
@@ -382,7 +396,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "subject",
+      "body",
+      "display_name",
+      "starts_at",
+      "ends_at"
+    ]
   },
   {
     "name": "mail_autoreplies_delete",
@@ -619,7 +640,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "destination",
+      "is_keep_copy_enabled"
+    ]
   },
   {
     "name": "mail_forwarders_delete",
@@ -754,7 +779,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "is_keep_copy_enabled"
+    ]
   },
   {
     "name": "mail_logs_list-access",
@@ -1189,7 +1217,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "local_part",
+      "password"
+    ]
   },
   {
     "name": "mail_mailboxes_delete-mailbox",
@@ -1256,7 +1288,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "mail_orders_list",
@@ -1410,7 +1445,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "name",
+      "description",
+      "events",
+      "status",
+      "url"
+    ]
   },
   {
     "name": "mail_webhooks_list-delivery-logs",
@@ -1576,7 +1618,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "name",
+      "description",
+      "events",
+      "status",
+      "url"
+    ]
   },
   {
     "name": "mail_webhooks_list",

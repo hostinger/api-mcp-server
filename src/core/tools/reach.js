@@ -299,7 +299,18 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "title",
+      "subject",
+      "sender_name",
+      "sender_email",
+      "template_uuid",
+      "all_contacts",
+      "segment_uuids",
+      "excluded_segment_uuids",
+      "metadata"
+    ]
   },
   {
     "name": "reach_campaigns_list",
@@ -431,7 +442,15 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "sender_name",
+      "sender_email",
+      "title",
+      "subject",
+      "template_uuid",
+      "metadata"
+    ]
   },
   {
     "name": "reach_campaigns_send",
@@ -630,7 +649,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "label",
+      "options"
+    ]
   },
   {
     "name": "reach_contact-fields_list",
@@ -715,7 +738,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "type",
+      "label",
+      "options"
+    ]
   },
   {
     "name": "reach_contacts_list-groups",
@@ -863,7 +891,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "email",
+      "name",
+      "surname",
+      "phone",
+      "note",
+      "tag_uuids",
+      "fields"
+    ]
   },
   {
     "name": "reach_contacts_get",
@@ -1029,7 +1066,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "email",
+      "name",
+      "surname",
+      "phone",
+      "subscription_status",
+      "note",
+      "fields"
+    ]
   },
   {
     "name": "reach_contacts_create-in-bulk",
@@ -1130,7 +1176,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "contacts",
+      "tag_uuids",
+      "note"
+    ]
   },
   {
     "name": "reach_contacts_list-profile",
@@ -1274,7 +1325,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "email",
+      "name",
+      "surname",
+      "phone",
+      "note",
+      "tag_uuids",
+      "fields"
+    ]
   },
   {
     "name": "reach_segments_list",
@@ -1409,7 +1469,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "conditions",
+      "logic"
+    ]
   },
   {
     "name": "reach_segments_count-profile-contacts",
@@ -1626,7 +1691,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "conditions",
+      "logic"
+    ]
   },
   {
     "name": "reach_segments_delete-profile",
@@ -1818,7 +1888,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "conditions",
+      "logic",
+      "page",
+      "per_page",
+      "search",
+      "sort_by",
+      "sort_direction"
+    ]
   },
   {
     "name": "reach_segments_list-profile",
@@ -1964,7 +2043,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "conditions",
+      "logic"
+    ]
   },
   {
     "name": "reach_segments_list-contacts",
@@ -2160,7 +2244,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "contact_uuids",
+      "all_contacts"
+    ]
   },
   {
     "name": "reach_tags_remove-contacts-from",
@@ -2184,6 +2272,18 @@ export default [
         "tagUuid": {
           "type": "string",
           "description": "Tag uuid parameter"
+        },
+        "contact_uuids": {
+          "type": "array",
+          "description": "Contacts to apply the change to. Required unless all_contacts is true.",
+          "items": {
+            "type": "string",
+            "description": "contact_uuids parameter"
+          }
+        },
+        "all_contacts": {
+          "type": "boolean",
+          "description": "Apply to every contact in the profile"
         }
       },
       "required": [
@@ -2196,7 +2296,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "contact_uuids",
+      "all_contacts"
+    ]
   },
   {
     "name": "reach_tags_delete",
@@ -2273,7 +2377,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "value"
+    ]
   },
   {
     "name": "reach_tags_list-profile",
@@ -2342,7 +2449,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "names"
+    ]
   },
   {
     "name": "reach_forms_get",
@@ -2462,7 +2572,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "status"
+    ]
   },
   {
     "name": "reach_forms_duplicate",
@@ -2579,7 +2693,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name"
+    ]
   },
   {
     "name": "reach_forms_add-submitter-tags",
@@ -2623,7 +2740,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "tag_uuids"
+    ]
   },
   {
     "name": "reach_forms_remove-submitter-tag",
@@ -2647,11 +2767,16 @@ export default [
         "formUuid": {
           "type": "string",
           "description": "Form uuid parameter"
+        },
+        "tag_uuid": {
+          "type": "string",
+          "description": "tag_uuid parameter"
         }
       },
       "required": [
         "profileUuid",
-        "formUuid"
+        "formUuid",
+        "tag_uuid"
       ]
     },
     "security": [
@@ -2659,7 +2784,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "tag_uuid"
+    ]
   },
   {
     "name": "reach_forms_update-template",
@@ -2700,7 +2828,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "content"
+    ]
   },
   {
     "name": "reach_profiles_connected-sending-domain",
@@ -2765,7 +2896,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_profiles_delete-sending-domain",
@@ -2785,10 +2919,15 @@ export default [
         "profileUuid": {
           "type": "string",
           "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
         }
       },
       "required": [
-        "profileUuid"
+        "profileUuid",
+        "domain"
       ]
     },
     "security": [
@@ -2796,7 +2935,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_profiles_domain-dns-status",
@@ -3075,7 +3217,31 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "brand_name",
+      "website_url",
+      "business_address",
+      "privacy_policy_url",
+      "accent_color",
+      "button_color",
+      "background_color",
+      "text_color",
+      "links_color",
+      "button_text",
+      "button_corners",
+      "font_family",
+      "heading_font_family",
+      "logo_url",
+      "social_links",
+      "socials",
+      "about",
+      "keywords",
+      "topics",
+      "selling_points",
+      "sender_name",
+      "sender_email"
+    ]
   },
   {
     "name": "reach_integrations_connect-ecommerce-store",
@@ -3245,7 +3411,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "template_content",
+      "title"
+    ]
   },
   {
     "name": "reach_templates_email",
@@ -3345,7 +3515,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_integrations_disconnect-ai-website-builder-site",
@@ -3365,10 +3538,15 @@ export default [
         "profileUuid": {
           "type": "string",
           "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
         }
       },
       "required": [
-        "profileUuid"
+        "profileUuid",
+        "domain"
       ]
     },
     "security": [
@@ -3376,7 +3554,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_integrations_disconnect-wordpress-site",
@@ -3396,10 +3577,15 @@ export default [
         "profileUuid": {
           "type": "string",
           "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
         }
       },
       "required": [
-        "profileUuid"
+        "profileUuid",
+        "domain"
       ]
     },
     "security": [
@@ -3407,6 +3593,9 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   }
 ];

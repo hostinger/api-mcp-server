@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -318,7 +319,18 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "title",
+      "subject",
+      "sender_name",
+      "sender_email",
+      "template_uuid",
+      "all_contacts",
+      "segment_uuids",
+      "excluded_segment_uuids",
+      "metadata"
+    ]
   },
   {
     "name": "reach_campaigns_list",
@@ -450,7 +462,15 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "sender_name",
+      "sender_email",
+      "title",
+      "subject",
+      "template_uuid",
+      "metadata"
+    ]
   },
   {
     "name": "reach_campaigns_send",
@@ -649,7 +669,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "label",
+      "options"
+    ]
   },
   {
     "name": "reach_contact-fields_list",
@@ -734,7 +758,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "type",
+      "label",
+      "options"
+    ]
   },
   {
     "name": "reach_contacts_list-groups",
@@ -882,7 +911,16 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "email",
+      "name",
+      "surname",
+      "phone",
+      "note",
+      "tag_uuids",
+      "fields"
+    ]
   },
   {
     "name": "reach_contacts_get",
@@ -1048,7 +1086,16 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "email",
+      "name",
+      "surname",
+      "phone",
+      "subscription_status",
+      "note",
+      "fields"
+    ]
   },
   {
     "name": "reach_contacts_create-in-bulk",
@@ -1149,7 +1196,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "contacts",
+      "tag_uuids",
+      "note"
+    ]
   },
   {
     "name": "reach_contacts_list-profile",
@@ -1293,7 +1345,16 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "email",
+      "name",
+      "surname",
+      "phone",
+      "note",
+      "tag_uuids",
+      "fields"
+    ]
   },
   {
     "name": "reach_segments_list",
@@ -1428,7 +1489,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "conditions",
+      "logic"
+    ]
   },
   {
     "name": "reach_segments_count-profile-contacts",
@@ -1645,7 +1711,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "conditions",
+      "logic"
+    ]
   },
   {
     "name": "reach_segments_delete-profile",
@@ -1837,7 +1908,16 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "conditions",
+      "logic",
+      "page",
+      "per_page",
+      "search",
+      "sort_by",
+      "sort_direction"
+    ]
   },
   {
     "name": "reach_segments_list-profile",
@@ -1983,7 +2063,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "conditions",
+      "logic"
+    ]
   },
   {
     "name": "reach_segments_list-contacts",
@@ -2179,7 +2264,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "contact_uuids",
+      "all_contacts"
+    ]
   },
   {
     "name": "reach_tags_remove-contacts-from",
@@ -2203,6 +2292,18 @@ const tools: OpenApiTool[] = [
         "tagUuid": {
           "type": "string",
           "description": "Tag uuid parameter"
+        },
+        "contact_uuids": {
+          "type": "array",
+          "description": "Contacts to apply the change to. Required unless all_contacts is true.",
+          "items": {
+            "type": "string",
+            "description": "contact_uuids parameter"
+          }
+        },
+        "all_contacts": {
+          "type": "boolean",
+          "description": "Apply to every contact in the profile"
         }
       },
       "required": [
@@ -2215,7 +2316,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "contact_uuids",
+      "all_contacts"
+    ]
   },
   {
     "name": "reach_tags_delete",
@@ -2292,7 +2397,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "value"
+    ]
   },
   {
     "name": "reach_tags_list-profile",
@@ -2361,7 +2469,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "names"
+    ]
   },
   {
     "name": "reach_forms_get",
@@ -2481,7 +2592,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "status"
+    ]
   },
   {
     "name": "reach_forms_duplicate",
@@ -2598,7 +2713,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name"
+    ]
   },
   {
     "name": "reach_forms_add-submitter-tags",
@@ -2642,7 +2760,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "tag_uuids"
+    ]
   },
   {
     "name": "reach_forms_remove-submitter-tag",
@@ -2666,11 +2787,16 @@ const tools: OpenApiTool[] = [
         "formUuid": {
           "type": "string",
           "description": "Form uuid parameter"
+        },
+        "tag_uuid": {
+          "type": "string",
+          "description": "tag_uuid parameter"
         }
       },
       "required": [
         "profileUuid",
-        "formUuid"
+        "formUuid",
+        "tag_uuid"
       ]
     },
     "security": [
@@ -2678,7 +2804,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "tag_uuid"
+    ]
   },
   {
     "name": "reach_forms_update-template",
@@ -2719,7 +2848,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "content"
+    ]
   },
   {
     "name": "reach_profiles_connected-sending-domain",
@@ -2784,7 +2916,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_profiles_delete-sending-domain",
@@ -2804,10 +2939,15 @@ const tools: OpenApiTool[] = [
         "profileUuid": {
           "type": "string",
           "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
         }
       },
       "required": [
-        "profileUuid"
+        "profileUuid",
+        "domain"
       ]
     },
     "security": [
@@ -2815,7 +2955,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_profiles_domain-dns-status",
@@ -3094,7 +3237,31 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "brand_name",
+      "website_url",
+      "business_address",
+      "privacy_policy_url",
+      "accent_color",
+      "button_color",
+      "background_color",
+      "text_color",
+      "links_color",
+      "button_text",
+      "button_corners",
+      "font_family",
+      "heading_font_family",
+      "logo_url",
+      "social_links",
+      "socials",
+      "about",
+      "keywords",
+      "topics",
+      "selling_points",
+      "sender_name",
+      "sender_email"
+    ]
   },
   {
     "name": "reach_integrations_connect-ecommerce-store",
@@ -3264,7 +3431,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "template_content",
+      "title"
+    ]
   },
   {
     "name": "reach_templates_email",
@@ -3364,7 +3535,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_integrations_disconnect-ai-website-builder-site",
@@ -3384,10 +3558,15 @@ const tools: OpenApiTool[] = [
         "profileUuid": {
           "type": "string",
           "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
         }
       },
       "required": [
-        "profileUuid"
+        "profileUuid",
+        "domain"
       ]
     },
     "security": [
@@ -3395,7 +3574,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_integrations_disconnect-wordpress-site",
@@ -3415,10 +3597,15 @@ const tools: OpenApiTool[] = [
         "profileUuid": {
           "type": "string",
           "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
         }
       },
       "required": [
-        "profileUuid"
+        "profileUuid",
+        "domain"
       ]
     },
     "security": [
@@ -3426,7 +3613,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   }
 ];
 export default tools;

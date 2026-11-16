@@ -177,7 +177,19 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "code",
+      "name",
+      "type",
+      "value",
+      "allocation",
+      "starts_at",
+      "ends_at",
+      "usage_limit",
+      "min_cart_value",
+      "time_zone"
+    ]
   },
   {
     "name": "ecommerce_miscellaneous_custom-storefront-setup-instructions",
@@ -239,7 +251,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "notify_customer"
+    ]
   },
   {
     "name": "ecommerce_orders_fulfil",
@@ -308,7 +323,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "items",
+      "tracking_number",
+      "tracking_url",
+      "notify_customer"
+    ]
   },
   {
     "name": "ecommerce_orders_list-store",
@@ -483,7 +504,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "title"
+    ]
   },
   {
     "name": "ecommerce_payments_create-provider-connect-link",
@@ -734,7 +758,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "description",
+      "status",
+      "seo_settings",
+      "collection_changes"
+    ]
   },
   {
     "name": "ecommerce_products_create-digital",
@@ -786,7 +817,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "price",
+      "description",
+      "currency",
+      "download_url"
+    ]
   },
   {
     "name": "ecommerce_products_list",
@@ -925,7 +963,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "price",
+      "description",
+      "currency",
+      "seo_settings"
+    ]
   },
   {
     "name": "ecommerce_products_upload-and-attach-image",
@@ -972,7 +1017,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "image_url",
+      "object_name",
+      "is_thumbnail"
+    ]
   },
   {
     "name": "ecommerce_sales-channels_list",
@@ -1049,7 +1099,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "type",
+      "name",
+      "url"
+    ]
   },
   {
     "name": "ecommerce_sales-channels_update",
@@ -1093,7 +1148,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "url"
+    ]
   },
   {
     "name": "ecommerce_shipping_set-store",
@@ -1128,7 +1187,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "price"
+    ]
   },
   {
     "name": "ecommerce_stores_delete",
@@ -1248,7 +1310,15 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "country_code",
+      "company_email",
+      "company_name",
+      "language",
+      "sales_channel"
+    ]
   },
   {
     "name": "ecommerce_stores_metadata",
@@ -1373,7 +1443,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "variants"
+    ]
   },
   {
     "name": "ecommerce_product-variants_delete",
@@ -1552,6 +1625,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "title",
+      "sku",
+      "options",
+      "prices",
+      "inventory_quantity",
+      "manage_inventory"
+    ]
   }
 ];

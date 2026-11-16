@@ -809,7 +809,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "agency-hosting_domains_link-to-website",
@@ -844,7 +847,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "agency-hosting_domains_list",
@@ -985,7 +991,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "archive_name"
+    ]
   },
   {
     "name": "agency-hosting_metrics_list-plan-order-disk-usage",
@@ -1168,7 +1177,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "extensions"
+    ]
   },
   {
     "name": "agency-hosting_php_list-options-for-website",
@@ -1252,7 +1264,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "options"
+    ]
   },
   {
     "name": "agency-hosting_php_list-versions-for-order",
@@ -1348,7 +1363,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "version"
+    ]
   },
   {
     "name": "agency-hosting_website-setups_create",
@@ -1464,7 +1482,15 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "datacenter_code",
+      "flavor",
+      "settings",
+      "domain",
+      "type",
+      "wordpress"
+    ]
   },
   {
     "name": "agency-hosting_website-setups_status",
@@ -1675,7 +1701,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "archive_path"
+    ]
   },
   {
     "name": "agency-hosting_cache_clear-website",
@@ -1784,7 +1813,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "time",
+      "command"
+    ]
   },
   {
     "name": "agency-hosting_cron-jobs_delete-website",
@@ -1903,7 +1936,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "database_name",
+      "database_user",
+      "password"
+    ]
   },
   {
     "name": "agency-hosting_databases_delete-website",
@@ -1988,7 +2026,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "database_user",
+      "password",
+      "host"
+    ]
   },
   {
     "name": "agency-hosting_databases_delete-website-user",
@@ -2230,7 +2273,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "version"
+    ]
   },
   {
     "name": "agency-hosting_wordpress_settings",
@@ -2343,7 +2389,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agent-readiness"
+    "group": "agent-readiness",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "agent-readiness_scans_get",
@@ -2470,7 +2519,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "billing"
+    "group": "billing",
+    "bodyParameters": [
+      "payment_method_id",
+      "items",
+      "coupons"
+    ]
   },
   {
     "name": "billing_payment-methods_set-default",
@@ -2681,7 +2735,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "billing"
+    "group": "billing",
+    "bodyParameters": [
+      "payment_method_id",
+      "coupons"
+    ]
   },
   {
     "name": "dns_snapshots_get",
@@ -2903,7 +2961,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "overwrite",
+      "zone"
+    ]
   },
   {
     "name": "dns_records_delete",
@@ -2923,10 +2985,45 @@ export default [
         "domain": {
           "type": "string",
           "description": "Domain name"
+        },
+        "filters": {
+          "type": "array",
+          "description": "Filter records for deletion",
+          "items": {
+            "type": "object",
+            "description": "filters parameter",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the record"
+              },
+              "type": {
+                "type": "string",
+                "description": "Type of the record",
+                "enum": [
+                  "A",
+                  "AAAA",
+                  "CNAME",
+                  "ALIAS",
+                  "MX",
+                  "TXT",
+                  "NS",
+                  "SOA",
+                  "SRV",
+                  "CAA"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "type"
+            ]
+          }
         }
       },
       "required": [
-        "domain"
+        "domain",
+        "filters"
       ]
     },
     "security": [
@@ -2934,7 +3031,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "filters"
+    ]
   },
   {
     "name": "dns_records_reset",
@@ -2980,7 +3080,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "sync",
+      "reset_email_records",
+      "whitelisted_record_types"
+    ]
   },
   {
     "name": "dns_records_validate",
@@ -3071,7 +3176,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "overwrite",
+      "zone"
+    ]
   },
   {
     "name": "domains_verifications_direct",
@@ -3129,7 +3238,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "description",
+      "limit"
+    ]
   },
   {
     "name": "domains_availability_suggest-names-from",
@@ -3164,7 +3277,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "limit"
+    ]
   },
   {
     "name": "domains_availability_check",
@@ -3207,7 +3324,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "tlds",
+      "with_alternatives"
+    ]
   },
   {
     "name": "domains_forwarding_get",
@@ -3282,7 +3404,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "redirect_type",
+      "redirect_url"
+    ]
   },
   {
     "name": "domains_forwarding_delete",
@@ -3357,7 +3483,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "redirect_type",
+      "redirect_url"
+    ]
   },
   {
     "name": "domains_whois_pending-irtp-verification",
@@ -3512,7 +3643,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain_contacts"
+    ]
   },
   {
     "name": "domains_move_reject-incoming",
@@ -3631,7 +3765,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "new_customer_email"
+    ]
   },
   {
     "name": "domains_move_cancel-outgoing",
@@ -3772,7 +3909,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "domain_contacts",
+      "additional_details"
+    ]
   },
   {
     "name": "domains_portfolio_enable-lock",
@@ -3961,7 +4103,15 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "item_id",
+      "payment_method_id",
+      "domain_contacts",
+      "additional_details",
+      "coupons"
+    ]
   },
   {
     "name": "domains_portfolio_enable-privacy-protection",
@@ -4110,7 +4260,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain_contacts",
+      "additional_details"
+    ]
   },
   {
     "name": "domains_portfolio_update-nameservers",
@@ -4159,7 +4313,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "ns1",
+      "ns2",
+      "ns3",
+      "ns4"
+    ]
   },
   {
     "name": "domains_transfer_claim-free",
@@ -4219,7 +4379,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "auth_code",
+      "domain_contacts",
+      "should_keep_ns"
+    ]
   },
   {
     "name": "domains_transfer_get",
@@ -4332,7 +4498,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "auth_code",
+      "domain_contacts",
+      "should_keep_ns"
+    ]
   },
   {
     "name": "domains_whois_change-for",
@@ -4383,7 +4555,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "new_whois_id",
+      "domain",
+      "change_for"
+    ]
   },
   {
     "name": "domains_whois_set-as-default",
@@ -4589,7 +4766,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "tld",
+      "country",
+      "entity_type",
+      "tld_details",
+      "whois_details"
+    ]
   },
   {
     "name": "domains_whois_usage",
@@ -4747,7 +4931,19 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "code",
+      "name",
+      "type",
+      "value",
+      "allocation",
+      "starts_at",
+      "ends_at",
+      "usage_limit",
+      "min_cart_value",
+      "time_zone"
+    ]
   },
   {
     "name": "ecommerce_miscellaneous_custom-storefront-setup-instructions",
@@ -4809,7 +5005,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "notify_customer"
+    ]
   },
   {
     "name": "ecommerce_orders_fulfil",
@@ -4878,7 +5077,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "items",
+      "tracking_number",
+      "tracking_url",
+      "notify_customer"
+    ]
   },
   {
     "name": "ecommerce_orders_list-store",
@@ -5053,7 +5258,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "title"
+    ]
   },
   {
     "name": "ecommerce_payments_create-provider-connect-link",
@@ -5304,7 +5512,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "description",
+      "status",
+      "seo_settings",
+      "collection_changes"
+    ]
   },
   {
     "name": "ecommerce_products_create-digital",
@@ -5356,7 +5571,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "price",
+      "description",
+      "currency",
+      "download_url"
+    ]
   },
   {
     "name": "ecommerce_products_list",
@@ -5495,7 +5717,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "price",
+      "description",
+      "currency",
+      "seo_settings"
+    ]
   },
   {
     "name": "ecommerce_products_upload-and-attach-image",
@@ -5542,7 +5771,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "image_url",
+      "object_name",
+      "is_thumbnail"
+    ]
   },
   {
     "name": "ecommerce_sales-channels_list",
@@ -5619,7 +5853,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "type",
+      "name",
+      "url"
+    ]
   },
   {
     "name": "ecommerce_sales-channels_update",
@@ -5663,7 +5902,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "url"
+    ]
   },
   {
     "name": "ecommerce_shipping_set-store",
@@ -5698,7 +5941,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "price"
+    ]
   },
   {
     "name": "ecommerce_stores_delete",
@@ -5818,7 +6064,15 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "name",
+      "country_code",
+      "company_email",
+      "company_name",
+      "language",
+      "sales_channel"
+    ]
   },
   {
     "name": "ecommerce_stores_metadata",
@@ -5943,7 +6197,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "variants"
+    ]
   },
   {
     "name": "ecommerce_product-variants_delete",
@@ -6122,7 +6379,15 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "ecommerce"
+    "group": "ecommerce",
+    "bodyParameters": [
+      "title",
+      "sku",
+      "options",
+      "prices",
+      "inventory_quantity",
+      "manage_inventory"
+    ]
   },
   {
     "name": "gpu_instances_get",
@@ -6307,7 +6572,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "gpu"
+    "group": "gpu",
+    "bodyParameters": [
+      "name",
+      "internal_port",
+      "protocol",
+      "type"
+    ]
   },
   {
     "name": "gpu_instances_list",
@@ -6378,7 +6649,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "gpu"
+    "group": "gpu",
+    "bodyParameters": [
+      "pool_instance_id",
+      "os_template_id",
+      "name",
+      "public_keys"
+    ]
   },
   {
     "name": "gpu_instances_metrics",
@@ -6623,7 +6900,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "horizons"
+    "group": "horizons",
+    "bodyParameters": [
+      "message"
+    ]
   },
   {
     "name": "horizons_websites_edit",
@@ -6679,7 +6959,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "horizons"
+    "group": "horizons",
+    "bodyParameters": [
+      "message"
+    ]
   },
   {
     "name": "horizons_websites_publish",
@@ -6713,7 +6996,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "horizons"
+    "group": "horizons",
+    "bodyParameters": [
+      "is_template"
+    ]
   },
   {
     "name": "horizons_websites_get",
@@ -6866,6 +7152,9 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "enabled"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_websites_update-settings"
@@ -6910,6 +7199,9 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "enabled"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_websites_update-settings"
@@ -7135,7 +7427,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "time",
+      "command"
+    ]
   },
   {
     "name": "hosting_cron-jobs_delete",
@@ -7247,7 +7543,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "hosting_databases_list",
@@ -7347,7 +7646,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "name",
+      "user",
+      "password",
+      "website_domain"
+    ]
   },
   {
     "name": "hosting_databases_delete",
@@ -7423,7 +7728,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "ip"
+    ]
   },
   {
     "name": "hosting_databases_delete-remote-connection",
@@ -7577,7 +7885,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "name",
+      "user"
+    ]
   },
   {
     "name": "hosting_databases_phpmyadmin-link",
@@ -7743,6 +8055,9 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "parked_domain"
+    ],
     "hidden": true
   },
   {
@@ -7870,6 +8185,11 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "subdomain",
+      "directory",
+      "is_using_public_directory"
+    ],
     "hidden": true
   },
   {
@@ -7942,7 +8262,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "hosting_files_generate-upload-url",
@@ -7978,6 +8301,10 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "username",
+      "domain"
+    ],
     "hidden": true
   },
   {
@@ -8194,6 +8521,14 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "installation_uuid",
+      "owner",
+      "repository",
+      "branch",
+      "directory",
+      "is_enabled"
+    ],
     "hidden": true
   },
   {
@@ -8353,7 +8688,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "repository_url",
+      "branch",
+      "directory"
+    ]
   },
   {
     "name": "hosting_git_list-website-repositories",
@@ -8671,7 +9011,22 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "schema_version",
+      "generated_at",
+      "consent",
+      "run",
+      "info",
+      "timing",
+      "tokens",
+      "issues",
+      "user_feedback",
+      "skill_gaps",
+      "what_went_well",
+      "logging_gaps",
+      "previous_runs"
+    ]
   },
   {
     "name": "hosting_nodejs_list-builds",
@@ -8868,6 +9223,17 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "node_version",
+      "app_type",
+      "root_directory",
+      "output_directory",
+      "build_script",
+      "entry_file",
+      "package_manager",
+      "source_type",
+      "source_options"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_deploy"
@@ -9006,6 +9372,15 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "node_version",
+      "app_type",
+      "root_directory",
+      "output_directory",
+      "build_script",
+      "entry_file",
+      "package_manager"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_deploy"
@@ -9203,7 +9578,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "env_vars"
+    ]
   },
   {
     "name": "hosting_nodejs_analyse-failed-build",
@@ -9570,7 +9948,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "vulnerability_ids"
+    ]
   },
   {
     "name": "hosting_websites_list-setups",
@@ -9695,7 +10076,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "type",
+      "domain",
+      "datacenter_code",
+      "wordpress"
+    ]
   },
   {
     "name": "hosting_orders_list",
@@ -9909,6 +10296,10 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "enable",
+      "disable"
+    ],
     "hidden": true
   },
   {
@@ -9952,6 +10343,9 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "options"
+    ],
     "hidden": true
   },
   {
@@ -9994,6 +10388,9 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "version"
+    ],
     "hidden": true
   },
   {
@@ -10072,7 +10469,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "superuser_email",
+      "superuser_password"
+    ]
   },
   {
     "name": "hosting_pocketbase_delete-backend",
@@ -10182,7 +10583,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "superuser_email",
+      "superuser_password"
+    ]
   },
   {
     "name": "hosting_redirects_list-website",
@@ -10270,7 +10675,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "hosting"
+    "group": "hosting",
+    "bodyParameters": [
+      "from",
+      "to"
+    ]
   },
   {
     "name": "hosting_redirects_delete-website",
@@ -10426,6 +10835,9 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "is_enabled"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_websites_update-settings"
@@ -10567,6 +10979,11 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "domain",
+      "order_id",
+      "datacenter_code"
+    ],
     "hidden": true
   },
   {
@@ -10608,6 +11025,9 @@ export default [
       }
     ],
     "group": "hosting",
+    "bodyParameters": [
+      "archive_path"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_deploy"
@@ -10676,7 +11096,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "local_part"
+    ]
   },
   {
     "name": "mail_aliases_delete-alias",
@@ -10802,7 +11225,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "name",
+      "scope"
+    ]
   },
   {
     "name": "mail_api-tokens_revoke",
@@ -10921,7 +11348,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "subject",
+      "body",
+      "display_name",
+      "starts_at",
+      "ends_at"
+    ]
   },
   {
     "name": "mail_autoreplies_update",
@@ -10974,7 +11408,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "subject",
+      "body",
+      "display_name",
+      "starts_at",
+      "ends_at"
+    ]
   },
   {
     "name": "mail_autoreplies_delete",
@@ -11211,7 +11652,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "destination",
+      "is_keep_copy_enabled"
+    ]
   },
   {
     "name": "mail_forwarders_delete",
@@ -11346,7 +11791,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "is_keep_copy_enabled"
+    ]
   },
   {
     "name": "mail_logs_list-access",
@@ -11781,7 +12229,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "local_part",
+      "password"
+    ]
   },
   {
     "name": "mail_mailboxes_delete-mailbox",
@@ -11848,7 +12300,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "mail_orders_list",
@@ -12002,7 +12457,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "name",
+      "description",
+      "events",
+      "status",
+      "url"
+    ]
   },
   {
     "name": "mail_webhooks_list-delivery-logs",
@@ -12168,7 +12630,14 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "mail"
+    "group": "mail",
+    "bodyParameters": [
+      "name",
+      "description",
+      "events",
+      "status",
+      "url"
+    ]
   },
   {
     "name": "mail_webhooks_list",
@@ -12529,7 +12998,18 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "title",
+      "subject",
+      "sender_name",
+      "sender_email",
+      "template_uuid",
+      "all_contacts",
+      "segment_uuids",
+      "excluded_segment_uuids",
+      "metadata"
+    ]
   },
   {
     "name": "reach_campaigns_list",
@@ -12661,7 +13141,15 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "sender_name",
+      "sender_email",
+      "title",
+      "subject",
+      "template_uuid",
+      "metadata"
+    ]
   },
   {
     "name": "reach_campaigns_send",
@@ -12860,7 +13348,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "label",
+      "options"
+    ]
   },
   {
     "name": "reach_contact-fields_list",
@@ -12945,7 +13437,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "type",
+      "label",
+      "options"
+    ]
   },
   {
     "name": "reach_contacts_list-groups",
@@ -13093,7 +13590,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "email",
+      "name",
+      "surname",
+      "phone",
+      "note",
+      "tag_uuids",
+      "fields"
+    ]
   },
   {
     "name": "reach_contacts_get",
@@ -13259,7 +13765,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "email",
+      "name",
+      "surname",
+      "phone",
+      "subscription_status",
+      "note",
+      "fields"
+    ]
   },
   {
     "name": "reach_contacts_create-in-bulk",
@@ -13360,7 +13875,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "contacts",
+      "tag_uuids",
+      "note"
+    ]
   },
   {
     "name": "reach_contacts_list-profile",
@@ -13504,7 +14024,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "email",
+      "name",
+      "surname",
+      "phone",
+      "note",
+      "tag_uuids",
+      "fields"
+    ]
   },
   {
     "name": "reach_segments_list",
@@ -13639,7 +14168,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "conditions",
+      "logic"
+    ]
   },
   {
     "name": "reach_segments_count-profile-contacts",
@@ -13856,7 +14390,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "conditions",
+      "logic"
+    ]
   },
   {
     "name": "reach_segments_delete-profile",
@@ -14048,7 +14587,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "conditions",
+      "logic",
+      "page",
+      "per_page",
+      "search",
+      "sort_by",
+      "sort_direction"
+    ]
   },
   {
     "name": "reach_segments_list-profile",
@@ -14194,7 +14742,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "conditions",
+      "logic"
+    ]
   },
   {
     "name": "reach_segments_list-contacts",
@@ -14390,7 +14943,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "contact_uuids",
+      "all_contacts"
+    ]
   },
   {
     "name": "reach_tags_remove-contacts-from",
@@ -14414,6 +14971,18 @@ export default [
         "tagUuid": {
           "type": "string",
           "description": "Tag uuid parameter"
+        },
+        "contact_uuids": {
+          "type": "array",
+          "description": "Contacts to apply the change to. Required unless all_contacts is true.",
+          "items": {
+            "type": "string",
+            "description": "contact_uuids parameter"
+          }
+        },
+        "all_contacts": {
+          "type": "boolean",
+          "description": "Apply to every contact in the profile"
         }
       },
       "required": [
@@ -14426,7 +14995,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "contact_uuids",
+      "all_contacts"
+    ]
   },
   {
     "name": "reach_tags_delete",
@@ -14503,7 +15076,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "value"
+    ]
   },
   {
     "name": "reach_tags_list-profile",
@@ -14572,7 +15148,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "names"
+    ]
   },
   {
     "name": "reach_forms_get",
@@ -14692,7 +15271,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name",
+      "status"
+    ]
   },
   {
     "name": "reach_forms_duplicate",
@@ -14809,7 +15392,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "name"
+    ]
   },
   {
     "name": "reach_forms_add-submitter-tags",
@@ -14853,7 +15439,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "tag_uuids"
+    ]
   },
   {
     "name": "reach_forms_remove-submitter-tag",
@@ -14877,11 +15466,16 @@ export default [
         "formUuid": {
           "type": "string",
           "description": "Form uuid parameter"
+        },
+        "tag_uuid": {
+          "type": "string",
+          "description": "tag_uuid parameter"
         }
       },
       "required": [
         "profileUuid",
-        "formUuid"
+        "formUuid",
+        "tag_uuid"
       ]
     },
     "security": [
@@ -14889,7 +15483,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "tag_uuid"
+    ]
   },
   {
     "name": "reach_forms_update-template",
@@ -14930,7 +15527,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "content"
+    ]
   },
   {
     "name": "reach_profiles_connected-sending-domain",
@@ -14995,7 +15595,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_profiles_delete-sending-domain",
@@ -15015,10 +15618,15 @@ export default [
         "profileUuid": {
           "type": "string",
           "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
         }
       },
       "required": [
-        "profileUuid"
+        "profileUuid",
+        "domain"
       ]
     },
     "security": [
@@ -15026,7 +15634,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_profiles_domain-dns-status",
@@ -15305,7 +15916,31 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "brand_name",
+      "website_url",
+      "business_address",
+      "privacy_policy_url",
+      "accent_color",
+      "button_color",
+      "background_color",
+      "text_color",
+      "links_color",
+      "button_text",
+      "button_corners",
+      "font_family",
+      "heading_font_family",
+      "logo_url",
+      "social_links",
+      "socials",
+      "about",
+      "keywords",
+      "topics",
+      "selling_points",
+      "sender_name",
+      "sender_email"
+    ]
   },
   {
     "name": "reach_integrations_connect-ecommerce-store",
@@ -15475,7 +16110,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "template_content",
+      "title"
+    ]
   },
   {
     "name": "reach_templates_email",
@@ -15575,7 +16214,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_integrations_disconnect-ai-website-builder-site",
@@ -15595,10 +16237,15 @@ export default [
         "profileUuid": {
           "type": "string",
           "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
         }
       },
       "required": [
-        "profileUuid"
+        "profileUuid",
+        "domain"
       ]
     },
     "security": [
@@ -15606,7 +16253,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "reach_integrations_disconnect-wordpress-site",
@@ -15626,10 +16276,15 @@ export default [
         "profileUuid": {
           "type": "string",
           "description": "Profile uuid parameter"
+        },
+        "domain": {
+          "type": "string",
+          "description": "domain parameter"
         }
       },
       "required": [
-        "profileUuid"
+        "profileUuid",
+        "domain"
       ]
     },
     "security": [
@@ -15637,7 +16292,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "reach"
+    "group": "reach",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "vps_data-centers_list",
@@ -15840,7 +16498,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "project_name",
+      "content",
+      "environment"
+    ]
   },
   {
     "name": "vps_docker_logs",
@@ -16204,7 +16867,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name"
+    ]
   },
   {
     "name": "vps_firewall_update-rule",
@@ -16279,7 +16945,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "protocol",
+      "port",
+      "source",
+      "source_detail"
+    ]
   },
   {
     "name": "vps_firewall_delete-rule",
@@ -16359,7 +17031,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "rules",
+      "sync"
+    ]
   },
   {
     "name": "vps_firewall_create-rule",
@@ -16428,7 +17104,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "protocol",
+      "port",
+      "source",
+      "source_detail"
+    ]
   },
   {
     "name": "vps_firewall_sync-to-all-assigned-v-ms",
@@ -16564,7 +17246,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name",
+      "content"
+    ]
   },
   {
     "name": "vps_post-install-scripts_delete",
@@ -16658,7 +17344,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name",
+      "content"
+    ]
   },
   {
     "name": "vps_public-keys_attach",
@@ -16697,7 +17387,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "ids"
+    ]
   },
   {
     "name": "vps_public-keys_delete",
@@ -16791,7 +17484,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name",
+      "key"
+    ]
   },
   {
     "name": "vps_ssh-keys_list-virtual-machine",
@@ -16860,7 +17557,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "keys"
+    ]
   },
   {
     "name": "vps_ssh-keys_remove-virtual-machine",
@@ -16880,10 +17580,19 @@ export default [
         "virtualMachineId": {
           "type": "integer",
           "description": "Virtual Machine ID"
+        },
+        "keys": {
+          "type": "array",
+          "description": "SSH public keys in OpenSSH format to remove",
+          "items": {
+            "type": "string",
+            "description": "keys parameter"
+          }
         }
       },
       "required": [
-        "virtualMachineId"
+        "virtualMachineId",
+        "keys"
       ]
     },
     "security": [
@@ -16891,7 +17600,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "keys"
+    ]
   },
   {
     "name": "vps_templates_get",
@@ -17152,7 +17864,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "hostname"
+    ]
   },
   {
     "name": "vps_virtual-machines_reset-hostname",
@@ -17283,7 +17998,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "item_id",
+      "payment_method_id",
+      "setup",
+      "coupons"
+    ]
   },
   {
     "name": "vps_monarx_scan-metrics",
@@ -17458,7 +18179,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "ns1",
+      "ns2",
+      "ns3"
+    ]
   },
   {
     "name": "vps_ptr_create",
@@ -17498,7 +18224,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "vps_ptr_delete",
@@ -17570,7 +18299,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "vps_recovery_start",
@@ -17605,7 +18337,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "root_password"
+    ]
   },
   {
     "name": "vps_recovery_stop",
@@ -17683,7 +18418,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "template_id",
+      "password",
+      "panel_password",
+      "post_install_script_id"
+    ]
   },
   {
     "name": "vps_virtual-machines_restart",
@@ -17749,7 +18490,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "vps_virtual-machines_setup",
@@ -17831,7 +18575,19 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "template_id",
+      "data_center_id",
+      "post_install_script_id",
+      "password",
+      "hostname",
+      "install_monarx",
+      "enable_backups",
+      "ns1",
+      "ns2",
+      "public_key"
+    ]
   },
   {
     "name": "vps_snapshots_get",
@@ -18085,7 +18841,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "prompt",
+      "image_type",
+      "num_of_images",
+      "width",
+      "height",
+      "style",
+      "color_guidance"
+    ]
   },
   {
     "name": "wordpress_ai-content_generation-result",
@@ -18226,7 +18991,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "option",
+      "enable"
+    ]
   },
   {
     "name": "wordpress_installations_check-if-are-valid",
@@ -18269,7 +19038,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "software_ids",
+      "force"
+    ]
   },
   {
     "name": "wordpress_installations_delete",
@@ -18293,6 +19066,14 @@ export default [
         "software": {
           "type": "string",
           "description": "WordPress installation (software) identifier"
+        },
+        "delete_files": {
+          "type": "boolean",
+          "description": "Delete installation files from disk."
+        },
+        "delete_database": {
+          "type": "boolean",
+          "description": "Delete the installation database."
         }
       },
       "required": [
@@ -18305,7 +19086,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "delete_files",
+      "delete_database"
+    ]
   },
   {
     "name": "wordpress_installations_detect",
@@ -18381,6 +19166,10 @@ export default [
       }
     ],
     "group": "wordpress",
+    "bodyParameters": [
+      "archive_path",
+      "sql_path"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_deploy"
@@ -18494,7 +19283,19 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "domain",
+      "site_title",
+      "language",
+      "type",
+      "directory",
+      "overwrite",
+      "auto_updates",
+      "version",
+      "credentials",
+      "database"
+    ]
   },
   {
     "name": "wordpress_installations_list",
@@ -18683,7 +19484,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "minor",
+      "version"
+    ]
   },
   {
     "name": "wordpress_litespeed-cache_purge-lite-speed",
@@ -18864,7 +19669,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "enabled"
+    ]
   },
   {
     "name": "wordpress_object-cache_show-memcached-status",
@@ -18940,7 +19748,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "enabled"
+    ]
   },
   {
     "name": "wordpress_plugins_activate",
@@ -18980,7 +19791,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugin"
+    ]
   },
   {
     "name": "wordpress_plugins_deactivate",
@@ -19020,7 +19834,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugin"
+    ]
   },
   {
     "name": "wordpress_plugins_deploy",
@@ -19066,6 +19883,10 @@ export default [
       }
     ],
     "group": "wordpress",
+    "bodyParameters": [
+      "slug",
+      "plugin_path"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_deploy"
@@ -19112,7 +19933,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugins"
+    ]
   },
   {
     "name": "wordpress_plugins_list",
@@ -19319,7 +20143,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugins"
+    ]
   },
   {
     "name": "wordpress_plugins_update-hostinger",
@@ -19366,7 +20193,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "slug"
+    ]
   },
   {
     "name": "wordpress_plugins_update",
@@ -19410,7 +20240,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugins"
+    ]
   },
   {
     "name": "wordpress_themes_activate",
@@ -19450,7 +20283,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "theme"
+    ]
   },
   {
     "name": "wordpress_themes_deploy",
@@ -19500,6 +20336,11 @@ export default [
       }
     ],
     "group": "wordpress",
+    "bodyParameters": [
+      "slug",
+      "theme_path",
+      "is_activated"
+    ],
     "hidden": true,
     "internal": true,
     "replacedBy": "hosting_deploy"
@@ -19562,7 +20403,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "theme",
+      "palette",
+      "layout",
+      "font"
+    ]
   },
   {
     "name": "wordpress_themes_list-installed",
@@ -19673,7 +20520,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "themes"
+    ]
   },
   {
     "name": "wordpress_themes_update",
@@ -19717,6 +20567,9 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "themes"
+    ]
   }
 ];

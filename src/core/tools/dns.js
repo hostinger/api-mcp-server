@@ -271,7 +271,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "overwrite",
+      "zone"
+    ]
   },
   {
     "name": "dns_records_delete",
@@ -291,10 +295,45 @@ export default [
         "domain": {
           "type": "string",
           "description": "Domain name"
+        },
+        "filters": {
+          "type": "array",
+          "description": "Filter records for deletion",
+          "items": {
+            "type": "object",
+            "description": "filters parameter",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the record"
+              },
+              "type": {
+                "type": "string",
+                "description": "Type of the record",
+                "enum": [
+                  "A",
+                  "AAAA",
+                  "CNAME",
+                  "ALIAS",
+                  "MX",
+                  "TXT",
+                  "NS",
+                  "SOA",
+                  "SRV",
+                  "CAA"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "type"
+            ]
+          }
         }
       },
       "required": [
-        "domain"
+        "domain",
+        "filters"
       ]
     },
     "security": [
@@ -302,7 +341,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "filters"
+    ]
   },
   {
     "name": "dns_records_reset",
@@ -348,7 +390,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "sync",
+      "reset_email_records",
+      "whitelisted_record_types"
+    ]
   },
   {
     "name": "dns_records_validate",
@@ -439,6 +486,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "overwrite",
+      "zone"
+    ]
   }
 ];

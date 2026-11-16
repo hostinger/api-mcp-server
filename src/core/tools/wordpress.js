@@ -122,7 +122,16 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "prompt",
+      "image_type",
+      "num_of_images",
+      "width",
+      "height",
+      "style",
+      "color_guidance"
+    ]
   },
   {
     "name": "wordpress_ai-content_generation-result",
@@ -263,7 +272,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "option",
+      "enable"
+    ]
   },
   {
     "name": "wordpress_installations_check-if-are-valid",
@@ -306,7 +319,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "software_ids",
+      "force"
+    ]
   },
   {
     "name": "wordpress_installations_delete",
@@ -330,6 +347,14 @@ export default [
         "software": {
           "type": "string",
           "description": "WordPress installation (software) identifier"
+        },
+        "delete_files": {
+          "type": "boolean",
+          "description": "Delete installation files from disk."
+        },
+        "delete_database": {
+          "type": "boolean",
+          "description": "Delete the installation database."
         }
       },
       "required": [
@@ -342,7 +367,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "delete_files",
+      "delete_database"
+    ]
   },
   {
     "name": "wordpress_installations_detect",
@@ -417,7 +446,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "archive_path",
+      "sql_path"
+    ]
   },
   {
     "name": "wordpress_installations_install",
@@ -528,7 +561,19 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "domain",
+      "site_title",
+      "language",
+      "type",
+      "directory",
+      "overwrite",
+      "auto_updates",
+      "version",
+      "credentials",
+      "database"
+    ]
   },
   {
     "name": "wordpress_installations_list",
@@ -717,7 +762,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "minor",
+      "version"
+    ]
   },
   {
     "name": "wordpress_litespeed-cache_purge-lite-speed",
@@ -898,7 +947,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "enabled"
+    ]
   },
   {
     "name": "wordpress_object-cache_show-memcached-status",
@@ -974,7 +1026,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "enabled"
+    ]
   },
   {
     "name": "wordpress_plugins_activate",
@@ -1014,7 +1069,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugin"
+    ]
   },
   {
     "name": "wordpress_plugins_deactivate",
@@ -1054,7 +1112,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugin"
+    ]
   },
   {
     "name": "wordpress_plugins_deploy",
@@ -1099,7 +1160,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "slug",
+      "plugin_path"
+    ]
   },
   {
     "name": "wordpress_plugins_install",
@@ -1143,7 +1208,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugins"
+    ]
   },
   {
     "name": "wordpress_plugins_list",
@@ -1350,7 +1418,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugins"
+    ]
   },
   {
     "name": "wordpress_plugins_update-hostinger",
@@ -1397,7 +1468,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "slug"
+    ]
   },
   {
     "name": "wordpress_plugins_update",
@@ -1441,7 +1515,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugins"
+    ]
   },
   {
     "name": "wordpress_themes_activate",
@@ -1481,7 +1558,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "theme"
+    ]
   },
   {
     "name": "wordpress_themes_deploy",
@@ -1530,7 +1610,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "slug",
+      "theme_path",
+      "is_activated"
+    ]
   },
   {
     "name": "wordpress_themes_install",
@@ -1590,7 +1675,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "theme",
+      "palette",
+      "layout",
+      "font"
+    ]
   },
   {
     "name": "wordpress_themes_list-installed",
@@ -1701,7 +1792,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "themes"
+    ]
   },
   {
     "name": "wordpress_themes_update",
@@ -1745,6 +1839,9 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "themes"
+    ]
   }
 ];

@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -253,7 +254,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "gpu"
+    "group": "gpu",
+    "bodyParameters": [
+      "name",
+      "internal_port",
+      "protocol",
+      "type"
+    ]
   },
   {
     "name": "gpu_instances_list",
@@ -324,7 +331,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "gpu"
+    "group": "gpu",
+    "bodyParameters": [
+      "pool_instance_id",
+      "os_template_id",
+      "name",
+      "public_keys"
+    ]
   },
   {
     "name": "gpu_instances_metrics",

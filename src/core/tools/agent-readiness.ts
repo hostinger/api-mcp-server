@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -121,7 +122,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agent-readiness"
+    "group": "agent-readiness",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "agent-readiness_scans_get",

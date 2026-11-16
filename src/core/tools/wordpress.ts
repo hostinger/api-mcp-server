@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -141,7 +142,16 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "prompt",
+      "image_type",
+      "num_of_images",
+      "width",
+      "height",
+      "style",
+      "color_guidance"
+    ]
   },
   {
     "name": "wordpress_ai-content_generation-result",
@@ -282,7 +292,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "option",
+      "enable"
+    ]
   },
   {
     "name": "wordpress_installations_check-if-are-valid",
@@ -325,7 +339,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "software_ids",
+      "force"
+    ]
   },
   {
     "name": "wordpress_installations_delete",
@@ -349,6 +367,14 @@ const tools: OpenApiTool[] = [
         "software": {
           "type": "string",
           "description": "WordPress installation (software) identifier"
+        },
+        "delete_files": {
+          "type": "boolean",
+          "description": "Delete installation files from disk."
+        },
+        "delete_database": {
+          "type": "boolean",
+          "description": "Delete the installation database."
         }
       },
       "required": [
@@ -361,7 +387,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "delete_files",
+      "delete_database"
+    ]
   },
   {
     "name": "wordpress_installations_detect",
@@ -436,7 +466,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "archive_path",
+      "sql_path"
+    ]
   },
   {
     "name": "wordpress_installations_install",
@@ -547,7 +581,19 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "domain",
+      "site_title",
+      "language",
+      "type",
+      "directory",
+      "overwrite",
+      "auto_updates",
+      "version",
+      "credentials",
+      "database"
+    ]
   },
   {
     "name": "wordpress_installations_list",
@@ -736,7 +782,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "minor",
+      "version"
+    ]
   },
   {
     "name": "wordpress_litespeed-cache_purge-lite-speed",
@@ -917,7 +967,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "enabled"
+    ]
   },
   {
     "name": "wordpress_object-cache_show-memcached-status",
@@ -993,7 +1046,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "enabled"
+    ]
   },
   {
     "name": "wordpress_plugins_activate",
@@ -1033,7 +1089,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugin"
+    ]
   },
   {
     "name": "wordpress_plugins_deactivate",
@@ -1073,7 +1132,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugin"
+    ]
   },
   {
     "name": "wordpress_plugins_deploy",
@@ -1118,7 +1180,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "slug",
+      "plugin_path"
+    ]
   },
   {
     "name": "wordpress_plugins_install",
@@ -1162,7 +1228,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugins"
+    ]
   },
   {
     "name": "wordpress_plugins_list",
@@ -1369,7 +1438,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugins"
+    ]
   },
   {
     "name": "wordpress_plugins_update-hostinger",
@@ -1416,7 +1488,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "slug"
+    ]
   },
   {
     "name": "wordpress_plugins_update",
@@ -1460,7 +1535,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "plugins"
+    ]
   },
   {
     "name": "wordpress_themes_activate",
@@ -1500,7 +1578,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "theme"
+    ]
   },
   {
     "name": "wordpress_themes_deploy",
@@ -1549,7 +1630,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "slug",
+      "theme_path",
+      "is_activated"
+    ]
   },
   {
     "name": "wordpress_themes_install",
@@ -1609,7 +1695,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "theme",
+      "palette",
+      "layout",
+      "font"
+    ]
   },
   {
     "name": "wordpress_themes_list-installed",
@@ -1720,7 +1812,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "themes"
+    ]
   },
   {
     "name": "wordpress_themes_update",
@@ -1764,7 +1859,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "wordpress"
+    "group": "wordpress",
+    "bodyParameters": [
+      "themes"
+    ]
   }
 ];
 export default tools;

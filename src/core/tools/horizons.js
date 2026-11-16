@@ -153,7 +153,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "horizons"
+    "group": "horizons",
+    "bodyParameters": [
+      "message"
+    ]
   },
   {
     "name": "horizons_websites_edit",
@@ -209,7 +212,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "horizons"
+    "group": "horizons",
+    "bodyParameters": [
+      "message"
+    ]
   },
   {
     "name": "horizons_websites_publish",
@@ -243,7 +249,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "horizons"
+    "group": "horizons",
+    "bodyParameters": [
+      "is_template"
+    ]
   },
   {
     "name": "horizons_websites_get",

@@ -252,7 +252,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "project_name",
+      "content",
+      "environment"
+    ]
   },
   {
     "name": "vps_docker_logs",
@@ -616,7 +621,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name"
+    ]
   },
   {
     "name": "vps_firewall_update-rule",
@@ -691,7 +699,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "protocol",
+      "port",
+      "source",
+      "source_detail"
+    ]
   },
   {
     "name": "vps_firewall_delete-rule",
@@ -771,7 +785,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "rules",
+      "sync"
+    ]
   },
   {
     "name": "vps_firewall_create-rule",
@@ -840,7 +858,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "protocol",
+      "port",
+      "source",
+      "source_detail"
+    ]
   },
   {
     "name": "vps_firewall_sync-to-all-assigned-v-ms",
@@ -976,7 +1000,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name",
+      "content"
+    ]
   },
   {
     "name": "vps_post-install-scripts_delete",
@@ -1070,7 +1098,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name",
+      "content"
+    ]
   },
   {
     "name": "vps_public-keys_attach",
@@ -1109,7 +1141,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "ids"
+    ]
   },
   {
     "name": "vps_public-keys_delete",
@@ -1203,7 +1238,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name",
+      "key"
+    ]
   },
   {
     "name": "vps_ssh-keys_list-virtual-machine",
@@ -1272,7 +1311,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "keys"
+    ]
   },
   {
     "name": "vps_ssh-keys_remove-virtual-machine",
@@ -1292,10 +1334,19 @@ export default [
         "virtualMachineId": {
           "type": "integer",
           "description": "Virtual Machine ID"
+        },
+        "keys": {
+          "type": "array",
+          "description": "SSH public keys in OpenSSH format to remove",
+          "items": {
+            "type": "string",
+            "description": "keys parameter"
+          }
         }
       },
       "required": [
-        "virtualMachineId"
+        "virtualMachineId",
+        "keys"
       ]
     },
     "security": [
@@ -1303,7 +1354,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "keys"
+    ]
   },
   {
     "name": "vps_templates_get",
@@ -1564,7 +1618,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "hostname"
+    ]
   },
   {
     "name": "vps_virtual-machines_reset-hostname",
@@ -1695,7 +1752,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "item_id",
+      "payment_method_id",
+      "setup",
+      "coupons"
+    ]
   },
   {
     "name": "vps_monarx_scan-metrics",
@@ -1870,7 +1933,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "ns1",
+      "ns2",
+      "ns3"
+    ]
   },
   {
     "name": "vps_ptr_create",
@@ -1910,7 +1978,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "vps_ptr_delete",
@@ -1982,7 +2053,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "vps_recovery_start",
@@ -2017,7 +2091,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "root_password"
+    ]
   },
   {
     "name": "vps_recovery_stop",
@@ -2095,7 +2172,13 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "template_id",
+      "password",
+      "panel_password",
+      "post_install_script_id"
+    ]
   },
   {
     "name": "vps_virtual-machines_restart",
@@ -2161,7 +2244,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "vps_virtual-machines_setup",
@@ -2243,7 +2329,19 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "template_id",
+      "data_center_id",
+      "post_install_script_id",
+      "password",
+      "hostname",
+      "install_monarx",
+      "enable_backups",
+      "ns1",
+      "ns2",
+      "public_key"
+    ]
   },
   {
     "name": "vps_snapshots_get",

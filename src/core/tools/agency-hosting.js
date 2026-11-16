@@ -200,7 +200,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "agency-hosting_domains_link-to-website",
@@ -235,7 +238,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "agency-hosting_domains_list",
@@ -376,7 +382,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "archive_name"
+    ]
   },
   {
     "name": "agency-hosting_metrics_list-plan-order-disk-usage",
@@ -559,7 +568,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "extensions"
+    ]
   },
   {
     "name": "agency-hosting_php_list-options-for-website",
@@ -643,7 +655,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "options"
+    ]
   },
   {
     "name": "agency-hosting_php_list-versions-for-order",
@@ -739,7 +754,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "version"
+    ]
   },
   {
     "name": "agency-hosting_website-setups_create",
@@ -855,7 +873,15 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "datacenter_code",
+      "flavor",
+      "settings",
+      "domain",
+      "type",
+      "wordpress"
+    ]
   },
   {
     "name": "agency-hosting_website-setups_status",
@@ -1066,7 +1092,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "archive_path"
+    ]
   },
   {
     "name": "agency-hosting_cache_clear-website",
@@ -1175,7 +1204,11 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "time",
+      "command"
+    ]
   },
   {
     "name": "agency-hosting_cron-jobs_delete-website",
@@ -1294,7 +1327,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "database_name",
+      "database_user",
+      "password"
+    ]
   },
   {
     "name": "agency-hosting_databases_delete-website",
@@ -1379,7 +1417,12 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "database_user",
+      "password",
+      "host"
+    ]
   },
   {
     "name": "agency-hosting_databases_delete-website-user",
@@ -1621,7 +1664,10 @@ export default [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "version"
+    ]
   },
   {
     "name": "agency-hosting_wordpress_settings",

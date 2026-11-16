@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -126,7 +127,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "description",
+      "limit"
+    ]
   },
   {
     "name": "domains_availability_suggest-names-from",
@@ -161,7 +166,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "limit"
+    ]
   },
   {
     "name": "domains_availability_check",
@@ -204,7 +213,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "tlds",
+      "with_alternatives"
+    ]
   },
   {
     "name": "domains_forwarding_get",
@@ -279,7 +293,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "redirect_type",
+      "redirect_url"
+    ]
   },
   {
     "name": "domains_forwarding_delete",
@@ -354,7 +372,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "redirect_type",
+      "redirect_url"
+    ]
   },
   {
     "name": "domains_whois_pending-irtp-verification",
@@ -509,7 +532,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain_contacts"
+    ]
   },
   {
     "name": "domains_move_reject-incoming",
@@ -628,7 +654,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "new_customer_email"
+    ]
   },
   {
     "name": "domains_move_cancel-outgoing",
@@ -769,7 +798,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "domain_contacts",
+      "additional_details"
+    ]
   },
   {
     "name": "domains_portfolio_enable-lock",
@@ -958,7 +992,15 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "item_id",
+      "payment_method_id",
+      "domain_contacts",
+      "additional_details",
+      "coupons"
+    ]
   },
   {
     "name": "domains_portfolio_enable-privacy-protection",
@@ -1107,7 +1149,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain_contacts",
+      "additional_details"
+    ]
   },
   {
     "name": "domains_portfolio_update-nameservers",
@@ -1156,7 +1202,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "ns1",
+      "ns2",
+      "ns3",
+      "ns4"
+    ]
   },
   {
     "name": "domains_transfer_claim-free",
@@ -1216,7 +1268,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "auth_code",
+      "domain_contacts",
+      "should_keep_ns"
+    ]
   },
   {
     "name": "domains_transfer_get",
@@ -1329,7 +1387,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "domain",
+      "auth_code",
+      "domain_contacts",
+      "should_keep_ns"
+    ]
   },
   {
     "name": "domains_whois_change-for",
@@ -1380,7 +1444,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "new_whois_id",
+      "domain",
+      "change_for"
+    ]
   },
   {
     "name": "domains_whois_set-as-default",
@@ -1586,7 +1655,14 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "domains"
+    "group": "domains",
+    "bodyParameters": [
+      "tld",
+      "country",
+      "entity_type",
+      "tld_details",
+      "whois_details"
+    ]
   },
   {
     "name": "domains_whois_usage",

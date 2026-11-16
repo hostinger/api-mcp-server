@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -165,7 +166,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "billing"
+    "group": "billing",
+    "bodyParameters": [
+      "payment_method_id",
+      "items",
+      "coupons"
+    ]
   },
   {
     "name": "billing_payment-methods_set-default",
@@ -376,7 +382,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "billing"
+    "group": "billing",
+    "bodyParameters": [
+      "payment_method_id",
+      "coupons"
+    ]
   }
 ];
 export default tools;

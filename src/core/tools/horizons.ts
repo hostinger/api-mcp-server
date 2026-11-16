@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -172,7 +173,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "horizons"
+    "group": "horizons",
+    "bodyParameters": [
+      "message"
+    ]
   },
   {
     "name": "horizons_websites_edit",
@@ -228,7 +232,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "horizons"
+    "group": "horizons",
+    "bodyParameters": [
+      "message"
+    ]
   },
   {
     "name": "horizons_websites_publish",
@@ -262,7 +269,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "horizons"
+    "group": "horizons",
+    "bodyParameters": [
+      "is_template"
+    ]
   },
   {
     "name": "horizons_websites_get",

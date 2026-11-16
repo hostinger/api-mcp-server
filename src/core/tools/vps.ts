@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -271,7 +272,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "project_name",
+      "content",
+      "environment"
+    ]
   },
   {
     "name": "vps_docker_logs",
@@ -635,7 +641,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name"
+    ]
   },
   {
     "name": "vps_firewall_update-rule",
@@ -710,7 +719,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "protocol",
+      "port",
+      "source",
+      "source_detail"
+    ]
   },
   {
     "name": "vps_firewall_delete-rule",
@@ -790,7 +805,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "rules",
+      "sync"
+    ]
   },
   {
     "name": "vps_firewall_create-rule",
@@ -859,7 +878,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "protocol",
+      "port",
+      "source",
+      "source_detail"
+    ]
   },
   {
     "name": "vps_firewall_sync-to-all-assigned-v-ms",
@@ -995,7 +1020,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name",
+      "content"
+    ]
   },
   {
     "name": "vps_post-install-scripts_delete",
@@ -1089,7 +1118,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name",
+      "content"
+    ]
   },
   {
     "name": "vps_public-keys_attach",
@@ -1128,7 +1161,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "ids"
+    ]
   },
   {
     "name": "vps_public-keys_delete",
@@ -1222,7 +1258,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "name",
+      "key"
+    ]
   },
   {
     "name": "vps_ssh-keys_list-virtual-machine",
@@ -1291,7 +1331,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "keys"
+    ]
   },
   {
     "name": "vps_ssh-keys_remove-virtual-machine",
@@ -1311,10 +1354,19 @@ const tools: OpenApiTool[] = [
         "virtualMachineId": {
           "type": "integer",
           "description": "Virtual Machine ID"
+        },
+        "keys": {
+          "type": "array",
+          "description": "SSH public keys in OpenSSH format to remove",
+          "items": {
+            "type": "string",
+            "description": "keys parameter"
+          }
         }
       },
       "required": [
-        "virtualMachineId"
+        "virtualMachineId",
+        "keys"
       ]
     },
     "security": [
@@ -1322,7 +1374,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "keys"
+    ]
   },
   {
     "name": "vps_templates_get",
@@ -1583,7 +1638,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "hostname"
+    ]
   },
   {
     "name": "vps_virtual-machines_reset-hostname",
@@ -1714,7 +1772,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "item_id",
+      "payment_method_id",
+      "setup",
+      "coupons"
+    ]
   },
   {
     "name": "vps_monarx_scan-metrics",
@@ -1889,7 +1953,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "ns1",
+      "ns2",
+      "ns3"
+    ]
   },
   {
     "name": "vps_ptr_create",
@@ -1929,7 +1998,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "vps_ptr_delete",
@@ -2001,7 +2073,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "vps_recovery_start",
@@ -2036,7 +2111,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "root_password"
+    ]
   },
   {
     "name": "vps_recovery_stop",
@@ -2114,7 +2192,13 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "template_id",
+      "password",
+      "panel_password",
+      "post_install_script_id"
+    ]
   },
   {
     "name": "vps_virtual-machines_restart",
@@ -2180,7 +2264,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "password"
+    ]
   },
   {
     "name": "vps_virtual-machines_setup",
@@ -2262,7 +2349,19 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "vps"
+    "group": "vps",
+    "bodyParameters": [
+      "template_id",
+      "data_center_id",
+      "post_install_script_id",
+      "password",
+      "hostname",
+      "install_monarx",
+      "enable_backups",
+      "ns1",
+      "ns2",
+      "public_key"
+    ]
   },
   {
     "name": "vps_snapshots_get",

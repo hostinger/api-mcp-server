@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -290,7 +291,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "overwrite",
+      "zone"
+    ]
   },
   {
     "name": "dns_records_delete",
@@ -310,10 +315,45 @@ const tools: OpenApiTool[] = [
         "domain": {
           "type": "string",
           "description": "Domain name"
+        },
+        "filters": {
+          "type": "array",
+          "description": "Filter records for deletion",
+          "items": {
+            "type": "object",
+            "description": "filters parameter",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the record"
+              },
+              "type": {
+                "type": "string",
+                "description": "Type of the record",
+                "enum": [
+                  "A",
+                  "AAAA",
+                  "CNAME",
+                  "ALIAS",
+                  "MX",
+                  "TXT",
+                  "NS",
+                  "SOA",
+                  "SRV",
+                  "CAA"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "type"
+            ]
+          }
         }
       },
       "required": [
-        "domain"
+        "domain",
+        "filters"
       ]
     },
     "security": [
@@ -321,7 +361,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "filters"
+    ]
   },
   {
     "name": "dns_records_reset",
@@ -367,7 +410,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "sync",
+      "reset_email_records",
+      "whitelisted_record_types"
+    ]
   },
   {
     "name": "dns_records_validate",
@@ -458,7 +506,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "dns"
+    "group": "dns",
+    "bodyParameters": [
+      "overwrite",
+      "zone"
+    ]
   }
 ];
 export default tools;

@@ -16,6 +16,7 @@ export interface OpenApiTool extends Tool {
   handlerMethod?: string;
   templateFile?: string;
   templateFileTS?: string;
+  bodyParameters?: string[];
 }
 
 const tools: OpenApiTool[] = [
@@ -219,7 +220,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "agency-hosting_domains_link-to-website",
@@ -254,7 +258,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "domain"
+    ]
   },
   {
     "name": "agency-hosting_domains_list",
@@ -395,7 +402,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "archive_name"
+    ]
   },
   {
     "name": "agency-hosting_metrics_list-plan-order-disk-usage",
@@ -578,7 +588,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "extensions"
+    ]
   },
   {
     "name": "agency-hosting_php_list-options-for-website",
@@ -662,7 +675,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "options"
+    ]
   },
   {
     "name": "agency-hosting_php_list-versions-for-order",
@@ -758,7 +774,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "version"
+    ]
   },
   {
     "name": "agency-hosting_website-setups_create",
@@ -874,7 +893,15 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "datacenter_code",
+      "flavor",
+      "settings",
+      "domain",
+      "type",
+      "wordpress"
+    ]
   },
   {
     "name": "agency-hosting_website-setups_status",
@@ -1085,7 +1112,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "archive_path"
+    ]
   },
   {
     "name": "agency-hosting_cache_clear-website",
@@ -1194,7 +1224,11 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "time",
+      "command"
+    ]
   },
   {
     "name": "agency-hosting_cron-jobs_delete-website",
@@ -1313,7 +1347,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "database_name",
+      "database_user",
+      "password"
+    ]
   },
   {
     "name": "agency-hosting_databases_delete-website",
@@ -1398,7 +1437,12 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "database_user",
+      "password",
+      "host"
+    ]
   },
   {
     "name": "agency-hosting_databases_delete-website-user",
@@ -1640,7 +1684,10 @@ const tools: OpenApiTool[] = [
         "apiToken": []
       }
     ],
-    "group": "agency-hosting"
+    "group": "agency-hosting",
+    "bodyParameters": [
+      "version"
+    ]
   },
   {
     "name": "agency-hosting_wordpress_settings",
