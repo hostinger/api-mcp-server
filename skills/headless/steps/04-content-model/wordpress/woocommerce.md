@@ -5,37 +5,28 @@ a **WooCommerce store** (`site.json → woocommerce.enabled: true`) — a brief 
 `**WordPress + WooCommerce**` (one site: content **and** commerce).
 
 **WooCommerce is not a separate backend.** It is the `woocommerce` plugin on a normal headless WordPress
-install at `/cms` (installed at provision, §0). This cookbook is the authoritative home for the store
+install at `/cms` (installed at provision Step 4, checked in §0). This cookbook is the authoritative home for the store
 data layer: how to **seed and CRUD** products, categories and coupons, and how the **storefront** reads
 the cart, coupons and checkout.
 
 ---
 
-## 0 — Provision: install, verify, record `site.json`
+## 0 — Provision: verify, record `site.json`
 
-Read from [`../../03-provision/wordpress/SKILL.md`](../../03-provision/wordpress/SKILL.md) Step 5. This is **join-half** work (needs the live instance): run it once
-`provision.status == "completed"`.
+Read from [`../../03-provision/wordpress/SKILL.md`](../../03-provision/wordpress/SKILL.md) Step 5.
 
-1. **Install + activate WooCommerce** (management MCP, async — poll, never blind-retry):
-   - `wordpress_plugins_install { username, software: <install_id>, plugins: ["woocommerce"] }`
-   - Poll `wordpress_plugins_list-installed { username, software }` until `woocommerce` shows `active`
-     (install + activate can complete together), or activate it with
-     `wordpress_plugins_activate { username, software, plugin: "woocommerce" }`.
-   - Confirm with `wordpress_plugins_check-if-woo-commerce-is-installed { domain: "<domain>" }`. Allow a
-     moment for WooCommerce's installer to create its tables and the Shop/Cart/Checkout pages.
-   - **Known quirk:** the `hostinger-wordpress` MCP sometimes returns **HTTP 500 even though the job
-     succeeded** (seen on both `plugins_install` and `jwt-token`). Treat a 500 as "verify, don't assume":
-     poll `list-installed` / re-check before retrying, and never fire a second install blindly.
-2. **Verify the store endpoints (public, no auth):**
+**Verify the store endpoints (public, no auth).** Allow a moment for WooCommerce's installer to create
+its tables and the Shop/Cart/Checkout pages. Provision Step 4's `list-installed` poll is the install
+check: `wordpress_plugins_check-if-woo-commerce-is-installed` answers `is_installed: false` on a headless
+`/cms` install even with WooCommerce active, so don't use it.
 
-   | Check | How | Expect |
-   |---|---|---|
-   | WooCommerce active | `wordpress_plugins_check-if-woo-commerce-is-installed { domain }` | installed + active |
-   | Store API answers | `GET https://<domain>/cms/wp-json/wc/store/v1/products?per_page=1` | 200 (empty until content-model seeds — fine) |
-   | Both namespaces loaded | `GET https://<domain>/cms/wp-json/` → `namespaces` | contains `wc/store/v1` **and** `wc/v3` |
+| Check | How | Expect |
+|---|---|---|
+| Store API answers | `GET https://<domain>/cms/wp-json/wc/store/v1/products?per_page=1` | 200 (empty until content-model seeds — fine) |
+| Both namespaces loaded | `GET https://<domain>/cms/wp-json/` → `namespaces` | contains `wc/store/v1` **and** `wc/v3` |
 
-   Pretty permalinks are on by default on a headless install, so the Store API resolves immediately; if a
-   store route ever 404s, the permalink structure is the thing to check.
+Pretty permalinks are on by default on a headless install, so the Store API resolves immediately; if a
+store route ever 404s, the permalink structure is the thing to check.
 
 Then add the `woocommerce` block and the store URLs to `site.json` (provision Step 6; `backend` stays
 `"wordpress"`). Checkout stays off until the owner sets it up (§4), so `payment_enabled` starts `false`:

@@ -6,29 +6,19 @@ submitted from the **decoupled frontend**, sends the enquiry to the site owner b
 WordPress's built-in `wp_mail()` — no third-party form service, no API keys, no secret on the client.
 
 **Contact Form 7 is not a separate backend.** It is the `contact-form-7` plugin on the same headless
-WordPress install at `/cms` (installed at provision, §0). This cookbook is the authoritative home for
+WordPress install at `/cms` (installed at provision Step 4, checked in §0). This cookbook is the authoritative home for
 the contact-form data layer: how to **resolve the form** (content-model push), **deploy a spam guard**,
 what the **frontend submits** (Step 6), and how **validate** proves mail actually leaves.
 
 ---
 
-## 0 — Provision: install, verify, record `site.json`
+## 0 — Provision: verify, record `site.json`
 
-Read from [`../../03-provision/wordpress/SKILL.md`](../../03-provision/wordpress/SKILL.md) Step 5. Like Yoast this is **join-half** work: run it once
-`provision.status == "completed"`.
+Read from [`../../03-provision/wordpress/SKILL.md`](../../03-provision/wordpress/SKILL.md) Step 5.
 
-1. **Install + activate CF7** (management MCP, async — poll, never blind-retry):
-   - `wordpress_plugins_install { username, software: <install_id>, plugins: ["contact-form-7"] }`
-   - Poll `wordpress_plugins_list-installed { username, software }` until `contact-form-7` shows `active`
-     (install + activate can complete together), or activate it with
-     `wordpress_plugins_activate { username, software, plugin: "contact-form-7" }`.
-   - **Known quirk:** the `hostinger-wordpress` MCP sometimes returns **HTTP 500 even though the job
-     succeeded**. Treat a 500 as "verify, don't assume": poll `list-installed` before retrying, and
-     never fire a second install blindly.
-2. **Verify** `GET https://<domain>/cms/wp-json/` lists the **`contact-form-7/v1`** namespace, then
-   record `contact_form.enabled: true` in `site.json` (provision Step 6). If the install can't be confirmed after
-   one retry, record `contact_form.enabled: false`, tell the user in one line, and let the frontend
-   render the contact page without a form (graceful — not a build failure). Don't fail provision over it.
+**Verify** `GET https://<domain>/cms/wp-json/` lists the **`contact-form-7/v1`** namespace, then record
+`contact_form.enabled: true` in `site.json` (provision Step 6). If it's missing, CF7 didn't come up:
+apply its fallback in provision Step 4.
 
 Then add the `contact_form` block to `site.json` (provision Step 6). Provision records only `enabled` +
 `plugin` here; §2 fills `form_id`, `feedback_url`, `fields` and `honeypot_field` once it resolves the form
@@ -59,8 +49,8 @@ You **could** deploy a custom plugin into the headless `/cms` and write a bespok
 [`custom-plugins.md`](custom-plugins.md)), but a contact form is exactly the kind of maintained,
 spam-hardened functionality you should **reuse rather than reinvent**. CF7 is the right choice because:
 
-- It is a **wordpress.org-slug plugin** → installs through the same management MCP (`wordpress_plugins_install`)
-  as Yoast and WooCommerce. No custom code to deploy.
+- It is a **wordpress.org-slug plugin** → provision Step 4 installs it like Yoast. No custom
+  code to deploy.
 - It ships a **public, unauthenticated submit endpoint**:
   `POST {urls.cms}/wp-json/contact-form-7/v1/contact-forms/<form_id>/feedback`. Submissions don't need
   the JWT or any key.

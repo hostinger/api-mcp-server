@@ -17,7 +17,7 @@ Read the brief's **Suggested backend** section:
 | Suggested backend | Follow |
 |---|---|
 | WordPress | `wordpress/SKILL.md` |
-| WordPress + WooCommerce | `wordpress/SKILL.md` **with the WooCommerce store on** (its Step 5; `site.json → backend` stays `"wordpress"`) |
+| WordPress + WooCommerce | `wordpress/SKILL.md` **with the WooCommerce store on** (its Steps 4–5; `site.json → backend` stays `"wordpress"`) |
 | Ecommerce | `ecommerce/SKILL.md` |
 | Webapp | `webapp/SKILL.md` |
 
