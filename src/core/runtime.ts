@@ -194,13 +194,20 @@ class MCPServer {
    */
   private setupHandlers(): void {
     // Capture the connecting MCP client's identity once the initialize handshake completes.
-    // The name is client-controlled input, so strip CR/LF to prevent header injection.
+    // The name and version are client-controlled input, so strip CR/LF to prevent header injection.
     this.server.oninitialized = () => {
-      const clientName = String(this.server.getClientVersion()?.name ?? "")
+      const clientInfo = this.server.getClientVersion();
+      const clientName = String(clientInfo?.name ?? "")
         .replace(/\r|\n/g, "")
         .trim();
       if (clientName) {
         this.headers["X-MCP-Client"] = clientName;
+      }
+      const clientVersion = String(clientInfo?.version ?? "")
+        .replace(/\r|\n/g, "")
+        .trim();
+      if (clientVersion) {
+        this.headers["X-MCP-Client-Version"] = clientVersion;
       }
     };
 

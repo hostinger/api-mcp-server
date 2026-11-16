@@ -4,6 +4,14 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.2.0 — 2026-11-16
+
+### Also in this release
+
+- Dependencies: `package-lock.json`
+- Bundled agent skills: `skills/headless/VERSION`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+
 ## v4.1.0 — 2026-11-16
 
 ### Also in this release
