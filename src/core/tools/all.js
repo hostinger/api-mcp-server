@@ -18286,7 +18286,7 @@ export default [
         },
         "password": {
           "type": "string",
-          "description": "Panel password for the virtual machine"
+          "description": "Panel password for the virtual machine.\n12 to 50 characters with an uppercase letter, a lowercase letter, a number and at least one of\n#%+:?@ (no other symbols). Known compromised passwords are rejected."
         }
       },
       "required": [
@@ -18397,11 +18397,11 @@ export default [
         },
         "password": {
           "type": "string",
-          "description": "Root password for the virtual machine. If not provided, random password will be generated.\nPassword will not be shown in the response."
+          "description": "Root password for the virtual machine. If not provided, random password will be generated.\nPassword will not be shown in the response.\n12 to 50 characters with an uppercase letter, a lowercase letter, a number and at least one of\n-().&@?'#;/,+ (no other symbols). Known compromised passwords are rejected."
         },
         "panel_password": {
           "type": "string",
-          "description": "Panel password for the panel-based OS template. If not provided, random password will be generated.\nIf OS does not support panel_password this field will be ignored.\nPassword will not be shown in the response."
+          "description": "Panel password for the panel-based OS template. If not provided, random password will be generated.\nIf OS does not support panel_password this field will be ignored.\nPassword will not be shown in the response.\n12 to 50 characters with an uppercase letter, a lowercase letter, a number and at least one of\n#%+:?@ (no other symbols). Known compromised passwords are rejected."
         },
         "post_install_script_id": {
           "type": "integer",
@@ -18477,7 +18477,7 @@ export default [
         },
         "password": {
           "type": "string",
-          "description": "Root password for the virtual machine"
+          "description": "Root password for the virtual machine.\n12 to 50 characters with an uppercase letter, a lowercase letter, a number and at least one of\n-().&@?'#;/,+ (no other symbols). Known compromised passwords are rejected."
         }
       },
       "required": [
@@ -18527,7 +18527,7 @@ export default [
         },
         "password": {
           "type": "string",
-          "description": "Password for the virtual machine. If not provided, random password will be generated.\nPassword will not be shown in the response."
+          "description": "Password for the virtual machine. If not provided, random password will be generated.\nPassword will not be shown in the response.\nUsed as both the root and the panel password, so it must pass both rules: 12 to 50 characters\nwith an uppercase letter, a lowercase letter, a number and at least one of # + ? @ (no other symbols).\nKnown compromised passwords are rejected."
         },
         "hostname": {
           "type": "string",

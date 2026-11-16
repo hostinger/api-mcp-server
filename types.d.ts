@@ -10331,7 +10331,9 @@ Use this endpoint to configure control panel access credentials for VPS instance
        */
       virtualMachineId: number;
       /**
-       * Panel password for the virtual machine
+       * Panel password for the virtual machine.
+12 to 50 characters with an uppercase letter, a lowercase letter, a number and at least one of
+#%+:?@ (no other symbols). Known compromised passwords are rejected.
        */
       password: string;
     };
@@ -10413,12 +10415,16 @@ Use this endpoint to completely rebuild VPS instances with fresh OS installation
       /**
        * Root password for the virtual machine. If not provided, random password will be generated.
 Password will not be shown in the response.
+12 to 50 characters with an uppercase letter, a lowercase letter, a number and at least one of
+-().&@?'#;/,+ (no other symbols). Known compromised passwords are rejected.
        */
       password?: string;
       /**
        * Panel password for the panel-based OS template. If not provided, random password will be generated.
 If OS does not support panel_password this field will be ignored.
 Password will not be shown in the response.
+12 to 50 characters with an uppercase letter, a lowercase letter, a number and at least one of
+#%+:?@ (no other symbols). Known compromised passwords are rejected.
        */
       panel_password?: string;
       /**
@@ -10461,7 +10467,9 @@ Use this endpoint to update administrator credentials for VPS instances.
        */
       virtualMachineId: number;
       /**
-       * Root password for the virtual machine
+       * Root password for the virtual machine.
+12 to 50 characters with an uppercase letter, a lowercase letter, a number and at least one of
+-().&@?'#;/,+ (no other symbols). Known compromised passwords are rejected.
        */
       password: string;
     };
@@ -10494,6 +10502,9 @@ Use this endpoint to configure and initialize purchased VPS instances.
       /**
        * Password for the virtual machine. If not provided, random password will be generated.
 Password will not be shown in the response.
+Used as both the root and the panel password, so it must pass both rules: 12 to 50 characters
+with an uppercase letter, a lowercase letter, a number and at least one of # + ? @ (no other symbols).
+Known compromised passwords are rejected.
        */
       password?: string;
       /**
