@@ -13,22 +13,15 @@ not a conversation: the frontend step implements `design.md`, not the chat.
 user gave. **Out:** `~/.hostinger/<domain>/design.md` and the logo files in
 `~/.hostinger/<domain>/brand/`.
 
-> ## ⚠️ Build mode: "Bring your own frontend"? This step defers to the user
-> Read `brief.md` → **Build mode** first. When it is **Bring your own frontend**, the user drives the
-> design — **do not generate three directions or write a prescriptive `design.md` over their project.**
-> The frontend already exists (or the user vibe-codes it with you); your job is to follow *their*
-> direction, not impose one. Skip Steps 1–7 below, *Keep the current look* included, even when
-> **Design direction** keeps the look of the app in this folder: their own code already carries it.
-> Either write nothing, or capture only what the user explicitly asks for (a short note of their
-> stated colours/vibe) so the frontend step has it, then do Step 7's `state.json` update so the flow
-> moves on to frontend. The logo and token work here apply only when **Build mode is "Agent designs
-> and builds"**.
+> **Build mode "Bring your own frontend"? This step defers to the user.** Read `brief.md` → **Build mode**
+> first. When it is **Bring your own frontend**, follow [`bring-your-own-frontend.md`](bring-your-own-frontend.md) instead of Steps 1–7: no three
+> directions and no prescriptive `design.md` over their project.
 
 This is **prepare work**: it runs while provision settles (see *Background provision & the instance
 barrier* in the top-level `SKILL.md`). Nothing here calls the Hostinger connector or the backend.
 
 **Keep it short.** Refine already asked about tone and look; don't ask again. The step asks the user
-**one** question: either the keep/change question (Step 1 and *Keep the current look*) or the three
+**one** question: either the keep/change question (Step 1 and `keep-look.md`) or the three
 directions (Step 4), never both. "You decide" is a valid answer.
 
 **Talk like a person, not a designer.** Everything the user reads describes how the site will
@@ -68,44 +61,9 @@ Read `brief.md`, `state.json`, and `content-model.md` if it exists.
   as normal. The current `design.md` becomes one more signal in Step 2, so carry over what the user
   wants to keep and move away from the rest.
 - **The brief says to keep the current look** (*Design direction* says so in the owner's words:
-  "keep the look we have", "same look, new platform") → follow *Keep the current look* below instead
+  "keep the look we have", "same look, new platform") → follow [`keep-look.md`](keep-look.md) instead
   of Steps 2–6. No three directions and no new logo. A live site, screenshots or a brand guide alone
   are signals for Step 2, not a request to keep.
-
-### Keep the current look
-
-1. **Read the look from what the brief points at.** A live site: use Step 2's reference-site method
-   (computed fonts, colours by painted area, the feel), but this site is the owner's own, so take its
-   logo file as it is (the header `<img>` or inline `<svg>`, plus its favicon if it has one) and save
-   it unchanged in `brand/`. Screenshots or a brand guide: read the colours and lettering from them;
-   a logo seen only in a screenshot counts as no logo file, so list "logo file needed" under gaps in
-   the final report. The app in this folder (the path under `brief.md` → **Existing project**):
-   read its source; no build or browser needed.
-   - *Colours:* the theme tokens (Tailwind v4 `@theme`, v3 `tailwind.config.*` `theme`/`theme.extend`,
-     `:root` custom properties), ranked by how often the code uses them (class names, `var()`), with
-     the page background and body text taken from the root layout or `body`.
-   - *Fonts:* theme font tokens, `@fontsource` imports or dependencies, Google Fonts `<link>` or
-     `@import`, and the `font-family` on `body` and headings.
-   - *Logo:* files named `logo*` in `public/`, `static/`, `src/assets/` or `assets/`;
-     `favicon*`, `icon*` or `apple-icon*` in `public/`, `static/`, `app/` or `src/app/`; or the icon
-     declared by `<link rel="icon">` in `index.html` or the root layout's `metadata.icons`. Copy them
-     unchanged into `brand/`.
-
-   Files or exact colours and fonts the owner supplied win over anything you read.
-2. **Confirm in one question.** Describe the kept look in two plain sentences and ask: *keep it, or
-   change something?* "Keep the look we have" still gets this question; skip it only when the brief
-   says to change nothing at all ("keep it exactly as it is"). A skipped tool result is not Keep; see
-   *When you ask the user* in the top-level `SKILL.md`. Change →
-   apply only what they asked for; a request for a new logo runs Step 6 for the logo alone.
-3. **Check it** as in Step 5. The kept colours are fixed like brand colours: a pair that fails gets a
-   shade of the same hue in that role only. Spacing moves to the nearest grid value, and a font
-   without an `@fontsource` package swaps to the closest one that resolves (5.4).
-4. **Logo.** Reuse the existing logo and favicon unchanged; never redraw or recolour them. With no
-   existing logo, the header shows the site name as text in the kept display font; no icon is drawn.
-5. **Write `design.md`** (Step 7) from the kept look, then hand off as usual. In **Logo**:
-   - *Files* and *Use* name the files as saved (a `.png` stays a `.png`), or say "No favicon kept".
-   - With no logo: *Files* says "None", *Use* says the header link holds the site name as text in
-     `--font-display` and the browser's default favicon stays, and the *Don't* line is dropped.
 
 ## Step 2 — Collect the signals
 
@@ -131,7 +89,7 @@ works, say so in one line and continue from the brief alone. Pull **cues**:
 - **Feel:** look at the first screen and one further down (screenshots shown to you, not saved in
   the workspace) and note what creates the feel: type weight, colour blocking, shapes, density.
 
-**Borrow cues, never assets** (the owner's own site under *Keep the current look* is the exception).
+**Borrow cues, never assets** (the owner's own site under `keep-look.md` is the exception).
 Don't use its logo, copy, images or exact layout. **The brief wins** over the live site when they
 disagree (the user's words are what they want). Note the mismatch in the direction.
 
@@ -475,21 +433,6 @@ duotone…); alt text written from what the photo shows.>
 
 ## Invariants
 
-- **One question.** Refine owns discovery; this step only chooses among directions (or keeps the
-  existing look).
-- **8-point grid, always.** No spacing, size, radius or breakpoint off the grid except the listed
-  exemptions.
-- **WCAG 2.2 AA is the floor.** No direction is offered, chosen or written that fails it. Brand
-  colours keep their hue but only appear in roles where they pass.
-- **The header never wraps.** Nav labels and the header button stay on one line (`white-space:
-  nowrap`); the inline nav collapses to a menu button at the width it stops fitting, not only at the
-  mobile breakpoint (5.5).
-- **Brand assets are fixed.** A supplied logo, colour or font appears in every direction, unchanged.
-- **The logo is the name plus a simple icon.** The site name as text in the display font beside a
-  small hand-written SVG icon that is also the favicon, or a supplied or kept logo unchanged. No
-  emoji or raster clip-art. A kept look with no logo shows the name as text and gets no icon.
 - **Self-hosted fonts only** (`@fontsource`). No Google Fonts or other font CDN links in the output.
 - **The tokens block is the only source of values** (breakpoints excepted). Components and pages
   reference tokens, never raw hex codes, pixel values or font names.
-- **No backend calls.** Design never waits on provision and never writes to the instance.
-- **Never overwrite an existing `design.md` silently.** Keep or change, as in Step 1.

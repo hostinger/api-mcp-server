@@ -9,14 +9,6 @@ Create the headless WordPress backend for `<domain>` and prove it is ready. One 
 every headless site out identically: WordPress in `public_html/cms`, Hostinger AI Assistant + MCP
 adapter, site marked `headless`. **Out:** `site.json`.
 
-> **WordPress + WooCommerce?** This same recipe serves it. When the brief's **Suggested backend** is
-> `**WordPress + WooCommerce**`, provision the WordPress site exactly as below, then run the **optional
-> WooCommerce tail in Step 5** (install + activate the `woocommerce` plugin and verify the store
-> endpoints; the catalog is seeded in content-model via the per-site WP MCP).
-> WooCommerce is a plugin on this WordPress install, **not** a separate backend: `site.json → backend`
-> stays `"wordpress"` and the store is recorded under `site.json → woocommerce`. For a plain WordPress
-> brief, skip Step 5 entirely.
-
 All operations below go through the Hostinger connector (`execute`).
 
 > **Fire vs join (background provision).** Step 1, plus the queuing call — `hosting_websites_create`
@@ -34,8 +26,8 @@ All operations below go through the Hostinger connector (`execute`).
 2. **No exact row** → nothing exists on this domain → **create fresh** (Step 2).
 3. **A row exists.** If `website_type` is **not** `headless`, stop and tell the user — this domain
    already hosts a different kind of site (plain WordPress, Node.js, builder, …); never overwrite it.
-   If it **is** `headless`, work out whether WordPress is already installed or the shell is still empty
-   (see the router's *Onboarding handoff*): check `hosting_websites_list-setups { "domain": "<domain>" }`
+   If it **is** `headless`, work out whether WordPress is already installed or the shell is still empty:
+   check `hosting_websites_list-setups { "domain": "<domain>" }`
    (exact row) and `wordpress_installations_list { username, domain, ownership: "all" }` (exact row):
    - Setup `running` → provisioning is underway → skip to Step 2's poll.
    - Setup `failed` → tell the user and point them at hPanel; do **not** call `hosting_websites_create` again yourself.
@@ -124,8 +116,8 @@ If a check fails: retry once after ~30 s; if it still fails, stop and point the 
 Every headless WordPress site gets **Yoast SEO** (`wordpress-seo`) installed and activated by default,
 so per-page title/description/Open Graph/JSON-LD come from a maintained plugin's `yoast_head_json`
 rather than being hand-generated from each item's content by the frontend. This is **join-half** work
-(needs the live `/cms` install), so run it once `provision.status == "completed"`, the same way as the
-WooCommerce tail. Tell the user in one line that SEO (Yoast) is being set up; if they explicitly don't
+(needs the live `/cms` install), so run it once `provision.status == "completed"`, the same way as
+Step 5. Tell the user in one line that SEO (Yoast) is being set up; if they explicitly don't
 want it, skip this step and record `seo.enabled: false` — but the default is to install it.
 
 1. **Install + activate Yoast** (management MCP, async — poll, never blind-retry):
@@ -142,93 +134,12 @@ want it, skip this step and record `seo.enabled: false` — but the default is t
    provision over SEO: if the install can't be confirmed after one retry, record `seo.enabled: false`,
    tell the user, and let the frontend fall back to generating tags from content.
 
-## Step 5 — WooCommerce store *(only for a `WordPress + WooCommerce` brief — skip otherwise)*
+## Step 5 — Store and contact form *(only when the brief has them — skip otherwise)*
 
-Run this only when the brief's **Suggested backend** is `**WordPress + WooCommerce**`. It turns the
-headless WordPress site into a headless **store**: WooCommerce is the `woocommerce` plugin on this same
-`/cms` install — **not a separate backend**. This is **join-half** work (needs the live instance), so run
-it once `provision.status == "completed"`. The authoritative data-layer reference is
-[`../../04-content-model/wordpress/woocommerce.md`](../../04-content-model/wordpress/woocommerce.md).
-
-> **No custom plugin — the catalog is driven through the per-site WP MCP.** A custom plugin can't be
-> installed into a headless `/cms` from a coding agent, so there is **no seed/config plugin and no REST
-> consumer key in this flow.** Instead, the Hostinger AI Assistant (the per-site WP MCP, same JWT session
-> content-model uses) exposes **native WooCommerce abilities** — `wc-products-*`, `wc-product-categories-*`,
-> `wc-coupons-*`, `wc-orders-*`, `media-upload-from-url`, `wp-settings-*`. Provision just **installs
-> WooCommerce and verifies the store endpoints**; the catalog + coupons are seeded in the content-model
-> push through those abilities (see the cookbook).
-
-1. **Install + activate WooCommerce** (management MCP, async — poll, never blind-retry):
-   - `wordpress_plugins_install { username, software: <install_id>, plugins: ["woocommerce"] }`
-   - Poll `wordpress_plugins_list-installed { username, software }` until `woocommerce` shows `active`
-     (install + activate can complete together), or activate it with
-     `wordpress_plugins_activate { username, software, plugin: "woocommerce" }`.
-   - Confirm with `wordpress_plugins_check-if-woo-commerce-is-installed { domain: "<domain>" }`. Allow a
-     moment for WooCommerce's installer to create its tables and the Shop/Cart/Checkout pages.
-   - **Known quirk:** the `hostinger-wordpress` MCP sometimes returns **HTTP 500 even though the job
-     succeeded** (seen on both `plugins_install` and `jwt-token`). Treat a 500 as "verify, don't assume":
-     poll `list-installed` / re-check before retrying, and never fire a second install blindly.
-2. **Verify the store endpoints (public, no auth):**
-
-   | Check | How | Expect |
-   |---|---|---|
-   | WooCommerce active | `wordpress_plugins_check-if-woo-commerce-is-installed { domain }` | installed + active |
-   | Store API answers | `GET https://<domain>/cms/wp-json/wc/store/v1/products?per_page=1` | 200 (empty until content-model seeds — fine) |
-   | Both namespaces loaded | `GET https://<domain>/cms/wp-json/` → `namespaces` | contains `wc/store/v1` **and** `wc/v3` |
-
-   Pretty permalinks are on by default on a headless install, so the Store API resolves immediately; if a
-   store route ever 404s, the permalink structure is the thing to check.
-
-> **Checkout needs owner setup — treat it like the Ecommerce payment gate.** A fresh WooCommerce install
-> has **no payment gateway and no shipping zone enabled**, and that configuration is **not reachable from
-> the headless tooling** (there is no payment/shipping MCP ability, and `wp-settings-update` only writes
-> standard WP settings). So **checkout is unavailable until the owner enables a payment method + shipping
-> in wp-admin** (hand them the one-click login in Step 6). Record `woocommerce.payment_enabled: false`
-> accordingly. This is **not a build failure**: the catalog, product pages, client-side cart and coupon
-> application all work headlessly — the downstream frontend renders a graceful disabled-checkout state and
-> never calls `/checkout` while `payment_enabled` is `false` (see content-model + frontend). Never ask the
-> user for payment credentials. Store currency and address (`woocommerce_*` options) likewise aren't
-> settable headlessly — they follow the install default and the owner can change them in wp-admin.
-
-## Step 5b — Contact form (Contact Form 7) *(only when the brief's Must-haves include a contact form — skip otherwise)*
-
-Run this only when the brief's **Must-haves** include a contact form. It installs **Contact Form 7**
-(`contact-form-7`) on this same `/cms` install, so the frontend can render a contact page whose form
-emails the site owner through WordPress's built-in `wp_mail()` — no third-party service and no API keys.
-Like Yoast/WooCommerce this is **join-half** work: run it once `provision.status == "completed"`. The form
-itself (id + fields + recipient) — and a tiny **spam-guard plugin** that makes a honeypot work headlessly —
-are resolved/deployed in the content-model push — see
-[`../../04-content-model/wordpress/contact-form.md`](../../04-content-model/wordpress/contact-form.md).
-
-> **Why CF7 and not a bespoke mailer.** A contact form is maintained, spam-hardened functionality worth
-> reusing rather than reinventing (you *can* deploy a custom plugin to a headless `/cms` — see the
-> content-model cookbook — but you needn't write your own mailer). CF7 is a wordpress.org-slug plugin,
-> installs through the same management MCP as Yoast, and ships a **public, unauthenticated** submit
-> endpoint (`POST /cms/wp-json/contact-form-7/v1/contact-forms/<id>/feedback`). The frontend and `/cms`
-> are same-origin, so the browser posts to it directly — no proxy, no CORS, no secret on the client.
-
-1. **Install + activate CF7** (management MCP, async — poll, never blind-retry):
-   - `wordpress_plugins_install { username, software: <install_id>, plugins: ["contact-form-7"] }`
-   - Poll `wordpress_plugins_list-installed { username, software }` until `contact-form-7` shows `active`
-     (install + activate can complete together), or activate it with
-     `wordpress_plugins_activate { username, software, plugin: "contact-form-7" }`.
-   - **Don't install the `contact-form-7-honeypot` add-on.** It only acts when a `[honeypot]` form-tag is
-     present in the form — a wp-admin edit the headless agent can't make — so on the default form it does
-     nothing. Headless spam protection instead comes from a small **spam-guard plugin deployed in the
-     content-model push** (it hooks `wpcf7_spam`); see the cookbook.
-   - **Known quirk:** the `hostinger-wordpress` MCP sometimes returns **HTTP 500 even though the job
-     succeeded**. Treat a 500 as "verify, don't assume": poll `list-installed` before retrying, and
-     never fire a second install blindly.
-2. **Verify** `GET https://<domain>/cms/wp-json/` lists the **`contact-form-7/v1`** namespace, then
-   record `contact_form.enabled: true` in `site.json` (Step 6). If the install can't be confirmed after
-   one retry, record `contact_form.enabled: false`, tell the user in one line, and let the frontend
-   render the contact page without a form (graceful — not a build failure). Don't fail provision over it.
-
-The owner's email is **CF7's default recipient** (`[_site_admin_email]`, the admin address from
-install) — fine out of the box, so "does Hostinger set up the email?" is **yes** for basic delivery via
-`wp_mail`. Deliverability (SPF/DKIM) is most reliable when that address is a mailbox **on the same
-domain**; the content-model push keeps the default recipient and validate sends a test submission to
-confirm mail actually leaves. Never ask the user for mail credentials.
+- **A store** (the brief's **Suggested backend** is `**WordPress + WooCommerce**`): follow
+  [`../../04-content-model/wordpress/woocommerce.md`](../../04-content-model/wordpress/woocommerce.md) §0.
+- **A contact form** (the brief's **Must-haves** include a contact form): follow
+  [`../../04-content-model/wordpress/contact-form.md`](../../04-content-model/wordpress/contact-form.md) §0 to install Contact Form 7 (`contact-form-7`).
 
 ## Step 6 — Record `site.json`
 
@@ -261,52 +172,3 @@ confirm mail actually leaves. Never ask the user for mail credentials.
 
 No passwords or tokens in `site.json`. When the user needs wp-admin, mint a one-click link with
 `wordpress_login_create-links { username, software: <install_id> }` — never hand over a password.
-
-**For a `WordPress + WooCommerce` brief, also add a `woocommerce` block and the store URLs** (the
-`backend` field still stays `"wordpress"`):
-
-```json
-{
-  "woocommerce": {
-    "enabled": true,
-    "seeded_via": "per-site-wp-mcp",
-    "currency": "<currency_code from GET {store_api}/products or the install default>",
-    "payment_enabled": false,
-    "checkout_setup": "owner enables a payment method + shipping in wp-admin"
-  },
-  "urls": {
-    "store_api": "https://<domain>/cms/wp-json/wc/store/v1",
-    "wc_rest_api": "https://<domain>/cms/wp-json/wc/v3"
-  }
-}
-```
-
-**For a brief with a contact form (CF7 installed in Step 5b), also add a `contact_form` block.**
-Provision records only `enabled` + `plugin` here; the content-model push fills `form_id`,
-`feedback_url`, `fields` and `honeypot_field` once it resolves the form and deploys the spam guard:
-
-```json
-{
-  "contact_form": {
-    "enabled": true,
-    "plugin": "contact-form-7",
-    "form_id": null,
-    "feedback_url": null,
-    "fields": [],
-    "honeypot_field": null,
-    "recipient": "site-admin-email"
-  }
-}
-```
-
-`form_id` / `feedback_url` / `fields` / `honeypot_field` stay `null` / `[]` until content-model resolves the form (the
-submit URL is `https://<domain>/cms/wp-json/contact-form-7/v1/contact-forms/<form_id>/feedback`).
-`recipient` is informational — CF7's `To` is `[_site_admin_email]`; no address, token or secret is
-stored in `site.json`.
-
-`rest_api` stays `wp/v2` (the WordPress content contract, for the blog/pages on the same site);
-`store_api` is the public storefront surface (browse/cart/coupons/checkout, no auth). `wc_rest_api`
-(`wc/v3`) is recorded only as the surface the **owner's own** integrations use with a consumer key they
-generate in wp-admin — **this flow never creates or stores a key** (the catalog is seeded through the
-per-site WP MCP's `wc-*` abilities; the storefront uses the public Store API). `payment_enabled` starts
-`false` and flips to `true` only once a gateway + shipping are configured — no secrets in `site.json`.

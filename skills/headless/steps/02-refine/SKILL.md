@@ -146,9 +146,8 @@ calendar backend, user-generated content), say plainly that the headless flow do
 and record it under **Out of scope** — don't promise it.
 
 > **A contact form *is* supported (WordPress backends).** If the user wants one, keep it in
-> **Must-haves** and name it "Contact form". Provision installs **Contact Form 7** on `/cms` and the
-> frontend wires a contact page whose form emails the site owner through WordPress's built-in
-> `wp_mail()` — no third-party service and no API keys. It's **opt-in**: built only when the brief asks
+> **Must-haves** and name it "Contact form": provision installs **Contact Form 7** and the frontend
+> wires a contact page that emails the site owner. It's **opt-in**: built only when the brief asks
 > for it. (A form that needs accounts, payments or a booking calendar is still out of scope — this is a
 > plain name/email/message enquiry form.)
 
@@ -261,8 +260,6 @@ can. Then update `state.json`:
 The **Suggested backend** section is the contract with `03-provision/SKILL.md`, which routes on it.
 Its first line must be exactly one of `**WordPress**`, `**Ecommerce**`, `**WordPress + Ecommerce**`,
 `**WordPress + WooCommerce**` or `**Webapp**`, followed by an em dash and the one-line reason.
-`**WordPress + WooCommerce**` is the WordPress backend with the WooCommerce store turned on — provision
-routes it to the `wordpress` subfolder with the store enabled (it is **not** a separate backend).
 
 ## `brief.md` template
 
@@ -324,23 +321,8 @@ the app reads — names only, never values>
 **<Bring your own frontend | Agent designs and builds>** — <one line>. <When "Bring your own frontend":
 how they want to drive design/code; the project's path is under **Existing project**. When "Agent designs and builds": leave the design + frontend steps to run as
 normal; with **Existing project** filled, the frontend starts from that app's source and rebuilds its UI
-to design.md.> The design step and the frontend step both read this: **Bring your own frontend** → design
-defers to the user and frontend builds on their project; **Agent designs and builds** → both run as normal.
+to design.md.>
 
 ## Rendering
-**<SSR | SSG>** — <reason>. Rules: **Ecommerce requires SSR** and **WordPress + WooCommerce requires
-SSR** (carts/checkout need per-request rendering — any SSR framework works; Next.js is the default, not
-a requirement); **WordPress may be SSG (Astro)** when the site is mostly static and rarely changes,
-otherwise **SSR**. Default when unsure: **Next.js SSR**.
-```
-
-## Example — WordPress + Ecommerce
-
-> A ceramicist sells around 30 handmade pieces and writes a monthly studio journal.
-
-```markdown
-## Suggested backend
-**WordPress + Ecommerce** — sells ~30 products with checkout, and the owner publishes a monthly
-studio journal they want to edit themselves.
-Confirmed by the user.
+**<SSR | SSG>** — <reason; the rules are in Step 4's *Then set rendering*>.
 ```

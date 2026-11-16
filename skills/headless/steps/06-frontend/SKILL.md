@@ -11,17 +11,9 @@ is where it becomes real code. There's no per-framework recipe — use good judg
 as the contract, and ask only for the clarifications you genuinely need. **Out:** source in the site
 workspace `~/.hostinger/<domain>/src/`.
 
-> ## ⚠️ Build mode: "Bring your own frontend"? Read this first (any backend)
-> Read `brief.md` → **Build mode**. When it is **Bring your own frontend**, the user already has a
-> frontend (the project in the folder the command was run in) and this step **wires it to the backend
-> from `site.json` — it does not scaffold a new project and there is usually no `design.md` to
-> implement** (the design step deferred to the user). **Use their project as the source**: copy or
-> point `~/.hostinger/<domain>/src/` at it, keep its framework and UI, and collaborate on changes at
-> the user's direction (vibe-code with them). Your job is to connect it to the live backend (WordPress
-> `wp/v2` reads, the WooCommerce/Ecommerce Store API, env/keys) and make it deployable (set
-> `engines.node` to `22`, remove any `.htaccess`), then hand off to deploy. This generalises the Webapp
-> "existing app" case below to WordPress and Ecommerce too. When **Build mode is "Agent designs and
-> builds"**, ignore this box and proceed normally (scaffold + implement `design.md`).
+> **Build mode "Bring your own frontend"? Read this first (any backend).** Read `brief.md` → **Build mode**.
+> When it is **Bring your own frontend**, follow [`bring-your-own-frontend.md`](bring-your-own-frontend.md): wire the user's own project to the
+> backend instead of scaffolding one. When it is **Agent designs and builds**, proceed normally.
 
 > ## ⚠️ Webapp backend? Read this first
 > A `webapp` brief has **no CMS/store and no `content-model.md`** — the app owns its own data (its own
@@ -60,10 +52,7 @@ it, and the backend constraint:
 - Map rendering → framework: **`ssr` → Next.js**, **`ssg` → Astro** — unless the brief/prompt explicitly
   names another supported framework, in which case use that.
 
-Supported frameworks (what the Hostinger build pipeline can deploy — the `app_type` in Step 8 deploy):
-
-- **Server/SSR-capable:** Next.js, Nuxt.js, Astro, SvelteKit, Express, NestJS, Fastify.
-- **Static / SPA:** React, Vue, Angular, Vite, Parcel, Preact, Svelte, (Astro / SvelteKit static too).
+Supported frameworks are the ones in deploy's *Build configurations* table (`../08-deploy/SKILL.md`).
 
 Confirm the framework with the user in one line only if the brief left it open. Record the choice in
 `state.json`:
@@ -72,8 +61,7 @@ Confirm the framework with the user in one line only if the brief left it open. 
 { "frontend": { "framework": "nextjs", "rendering": "ssr" } }
 ```
 
-If the brief is silent, default to **Next.js SSR**. Ecommerce must be SSR (never SSG) — but the SSR
-framework itself is free to be any supported one, not just Next.js.
+If the brief is silent, default to **Next.js SSR**.
 
 ## Step 2 — Implement `design.md` (don't re-design)
 
@@ -115,46 +103,17 @@ Read the backend from `site.json`:
     Leave HTML fields (`content.rendered`, an excerpt shown as HTML) as they are, and never inject a
     decoded field as raw HTML.
   - **Contact form** (`site.json → contact_form.enabled: true`, any WordPress backend) → render the
-    contact page's form and submit it **client-side** to Contact Form 7's public feedback endpoint. Put a
-    `submitContactForm(data)` helper in the one data module: build a `FormData` with the field names from
-    `contact_form.fields` (e.g. `your-name`, `your-email`, `your-subject`, `your-message`) **plus CF7's
-    hidden fields** — `_wpcf7` = `contact_form.form_id`, `_wpcf7_version`, `_wpcf7_locale` (e.g. `en_US`),
-    `_wpcf7_unit_tag` (any stable string), `_wpcf7_container_post` = `0` — and `POST` it to
-    `contact_form.feedback_url` **without setting `Content-Type`** (let the browser add the multipart
-    boundary). `/cms` is same-origin, so no CORS and no secret. Branch on the JSON `status`: `mail_sent`
-    → success state; `validation_failed` → map `invalid_fields[].field` to per-input errors;
-    `spam`/`aborted`/`mail_failed` → a generic "couldn't send, try again" message. Include the honeypot
-    decoy field named in `contact_form.honeypot_field` (e.g. `your_website`), rendered hidden/off-screen,
-    **empty**, `autocomplete="off"`, `tabindex="-1"` — the deployed spam guard rejects it if filled. A user
-    validation error is a **normal UI state, not a build error**. When `contact_form.enabled` is `false` or absent, render the contact page with
-    plain contact details and **no form** — graceful, like disabled checkout; never half-build. Full
-    contract: `../04-content-model/wordpress/contact-form.md` §3.
+    contact page's form and submit it **client-side** to `contact_form.feedback_url` exactly as
+    [`../04-content-model/wordpress/contact-form.md`](../04-content-model/wordpress/contact-form.md) §3
+    says. When `contact_form.enabled` is `false` or absent, render the contact page with plain contact
+    details and **no form** — graceful, like disabled checkout; never half-build.
 - **WordPress + WooCommerce** (`site.json → woocommerce.enabled: true`) → the WordPress bullet above **plus**
-  the store. Read the catalog over the **public WooCommerce Store API** (`site.json → urls.store_api`,
-  `/cms/wp-json/wc/store/v1`, no auth, open CORS): `GET /products` (prices are **integer minor units** on
-  `prices.price` with `prices.currency_minor_unit` — divide to display), `GET /products/categories`. Cart,
-  coupons and checkout are **client-side** against the Store API with the `Nonce` + `Cart-Token` headers
-  (`GET /cart`, `POST /cart/add-item`, `/cart/apply-coupon`, `POST /checkout`) — see
-  `../04-content-model/wordpress/woocommerce.md`. **Never embed a consumer key client-side**; the
-  storefront is fully public. Blog/pages on the same site still come from `urls.rest_api` (`wp/v2`) + Yoast.
-  - **Honour `site.json → woocommerce.payment_enabled`.** It is `false` until the owner enables a payment
-    gateway + shipping in wp-admin (that config isn't reachable headlessly — see the provision note). While
-    `false`, build the full catalog, product pages and the client-side cart as normal, but render a
-    graceful disabled-checkout state (e.g. a disabled "Checkout" with "Checkout isn't set up yet"), **don't
-    call `/checkout`**, and don't treat it as a build error. When `true`, wire checkout (`payment_method`
-    `"cod"` works out of the box).
-- **Ecommerce** → the **public Hostinger Storefront Core V2 API** (`https://api-ecommerce.hostinger.com/v2`,
-  no auth, open CORS), keyed on the **custom sales channel** (`site.json → ecommerce.sales_channel.id`):
-  `GET /channels/<scha_*>/products` (prices are **minor units** on variants), `POST /channels/<scha_*>/checkout`
-  for buying. Cart is client-side; never embed a token. Read
-  `ecommerce_miscellaneous_custom-storefront-setup-instructions` for the authoritative, current guide.
-  - **Honour `site.json → ecommerce.payment_enabled`.** When it is `false` (free account / no paid
-    Ecommerce plan — see the provision gate), there is **no checkout**: build the full catalog, product
-    pages and the client-side cart as normal, but **do not call the checkout endpoint**. Instead render
-    a clear, graceful state at the checkout step — e.g. a disabled "Checkout" button with a short note
-    like "Online checkout isn't available on this plan yet" (and/or a contact/enquiry fallback). A
-    missing checkout is **not** a build error here — never leave the storefront half-built, throw, or
-    retry checkout because payment is off. When `payment_enabled` is `true`, wire checkout normally.
+  the store, read over the **public WooCommerce Store API** (`site.json → urls.store_api`): follow
+  [`../04-content-model/wordpress/woocommerce.md`](../04-content-model/wordpress/woocommerce.md) §2 for
+  the calls, headers and minor-unit prices, and §4 for `site.json → woocommerce.payment_enabled` (while
+  `false`, a graceful disabled-checkout state, no `/checkout` call, not a build error). **Never embed a
+  consumer key client-side.**
+- **Ecommerce** → the public Hostinger Storefront Core V2 API: follow [`ecommerce.md`](ecommerce.md).
 - **Webapp** → **no `content-model.md` and no headless backend to read**. The app uses its own data source:
   the MySQL database from `site.json → database` (through the `DB_*` / `DATABASE_URL` env vars — set at
   provision/deploy, see `../03-provision/webapp/SKILL.md` Step 3; `127.0.0.1` only resolves on the server,

@@ -38,7 +38,7 @@ reuse existing ids. For each product in the helper:
 `ecommerce_products_upload-and-attach-image { store_id, product_id, image_url, is_thumbnail: true }` —
 fetches the image from a public URL and attaches it (raster only, no SVG, ≤15MB, HTTPS, ≤1 redirect).
 Unsplash direct URLs (`https://images.unsplash.com/photo-…?w=1200&q=80&fm=jpg&fit=max`) work directly.
-Source images as in the parent `../SKILL.md` (Unsplash). The store stores its own CDN copy
+Source images as in [`../images-unsplash.md`](../images-unsplash.md). The store stores its own CDN copy
 (`cdn.zyrosite.com`), so the storefront never depends on the source URL.
 
 > Idempotency: check the product's existing `images`/`thumbnail` before attaching so a re-run doesn't pile

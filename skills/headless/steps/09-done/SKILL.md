@@ -57,8 +57,9 @@ Write it in this order:
      (`https://<domain>/cms/wp-admin` — the headless WordPress lives under `/cms`), and the **WP Admin
      button in hPanel** (hPanel → the website → *WP Admin*). Note how to **reset the password**: on the
      `/cms/wp-admin` login screen use **"Lost your password?"**, and WordPress emails a reset link to the
-     **WordPress admin email** (the address set at install, which the owner already has) — see *Next
-     steps* for an optional deliverability tip.
+     **WordPress admin email** (the address set at install, which the owner already has). Optionally, for
+     more reliable delivery, they can create a mailbox on the domain (hPanel → *Emails*) and set it as the
+     admin address in **wp-admin → Settings → General**.
      **Never print or store a password.** For a **WordPress + WooCommerce** store, this *same* wp-admin
      login is the store admin (wp-admin → WooCommerce → Products/Orders) — do **not** use the Ecommerce
      `store_admin` path; the store setup the owner still needs is spelled out under *Next steps*. For a
@@ -81,11 +82,6 @@ Write it in this order:
      the live site for *this* build: an **SSR** frontend re-reads the REST API each request, so changes
      show up with no redeploy; an **SSG/static** build must be redeployed to pick up new content (read
      `state.json → frontend.rendering`).
-   - **Log in later & reset the password:** repeat the two non-expiring routes (the `/cms/wp-admin` login
-     URL and hPanel's *WP Admin* button) and the **"Lost your password?"** reset. The reset link goes to
-     the **WordPress admin email** — the address set at install, which the owner already has — so nothing
-     extra is needed to receive it. Optionally, for more reliable delivery, they can create a mailbox on
-     the domain (hPanel → *Emails*) and set it as the admin address in **wp-admin → Settings → General**.
    - **WordPress + WooCommerce — finish store setup so it can take orders.** The catalog and cart already
      work, but **checkout stays off until the owner configures it in wp-admin**: WooCommerce → Settings →
      **Payments** (enable at least one method) and → **Shipping** (add a zone with a rate), then confirm
@@ -117,10 +113,8 @@ already checked this — this is a quick re-confirm, not a full re-run):
   (`site.json → woocommerce.enabled`) also `GET {urls.store_api}/products?per_page=1` → 200; or the
   storefront API for the sales channel → 200 (Ecommerce).
 - **Contact form** (`site.json → contact_form.enabled`): validate already sent a test submission, so
-  don't send another here. In the handover, tell the owner the contact page is live and enquiries email
-  the **WordPress admin address** (via `wp_mail`) — and that for the most reliable delivery that address
-  should be a Hostinger mailbox on the domain. If validate reported `mail_failed`, say so plainly instead
-  of claiming the form sends.
+  don't send another here. Hand it over as
+  [`../04-content-model/wordpress/contact-form.md`](../04-content-model/wordpress/contact-form.md) §6 says.
 
 If a check fails, say so in the outcome paragraph and don't claim the site is live.
 
@@ -166,16 +160,9 @@ node <skill>/run-log.mjs <domain> stage-end done ok && \
 node <skill>/run-log.mjs <domain> report --outcome <live|stopped|failed> [--tokens '<json>']
 ```
 
-Then send it to Hostinger: pass `reports/<run>.json` unchanged to `hosting_headless_submit-build-report`
-and run `report-sent <run>` (or `report-rejected <run>` on a 422). The `report` command prints the
-exact path and run id. Don't ask first; see *Run log and build report* in the top-level `SKILL.md`
-for failures. Then tell the user in one line: "Sent the build report to Hostinger to help improve
+Then send it to Hostinger as *Run log and build report* in the top-level `SKILL.md` says (for changes asked
+after this report, see *Follow-ups continue the run* there), and tell the user in one line: "Sent the build report to Hostinger to help improve
 the flow." On a 422 say it's saved locally only; on any other failure say it'll be sent next session.
-
-If the user asks for more changes after this report in the same session, call
-`run-log.mjs <domain> run-resume --reason "<what they asked for>"` before the work. Then log as
-usual and run `report` again when it's done. It updates this run's report in place, and the report
-lists the follow-up. Send the updated report the same way.
 
 - **Outcome:** `live` when the deploy succeeded this run, `failed` when a stage failed and you
   couldn't recover, `stopped` for everything else (the user paused, a dummy or missing step). Leave
@@ -187,8 +174,6 @@ lists the follow-up. Send the updated report the same way.
   a stage that was never logged. Fix what you can: `stage-end` an open stage, or correct a start with
   `stage-fix <stage> --started-ago <time>`, then run `report` again. What you can't fix stays in the report's
   *Logging gaps* section.
-- **Tokens:** only what your tool tells you about your own usage (see *Run log and build report* in
-  the top-level `SKILL.md`).
 - In the final report's *Where state lives*, add the path to `report.html` so the user can open it.
 
 Do this on every run, including the early stops: those reports are the most useful ones.

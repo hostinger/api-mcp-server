@@ -14,27 +14,8 @@ This step owns all resume/position logic — no other stage second-guesses it.
 Nothing in this step creates, provisions, deploys, or deletes anything. It reads and guides. Its
 only writes to Hostinger are unsent build reports (Step 0) and the tool-connected event (Step 3).
 
----
-
-## Where state lives
-
-Everything for a domain lives under the global site workspace **`~/.hostinger/<domain>/`** — one
-directory per domain, under the user's home (`~` = `$HOME`), **not** the current working directory.
-The directory name **is** the domain, so `state.json` inside does not store it. Because it's global,
-this domain's build is resumable from any directory.
-
-`state.json` shape (`stage` is the *next* stage to run; `provision` is the background task's status,
-present only once provision has fired):
-
-```json
-{ "tool": "claude-code", "stage": "content_model",
-  "provision": { "status": "in_progress", "domain": "<domain>", "started_at": "…" },
-  "updated_at": "…" }
-```
-
-`provision.status` is `in_progress` or `completed` — but it is a **hint** from an earlier session:
-re-verify it against `hosting_websites_list-setups` here (Step 1). See *State and artifacts* in the
-top-level `SKILL.md` for when the connector is asked again.
+Everything for this domain lives in its global workspace `~/.hostinger/<domain>/`; the files and the
+`state.json` shape are in *State and artifacts* in the top-level `SKILL.md`.
 
 ---
 
@@ -56,8 +37,6 @@ that failed last time).
 Each line is `<run> <path>`. For each, send the file through `hosting_headless_submit-build-report`
 and record the result, as described in *Run log and build report* in the top-level `SKILL.md`. One
 try each. Don't ask first and say nothing about it to the user. Don't let a failure hold up this step.
-Check-state runs once per session. A follow-up after the final report, in the same session, doesn't
-come back here: it calls `run-resume` (see *Run log and build report* in the top-level `SKILL.md`).
 
 ## Step 1 — Is a build actively running right now? (check this before anything else)
 
@@ -121,22 +100,13 @@ Query the Hostinger connector — the local files are never trusted on their own
   a sandboxed shell), try it one more time the way that environment allows, such as requesting
   approval or network access, then go on. Ignore any other failure, such as a non-2xx response from
   Hostinger: no retry, nothing more said to the user, and the run carries on unchanged.
-- **How far did it get?** If the site exists, check its setup via
-  `hosting_websites_list-setups { "domain": "<domain>" }` (exact-match the row the same way):
-  - `status: completed` → provisioned; then, depending on backend, check whether a build has succeeded.
-  - `status: running` → still provisioning (see Step 1).
-  - `status: failed` → provisioning stopped before finishing → route to **provision** to self-heal.
-- **Is it an empty headless shell from onboarding?** A `headless` site whose setup is `completed` is
-  **not necessarily finished** — onboarding now creates the website *before* the build runs, as an
-  **empty headless shell** (`hosting_websites_create { type: "headless_empty" }`): `website_type`
-  is `headless` but **no backend is installed** (no WordPress at `/cms`, no store). Tell a shell from a
-  real backend the same way provision does: within 24 h the setup `type` is `headless_empty`; otherwise
-  `wordpress_installations_list { username, domain, ownership: "all" }` returns **no** `/cms` row and
-  there is no `site.json` recording a backend. An empty shell means **provision has not chosen or
-  installed a backend yet** — this is a **new build** that happens to already own its website, not a
-  finished or resumable one. Route it to **refine** (choose the backend), then **provision** adopts the
-  shell and swaps it to that backend (see the provision router's *Onboarding handoff*). Never create a
-  second site, and never skip provision for it.
+- **Is it an empty headless shell from onboarding?** A `headless` site with no backend installed (no
+  WordPress at `/cms`, no store) is an **empty headless shell**: within 24 h its setup `type` is
+  `headless_empty`; otherwise `wordpress_installations_list { username, domain, ownership: "all" }`
+  returns **no** `/cms` row and there is no `site.json` recording a backend. It is a **new build** that
+  happens to already own its website, not a finished or resumable one. Route it to **refine** (choose
+  the backend), then **provision** adopts the shell and swaps it to that backend (provision's subfolder
+  repeats this check before swapping). Never create a second site, and never skip provision for it.
 
 Reconcile with the local state. **When they disagree, reality wins** and the local `stage` is
 corrected.
@@ -209,15 +179,3 @@ Then:
   forces an unnecessary "is another window running?" question on the next run. Always release the lock
   on a clean stop; it exists only to mark an actively-running session. A stop is still the end of a
   run: give the final report and save the build report (`09-done`).
-
----
-
-## Invariants
-
-- **One directory per domain.** The domain is the key; state files never repeat it.
-- **Only this domain's workspace.** Never list `~/.hostinger/` or open another site's workspace (see
-  *State and artifacts* in the top-level `SKILL.md`).
-- **Never create a second site** on a domain that already has one.
-- **Never re-provision or overwrite a live site.** Recovery is forward-only.
-- **Reality beats local state**, always.
-- **When ambiguous, ask.**

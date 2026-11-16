@@ -6,9 +6,50 @@ submitted from the **decoupled frontend**, sends the enquiry to the site owner b
 WordPress's built-in `wp_mail()` — no third-party form service, no API keys, no secret on the client.
 
 **Contact Form 7 is not a separate backend.** It is the `contact-form-7` plugin on the same headless
-WordPress install at `/cms` (installed in the provision step). This cookbook is the authoritative home for
+WordPress install at `/cms` (installed at provision, §0). This cookbook is the authoritative home for
 the contact-form data layer: how to **resolve the form** (content-model push), **deploy a spam guard**,
 what the **frontend submits** (Step 6), and how **validate** proves mail actually leaves.
+
+---
+
+## 0 — Provision: install, verify, record `site.json`
+
+Read from [`../../03-provision/wordpress/SKILL.md`](../../03-provision/wordpress/SKILL.md) Step 5. Like Yoast this is **join-half** work: run it once
+`provision.status == "completed"`.
+
+1. **Install + activate CF7** (management MCP, async — poll, never blind-retry):
+   - `wordpress_plugins_install { username, software: <install_id>, plugins: ["contact-form-7"] }`
+   - Poll `wordpress_plugins_list-installed { username, software }` until `contact-form-7` shows `active`
+     (install + activate can complete together), or activate it with
+     `wordpress_plugins_activate { username, software, plugin: "contact-form-7" }`.
+   - **Known quirk:** the `hostinger-wordpress` MCP sometimes returns **HTTP 500 even though the job
+     succeeded**. Treat a 500 as "verify, don't assume": poll `list-installed` before retrying, and
+     never fire a second install blindly.
+2. **Verify** `GET https://<domain>/cms/wp-json/` lists the **`contact-form-7/v1`** namespace, then
+   record `contact_form.enabled: true` in `site.json` (provision Step 6). If the install can't be confirmed after
+   one retry, record `contact_form.enabled: false`, tell the user in one line, and let the frontend
+   render the contact page without a form (graceful — not a build failure). Don't fail provision over it.
+
+Then add the `contact_form` block to `site.json` (provision Step 6). Provision records only `enabled` +
+`plugin` here; §2 fills `form_id`, `feedback_url`, `fields` and `honeypot_field` once it resolves the form
+and deploys the spam guard:
+
+```json
+{
+  "contact_form": {
+    "enabled": true,
+    "plugin": "contact-form-7",
+    "form_id": null,
+    "feedback_url": null,
+    "fields": [],
+    "honeypot_field": null,
+    "recipient": "site-admin-email"
+  }
+}
+```
+
+`recipient` is informational — CF7's `To` is `[_site_admin_email]`; no address, token or secret is
+stored in `site.json`.
 
 ---
 
@@ -67,7 +108,7 @@ its **numeric form id** (and, if you tailored the form, its field names) to buil
 
    The default field names are `your-name`, `your-email`, `your-subject`, `your-message`. (A full test
    submission that confirms both the id and the field names — and that mail actually sends — belongs to
-   **validate**, so you send just one real email; see §4.)
+   **validate**, so you send just one real email; see §5.)
 
 2. **(Optional) tailor the form — owner-side.** The headless tooling can't edit the CF7 form (no REST
    ability reaches it). If the design needs different fields, keep the default form for the build and note
@@ -167,7 +208,7 @@ sends a decoy field (empty for humans), and the guard flags the submission as sp
 
 > **Nonce note.** CF7's built-in spam check also flags nonce failure, but nonce verification is **inactive
 > for logged-out visitors by default** — which is why a plain headless submission returns `mail_sent`, not
-> `spam`. The guard adds the honeypot on top. Confirm end-to-end in validate (§4).
+> `spam`. The guard adds the honeypot on top. Confirm end-to-end in validate (§5).
 
 ---
 
@@ -210,18 +251,42 @@ A user validation error is a **normal UI state, not a build error**. When `conta
 ## 4 — Email delivery & the `wp_mail` caveat (what to tell the owner)
 
 CF7's default form mails `[_site_admin_email]` via `wp_mail()`, so **Hostinger does "set up" basic email
-by default** — nothing else to configure for the form to send. Two caveats worth surfacing:
+by default** — nothing else to configure for the form to send. One caveat worth surfacing:
 
 - **Deliverability.** `wp_mail` from a shared host can land in spam for external recipients without
   SPF/DKIM. The most reliable recipient is a **Hostinger mailbox on the same domain**. Keep CF7's admin
   recipient; if the owner wants a different inbox, point them to a same-domain mailbox.
-- **Prove it, don't assume it.** Validate (Step 7) POSTs a throwaway test submission and asserts
-  `status == "mail_sent"`. A `mail_failed` is a real finding — report it (CF7 is wired, but the mailer
-  needs attention), don't pass silently.
-- **Check the honeypot too.** Send one more throwaway submission with the decoy
-  (`contact_form.honeypot_field`) **filled** — it must come back `status: "spam"` with **no** mail. If it
-  returns `mail_sent`, the §2b guard plugin isn't active (re-check its deploy). The normal empty-decoy
-  submission still returns `mail_sent`, so this costs one extra throwaway email at most.
 
 Don't install an SMTP plugin or ask for mail credentials as part of this flow — the default `wp_mail`
 path is the intended behaviour; SMTP is an owner decision in wp-admin if deliverability needs hardening.
+
+---
+
+## 5 — Validate (Step 7): the two test sends
+
+Read from [`../../07-validate/SKILL.md`](../../07-validate/SKILL.md) when `site.json → contact_form.enabled` is true.
+
+POST one throwaway test submission (dummy
+name/email/subject/message + CF7's hidden `_wpcf7*` fields — see §3
+above) to `contact_form.feedback_url` and assert the JSON
+`status` is **`mail_sent`**. This is the one place a real send happens, so one test email reaches the
+owner — not several. `mail_failed` is a real finding: surface it to the user (CF7 is wired, but
+`wp_mail` delivery/SPF needs attention — a Hostinger mailbox on the domain is the most reliable
+recipient) and log it as an issue. A `validation_failed` means the test payload didn't match the form's
+fields — fix the field names in `site.json`, not the plugin.
+**Then check the honeypot:** POST a **second** throwaway submission with the same valid fields **plus**
+`contact_form.honeypot_field` **filled**, and assert the `status` is **`spam`** (no mail sent). Keep the
+real fields valid — CF7 validates **before** running the spam filter, so an invalid payload would return
+`validation_failed` and never reach the honeypot check. A `mail_sent` here means the
+`cf7-headless-spamguard` plugin isn't active — surface it and re-check its deploy.
+
+---
+
+## 6 — Handover (Step 9)
+
+Read from [`../../09-done/SKILL.md`](../../09-done/SKILL.md) when `site.json → contact_form.enabled` is true.
+
+In the handover, tell the owner the contact page is live and enquiries email
+the **WordPress admin address** (via `wp_mail`) — and that for the most reliable delivery that address
+should be a Hostinger mailbox on the domain. If validate reported `mail_failed`, say so plainly instead
+of claiming the form sends.

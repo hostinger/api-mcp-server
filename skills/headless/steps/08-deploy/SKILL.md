@@ -56,21 +56,7 @@ Common cases (all `nodeVersion: 22`, `buildScript: "build"`, `packageManager: "n
 
 SSR/server frameworks run a persistent Node process (root sends `x-powered-by` / `cache-control: no-store`);
 static frameworks serve their output dir as files. If unsure of a framework's output dir, check the
-framework's own build output, but **always pass `appType`/`outputDirectory` on the deploy call with the
-framework's correct values** — don't rely on auto-detection (it returns null → 403).
-
-> ## ⚠️ Next.js 16+: build with webpack, not Turbopack (recurring deploy failure)
-> Next.js 16 makes **Turbopack** the default bundler for `next build`. Turbopack's native (Rust)
-> compiler needs a newer **glibc** than the Hostinger build server ships, so the server build aborts
-> with a "glibc too old" error — and Turbopack **does not fall back** to webpack on its own, so the
-> deploy fails every time. **Fix: build with webpack.** On **Next.js 16+** the project's `build` script
-> in `package.json` must be `next build --webpack` (not plain `next build`); `buildScript` on the deploy
-> call stays `"build"` — that's what runs it. The `--webpack` flag exists only on Next.js 16+; on
-> **Next.js 15.x** leave the build script as plain `next build` (it already defaults to webpack).
-> **Confirm this in `package.json` before deploying** (the frontend step scaffolds it this way — see
-> `../06-frontend`). Alternative, only if you must avoid the `--webpack` flag: pin Next.js to `15.x`
-> (keeping plain `next build`), whose `next build` still defaults to webpack. Next.js only — other
-> frameworks are unaffected.
+framework's own build output.
 
 ## Step 1 — Pre-flight
 
@@ -80,8 +66,8 @@ framework's correct values** — don't rely on auto-detection (it returns null �
 2. **Build output exists locally** (the framework's output dir — e.g. `.next/`, `dist/`, `.output/`) and
    the project builds clean (frontend/validate already did this). If not, go back.
    - **Next.js 16+:** `package.json`'s `build` script is `next build --webpack`, not plain `next build` —
-     the server's glibc can't run Turbopack's native compiler (see the box above). On Next.js 15.x leave it
-     as plain `next build`. Fix it here if it isn't.
+     the server's glibc can't run Turbopack's native compiler, and Turbopack doesn't fall back to webpack
+     (see `../06-frontend/SKILL.md` Step 3). On Next.js 15.x leave it as plain `next build`. Fix it here if it isn't.
 3. **Env vars (only if used).** Build-time vars (e.g. `NEXT_PUBLIC_*`) must be set **before** the build
    with `hosting_nodejs_replace-environment-variables` (full replace). Never put secrets in the repo or
    the archive. **Webapp with a database:** that full replace wipes the `DB_*`/`DATABASE_URL` that
@@ -152,9 +138,11 @@ Pass the framework's build settings **inline** on the deploy call — there is n
 
 `hosting_deploy` uploads the source and triggers `npm install` + the build **end-to-end** — do not call
 any upload or build operation yourself. It returns a build `buildUuid` at once. This **overwrites the
-website root** (expected) and keeps `/cms` intact. `type` is always `"nodejs"` for a headless site —
-**never `"static"`** (see the gate below). Passing `appType`/`outputDirectory` explicitly is what
-keeps the root from serving 403 (see the rule above).
+website root** (expected) and keeps `/cms` intact. `type` is always `"nodejs"` for a headless site, with the explicit `appType`/`outputDirectory` from
+*Build configurations* —
+**never `"static"`**, which serves the build as plain files over the document root and **overwrites
+`/cms`**, destroying the WordPress backend. A static-built SPA (Vite/React/Vue) still deploys as
+`type: "nodejs"` with its `appType`.
 
 ## Step 4 — Wait for the build and the live root
 
@@ -241,19 +229,6 @@ No secrets in `deploy.json`. The `urls.cms` field and the `backend_preserved` ch
 - **Webapp:** omit `urls.cms` and `backend_preserved` entirely — `urls` is just `{ "live": "https://<domain>" }`.
 
 Update `state.json` (`stage` → `done`), then continue to Step 9 (done).
-
----
-
-## Gate — a headless deploy is always `type: "nodejs"`, never `type: "static"`
-
-**Hard rule, check it before every deploy:** a headless site is deployed **only** with
-`type: "nodejs"` plus the explicit `appType`/`outputDirectory`/`nodeVersion`/`buildScript`/
-`packageManager`/`rootDirectory` from the table. **Never pass `type: "static"` on a headless site** — it
-serves the build as plain files over the document root and **overwrites `/cms`**, destroying the
-WordPress backend (this is the "accidentally cleared cms" failure). A static-built SPA (Vite/React/Vue)
-still deploys as `type: "nodejs"` with its `appType` — the framework's static output is served correctly
-that way, and `/cms` is preserved. If a flow ever tells you to deploy a headless site as `type:
-"static"`, you are on a stale/legacy skill copy — stop and update the skill (`npx skills update` or the plugin update for an installed skill, or connect's Phase 1 npm install for a web-installed `headless/` folder).
 
 `hosting_deploy` on the local server is the only path: give its `path` a local **archive** (`zip`, `tar`,
 `tar.gz`, `tgz`, `7z`) written outside `~/.hostinger/` as in Step 2. There is no separate upload or
