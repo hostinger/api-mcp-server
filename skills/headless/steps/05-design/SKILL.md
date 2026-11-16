@@ -166,16 +166,11 @@ Each direction carries exactly this:
   direction's logo idea is that wish in its own style. A wish is words
   describing a logo; a logo file in *Assets* is a supplied logo and wins (Step 6).
 
-**Only offer what can pass.** Before asking, run two quick gates on **all three**:
-
-1. **Contrast gate.** Every colour that will carry text (base, surfaces, and any accent used as a
-   text block) has a palette text colour reaching **4.5:1** on it. Two text colours are fine (dark on
-   light blocks, light on dark ones). Accents that only ever hold large text need 3:1.
-2. **Font gate.** Each font resolves on npm (5.4).
-
-A direction that fails either gate gets adjusted, not offered as-is. Don't offer a look that only
-works by breaking the rules, such as body text on a neon accent or a marquee that can't be stopped.
-Loud is fine; inaccessible is not.
+**Only offer what can pass.** Don't run contrast or font checks before asking: Step 5 checks the
+chosen direction, and fixes it with a shade of the same hue or the closest font that resolves, which
+keeps the look the user picked from words. Don't offer a look that only works by breaking the
+rules, such as body text on a neon accent or a marquee that can't be stopped. Loud is fine;
+inaccessible is not.
 
 **Avoid the template look** unless the brief asks for neutral: Inter or Roboto everywhere, a
 blue-to-purple gradient hero, centred hero with three feature cards, grey cards on white. Every
@@ -242,12 +237,20 @@ pure decoration are exempt, but say which elements those are. **Text on photos**
 solid backing that gets the text to 4.5:1 against the lightest part of the image. If you can't
 guarantee that, don't put text on photos. Record every pair and its ratio in `design.md`.
 
-```js
-// node -e: relative luminance + contrast ratio, hex in → ratio out
+Compute every pair in **one run**: list them all, then pass the list to this command as JSON
+(6-digit hex, kind `body`, `large` or `non-text`). Re-run it once over the pairs you shaded, not
+pair by pair.
+
+```sh
+node -e '
 const L = h => { const c = h.match(/\w\w/g).map(x => parseInt(x, 16) / 255)
   .map(v => v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
   return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
-const ratio = (a, b) => { const [x, y] = [L(a), L(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+const min = { body: 4.5, large: 3, "non-text": 3 };
+for (const [fg, bg, kind, what] of JSON.parse(process.argv[1])) {
+  const [x, y] = [L(fg), L(bg)].sort((m, n) => n - m), r = (x + 0.05) / (y + 0.05);
+  console.log(`${r >= min[kind] ? "pass" : "FAIL"} ${r.toFixed(2)}:1 ${kind} ${fg} on ${bg} ${what}`);
+}' '[["#1a1a1a","#fff8ee","body","body text on base"],["#ffffff","#c2185b","large","button label"]]'
 ```
 
 ### 5.2 The 8-point grid
@@ -290,9 +293,16 @@ These criteria are settled at design time. Write each answer into the **Accessib
 ### 5.4 Fonts resolve
 
 For each family, prefer the variable package and fall back to the static one:
-`npm view @fontsource-variable/<slug> version`, then `npm view @fontsource/<slug> version`. One must
-answer with a version. If neither does, swap to the closest family that does. Record the exact
-package names.
+`@fontsource-variable/<slug>`, then `@fontsource/<slug>`. Look up every family in **one command**:
+
+```sh
+for f in <slug-1> <slug-2>; do for p in @fontsource-variable/$f @fontsource/$f; do
+  v=$(npm view $p version 2>&1) && echo "$p $v" || { echo "$v" | grep -q E404 && echo "$p none" || echo "$p error"; }; done; done
+```
+
+One package per family must answer with a version. If neither does (both `none`), swap to the closest
+family that does, and look up only the swaps in one more run. `error` means the lookup failed, not that
+the package is missing: re-run it for that family instead of swapping. Record the exact package names.
 
 ### 5.5 The header fits on one line
 
