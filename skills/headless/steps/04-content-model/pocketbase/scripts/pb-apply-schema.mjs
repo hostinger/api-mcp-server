@@ -178,6 +178,14 @@ async function updateFieldsAndIndexes(group) {
       const desired = withTimestamps(collection, (collection.fields ?? []).map(toApiField), existing.fields)
       body.fields = mergeFields(existing, desired)
       body.indexes = mergeIndexes(existing.indexes, collection.indexes)
+      // A new field is writable under the old rules until applyRules() runs (it goes last because rules
+      // may name fields of collections synced later), so lock the writes it will replace meanwhile. An
+      // aborted run then leaves them superuser-only, not open.
+      if (desired.some((field) => !existing.fields.some((f) => f.name === field.name))) {
+        for (const key of ["create", "update"]) {
+          if (key in (collection.rules ?? {})) body[RULE_KEYS[key]] = null
+        }
+      }
     }
     if (collection.authOptions) Object.assign(body, collection.authOptions)
     if (!Object.keys(body).length) continue

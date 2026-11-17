@@ -1,4 +1,6 @@
 import { execFileSync } from "node:child_process"
+import { homedir } from "node:os"
+import path from "node:path"
 import { baseUrlFrom, listCollections, readCredentials, readJson, request, superuserToken } from "./pb-lib.mjs"
 
 const REALTIME_PROBE_SECONDS = "8"
@@ -86,9 +88,19 @@ if (settings.data?.smtp && !settings.data.smtp.enabled) {
   console.log("INFO  outgoing mail (SMTP) is off: verification and password-reset emails are not sent")
 }
 
+// curl is found by name, and Windows looks in the working directory (the user's project, maybe a
+// cloned repository) before PATH, as does a relative PATH entry elsewhere: run it from the home folder
+// with only absolute PATH entries, as connect/launch.mjs does for npx.
+const curlEnv = { ...process.env }
+for (const key of Object.keys(curlEnv).filter((k) => k.toUpperCase() === "PATH")) {
+  curlEnv[key] = curlEnv[key].split(path.delimiter).filter((p) => path.isAbsolute(p)).join(path.delimiter)
+}
+
 function probeRealtime(protocol) {
   try {
     const out = execFileSync("curl", ["-sS", "-N", protocol, "--max-time", REALTIME_PROBE_SECONDS, "-H", "Accept: text/event-stream", `${base}/api/realtime`], {
+      cwd: homedir(),
+      env: curlEnv,
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"],
     })

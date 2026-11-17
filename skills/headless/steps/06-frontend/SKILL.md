@@ -116,7 +116,8 @@ Read the backend from `site.json`:
   ([`../04-content-model/pocketbase/auth.md`](../04-content-model/pocketbase/auth.md)). A public form
   includes its recipe's honeypot field, empty and hidden. **The superuser password never reaches the
   frontend**; server-side superuser work reads `PB_URL`, `PB_SUPERUSER_EMAIL` and
-  `PB_SUPERUSER_PASSWORD` from the app's environment variables (`frontend.md`, Node.js apps). For an
+  `PB_SUPERUSER_PASSWORD` from the app's environment variables and signs in **its own** server-only
+  client, never the shared `pb` that renders pages for visitors (`frontend.md`, Node.js apps). For an
   existing app, keep its screens and swap its data calls to the backend.
 
 Guidelines (framework-agnostic):

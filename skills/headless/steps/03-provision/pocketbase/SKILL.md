@@ -98,7 +98,10 @@ it runs at the join.
    with `hosting_pocketbase_set-superuser { username, domain }` (no password, so a strong one is
    generated) and save the response as in point 2; when it may belong to something else, **ask** first.
 2. **Create it.** `hosting_pocketbase_create-backend { username, domain }` **without**
-   `superuser_password`. As soon as the call returns, before any other step or message, write the
+   `superuser_password`. Before the call, make the folder private:
+   `mkdir -p ~/.hostinger/<domain>/.pocketbase && chmod 700 ~/.hostinger/<domain>/.pocketbase`, so
+   other users of this computer can't read the file even before its own `chmod`. As soon as the call
+   returns, before any other step or message, write the
    **full response** to `~/.hostinger/<domain>/.pocketbase/credentials.json` with your file-writing
    tool and `chmod 600` it (on Windows the profile folder is already private). It holds `domain`,
    `api_url`, `admin_url`, `superuser_email`, `superuser_password`, `instance_id`, `state` and

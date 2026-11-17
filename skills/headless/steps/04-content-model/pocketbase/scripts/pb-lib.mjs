@@ -19,7 +19,12 @@ export function readCredentials(path) {
   const mode = fs.statSync(path).mode
   const readableByOthers = (mode & 0o077) !== 0
   if (readableByOthers && process.platform !== "win32") {
-    console.warn(`WARN  ${path} is readable by other users; run: chmod 600 ${path}`)
+    try {
+      fs.chmodSync(path, 0o600)
+      console.warn(`WARN  ${path} was readable by other users; it is now mode 600. If this computer is shared, rotate the password with hosting_pocketbase_set-superuser.`)
+    } catch {
+      console.warn(`WARN  ${path} is readable by other users; run: chmod 600 ${path}`)
+    }
   }
   return creds
 }

@@ -111,7 +111,7 @@ const unsubscribe = await pb.collection("messages").subscribe(
 A Node.js app on the site can call its own backend at `https://<domain>` for trusted server-side work (webhooks, scheduled jobs, writes visitors must not make):
 
 1. Store `PB_URL`, `PB_SUPERUSER_EMAIL` and `PB_SUPERUSER_PASSWORD` as Node.js environment variables. `hosting_nodejs_replace-environment-variables` replaces the full set, so read the current ones first and send them all.
-2. Authenticate once at startup with `pb.collection("_superusers").authWithPassword(email, password)` and again on a 401.
+2. Do superuser work on its own client in a server-only module (e.g. `src/lib/pb-admin.ts`), used only by that trusted work: authenticate it once at startup with `admin.collection("_superusers").authWithPassword(email, password)` and again on a 401. Never sign in the shared `pb` client: pages rendered and requests handled for visitors would then run as superuser and skip every collection rule. Server code acting for a visitor uses a client with no superuser sign-in (a new `PocketBase` per request when it carries the visitor's own sign-in).
 3. The app's own routes must not start with `/api` or `/_`; those paths go to PocketBase.
 4. For realtime subscriptions from Node.js, check the HTTP/1.1 note in `troubleshooting.md`.
 
