@@ -4,6 +4,12 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.5.1 — 2026-11-17
+
+### Also in this release
+
+- Bundled agent skills: `skills/headless/VERSION`
+
 ## v4.5.0 — 2026-11-17
 
 ### Also in this release
