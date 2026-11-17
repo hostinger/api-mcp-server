@@ -1,0 +1,65 @@
+{
+  "collections": [
+    {
+      "name": "users",
+      "type": "auth",
+      "rules": {
+        "list": "id = @request.auth.id",
+        "view": "id = @request.auth.id",
+        "create": "",
+        "update": "id = @request.auth.id",
+        "delete": "id = @request.auth.id"
+      },
+      "fields": []
+    },
+    {
+      "name": "posts",
+      "rules": {
+        "list": "published = true || author = @request.auth.id",
+        "view": "published = true || author = @request.auth.id",
+        "create": "@request.auth.id != \"\" && @request.body.author = @request.auth.id",
+        "update": "author = @request.auth.id && @request.body.author:changed = false",
+        "delete": "author = @request.auth.id"
+      },
+      "fields": [
+        { "name": "title", "type": "text", "required": true, "min": 3, "max": 120 },
+        { "name": "body", "type": "editor", "required": true },
+        { "name": "cover", "type": "file", "maxSelect": 1, "maxSize": 5242880, "mimeTypes": ["image/jpeg", "image/png", "image/webp"] },
+        { "name": "published", "type": "bool" },
+        { "name": "author", "type": "relation", "collection": "users", "required": true, "cascadeDelete": true }
+      ],
+      "indexes": ["CREATE INDEX idx_posts_author ON posts (author)"]
+    },
+    {
+      "name": "comments",
+      "rules": {
+        "list": "post.published = true",
+        "view": "post.published = true",
+        "create": "@request.auth.id != \"\" && @request.body.author = @request.auth.id && @request.body.post.published = true",
+        "update": null,
+        "delete": "author = @request.auth.id || post.author = @request.auth.id"
+      },
+      "fields": [
+        { "name": "post", "type": "relation", "collection": "posts", "required": true, "cascadeDelete": true },
+        { "name": "author", "type": "relation", "collection": "users", "required": true, "cascadeDelete": true },
+        { "name": "text", "type": "text", "required": true, "min": 1, "max": 1000 }
+      ],
+      "indexes": ["CREATE INDEX idx_comments_post ON comments (post)"]
+    },
+    {
+      "name": "likes",
+      "rules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.id != \"\" && @request.body.user = @request.auth.id",
+        "update": null,
+        "delete": "user = @request.auth.id"
+      },
+      "fields": [
+        { "name": "post", "type": "relation", "collection": "posts", "required": true, "cascadeDelete": true },
+        { "name": "user", "type": "relation", "collection": "users", "required": true, "cascadeDelete": true }
+      ],
+      "indexes": ["CREATE UNIQUE INDEX idx_likes_post_user ON likes (post, user)"]
+    }
+  ]
+}

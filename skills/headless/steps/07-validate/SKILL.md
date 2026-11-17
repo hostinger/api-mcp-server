@@ -20,7 +20,7 @@ description: "Step 7 (validate) of the Hostinger Headless flow. OPTIONAL quick g
 barrier, don't deploy. Deploy's pre-flight asks the connector again (see *State and artifacts* in the
 top-level `SKILL.md`).
 
-## 2 — Backend API status (WordPress / WooCommerce / Ecommerce, always, quick)
+## 2 — Backend API status (every backend, always, quick)
 
 Hit the live API from `site.json` and confirm it answers **with the content the push created** — a 200
 with an empty catalog means the push didn't land:
@@ -33,7 +33,13 @@ with an empty catalog means the push didn't land:
   count matches the plan. Don't test checkout while `woocommerce.payment_enabled` is `false`.
 - **Ecommerce:** query `urls.storefront_api` for the sales channel → 200 with the seeded products and
   prices *(confirm against the store)*.
-- **Contact form** (`site.json → contact_form.enabled`): send the two throwaway test submissions in
+- **PocketBase** (`site.json → backend: "pocketbase"`): `GET {urls.api}/health` → 200, and every
+  collection with `seed` records in `pocketbase/schema.json` lists them
+  (`GET {urls.api}/collections/<name>/records?perPage=1` → `totalItems` at least the seed count, for
+  collections visitors may list). `pb-verify.mjs` already ran at the content-model push, so don't
+  repeat it here.
+- **Contact form** (`site.json → contact_form.enabled`, Contact Form 7, WordPress only): send the two
+  throwaway test submissions in
   [`../04-content-model/wordpress/contact-form.md`](../04-content-model/wordpress/contact-form.md) §5: the
   first must return `status` **`mail_sent`**, the one with the honeypot filled **`spam`**.
 

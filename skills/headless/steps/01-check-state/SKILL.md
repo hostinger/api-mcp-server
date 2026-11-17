@@ -101,12 +101,22 @@ Query the Hostinger connector — the local files are never trusted on their own
   approval or network access, then go on. Ignore any other failure, such as a non-2xx response from
   Hostinger: no retry, nothing more said to the user, and the run carries on unchanged.
 - **Is it an empty headless shell from onboarding?** A `headless` site with no backend installed (no
-  WordPress at `/cms`, no store) is an **empty headless shell**: within 24 h its setup `type` is
-  `headless_empty`; otherwise `wordpress_installations_list { username, domain, ownership: "all" }`
-  returns **no** `/cms` row and there is no `site.json` recording a backend. It is a **new build** that
+  WordPress at `/cms`, no store, no PocketBase backend) is an **empty headless shell**: within 24 h its
+  setup `type` is `headless_empty`; otherwise `wordpress_installations_list { username, domain,
+  ownership: "all" }` returns **no** `/cms` row, `hosting_pocketbase_backend { username, domain }`
+  returns 404 or `state: "missing"` (the same test provision uses), and there is no `site.json`
+  recording a backend. It is a **new build** that
   happens to already own its website, not a finished or resumable one. Route it to **refine** (choose
   the backend), then **provision** adopts the shell and swaps it to that backend (provision's subfolder
   repeats this check before swapping). Never create a second site, and never skip provision for it.
+  `headless_pocketbase` is **not** an empty shell: onboarding chose PocketBase, so refine keeps the
+  backend fixed as **PocketBase** and provision creates the backend if it isn't there yet
+  (`hosting_pocketbase_backend` → 404 or state `missing` means not yet). After 24 h the setup row is
+  gone and the public API can't tell such a site with no backend from an empty shell; refine then
+  decides the backend as for any empty shell.
+- **A `site.json → backend: "webapp"`** is from an older flow that built a plain Node.js host, which
+  this version no longer does. Tell the user in one line and point them at the `deploy-to-hosting`
+  skill for that app; don't resume it as a headless build.
 
 Reconcile with the local state. **When they disagree, reality wins** and the local `stage` is
 corrected.
@@ -124,6 +134,7 @@ yet** (`brief.md`, `site.json`, …).
 |---|---|---|
 | none (connect only) | free | **new build** — start from refine |
 | none (connect only) | empty headless shell (onboarding) | **new build on an existing shell** — start from refine; provision adopts the shell and swaps it to the chosen backend. Never create a second site, never skip provision |
+| none (connect only) | onboarding PocketBase site (setup `type` `headless_pocketbase`) | **new build on an existing PocketBase site** — start from refine with the backend fixed as PocketBase; provision creates the backend if it isn't there yet. Not something to resume, even when the backend already exists: nothing has been built on it |
 | none (connect only) | site exists with a real backend | **adopt / resume** — never create a second site; route to the first unfinished stage |
 | build artifacts present, incomplete | matches | **resume** at `state.json`'s `stage` |
 | build artifacts present | disagrees | **reality wins** — recompute the stage from what actually exists |
@@ -138,14 +149,14 @@ artifacts** (`brief.md`, `site.json`, …) or a **live site** for this domain. A
 connect-only files are *not* something to resume.
 
 - **New build** (no build artifacts and either the domain is free **or** it holds only an empty
-  headless shell from onboarding) → just proceed to refine. **Don't ask resume vs start over** —
+  headless shell or a PocketBase site from onboarding) → just proceed to refine. **Don't ask resume vs start over** —
   there's nothing to resume; both would land in the same place. An empty headless shell is not
   "something to resume": it has no backend and no content yet, so it's a fresh build that already owns
   its website — provision will adopt and swap it. Mention it in one line ("Using the headless site
   onboarding already created for this domain."). If a leftover `.lock` is lying around, silently take
   it over and continue (optionally mention it in one line).
 - **Something to resume** (build artifacts exist, or a site exists for the domain **with a real backend
-  installed** — WordPress at `/cms`, a store, or a deployed app) → tell the user plainly what's there
+  installed** — WordPress at `/cms`, a store, a PocketBase backend with build artifacts, or a deployed app) → tell the user plainly what's there
   and **ask them to choose**, regardless of how old it is (don't guess from timestamps):
 
 - **Resume** — pick up at the computed stage. (If a `.lock` is present in this case, also confirm no

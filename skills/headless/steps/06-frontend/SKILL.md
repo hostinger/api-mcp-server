@@ -15,26 +15,13 @@ workspace `~/.hostinger/<domain>/src/`.
 > When it is **Bring your own frontend**, follow [`bring-your-own-frontend.md`](bring-your-own-frontend.md): wire the user's own project to the
 > backend instead of scaffolding one. When it is **Agent designs and builds**, proceed normally.
 
-> ## ⚠️ Webapp backend? Read this first
-> A `webapp` brief has **no CMS/store and no `content-model.md`** — the app owns its own data (its own
-> API, or the MySQL database recorded in `site.json → database`). It comes in two shapes, decided back in
-> **refine**:
->
-> - **An existing app under Build mode "Bring your own frontend"** (refine routes "deploy my app" here). **Use their
->   project as the source** — copy/point `~/.hostinger/<domain>/src/` at it and keep its own framework and
->   UI. **Do not scaffold a new project, and do not re-implement `design.md` over it** (so **the design
->   step does not apply** to an app that brings its own UI). Your job is only to make it deployable: set
->   `engines.node` to `22`, remove any `.htaccess`, wire its data/env, then hand off to deploy. **Skip the
->   Step 2 design pass**, and ignore the `content-model.md` requirement in Step 3.
-> - **A new app built from the brief.** Scaffold and build it from `brief.md` (and `design.md` if the
->   design step produced one — design *does* run for a from-scratch app). Its data is owned by the app, so
->   there is still **no `content-model.md`** to bind against. An existing app under **Build mode "Agent
->   designs and builds"** takes this shape too, but starts from its source: copy the project at
->   `brief.md` → **Existing project** into `~/.hostinger/<domain>/src/`, keep its framework, screens,
->   features and data wiring, and rebuild its UI to `design.md` instead of scaffolding a new project.
->
-> Framework choice (Step 1), the build, and hand-off (Step 4) apply to both. The per-backend bullets in
-> Step 3 are **WordPress / WooCommerce / Ecommerce only** — for a webapp follow the Webapp bullet there.
+> **PocketBase backend?** A `pocketbase` brief has **no CMS/store**: the app's data lives in the
+> PocketBase backend recorded in `site.json → pocketbase`, its collections in `pocketbase/schema.json`
+> (and the `## Data` section of `content-model.md`), and its fixed copy in `content-model.md`. A new
+> app is scaffolded from `brief.md` and `design.md` and binds its forms and views to the collections
+> in `pocketbase/schema.json`; an existing app under **Agent designs and builds** starts from its
+> source, keeps its screens and features, wires its data to the backend and rebuilds its UI to
+> `design.md`. In Step 3 follow the PocketBase bullet.
 
 ## Step 1 — Pick the framework (guess → default → confirm)
 
@@ -45,10 +32,13 @@ it, and the backend constraint:
   Next.js is the default, not a requirement (Express, Nuxt, SvelteKit, etc. are all fine).
 - **WordPress + WooCommerce → SSR required** (same reason — cart/checkout need per-request rendering).
 - **WordPress → SSG (Astro)** when the brief says SSG, otherwise **SSR (Next.js default)**.
-- **Webapp → the app's own stack.** An **existing app** keeps its current framework (don't impose one), including
+- **PocketBase → the app's own stack.** An **existing app** keeps its current framework (don't impose one), including
   one rebuilt under **Agent designs and builds**; a
   **new app** uses whatever fits the brief (SSR or SPA). Either way it deploys as a Node.js app (Step 8) —
-  an SSR app runs a server, a SPA builds to static output.
+  an SSR app runs a server, a SPA builds to static output. The app must not serve anything under
+  `/api` or `/_`: PocketBase owns those paths on this domain, so server routes go under another prefix
+  (`/server`): Next.js `app/server/…` never `app/api/…`, and likewise no Nuxt `server/api/`, SvelteKit
+  `src/routes/api/` or Astro `src/pages/api/`.
 - Map rendering → framework: **`ssr` → Next.js**, **`ssg` → Astro** — unless the brief/prompt explicitly
   names another supported framework, in which case use that.
 
@@ -114,10 +104,20 @@ Read the backend from `site.json`:
   `false`, a graceful disabled-checkout state, no `/checkout` call, not a build error). **Never embed a
   consumer key client-side.**
 - **Ecommerce** → the public Hostinger Storefront Core V2 API: follow [`ecommerce.md`](ecommerce.md).
-- **Webapp** → **no `content-model.md` and no headless backend to read**. The app uses its own data source:
-  the MySQL database from `site.json → database` (through the `DB_*` / `DATABASE_URL` env vars — set at
-  provision/deploy, see `../03-provision/webapp/SKILL.md` Step 3; `127.0.0.1` only resolves on the server,
-  not locally), or whatever external API the app calls. For an existing app, keep its data layer as-is.
+- **PocketBase** → the `pocketbase` SDK against the backend on the same domain, following
+  [`../04-content-model/pocketbase/frontend.md`](../04-content-model/pocketbase/frontend.md) (skip its
+  static `.htaccess` section: a headless site deploys as Node.js and keeps no `.htaccess`). In the one
+  data module: `new PocketBase(<origin>)` where the origin is `window.location.origin` in the browser
+  and `site.json → urls.site` in local dev and on the server, then `pb.autoCancellation(false)` once.
+  Build filters with `pb.filter()`, load a list then subscribe to it for live views, and unsubscribe on
+  unmount. Build each form and view against the fields in `pocketbase/schema.json`, and show a rule
+  rejection (a 400 with no field errors, a 404 on update) as a normal "not allowed" state. Add the
+  sign-in form only when the schema has an auth collection visitors use
+  ([`../04-content-model/pocketbase/auth.md`](../04-content-model/pocketbase/auth.md)). A public form
+  includes its recipe's honeypot field, empty and hidden. **The superuser password never reaches the
+  frontend**; server-side superuser work reads `PB_URL`, `PB_SUPERUSER_EMAIL` and
+  `PB_SUPERUSER_PASSWORD` from the app's environment variables (`frontend.md`, Node.js apps). For an
+  existing app, keep its screens and swap its data calls to the backend.
 
 Guidelines (framework-agnostic):
 
@@ -125,10 +125,10 @@ Guidelines (framework-agnostic):
   to inspect, one base URL to switch. Keep it swappable so the shell can build against stubs first.
 - **Fetch at request time for SSR** (fresh content, no rebuild); a static build fetches at build time.
 - **A failed or incomplete fetch is an error, not a silent empty/placeholder.** Planned content missing
-  from the API is a build error too — a site that builds with holes ships with holes. *(WordPress/Ecommerce;
-  a webapp has no planned content to check.)*
-- **`content-model.md` is the source for what should exist** (pages, nav, collections mapping) — for
-  WordPress/Ecommerce only; a **webapp has no `content-model.md`**.
+  from the API is a build error too — a site that builds with holes ships with holes. *(On PocketBase
+  the planned content is the fixed pages plus the seed records.)*
+- **`content-model.md` is the source for what should exist** (pages, nav, collections mapping) — on
+  every backend; on PocketBase it also carries the `## Data` section.
 - **No `.htaccess`** in the project (deploy would overwrite the live one); don't commit `node_modules`
   or build output.
 - Set `engines.node` to `22` (the deploy builds on Node 22).
@@ -158,6 +158,5 @@ won't size a window below ~500 px, so a phone-width window comes back cropped: s
 both widths in one image. The live site runs this same build, so it needs no screenshots; deploy checks
 that it serves.
 
-> **Webapp:** just confirm the app builds clean and `state.json → frontend` is right — there's no
-> `content-model.md` or headless backend to check. A DB-backed app can't reach its database locally
-> (`127.0.0.1` is server-only), so its data layer is verified **after** deploy, not here.
+> **PocketBase:** the app reaches the live backend from local dev (`frontend.md`, Local development),
+> so check one list and one create against it here, then delete the test records before handing over.

@@ -339,7 +339,7 @@ function buildReport(ws, { outcome, tokens } = {}) {
   const stillOpen = resolvedOutcome !== 'abandoned' && history.some((h) => !h.ended_at);
   const endedAt = stillOpen ? now() : lastActivity;
   const stages = history.map((h) => ({ ...h, minutes: minutesBetween(h.started_at, h.ended_at ?? endedAt) }));
-  const gaps = [...loggingGaps(stages, run, resolvedOutcome, site.backend), ...dropped];
+  const gaps = [...loggingGaps(stages, run, resolvedOutcome), ...dropped];
   const strip = ({ ts, run: _run, type: _type, ...rest }) => ({ ...rest, logged_at: ts });
   const liveStage = stages.find((s) => s.stage === 'deploy' && s.result?.startsWith('ok'));
   if (!OUTCOMES.includes(resolvedOutcome)) fail(`unknown outcome "${resolvedOutcome}"; one of ${OUTCOMES.join(', ')}`);
@@ -449,9 +449,7 @@ function reportRejected(ws, [runId]) {
 
 // Gaps are printed as warnings by `report`, so guesses never pass as measurements.
 const EXPECTED_FOR_BUILD = ['check_state', 'refine', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy'];
-// Stages a backend skips on purpose: webapp has no CMS, so no content model.
-const SKIPPED_BY_BACKEND = { webapp: ['content_model'] };
-function loggingGaps(stages, run, outcome, backend) {
+function loggingGaps(stages, run, outcome) {
   const gaps = [];
   for (const s of stages) {
     // A skipped stage did no work, so it has no duration to measure.
@@ -463,7 +461,7 @@ function loggingGaps(stages, run, outcome, backend) {
     if (problem) gaps.push({ stage: s.stage, phase: s.phase, problem });
   }
   if (run.kind === 'build' && outcome === 'live') {
-    for (const stage of EXPECTED_FOR_BUILD.filter((name) => !SKIPPED_BY_BACKEND[backend]?.includes(name))) {
+    for (const stage of EXPECTED_FOR_BUILD) {
       if (!stages.some((s) => s.stage === stage)) gaps.push({ stage, phase: null, problem: 'never logged, though the site went live' });
     }
   }

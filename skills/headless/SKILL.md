@@ -144,7 +144,8 @@ keep the language you were using.
 ### One instance per headless site (the core invariant)
 
 > **A headless site is exactly one website.** The frontend is served at the site root and WordPress
-> lives at `/cms` **on the same domain** — one instance, one domain. There is **never** a second
+> lives at `/cms` **on the same domain** (a PocketBase backend at `/api` and `/_/` of the same domain) —
+> one instance, one domain. There is **never** a second
 > website for the same build and **never** a separate CMS domain: the CMS is always the `/cms` path of
 > the site's own domain (`https://<domain>/cms`), not `cms.<domain>` or any other host. Provision
 > therefore **adopts and swaps** an existing headless shell rather than creating another site, and a
@@ -165,13 +166,16 @@ but an instance existing does **not** mean provision is done or can be skipped. 
 which of these cases applies and records it, then provision takes the matching path:
 
 1. **An empty headless shell already exists for the domain (the common onboarding case).** Provision
-   **adopts the shell and swaps it to the chosen backend** (the backend is picked in refine first).
-   **Never skip provision for a shell, and never create a second site.** See the provision router's
-   *Onboarding handoff*.
+   **adopts the shell and swaps it to the chosen backend** (the backend is picked in refine first):
+   WordPress into `/cms`, the shell as the Ecommerce storefront host, or a PocketBase backend created
+   on it with `hosting_pocketbase_create-backend` (which turns the `headless_empty` site into
+   `headless_pocketbase`). **Never skip provision for a shell, and never create a second site.** See
+   the provision router's *Onboarding handoff*.
 2. **No instance exists at all.** Provision creates a fresh headless instance with
-   `hosting_websites_create` using the chosen backend's own `type`.
-3. **User wants a webapp.** Provision is a plain Node.js app host, not headless — `webapp` ignores
-   headless shells entirely and is only reached by experimental actions, never the onboarding flow.
+   `hosting_websites_create` using the chosen backend's own `type` (`headless_wordpress`,
+   `headless_ecommerce` or `headless_pocketbase`; a PocketBase site gets its backend at the join).
+
+Every backend is a headless website: there is no plain Node.js app host in this flow.
 
 Either way the create/install is asynchronous and returns `queued` immediately, then it takes a few
 minutes; the backend's provision step names the `wait.mjs` command to run at the join, not at the fire.
@@ -194,6 +198,7 @@ cd "$HOME" && node <skill>/wait.mjs setup <domain>              # a fresh site's
 cd "$HOME" && node <skill>/wait.mjs cms <domain> <username>     # a shell swap's WordPress install at /cms → valid
 cd "$HOME" && node <skill>/wait.mjs build <domain> <buildUuid>  # the deploy build → completed, then the root serves 200 (http:// while SSL is pending)
 cd "$HOME" && node <skill>/wait.mjs live <domain>               # the root serves 200
+cd "$HOME" && node <skill>/wait.mjs pocketbase <domain>         # a PocketBase backend's /api/health serves 200
 ```
 
 Run it in the foreground, with a `--timeout` just under your tool's command limit (e.g. `--timeout 9m`
@@ -235,6 +240,8 @@ took from it.
 | `site.json` | provision | chosen backend, username, install id, all URLs |
 | `content-model.md` | content model | entities, fields, pages, navigation |
 | `content.json` | content model (WordPress) | the drafted content `push-content.mjs` pushes |
+| `pocketbase/schema.json` | content model (PocketBase) | collections, access rules, indexes, rate limits, seed records |
+| `.pocketbase/credentials.json` | provision (PocketBase) | the backend's superuser email and one-time password; mode `600`, never deployed, never printed |
 | `design.md` (+ `brand/` logo files) | design | chosen design direction: tokens, type, logo, components, per-page composition, accessibility |
 | `src/` | frontend | the website source implementing `design.md`; framework choice is recorded in `state.json → frontend` |
 | `deploy.json` | deploy | build id, deployed at, live URLs |

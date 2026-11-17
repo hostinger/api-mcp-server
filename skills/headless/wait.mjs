@@ -6,6 +6,7 @@
 //   node wait.mjs cms <domain> <username>     # wordpress_installations_list → /cms row is_valid (shell swap)
 //   node wait.mjs build <domain> <buildUuid>  # hosting_get-deployment → build completed, then the root serves 200 (http:// while SSL is pending)
 //   node wait.mjs live <domain>               # https://<domain>/ serves 200 (http:// while SSL is pending)
+//   node wait.mjs pocketbase <domain>         # https://<domain>/api/health serves 200 (http:// while SSL is pending)
 //   any of them: [--timeout 10m]
 //
 // It talks to the local Hostinger MCP server, which reuses the sign-in from the connect step. Progress
@@ -79,16 +80,18 @@ const rowsFor = (data, domain) =>
   (Array.isArray(data) ? data : data?.data ?? []).filter((r) => r.domain?.toLowerCase() === domain.toLowerCase());
 
 // A new domain's SSL certificate can take far longer than the build, and until then HTTPS fails at the
-// TLS handshake. When plain HTTP serves the app, the deploy is done; HTTPS follows on its own.
-const waitLive = (domain, timeoutMs) =>
-  poll('live', timeoutMs, async () => {
-    const status = await httpStatus(`https://${domain}/`);
-    if (status === 200) return { done: { ok: true, live: `https://${domain}/` } };
-    if (status !== 0) return { status: `root ${status}` };
-    const plain = await httpStatus(`http://${domain}/`);
-    if (plain === 200) return { done: { ok: true, live: `http://${domain}/`, https_pending: true } };
-    return { status: `root unreachable over https, http ${plain || 'unreachable'}` };
+// TLS handshake. When plain HTTP serves the path, the job is done; HTTPS follows on its own.
+const waitUrl = (label, path, key, domain, timeoutMs) =>
+  poll(label, timeoutMs, async () => {
+    const status = await httpStatus(`https://${domain}${path}`);
+    if (status === 200) return { done: { ok: true, [key]: `https://${domain}${path}` } };
+    if (status !== 0) return { status: `${label} ${status}` };
+    const plain = await httpStatus(`http://${domain}${path}`);
+    if (plain === 200) return { done: { ok: true, [key]: `http://${domain}${path}`, https_pending: true } };
+    return { status: `${label} unreachable over https, http ${plain || 'unreachable'}` };
   });
+
+const waitLive = (domain, timeoutMs) => waitUrl('root', '/', 'live', domain, timeoutMs);
 
 const LIVE_TIMEOUT = '5m';
 
@@ -158,6 +161,13 @@ const KINDS = {
     args: [],
     timeout: LIVE_TIMEOUT,
     run: (_mcp, { domain }, timeoutMs) => waitLive(domain, timeoutMs),
+  },
+
+  // A PocketBase backend answers on the site's own domain; no Hostinger operation to poll, so no MCP server.
+  pocketbase: {
+    args: [],
+    timeout: '3m',
+    run: (_mcp, { domain }, timeoutMs) => waitUrl('/api/health', '/api/health', 'api', domain, timeoutMs),
   },
 };
 

@@ -1,6 +1,6 @@
 ---
 name: headless-step-refine
-description: "Step 2 (refine) of the Hostinger Headless flow. Turns the user's seed — often just a domain — into a brief through conversation: asks what they want to build (purpose, audience, tone, pages, products, must-haves; images, local files, links all welcome), then *infers* the backend that fits (WordPress, Ecommerce, WordPress + Ecommerce, WordPress + WooCommerce for a one-site content+store, or Webapp for a custom app/SPA) — it never asks the user to pick a backend or a technology; it asks for the site name (suggesting a few when the user has none), the user confirms the plan in plain language, and only after their yes it writes brief.md. Hostinger Ecommerce stays the default for selling; WooCommerce is chosen only when the user explicitly asks for it or wants content and a store on one WordPress site."
+description: "Step 2 (refine) of the Hostinger Headless flow. Turns the user's seed — often just a domain — into a brief through conversation: asks what they want to build (purpose, audience, tone, pages, products, must-haves; images, local files, links all welcome), then *infers* the backend that fits (WordPress, Ecommerce, WordPress + Ecommerce, WordPress + WooCommerce for a one-site content+store, or PocketBase for a custom app/SPA or any site whose visitors create its data: accounts, bookings, comments, votes, order requests) — it never asks the user to pick a backend or a technology; it asks for the site name (suggesting a few when the user has none), the user confirms the plan in plain language, and only after their yes it writes brief.md. Hostinger Ecommerce stays the default for selling; WooCommerce is chosen only when the user explicitly asks for it or wants content and a store on one WordPress site."
 ---
 
 # headless-step-refine
@@ -18,7 +18,7 @@ question tool is not the user passing on a question; see *When you ask the user*
 `SKILL.md`.
 
 > **Never ask the user to choose a backend or a technology.** Don't ask "WordPress or Ecommerce?",
-> don't present WordPress/Ecommerce/WooCommerce/Webapp as options, and don't surface the backend in a
+> don't present WordPress/Ecommerce/WooCommerce/PocketBase as options, and don't surface the backend in a
 > multiple-choice UI. Open with **"What do you want to build?"** and infer the backend yourself in
 > Step 4 from what they describe (and whether they sell). The backend is a technical decision the flow
 > makes *for* the user — they confirm the **plan** (what the site is and does), not the plumbing. The
@@ -44,7 +44,12 @@ and add it. Change → edit only what they asked for, then re-confirm (Step 5). 
 not Keep; see *When you ask the user* in the top-level `SKILL.md`.
 
 If the site is already provisioned (`site.json` exists), the backend is **fixed** — never change the
-Suggested backend on a provisioned site. Explain that switching backends means a new domain.
+Suggested backend on a provisioned site. Explain that switching backends means a new domain. The same
+holds when check-state found an onboarding site of setup type `headless_pocketbase`: onboarding has
+already chosen PocketBase, so the backend is **PocketBase**. Refine still finds out what to build, but
+never picks another backend for that domain. A `brief.md` whose Suggested backend is **Webapp** is
+from an older flow: re-decide it in Step 4 (it becomes **PocketBase**, or the user is pointed at the
+`deploy-to-hosting` skill).
 
 ## Step 2 — Gather what you already have
 
@@ -135,21 +140,29 @@ move, so ask each as a confirm of what you found, naming it, so the user only sa
 1. **Routes that open directly** — the client-side routes you found (name them, e.g. `/stats`,
    `/settings`) must open from a typed link and survive a refresh? Ask only when the code routes in
    the browser (React Router, Vue Router, a history or hash router); a server-routed app has none.
-2. **Data** — the database and environment variable names you found (or "none"): is that all the
-   app needs? Hostinger gives the app MySQL only: a different database (Postgres, MongoDB, a SQLite
-   file) goes under **Out of scope** as a migration the user owns, not as `Database: MySQL`.
+2. **Data** — what the app stores, and where. An app **already written against a database of its
+   own** — MySQL, Postgres, MongoDB, Supabase, Firebase: its code imports the client
+   (`mysql2`, `pg`, `@supabase/supabase-js`, `firebase`), reads `DB_*`/`DATABASE_URL`, or has a
+   `supabase/` folder — is **not a headless build**: say so plainly, point the user at the
+   `deploy-to-hosting` skill (it deploys the app with its database), and stop here without writing a
+   brief. An app with no backend yet, or that stores nothing, continues: what it stores goes to
+   **PocketBase** (Step 4). Placeholder values in `.env.example` alone don't mean the app is wired to
+   something; confirm with the user when the code is ambiguous.
 
 Record the routes and data in **Existing project**.
 
-If the user asks for something outside the scope (user accounts, member areas, bookings with a
-calendar backend, user-generated content), say plainly that the headless flow doesn't support it yet
-and record it under **Out of scope** — don't promise it.
+Visitor accounts, member areas, bookings with limited places, comments, votes, leaderboards, live
+chat and order requests without payment make the site a **PocketBase** build (Step 4) — don't record
+them as out of scope. Bookings that sync with an outside calendar and payments outside a store stay
+out of scope either way: say so plainly and record them under **Out of scope** — don't promise them.
 
-> **A contact form *is* supported (WordPress backends).** If the user wants one, keep it in
-> **Must-haves** and name it "Contact form": provision installs **Contact Form 7** and the frontend
-> wires a contact page that emails the site owner. It's **opt-in**: built only when the brief asks
-> for it. (A form that needs accounts, payments or a booking calendar is still out of scope — this is a
-> plain name/email/message enquiry form.)
+> **A contact form *is* supported.** If the user wants one, keep it in **Must-haves** and name it
+> "Contact form". On a **WordPress** backend, provision installs **Contact Form 7** and the frontend
+> wires a contact page that emails the site owner. On a **PocketBase** backend it is a `messages`
+> collection the owner reads in the dashboard (the contact-form recipe in
+> `../04-content-model/pocketbase/patterns.md`), not Contact Form 7. It's **opt-in**: built only when
+> the brief asks for it. A plain name/email/message enquiry form never turns a content site into a
+> PocketBase build.
 
 ### Build mode — a user choice when the folder holds a project
 
@@ -194,13 +207,18 @@ a question put back to the user. Pick the backend that fits what the user told y
 | **Ecommerce** | Selling is the point, and the rest is a few static pages (About, Contact, FAQ, policies). No ongoing blog. | Hostinger Ecommerce store — products, collections, checkout, payments, shipping, orders. |
 | **WordPress + Ecommerce** | Selling **and** regular editorial content (a blog, guides, lookbooks, recipes) the owner keeps adding to, run as **two** backends (WordPress site + separate Hostinger Ecommerce store). | Both: WordPress for content, the Ecommerce store for products and checkout. |
 | **WordPress + WooCommerce** | **Only** when the user explicitly names WooCommerce, or explicitly wants content **and** a store on **one** WordPress site (one admin, one domain). The one-site alternative to WordPress + Ecommerce. | A single headless WordPress at `/cms` with the WooCommerce plugin — products, cart, coupons and checkout (Cash on Delivery) over the WooCommerce Store API, plus WP posts/pages on the same site. |
-| **Webapp** | A custom **app, SPA or web application** that brings its own code and data — a dashboard, tool, calculator, booking app, a project the user is deploying — **not** a content site or a store. No CMS and no store engine. | A plain Node.js app host (an empty website, no `/cms`), with a MySQL database when the app needs one. The app owns all its routes and data. |
+| **PocketBase** | A custom **app, SPA or web application** — a dashboard, tool, calculator, booking app, a project the user is deploying — **not** a content site or a store. Also any site whose **visitors create the data** it keeps and shows: accounts or a member area, bookings with limited places, comments, likes or votes, a leaderboard, live chat, order requests without payment. No CMS and no store engine. | A headless website with a **PocketBase** backend on the same domain: database, visitor sign-in, file storage and realtime at `/api`, the owner's dashboard at `/_/`. The app owns every other route. |
 
 Rules of thumb:
 
-- **Is it an app, or a site?** A custom application the user builds/brings (its own logic, its own data,
-  maybe a database) → **Webapp**. A content site or a shop → one of the three above. When the user says
-  "my app / SPA / dashboard / tool", or hands you an existing app project to deploy, that's **Webapp**.
+- **Is it an app, or a site?** A custom application the user builds/brings (its own logic, its own
+  data) → **PocketBase**. So is a site whose **visitors** write the data and the site shows it back
+  (bookings, comments, votes, scores, messages, accounts): the owner writing pages, posts or products
+  is a content site or a store; visitors writing records is an app. A plain contact form doesn't make
+  it an app. A content site or a shop → one of the three above. When the user says "my app / SPA /
+  dashboard / tool", or hands you an existing app project to deploy, that's **PocketBase** — even an
+  app that stores nothing yet (a calculator, a static tool): it gets the backend with an empty schema,
+  so there is one app path. An app already on its own database is not a headless build (Step 3).
 - **Selling decides first (for sites).** No selling → WordPress. Selling → Ecommerce or
   WordPress + Ecommerce.
 - **Then the content.** Selling plus only a few fixed pages → Ecommerce. Selling plus content the
@@ -215,16 +233,24 @@ Rules of thumb:
   combination only when the user described ongoing content.
 - Selling a single service by enquiry (no checkout, no cart) is **not** commerce → WordPress with a
   contact page.
-- **Webapp never uses WordPress or a store.** If the user wants a custom app *and* a CMS/shop, that's two
-  different sites — build the app as a Webapp and tell them the content/commerce backend is a separate
-  domain.
+- **PocketBase never sits beside WordPress or a store.** Hostinger runs one backend per headless site
+  and refuses PocketBase on a headless WordPress site. A site that is mainly content the owner
+  publishes stays WordPress (a blog's comments are WordPress comments). If the user wants a custom app
+  *and* a CMS/shop, that's two different sites — build the app on PocketBase and tell them the
+  content/commerce backend is a separate domain.
+- **PocketBase never takes payments.** Selling with checkout is Ecommerce; a PocketBase app stores
+  order requests the owner handles by hand.
+- **"Supabase" or "Firebase" with nothing wired yet** → PocketBase. Say once: *"Your Hostinger site
+  comes with its own backend on the same domain, so you don't need a separate Supabase account. I'll
+  use that."* Switch only if they insist, and then it is not a headless build (Step 3).
 
 **Then set rendering** (write it in the brief's **Rendering** section): **Ecommerce → SSR required**
 (carts/search need per-request rendering — any SSR framework works; Next.js is the default, not a
 requirement); **WordPress + WooCommerce → SSR required** (same reason — cart/checkout need per-request
 rendering); **WordPress → SSG (Astro)** if the site is mostly static and the owner is fine rebuilding
-to publish, otherwise **SSR**; **Webapp → whatever the app is** (SSR for a server app, SPA for a
-client-only app) — it deploys as a Node.js app either way. When unsure, default to **Next.js SSR**.
+to publish, otherwise **SSR**; **PocketBase → whatever the app is** (SSR for a server app, SPA for a
+client-only app) — it deploys as a Node.js app either way, and it never serves its own routes under
+`/api` or `/_` (they belong to PocketBase). When unsure, default to **Next.js SSR**.
 
 ## Step 5 — Confirm the plan in one message
 
@@ -236,10 +262,11 @@ build** — the plan, not the plumbing. Lead with the site, not the backend:
 - **The plan** — what it is, audience, pages, products (if any), tone. Mark anything you defaulted
   (*"assumed: warm, minimal look"*) so the user sees what they skipped.
 - **Your app** *(when Step 2 found a project in the folder)* — one line: keeps its look or gets a new
-  one, the routes that must open directly, and whether a database is created.
+  one, the routes that must open directly, and what it will store on the site.
 - **How it's built** — state the backend as a *consequence* in one plain line, focused on what it
   means for them day to day ("I'll build this on WordPress, so you edit pages and posts in a normal
-  WordPress admin"), **not** as a choice you're asking them to make. Don't ask "is WordPress OK?" or
+  WordPress admin"; for PocketBase: "Bookings and accounts are saved on your site, and you see and
+  manage them in your site's dashboard"), **not** as a choice you're asking them to make. Don't ask "is WordPress OK?" or
   offer alternatives unless it was a genuine close call *and* the difference matters to the user.
 
 End with *"Good to go, or anything to change?"* and end your turn there: nothing after refine
@@ -259,7 +286,7 @@ can. Then update `state.json`:
 
 The **Suggested backend** section is the contract with `03-provision/SKILL.md`, which routes on it.
 Its first line must be exactly one of `**WordPress**`, `**Ecommerce**`, `**WordPress + Ecommerce**`,
-`**WordPress + WooCommerce**` or `**Webapp**`, followed by an em dash and the one-line reason.
+`**WordPress + WooCommerce**` or `**PocketBase**`, followed by an em dash and the one-line reason.
 
 ## `brief.md` template
 
@@ -310,11 +337,11 @@ on both.>
 
 ## Existing project
 <only when Step 2 found a project in the folder: its path; the framework; the client-side
-routes that must open directly and on refresh (or "None"); Database: none | MySQL; the env var names
-the app reads — names only, never values>
+routes that must open directly and on refresh (or "None"); what the app stores (or "Nothing"); the env
+var names the app reads — names only, never values>
 
 ## Suggested backend
-**<WordPress | Ecommerce | WordPress + Ecommerce | WordPress + WooCommerce | Webapp>** — <one-line reason>.
+**<WordPress | Ecommerce | WordPress + Ecommerce | WordPress + WooCommerce | PocketBase>** — <one-line reason>.
 <"Confirmed by the user." or "User chose this over the recommended <X> because <reason>.">
 
 ## Build mode
