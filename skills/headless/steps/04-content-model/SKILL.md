@@ -19,6 +19,42 @@ Two phases around the **instance barrier** (see the top-level `SKILL.md`):
 
 ---
 
+## Prepare in a subagent
+
+**Content subagent: skip this section and start at *Prepare phase*.** Main agent with a subagent
+tool: don't do the prepare phase yourself (*Content and design at the same time* in the top-level
+`SKILL.md`). Ask the image-source question (*Images* below), then launch one background subagent
+with the prompt below and go on to design. One subagent keeps the whole site in one voice and leaves
+no files to merge.
+
+Send the prompt as it is, filling only the `<…>` slots. Add nothing to it: word counts, item counts,
+extra photos or extra sections make the subagent slower, and the push waits for it.
+
+```text
+You are the content subagent of a Hostinger headless build for <domain>. Do content prepare
+yourself, start to finish, and skip the section "Prepare in a subagent".
+
+Workspace: ~/.hostinger/<domain>/ (brief.md is there). Skill folder: <skill folder>.
+Backend: <backend from brief.md>. Image source the user chose: <their answer>.
+
+Follow <skill folder>/steps/04-content-model/SKILL.md → "Prepare phase". For the file format: on
+wordpress, with or without WooCommerce, also <skill folder>/steps/04-content-model/wordpress/SKILL.md
+→ "Step 1 — Write content.json" (the catalog goes under "store"); on pocketbase, also
+<skill folder>/steps/04-content-model/pocketbase/SKILL.md → "Prepare phase"; on ecommerce,
+content-model.md holds the products.
+Take sizes and counts from brief.md and those files only.
+
+Write only content-model.md, content.json or pocketbase/schema.json, and media/. Leave state.json,
+the run log, design.md and brand/ alone, and call neither the Hostinger connector nor the live site.
+You can't ask the user anything: the image question is already answered above, and wherever a file
+says to offer or ask the user, or brief.md is silent, pick what fits the site and list it as a gap.
+For Hostinger AI images, write their briefs only; the main agent generates them later.
+
+Report back: the files you wrote, the page, article and product counts, and any gaps.
+```
+
+---
+
 ## Prepare phase — write the content helper (no instance)
 
 `content-model.md` is a lightweight helper, not a schema. Fill the **fixed values** from the brief and
@@ -168,7 +204,8 @@ runs **at the instance barrier** (after `provision.status == "completed"`), usin
 Follow [`images-unsplash.md`](images-unsplash.md). It is prepare work and needs no live backend.
 
 Then update `state.json`: set `stage` to the next prepare stage still to do, fresh `updated_at`. Do
-**not** advance past the barrier here.
+**not** advance past the barrier here. A content subagent skips this: the main agent owns
+`state.json`.
 
 ---
 

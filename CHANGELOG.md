@@ -4,6 +4,14 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.5.0 — 2026-11-17
+
+### Also in this release
+
+- Dependencies: `package-lock.json`
+- Bundled agent skills: 5 files
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v4.4.0 — 2026-11-17
 
 ### Also in this release

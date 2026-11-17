@@ -48,7 +48,8 @@ judges the look in the preview; the rules just make sure it works.
 
 ## Step 1 — Read the workspace, then the resume check
 
-Read `brief.md`, `state.json`, and `content-model.md` if it exists.
+Read `brief.md`, `state.json`, and `content-model.md` once content prepare has finished (not while
+a content subagent is still writing it).
 
 - **`design.md` already exists and this is not a redesign** → don't overwrite it. Describe the
   current look in two or three plain sentences and ask: *keep it, or change something?* That is this
@@ -73,9 +74,9 @@ Before inventing anything, gather what already constrains the design:
 |---|---|---|
 | Tone, purpose, audience | `brief.md` → *Tone*, *Purpose*, *Audience* | Sets the mood all three directions must fit |
 | Brand assets | `brief.md` → *Assets* | Logo, brand colours and fonts are **fixed** in every direction. Never recolour a supplied logo; Step 6 uses it instead of drawing an icon |
-| Pages and entities | `content-model.md` → *Navigation*, *Pages*, *Articles*; if it doesn't exist yet, `brief.md` → *Pages* | Drives the component inventory and page composition |
+| Pages and entities | `content-model.md` → *Navigation*, *Pages*, *Articles*; until content prepare has finished, `brief.md` → *Pages* | Drives the component inventory and page composition |
 | Reference sites | URLs in the brief or the conversation | Cues to borrow (see below) |
-| Images already sourced | `content-model.md` → the image lines under *Articles*, or the `image` URLs in `content.json` on WordPress (skip if none yet) | Glance at a few at small size; keep accents from clashing with their dominant colours |
+| Images already sourced | `content-model.md` → the image lines under *Articles*, or the `image` URLs in `content.json` on WordPress (skip until content prepare has finished) | Glance at a few at small size; keep accents from clashing with their dominant colours |
 | Current design (redesign only) | existing `design.md` | What to keep, what to move away from |
 
 **Reference sites.** Open each one in a real browser if you have one. Static fetches are often
@@ -312,8 +313,9 @@ The template's token list is the **minimum**: add what the design needs (`--colo
 listed in *Grid, shape & motion* as plain px values.
 
 Then update `state.json`: set `"stage": "frontend"` (also for a redesign: restyle, then validate and
-deploy) and `updated_at` to the current UTC time (ISO 8601). Don't touch `provision` or add
-other keys.
+deploy) and `updated_at` to the current UTC time (ISO 8601). If a content subagent is still running, leave `stage` alone: you set it once that
+subagent has also reported (top-level `SKILL.md` → *Content and design at the same time*). Don't touch
+`provision` or add other keys.
 
 If content prepare hasn't sourced images yet, it now follows `design.md` → **Imagery** (see
 `04-content-model/SKILL.md`).

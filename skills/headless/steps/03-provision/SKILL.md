@@ -72,8 +72,10 @@ it yet:
   "provision": { "status": "in_progress", "domain": "<domain>", "started_at": "<now>" } }
 ```
 
-Now go run the prepare work that doesn't need the backend (content-model prepare, frontend
-shell). The subfolder's readiness poll, verification and `site.json` are the **join** half below.
+Now go run the prepare work that doesn't need the backend: content-model prepare and design (at the
+same time when you have a subagent tool, see *Content and design at the same time* in the top-level
+`SKILL.md`), then the frontend shell. The subfolder's readiness poll, verification and `site.json`
+are the **join** half below.
 
 ## Step 3 — Join (at the instance barrier)
 
