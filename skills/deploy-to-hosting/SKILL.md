@@ -18,12 +18,14 @@ Ship a project that already exists — on disk or in a Git repository — to a H
 `hostinger up` does steps 1 to 3 in one call and is the shortest path when you can run commands and the `hostinger` CLI is installed (`brew install hostinger/tap/hostinger`), signed in and has `hostinger up`: it finds or creates the website, detects the type, packs the directory (honouring `.gitignore`; skipping `node_modules`, `.git`, `.env` files, credentials and private keys, and listing symlinks it does not follow), uploads, deploys or builds, waits for the build and links the directory in `.hostinger/site.json`, the same file this skill uses. Nothing is asked without a terminal.
 
 ```
-hostinger up <dir> --domain <domain> --yes --format json     # existing website; --yes only after the user agreed to replace its content
-hostinger up <dir> --create --format json                    # new website on the only plan, free subdomain
-hostinger up <dir> --domain <domain> --dry-run                # the plan as JSON, changes nothing: show it to the user before a first deploy (overwritesContent: the real run needs --yes)
-hostinger up <dir> --domain <domain> --type nodejs --app-type next --output-directory .next --build-script build --node-version 22 --yes --format json
-hostinger up <dir> --domain <domain> --no-wait --format json  # returns buildUuid at once; poll with `hostinger hosting nodejs build <domain> <uuid>`
+hostinger up <dir> --domain <domain> --message "<summary>" --yes --format json     # existing website; --yes only after the user agreed to replace its content
+hostinger up <dir> --create --message "<summary>" --format json                    # new website on the only plan, free subdomain
+hostinger up <dir> --domain <domain> --dry-run                                      # the plan as JSON, changes nothing: show it to the user before a first deploy (overwritesContent: the real run needs --yes)
+hostinger up <dir> --domain <domain> --message "<summary>" --type nodejs --app-type next --output-directory .next --build-script build --node-version 22 --yes --format json
+hostinger up <dir> --domain <domain> --message "<summary>" --no-wait --format json  # returns buildUuid at once; poll with `hostinger hosting nodejs build <domain> <uuid>`
 ```
+
+Always pass `--message` on a deploy: a short summary of what this deploy changes, written like a commit message (first line under 72 characters, at most 500). A Node.js build from an upload shows it in the site's deployment history, which otherwise lists only the archive name; Git builds show their commit instead, and other types ignore it. If the CLI fails with `unknown flag: --message`, it is an older version: run `brew upgrade hostinger/tap/hostinger`, or rerun the same command without `--message`.
 
 Run it from the project directory: the link is written in the current directory, with `path` naming `<dir>`. The JSON result has `url`, `data.type`, `data.buildUuid`, `data.buildState`, `data.skippedFiles` and, on failure, `error`. Shared and Cloud plans only; for Agency plans, archives and WordPress plugins or themes, use the operations below. The MCP's `hosting_deploy` does the same work when there is no shell.
 

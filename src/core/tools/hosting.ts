@@ -2750,7 +2750,7 @@ const tools: OpenApiTool[] = [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Start a Node.js build process using files already present on the website's file storage.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nWith `source_type` `archive`, `source_options.archive_path` must point to an existing\narchive file on the server (relative to the website document root). Use the\n`Generate Upload URL` endpoint to obtain credentials and upload the archive first. To\nauto-detect build settings from an archive before starting, first call the\n`Get Node.js Build Settings from Archive` endpoint.\n\nWith `source_type` `git`, `source_options` carries `owner`, `repository`, `branch` and\n`installation_uuid`. Take the installation from `List Git installations` and the owner and\nrepository from `List Git installation repositories`; the branch is cloned at its current\nhead. The installation must belong to the same customer as the website.\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
+    "description": "Start a Node.js build process using files already present on the website's file storage.\n\nWARNING: on success this overwrites the website's existing contents and cannot be\nundone — verify this is intended before calling this endpoint.\n\nWith `source_type` `archive`, `source_options.archive_path` must point to an existing\narchive file on the server (relative to the website document root). Use the\n`Generate Upload URL` endpoint to obtain credentials and upload the archive first. To\nauto-detect build settings from an archive before starting, first call the\n`Get Node.js Build Settings from Archive` endpoint. Send `source_options.message` with a\nshort summary of what changed; it labels the deployment in the website's deployment\nhistory, which otherwise shows only the archive file name.\n\nWith `source_type` `git`, `source_options` carries `owner`, `repository`, `branch` and\n`installation_uuid`. Take the installation from `List Git installations` and the owner and\nrepository from `List Git installation repositories`; the branch is cloned at its current\nhead. The installation must belong to the same customer as the website.\n\nThe returned build `uuid` can be used to poll progress and retrieve logs via\nthe `Get Node.js Build Logs` endpoint.",
     "method": "POST",
     "path": "/api/hosting/v1/accounts/{username}/websites/{domain}/nodejs/builds",
     "inputSchema": {
@@ -2834,11 +2834,15 @@ const tools: OpenApiTool[] = [
         },
         "source_options": {
           "type": "object",
-          "description": "Source-specific options. For `archive` send `archive_path`. For `git` send `owner`,\n`repository`, `branch` and `installation_uuid`, taken from `List Git installations`\nand `List Git installation repositories`.",
+          "description": "Source-specific options. For `archive` send `archive_path` and a `message` describing the\nchange. For `git` send `owner`, `repository`, `branch` and `installation_uuid`, taken from\n`List Git installations` and `List Git installation repositories`.",
           "properties": {
             "archive_path": {
               "type": "string",
               "description": "The path to the archive file relative to the document root of the vhost (required if source is \"archive\")"
+            },
+            "message": {
+              "type": "string",
+              "description": "Short summary of what this deployment changes, shown in the website's deployment\nhistory the way a commit message is for git deployments. Without it the history only\nshows the archive file name, so always send one: keep the first line under 72\ncharacters and describe the change, not the upload. Only used if source is \"archive\"."
             },
             "owner": {
               "type": "string",

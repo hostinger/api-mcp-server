@@ -19,7 +19,8 @@ This is an **instance-barrier** step: run it only after `provision.status == "co
 
 > **With a shell and the Hostinger CLI installed**, the same deploy is one command, with the build
 > settings passed exactly as the table below says. Run it from the project, since it links the current directory:
-> `cd ~/.hostinger/<domain>/src && hostinger up --domain <domain> --type nodejs --app-type <appType> --output-directory <dir> --build-script build --node-version 22 --package-manager npm --yes --format json`.
+> `cd ~/.hostinger/<domain>/src && hostinger up --domain <domain> --type nodejs --app-type <appType> --output-directory <dir> --build-script build --node-version 22 --package-manager npm --message "<what this deploy changes, like a commit message>" --yes --format json`.
+> If it fails with `unknown flag: --message` (an older CLI), run `brew upgrade hostinger/tap/hostinger` or rerun it without `--message`.
 > It uploads, builds, waits and returns `data.buildUuid` and `data.buildState`; add `--no-wait` to
 > return at once and wait with `cd "$HOME" && node <skill>/wait.mjs build <domain> <uuid>`. Then continue at
 > "Verify" below. Recent CLI versions see that the site is headless (`data.headless: true`) and

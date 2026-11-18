@@ -4993,7 +4993,9 @@ With `source_type` `archive`, `source_options.archive_path` must point to an exi
 archive file on the server (relative to the website document root). Use the
 `Generate Upload URL` endpoint to obtain credentials and upload the archive first. To
 auto-detect build settings from an archive before starting, first call the
-`Get Node.js Build Settings from Archive` endpoint.
+`Get Node.js Build Settings from Archive` endpoint. Send `source_options.message` with a
+short summary of what changed; it labels the deployment in the website's deployment
+history, which otherwise shows only the archive file name.
 
 With `source_type` `git`, `source_options` carries `owner`, `repository`, `branch` and
 `installation_uuid`. Take the installation from `List Git installations` and the owner and
@@ -5047,9 +5049,9 @@ the `Get Node.js Build Logs` endpoint.
        */
       source_type: string;
       /**
-       * Source-specific options. For `archive` send `archive_path`. For `git` send `owner`,
-`repository`, `branch` and `installation_uuid`, taken from `List Git installations`
-and `List Git installation repositories`.
+       * Source-specific options. For `archive` send `archive_path` and a `message` describing the
+change. For `git` send `owner`, `repository`, `branch` and `installation_uuid`, taken from
+`List Git installations` and `List Git installation repositories`.
        */
       source_options: object;
     };
