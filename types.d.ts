@@ -65,6 +65,10 @@ export interface APITools {
        * Package manager used to install dependencies
        */
       packageManager?: string;
+      /**
+       * Short summary of what this deployment changes, shown in the deployment history like a commit message. Always send one; first line under 72 characters. Used by Node.js deploys from path; a Git build shows its commit message.
+       */
+      message?: string;
     };
     response: any; // Response structure will depend on the API
   };

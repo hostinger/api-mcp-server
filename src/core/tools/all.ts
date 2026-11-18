@@ -190,6 +190,11 @@ const tools: OpenApiTool[] = [
             "pnpm"
           ],
           "description": "Package manager used to install dependencies"
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Short summary of what this deployment changes, shown in the deployment history like a commit message. Always send one; first line under 72 characters. Used by Node.js deploys from path; a Git build shows its commit message."
         }
       },
       "required": [

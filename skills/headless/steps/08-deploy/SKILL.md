@@ -124,6 +124,9 @@ Delete the temp directory once the build in Step 4 is `completed`.
 Pass the framework's build settings **inline** on the deploy call — there is no separate settings step.
 `path` is the absolute path of the archive from Step 2, in its temp directory. Never pass a path under
 `~/.hostinger/`, the `src/` directory included: the deploy refuses it (see Step 2).
+`message` says what this deploy ships, written like a commit message (first line under 72 characters,
+at most 500): it labels the deploy in the website's deployment history, which otherwise shows only the
+archive's file name.
 
 ```json
 { "operation": "hosting_deploy",
@@ -136,7 +139,8 @@ Pass the framework's build settings **inline** on the deploy call — there is n
     "nodeVersion": 22,
     "buildScript": "build",
     "packageManager": "npm",
-    "rootDirectory": "." } }
+    "rootDirectory": ".",
+    "message": "<one-line summary of what this deploy ships, e.g. Add pricing page>" } }
 ```
 
 `hosting_deploy` uploads the source and triggers `npm install` + the build **end-to-end** — do not call

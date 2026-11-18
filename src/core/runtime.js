@@ -941,6 +941,10 @@ class MCPServer {
     if (params.slug !== undefined && !(typeof params.slug === 'string' && /^[a-z0-9_-]+$/.test(params.slug))) {
       throw new Error('slug must contain only lower-case letters, digits, "-" and "_"');
     }
+    // The API caps the message at 500 characters: fail before the archive is packed and uploaded.
+    if (params.message !== undefined && (typeof params.message !== 'string' || params.message.trim().length > 500)) {
+      throw new Error('message must be a string of at most 500 characters');
+    }
     if (git !== undefined && (typeof git !== 'object' || git === null || typeof git.repository !== 'string' || typeof git.branch !== 'string' || git.branch === '')) {
       throw new Error('git must be an object with repository (owner/name) and branch');
     }
@@ -1156,8 +1160,10 @@ class MCPServer {
         const message = error instanceof Error ? error.message : String(error);
         throw new Error(detectionError ? message + ' (automatic detection failed: ' + detectionError + ')' : message);
       }
+      const deployMessage = typeof params.message === 'string' ? params.message.trim() : '';
       const build = await this.callOperation('hosting_nodejs_start-build', {
-        username, domain, ...settings, source_type: 'archive', source_options: { archive_path: archiveName },
+        username, domain, ...settings, source_type: 'archive',
+        source_options: { archive_path: archiveName, ...(deployMessage !== '' ? { message: deployMessage } : {}) },
       });
       return this.hosting_deploy_withSkipped(this.hosting_deploy_buildStarted(type, domain, 'path', build), prepared.skipped);
     } finally {

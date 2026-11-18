@@ -4,6 +4,21 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.7.0 — 2026-11-18
+
+### Operations
+
+- Changed the input schema of `hosting_deploy`
+
+### Also in this release
+
+- Dependencies: `package-lock.json`
+- Bundled agent skills: `skills/deploy-to-hosting/SKILL.md`, `skills/headless/VERSION`, `skills/headless/steps/08-deploy/SKILL.md`
+- Server instructions: `src/core/instructions.js`, `src/core/instructions.ts`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+- Build and packaging: `types.d.ts`
+
 ## v4.6.0 — 2026-11-18
 
 ### Also in this release

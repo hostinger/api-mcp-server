@@ -50,6 +50,7 @@ Run it from the project directory: the link is written in the current directory,
 
 - Pass `type` to override detection. It is required for an archive (an archive cannot be inspected) and when a directory matches more than one WordPress type, which `hosting_deploy` rejects as ambiguous.
 - Node.js build settings come from the project; detection covers the framework and the build script. Set `appType`, `outputDirectory`, `buildScript`, `entryFile`, `nodeVersion` (default 22), `rootDirectory` or `packageManager` when it is wrong. A TypeScript or other compiled server app always needs `entryFile` set to the built file (for example `dist/server.js`): detection only guesses a root-level file, and the build fails with "Entry file not found". The entry file is relative to the root directory for express, fastify, hono, react-router and other, and to the output directory for nest, nuxt, nitro, astro and svelte-kit (`main.js`, not `dist/main.js`); Next.js ignores it. Per-framework values are in the Hostinger docs under Node.js (Supported Frameworks, Build Settings).
+- Every Node.js deploy from files (`hosting_deploy` with `path`, or `hosting_nodejs_start-build` with `source_type: "archive"` as `source_options.message`) takes a `message`: always send a short summary of what this deploy changes, written like a commit message (first line under 72 characters, at most 500). It is shown in the site's deployment history, which otherwise lists only the archive's file name. A Git build shows its commit message instead.
 - Static, PHP, plugin and theme deploys are live when the call returns. A WordPress site import only starts (`status: import_started`) and finishes extracting a few minutes later; do not report it complete or verify it before then. Node.js builds run on the server: see step 3.
 
 **Agency:** the website's type decides (`agency-hosting_websites_get`): sites created as `node-static` take `agency-hosting_deploy-node-static-website`, which runs the build when the project has one; every other site takes `agency-hosting_deploy-php-application`, which extracts the archive as-is. They deploy archives, synchronously: the site is live when the call returns. WordPress plugins and themes on Agency sites are installed from wp-admin.
@@ -78,7 +79,7 @@ curl -sS -X PATCH "$URL/$DEST?override=true" -H "X-Auth: $AUTH_KEY" -H "X-Auth-R
 | Project | `DEST` | Then |
 | --- | --- | --- |
 | Static or PHP | `site.zip` | `hosting_websites_deploy-static-site-archive` with `archive_path: "site.zip"` |
-| Node.js | `app.zip` | `hosting_nodejs_build-settings-from-archive` with `archive_path: "app.zip"`, then `hosting_nodejs_start-build` with those settings, `source_type: "archive"` and `source_options.archive_path: "app.zip"` |
+| Node.js | `app.zip` | `hosting_nodejs_build-settings-from-archive` with `archive_path: "app.zip"`, then `hosting_nodejs_start-build` with those settings, `source_type: "archive"`, `source_options.archive_path: "app.zip"` and `source_options.message` summarizing what this deploy changes, written like a commit message |
 | WordPress plugin | every file, as `wp-content/plugins/SLUG-RANDOM8/<path in the plugin>` | `wordpress_plugins_deploy` with `slug` and `plugin_path: "SLUG-RANDOM8"` |
 | WordPress theme | every file, as `wp-content/themes/SLUG-RANDOM8/<path in the theme>` | `wordpress_themes_deploy` with `slug`, `theme_path: "SLUG-RANDOM8"` and optional `is_activated` |
 | Agency, extracted as-is | `.h5g/site.zip` | `agency-hosting_files_import-website-from-archive` with `archive_name: "site.zip"` |
@@ -93,7 +94,7 @@ curl -sS -X PATCH "$URL/$DEST?override=true" -H "X-Auth: $AUTH_KEY" -H "X-Auth-R
 
 Local files on the hosted server, deployed from an upload (step 2):
 
-- Wrong detection: run `hosting_nodejs_start-build` again with explicit values, `source_type: "archive"` and `source_options.archive_path` set to the archive's file name in the document root (check it is there with `hosting_files_list-website-and-directories`). Store the same values with `hosting_nodejs_update-build-settings`.
+- Wrong detection: run `hosting_nodejs_start-build` again with explicit values, `source_type: "archive"`, `source_options.archive_path` set to the archive's file name in the document root (check it is there with `hosting_files_list-website-and-directories`) and `source_options.message` saying what the rebuild fixes. Store the same values with `hosting_nodejs_update-build-settings`.
 - To review detected settings before any build: upload the archive with `hosting_files_generate-upload-url` (the TUS steps are in its description), then `hosting_nodejs_build-settings-from-archive`.
 
 ## 4. Auto-deploy from Git
