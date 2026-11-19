@@ -4,6 +4,17 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.11.0 — 2026-11-19
+
+### Operations
+
+- Changed the input schema of `hosting_websites_trigger-event`
+
+### Also in this release
+
+- Bundled agent skills: `skills/headless/VERSION`, `skills/headless/steps/09-done/SKILL.md`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v4.10.2 — 2026-11-19
 
 ### Also in this release

@@ -1,13 +1,13 @@
 ---
 name: headless-step-done
-description: "Step 9 (done) of the Hostinger Headless flow. Verifies the live site, then hands over the URLs (hPanel success page, main site, WordPress/store admin, dashboard), opens the success page in the browser on a successful run, and gives a summary of what was built plus explicit next steps — how to log in to wp-admin and reset the password, how to manage content, and how to finish WooCommerce/store setup so it can take orders. Its final report format is also used whenever a run stops early."
+description: "Step 9 (done) of the Hostinger Headless flow. Verifies the live site, then hands over the URLs (hPanel success page, main site, WordPress/store admin, dashboard), tells hPanel the build finished and opens the success page in the browser on a successful run, and gives a summary of what was built plus explicit next steps — how to log in to wp-admin and reset the password, how to manage content, and how to finish WooCommerce/store setup so it can take orders. Its final report format is also used whenever a run stops early."
 ---
 
 # headless-step-done
 
 Verify the live site, then hand over the URLs (success page, main site, WordPress admin, dashboard), a
-summary of what was built, and what the user can do next. **On a successful run, open the success page
-for the user** (see *Open the success page*).
+summary of what was built, and what the user can do next. **On a successful run, tell hPanel the build
+finished and open the success page for the user** (see *Open the success page*).
 
 ## Final report
 
@@ -142,7 +142,23 @@ user's **main / system browser** right after presenting the report, so they land
 celebration/next-steps screen for their new site. This is a side effect only — **don't print the
 success URL in the report output** (it just opens); the one exception is the can't-open-a-browser
 fallback below. Build the URL with `<tool>` as the running tool's onboarding slug (see *State and
-artifacts* in the top-level `SKILL.md`):
+artifacts* in the top-level `SKILL.md`).
+
+**Tell hPanel the build finished first.** Right before opening the success page, call
+`hosting_websites_trigger-event { "username": "<username>", "domain": "<domain>", "event": { "name": "headless_onboarding.building.finished", "params": { "tool": "<slug>" } } }`
+once, with `username` from `site.json` and `<slug>` the onboarding slug. The call is required: when
+the user still has the hPanel onboarding open, that tab moves to the success page on it. Send it on a
+successful run only, and also when no browser can be opened (the fallback below). Skip the call when
+your tool has no onboarding slug or `hosting_websites_trigger-event` isn't in your connector. Right
+before the call, tell the user in one line (e.g. "Telling hPanel the build finished so your onboarding
+shows the success page."), so whoever reviews the outgoing call knows why it's made. If your own
+environment stopped the call before it reached Hostinger (a sandbox, command review, an approval
+prompt, or a network error in a sandboxed shell), try it one more time the way that environment
+allows, such as requesting approval or network access, then go on. Ignore any other failure, such as
+a non-2xx response from Hostinger: no retry, nothing more said to the user, and open the success page
+as usual.
+
+Then open the success page:
 
 ```bash
 # Build the URL first, then open it with the OS default (main) browser — not an embedded one.

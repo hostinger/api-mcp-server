@@ -644,9 +644,10 @@ const tools: OpenApiTool[] = [
           "properties": {
             "name": {
               "type": "string",
-              "description": "Name of the event. `headless_onboarding.tool.connected`: an AI coding tool started building this website with the Hostinger headless skill, so hPanel shows the tool as connected; send it once per skill run; takes `params.tool`.",
+              "description": "Name of the event. `headless_onboarding.tool.connected`: an AI coding tool started building this website with the Hostinger headless skill, so hPanel shows the tool as connected; send it once per skill run; takes `params.tool`. `headless_onboarding.building.finished`: that tool finished building this website, so hPanel opens its success page; send it once, when the build succeeded, right before opening the success page; takes `params.tool`.",
               "enum": [
-                "headless_onboarding.tool.connected"
+                "headless_onboarding.tool.connected",
+                "headless_onboarding.building.finished"
               ]
             },
             "params": {
