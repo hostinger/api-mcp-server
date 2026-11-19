@@ -37,7 +37,7 @@ Write it in this order:
    | 4 content model | 5 pages, 8 posts, 6 categories, 1 menu, 14 images (Hostinger AI), SEO titles on every page; counts re-read from the REST API. |
    | 5 design | "Salt & Ink" direction: serif headings, sea-blue accents; `design.md` and logo icon written. |
    | 6 frontend | Next.js SSR with home, blog, post, category and contact pages wired to the REST API; local build passed. |
-   | 7 validate | Instance setup completed; REST API returned the 8 pushed posts; no preview (nobody signing off). |
+   | 7 validate | Instance setup completed; REST API returned the 8 pushed posts; npm audit clean; no preview (nobody signing off). |
    | 8 deploy | Source uploaded, build finished in 3 min; site root returns 200. |
    | 9 done | Main site, wp-admin and REST API re-checked live: all returned 200. |
 

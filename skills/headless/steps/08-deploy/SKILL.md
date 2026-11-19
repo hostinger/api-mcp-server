@@ -10,7 +10,8 @@ the project **source** and it uploads it, runs `npm install` + the build script 
 serves the result. **Out:** `deploy.json`.
 
 This is an **instance-barrier** step: run it only after `provision.status == "completed"` and validate
-(if run) has passed. All operations go through the connector (`execute`).
+has passed (on a first deploy that includes its dependency audit, even when the rest of validate is
+skipped). All operations go through the connector (`execute`).
 
 > **Connected to the hosted server (`mcp.hostinger.com`)?** Its `hosting_deploy` deploys Git
 > repositories only and cannot read a local `path`. Run this step through the local

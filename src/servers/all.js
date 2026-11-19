@@ -5,4 +5,4 @@ import tools from '../core/tools/all.js';
 import instructions from '../core/instructions.js';
 import skills from '../core/skills.js';
 
-startServer({ name: 'hostinger-api-mcp', version: '4.11.0', tools, instructions, skills });
+startServer({ name: 'hostinger-api-mcp', version: '4.12.0', tools, instructions, skills });
