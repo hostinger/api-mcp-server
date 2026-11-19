@@ -12,6 +12,7 @@ Read-only from start to finish. The output is a report; every fix is a separate,
 - Read the `inputSchema` that `search` returns before the first call of each operation. If a name below is rejected as unknown, `search` for what the step does (e.g. "virtual machine metrics").
 - Batch reads with `multi-execute`, up to 20 steps a batch. Batches chain operations from one server only — the Hostinger Connector runs `vps` and `billing` as separate servers. When a product group is switched off, skip its checks and say which were skipped.
 - `vps_virtual-machines_list` returns a plain array; paged lists (`vps_actions_list`, `vps_backups_list`, `vps_firewall_list`) return `data` and `meta`.
+- `Too Many Attempts` is the API rate limit: wait about a minute, then retry that call once, and send no other calls meanwhile. `[VPS:9999] Request failed` (HTTP 500) is usually temporary: retry once later, and if it fails again, report that server as not checked.
 - Call only read operations. Do not take a snapshot, sync a firewall, install Monarx or restart anything during the audit.
 
 ## 1. Inventory
@@ -30,9 +31,9 @@ Per server, one batch for every read below except `vps_monarx_scan-metrics` and 
 - **State.** `running` is normal; `stopped` may be the user's own stop or a Hostinger stop after malware was found; `suspended` is non-payment or abuse; `error` needs Hostinger support; `initial` is bought and waiting for setup. Any other state with `actions_lock: locked` is an action in progress. Expired plans can still show `running` — use the subscription.
 - **Actions.** `vps_actions_list` (first page): an `error` in the last 7 days, or an action still `sent` after 12 hours (stuck — Hostinger support).
 - **Usage.** `vps_virtual-machines_metrics` for the last 24 h. `disk_space` and `ram_usage` are in bytes, while `disk` and `memory` are in MB, so convert before comparing: `disk_space` above 85 % of `disk`, `ram_usage` above 90 % of `memory` most of the day, `cpu_usage` above 90 % most of the day. Sustained high CPU leads Hostinger to limit the server's CPU; whether a limit is active shows only in hPanel.
-- **Traffic.** The same metrics from the 1st of the month: inbound plus outbound traffic near the plan's monthly `bandwidth` means the server will be throttled for the rest of the month.
+- **Traffic.** The same metrics from the 1st of the month: inbound plus outbound traffic near the plan's monthly `bandwidth` means the server will be throttled for the rest of the month. By mid-month the result is over 100 KB per server, too large to read whole. When it comes back saved to a file, add up `incoming_traffic` and `outgoing_traffic` with a short script on that file. If the script cannot run, use the last 7 days, scale them to the month and say the figure is an estimate.
 - **Backups.** `vps_backups_list`: no backup newer than 8 days on a server older than 7 days means the weekly schedule is probably off. The API cannot show the schedule; the user checks hPanel → VPS → Snapshots & Backups, where Auto-backups shows it.
-- **SSH keys.** `vps_ssh-keys_list-virtual-machine`: none means password login only.
+- **SSH keys.** `vps_ssh-keys_list-virtual-machine` shows only keys added through Hostinger (hPanel or the API). Keys added on the server by hand do not appear, so an empty list means "no SSH key added through Hostinger", not that login is password-only. secure-vps checks password login over SSH.
 - **Malware.** `vps_monarx_scan-metrics`: `[VPS:2042] Monarx is not installed` means it is not installed; counts mean it is. `malicious` or `compromised` above 0 is a finding.
 - **Docker Manager.** `vps_docker_list` on every server; an empty list means no projects. `[VPS:2044]` means this server has no Docker Manager, so skip it. Availability does not follow the template name. For each project, flag any container not `running`, or with `health` other than `healthy`.
 - **OpenVZ.** A plan named `KVM n` is KVM and is never flagged. Flag a server whose plan name does not start with `KVM`. Only when the plan name is missing or unclear, use `created_at` before 18 April 2023 as a hint, because VPS bought on hostinger.com before then were usually OpenVZ. For a flagged server, the user checks hPanel and follows Hostinger's OpenVZ-to-KVM migration guide.
@@ -50,9 +51,12 @@ Plans: auto-renew off (`is_auto_renewed: false`, status `non_renewing`) **and** 
 From outside, per server:
 
 ```bash
-nc -z -w 3 IP 22 && echo ssh; curl -s -o /dev/null -w "%{http_code}\n" --max-time 10 http://IP/
-for p in 3306 5432 6379 27017; do nc -z -w 3 IP $p && echo "open $p"; done
+nc -zv -w 3 IP 22
+curl -s -o /dev/null -w "%{http_code}\n" --max-time 10 http://IP/
+nc -zv -w 3 IP 3306; nc -zv -w 3 IP 5432; nc -zv -w 3 IP 6379; nc -zv -w 3 IP 27017
 ```
+
+Run each port as its own `nc`, with the IP written out. A loop or a shell variable makes Claude Code ask for approval every time, and macOS `nc` stops after the first port when given a list.
 
 Before trusting the scan, run the same check against `192.0.2.1`, a reserved address with no server. Any port that answers there is faked by the local network (a VPN or proxy; 80, 443 and 8080 are common), so check it with `curl` instead. On macOS add `-G 3` to `nc`; without it a port that drops traffic hangs for over a minute.
 
@@ -75,7 +79,7 @@ A database port answering from outside is a finding whatever the rules say.
 - srv100 — no backup in the last 30 days → hPanel → Snapshots & Backups → Manage schedule
 
 ## Worth knowing
-- srv102 — password login only, no SSH key → secure-vps
+- srv102 — no SSH key added through Hostinger → secure-vps
 - srv103 — firewall group "web" not synced → secure-vps
 
 ## Healthy
@@ -84,7 +88,7 @@ srv104
 
 - **Fix now:** state `error`, `suspended`, or `stopped` without the user's knowledge; a failed or stuck action; malware counts above 0; disk above 95 %; a Docker project down; a plan already lapsed; an OpenVZ server.
 - **Soon:** no firewall group, or a database port open to the internet; no backup in 8 days; a plan lapsing within 30 days; disk above 85 %; CPU or memory saturated most of the day; monthly traffic near the quota.
-- **Worth knowing:** no SSH key; firewall group not synced; Monarx not installed.
+- **Worth knowing:** no SSH key added through Hostinger; firewall group not synced; Monarx not installed.
 
 Each item names the evidence and what fixes it: `troubleshoot-vps`, `secure-vps`, `deploy-to-vps`, `provision-vps`, Hostinger support, or the hPanel page. Hand back without fixing anything.
 

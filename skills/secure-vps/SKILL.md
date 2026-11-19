@@ -12,6 +12,7 @@ Baseline hardening for one server. Read and report first; each change is propose
 - Read the `inputSchema` that `search` returns before the first call of each operation. If a name below is rejected as unknown, `search` for what the step does (e.g. "firewall rule").
 - Only the public operations that `search` returns can be called. The backup schedule, the Monarx file list and the SSH and firewall resets live in hPanel; say where when a step needs them.
 - Batch reads with `multi-execute`; values pass between steps as `$steps.<i>.<path>`. A batch stops at its first failure.
+- `Too Many Attempts` is the API rate limit: wait about a minute, then retry that call once, and send no other calls meanwhile. `[VPS:9999] Request failed` (HTTP 500) is usually temporary: retry a read once later. Never resend a change that failed with 500 straight away: it may have gone through, so check the outcome with the matching read or `vps_actions_list` first, and tell the user what you found.
 - A VPS runs one action at a time. Most changes return an action: poll `vps_actions_get`, waiting longer between checks, until `state` is `success` or `error`. Firewall sync and delete answer `Request accepted` instead; check the result with the matching read operation.
 - Confirm with the user before each of these, listing exactly what changes: `vps_firewall_activate` (closes every port without an accept rule), `vps_firewall_replace-all-rules-in-group`, `vps_firewall_delete-rule`, `vps_firewall_update-rule`, `vps_firewall_deactivate`, `vps_firewall_delete`, `vps_ssh-keys_remove-virtual-machine`, turning off password login, `vps_monarx_install` (locks the VPS for up to an hour), `vps_monarx_uninstall`, and `vps_snapshots_create` (replaces the snapshot).
 - SSH keys: `vps_ssh-keys_*`; the `vps_public-keys_*` operations are deprecated. Firewall sync: `vps_firewall_sync-to-all-assigned-v-ms`; `vps_firewall_sync` is deprecated.
@@ -25,17 +26,18 @@ Baseline hardening for one server. Read and report first; each change is propose
 One batch:
 
 - `vps_firewall_get` with `firewall_group_id`: rules (`protocol`, `port`, `source`, `source_detail`) and `is_synced`. `vps_firewall_list` and `vps_virtual-machines_list` show which other servers share the group.
-- `vps_ssh-keys_list-virtual-machine`: keys on `root`.
+- `vps_ssh-keys_list-virtual-machine`: keys on `root` added through Hostinger. Keys added on the server by hand do not appear, so an empty list does not prove password-only login. The SSH check below shows it.
 - `vps_backups_list`: the newest backup. Backups are weekly by default; on the weekly schedule the first one appears after a full 7-day cycle (on daily, within a day). The API cannot show or change the schedule.
 - `vps_monarx_scan-metrics`, alone or last in the batch: `[VPS:2042] Monarx is not installed` means it is not installed, and the error stops the batch; otherwise it returns the `malicious` and `compromised` counts.
 
 From outside, which ports actually answer:
 
 ```bash
-for p in 21 22 25 80 443 3306 5432 6379 8080 9200 11211 27017; do nc -z -w 3 IP $p && echo "open $p"; done
+nc -zv -w 3 IP 21; nc -zv -w 3 IP 22; nc -zv -w 3 IP 25; nc -zv -w 3 IP 80; nc -zv -w 3 IP 443; nc -zv -w 3 IP 3306
+nc -zv -w 3 IP 5432; nc -zv -w 3 IP 6379; nc -zv -w 3 IP 8080; nc -zv -w 3 IP 9200; nc -zv -w 3 IP 11211; nc -zv -w 3 IP 27017
 ```
 
-Run the same loop against `192.0.2.1`, a reserved address with no server, first. Any port that answers there is faked by the local network (a VPN or proxy; 80, 443 and 8080 are common), so judge it with `curl` instead. On macOS add `-G 3` to `nc`; without it a port that drops traffic hangs for over a minute.
+Run each port as its own `nc`, with the IP written out: a loop or a shell variable makes Claude Code ask for approval every time, and macOS `nc` stops after the first port when given a list. Run the same commands against `192.0.2.1`, a reserved address with no server, first. Any port that answers there is faked by the local network (a VPN or proxy; 80, 443 and 8080 are common), so judge it with `curl` instead. On macOS add `-G 3` to `nc`; without it a port that drops traffic hangs for over a minute.
 
 Over SSH, what listens and how SSH is set up:
 
