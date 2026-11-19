@@ -4,6 +4,20 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.10.1 — 2026-11-19
+
+### Operations
+
+- Added `dns_propagation_check-record` — Check DNS record propagation
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Bundled agent skills: `skills/headless/VERSION`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v4.10.0 — 2026-11-18
 
 ### Also in this release

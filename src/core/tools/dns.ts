@@ -72,6 +72,41 @@ const tools: OpenApiTool[] = [
     "everyServer": true
   },
   {
+    "name": "dns_propagation_check-record",
+    "title": "Check DNS record propagation",
+    "annotations": {
+      "title": "Check DNS record propagation",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Check whether a DNS record of a domain or host name has propagated to public resolvers around the world.\n\n`authoritative` shows what the domain's authoritative nameservers serve now. It is the best signal\nof the current record value. Its TTL tells how long resolvers may keep serving the old value.\n\n`vantage_points` shows what public resolvers at different locations return. `is_propagated` is true\nwhen the location returns the same records as the authoritative nameservers. For GeoDNS domains,\nwhose nameservers answer differently by region, true means the location returned a record.\nA records served from the Hostinger CDN count as propagated. When every responding authoritative\nnameserver returns no records, `is_propagated` is true.\n\nWorks for any domain or host name, either a domain or a subdomain. Read-only: it changes nothing.\n\nA 404 response with error code 2025 can also mean the check could not be completed, for example\nwhen the DNS checker is busy or timed out. It is safe to retry after a short delay.",
+    "method": "GET",
+    "path": "/api/dns/v1/propagation/{domain}/{type}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Domain or host name to check, either a domain or a subdomain"
+        },
+        "type": {
+          "type": "string",
+          "description": "DNS record type to check. One of: A, AAAA, CNAME, MX, SRV, TXT, CAA"
+        }
+      },
+      "required": [
+        "domain",
+        "type"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "dns"
+  },
+  {
     "name": "dns_snapshots_get",
     "title": "Get DNS snapshot",
     "annotations": {
