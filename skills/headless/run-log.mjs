@@ -19,7 +19,12 @@ import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const STAGES = ['connect', 'check_state', 'refine', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy', 'done'];
+const STAGES = ['refine', 'connect', 'check_state', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy', 'done'];
+// Stages that stop for the user to restart their tool, so it loads a newly registered Hostinger MCP server.
+const RESTART_STAGES = ['connect', 'provision', 'content_model'];
+const PAUSE_NOTE = 'paused for a tool restart';
+// A domain names a folder under ~/.hostinger, so "../x" or "a/b" must never reach the file system.
+const HOSTNAME = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i;
 const RESULTS = ['ok', 'ok_after_retries', 'ok_with_fixups', 'failed', 'skipped', 'stopped'];
 const OUTCOMES = ['live', 'stopped', 'failed', 'abandoned'];
 const EVENT_FIELDS = {
@@ -69,10 +74,13 @@ function parseArgs(argv) {
 const readJson = (file, fallback) => (existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : fallback);
 const writeJson = (file, value) => writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
 
-function workspace(domain) {
+// run-start is a run's first command, before anything else has written to the workspace.
+function workspace(domain, { create = false } = {}) {
   if (!domain || domain.startsWith('-')) fail('first argument must be the domain');
+  if (!HOSTNAME.test(domain)) fail(`"${domain}" is not a domain (use its ASCII form, e.g. xn--caf-dma.com)`);
   const dir = join(homedir(), '.hostinger', domain);
-  if (!existsSync(dir)) fail(`no workspace at ${dir}; connect creates it`);
+  if (create) mkdirSync(dir, { recursive: true });
+  else if (!existsSync(dir)) fail(`no workspace at ${dir}; run-start creates it`);
   return {
     dir,
     domain,
@@ -112,7 +120,7 @@ function migrate(ws) {
 }
 
 function currentRun(log) {
-  if (!log.run?.id) fail('no run started; call run-start first (check-state does this)');
+  if (!log.run?.id) fail('no run started; call run-start first (the start of every run does this)');
   return log.run;
 }
 
@@ -135,6 +143,23 @@ function readConnect(ws) {
 
 function runStart(ws, flags) {
   const log = loadLog(ws);
+  // A run left open in a restart stage goes on in the new session, at connect, instead of being
+  // abandoned. The paused stage ends at its last logged activity, so the restart wait isn't counted.
+  // A clean pause deletes .lock, so one still there means a crash or another window: not a pause.
+  const history = (log.history ?? []).filter((h) => h.run === log.run?.id);
+  const open = history.filter((h) => !h.ended_at);
+  const pausedCleanly = !existsSync(join(ws.dir, '.lock'));
+  if (log.run?.id && !log.run.reported_at && pausedCleanly && open.length === 1 && RESTART_STAGES.includes(open[0].stage)) {
+    const [paused] = open;
+    for (const key of ['model', 'skill']) if (typeof flags[key] === 'string') log.run[key] = flags[key];
+    const events = readEvents(ws).filter((e) => e.run === log.run.id);
+    Object.assign(paused, { ended_at: lastActivity(log.run, history, events), result: 'ok', note: paused.note ? `${paused.note}; ${PAUSE_NOTE}` : PAUSE_NOTE });
+    log.history.push({ run: log.run.id, stage: 'connect', phase: null, started_at: now(), ended_at: null, result: null, note: 'continued after a tool restart' });
+    saveLog(ws, log);
+    const where = `${paused.stage}${paused.phase ? `/${paused.phase}` : ''}`;
+    console.log(`run ${log.run.id} continued after a tool restart in ${where}; next: connect`);
+    return;
+  }
   // A previous run that never reached its report (closed window, crash) is closed out first, so
   // its log still turns into a report.
   if (log.run?.id && !log.run.reported_at) {
@@ -164,8 +189,9 @@ function runStart(ws, flags) {
     skill: flags.skill ?? previous.skill ?? null,
   };
   fresh.history ??= [];
+  fresh.history.push({ run: id, stage: 'refine', phase: null, started_at: startedAt, ended_at: null, result: null, note: null });
   saveLog(ws, fresh);
-  console.log(`run ${fresh.run.id} started`);
+  console.log(`run ${fresh.run.id} started; next: refine`);
 }
 
 function runUpdate(ws, flags) {
@@ -332,12 +358,8 @@ function buildReport(ws, { outcome, tokens } = {}) {
   // A run ends at its last logged activity, so re-running `report` later (after fixing warnings, or
   // when the next run-start closes an abandoned run) doesn't stretch it to "now". Only a stage still
   // open on a live run keeps the clock running.
-  const lastActivity = [run.started_at, ...history.flatMap((h) => [h.started_at, h.ended_at]), ...events.map((e) => e.ts)]
-    .filter(Boolean)
-    .sort()
-    .at(-1);
   const stillOpen = resolvedOutcome !== 'abandoned' && history.some((h) => !h.ended_at);
-  const endedAt = stillOpen ? now() : lastActivity;
+  const endedAt = stillOpen ? now() : lastActivity(run, history, events);
   const stages = history.map((h) => ({ ...h, minutes: minutesBetween(h.started_at, h.ended_at ?? endedAt) }));
   const gaps = [...loggingGaps(stages, run, resolvedOutcome), ...dropped];
   const strip = ({ ts, run: _run, type: _type, ...rest }) => ({ ...rest, logged_at: ts });
@@ -448,7 +470,7 @@ function reportRejected(ws, [runId]) {
 }
 
 // Gaps are printed as warnings by `report`, so guesses never pass as measurements.
-const EXPECTED_FOR_BUILD = ['check_state', 'refine', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy'];
+const EXPECTED_FOR_BUILD = STAGES.filter((stage) => stage !== 'done');
 function loggingGaps(stages, run, outcome) {
   const gaps = [];
   for (const s of stages) {
@@ -456,7 +478,7 @@ function loggingGaps(stages, run, outcome) {
     const problem = s.result === 'skipped' ? null
       : !s.ended_at ? 'started but never ended'
       : s.start_estimated ? 'start time estimated, not measured'
-      : Date.parse(s.ended_at) === Date.parse(s.started_at) ? 'logged with no duration; probably started and ended in one go after the work'
+      : Date.parse(s.ended_at) === Date.parse(s.started_at) && !s.note?.endsWith(PAUSE_NOTE) ? 'logged with no duration; probably started and ended in one go after the work'
       : null;
     if (problem) gaps.push({ stage: s.stage, phase: s.phase, problem });
   }
@@ -466,6 +488,13 @@ function loggingGaps(stages, run, outcome) {
     }
   }
   return gaps;
+}
+
+function lastActivity(run, history, events) {
+  return [run.started_at, ...history.flatMap((h) => [h.started_at, h.ended_at]), ...events.map((e) => e.ts)]
+    .filter(Boolean)
+    .sort()
+    .at(-1);
 }
 
 function stoppedAt(stages, fallbackStage) {
@@ -661,7 +690,7 @@ document.querySelectorAll('.bar').forEach((el) => {
 
 const { positional, flags } = parseArgs(process.argv.slice(2));
 const [domain, command, ...rest] = positional;
-const ws = workspace(domain);
+const ws = workspace(domain, { create: command === 'run-start' });
 switch (command) {
   case 'run-start':
     runStart(ws, flags);

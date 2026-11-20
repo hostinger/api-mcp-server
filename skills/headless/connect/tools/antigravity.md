@@ -37,13 +37,11 @@ no tokens to handle:
 ```
 
 Antigravity loads MCP servers only when the editor starts, so follow *register, restart, resume* in
-`connect/SKILL.md`: write `connect.json`, then ask the user to fully quit and reopen
-Antigravity and paste the same prompt. Never spawn the server yourself or write a JSON-RPC client to
+`connect/SKILL.md`, which says when a restart is needed. When it is, ask the user to fully quit and
+reopen Antigravity and paste the same prompt. Never spawn the server yourself or write a JSON-RPC client to
 reach it.
 
 ## Step 2 — Hand off
 
-The skills are already in place: Phase 1 of `connect/SKILL.md` found the installed `<skill>`
-folder or installed it from the `@hostinger/mcp` release. Don't download them again here. Read the
-`<skill>/VERSION` stamp (record it in `connect.json`), open `<skill>/SKILL.md` and follow its
-steps. That skill owns the rest of the run.
+The skills are already in place: Phase 1 of `connect/SKILL.md` found `<skill>` and its
+`<skill>/VERSION` stamp. Go back to `connect/SKILL.md`, Phase 4.

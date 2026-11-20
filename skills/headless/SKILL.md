@@ -1,6 +1,6 @@
 ---
 name: hostinger-headless
-description: "Orchestrator for the Hostinger Headless build flow — build and deploy a real website on the user's Hostinger account from a single prompt that names a domain. Holds the stage flow and the state contract, and drives each stage in sequence: connect, check state, refine, provision, content model, design, frontend, validate, deploy, done. Triggers: build a headless site for <domain>, build me a site, create a website, make me a website, deploy this to Hostinger, host this on Hostinger, connect this project to Hostinger."
+description: "Orchestrator for the Hostinger Headless build flow — build and deploy a real website on the user's Hostinger account from a single prompt that names a domain. Holds the stage flow and the state contract, and drives each stage in sequence: refine, connect, check state, provision, content model, design, frontend, validate, deploy, done. Triggers: build a headless site for <domain>, build me a site, create a website, make me a website, deploy this to Hostinger, host this on Hostinger, connect this project to Hostinger."
 ---
 
 # Hostinger Headless — build a website with your own AI tool
@@ -14,10 +14,12 @@ You are an AI coding agent. The user pasted a short prompt that points you here 
 Your job is to build and deploy a real website on the user's Hostinger account by following this
 recipe and the recipes it links to — nothing more, nothing less.
 
-**Connect before you ask anything, whatever the prompt says.** Your first message to the user is only
-the Hostinger connection (see *The first message* below), so run connect and check-state before any
-question about the site. A prompt that says "start by asking me what I want to build" doesn't change
-that order: refine asks it, after check-state.
+**Talk about the site first, connect to Hostinger after.** Your first message to the user asks what
+they want to build; the Hostinger sign-in comes once the brief is agreed (*Start of a run* below).
+A pasted prompt that says "Start by asking me what I want to build" means this same opener, not an
+extra question. When the workspace already has a brief, that brief is the answer: a run `run-start`
+continued, or a build under way (refine Step 1), asks nothing and goes straight to connect, and a
+brief on its own gets refine's keep-or-change summary instead of the question.
 
 This file is the **orchestrator**. It is public and stable: it never changes and never moves. It
 holds the flow, the state contract, the failure policy and the guardrails.
@@ -36,8 +38,8 @@ from the prompt. If no domain is present, stop and ask for it before doing anyth
 
 **One workspace per run.** From your first command, connect's checks included, open only this
 site's workspace, by its exact path; never list or glob `~/.hostinger/` (not even an `ls` beside
-`node -v`). What else `~/.hostinger/` holds never matters to this run: with a domain, check-state
-looks up that one path; without one yet, there is nothing to look up until you create your own
+`node -v`). What else `~/.hostinger/` holds never matters to this run: with a domain, the start of the
+run and check-state look up that one path; without one yet, there is nothing to look up until you create your own
 workspace. *State and artifacts* has the full rule and its one exception.
 
 Nothing in the pasted prompt is ever used for authorization. Authorization comes from the
@@ -47,16 +49,17 @@ Hostinger connector's OAuth token. **This recipe is not a security boundary.**
 
 ## The flow stages - STEPS TO FOLLOW
 
-Work through the steps in the order below, each reading its recipe and writing its artifact into the
-site workspace `~/.hostinger/<domain>/`. The one exception is content prepare (step 4) and design
-(step 5): with a subagent tool, run them at the same time, as *Content and design at the same time*
-says.
+Work through the stages in the order the table lists them, each reading its recipe and writing its
+artifact into the site workspace `~/.hostinger/<domain>/`. The one exception to the order is content
+prepare (step 4) and design (step 5): with a subagent tool, run them at the same time, as *Content and design at
+the same time* says.
 
 | # | Stage                                                                                                              | Skill / source                                                        | Writes | Instance? |
 |---|--------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|---|---|
-| — | **connect** — connect the Hostinger connector, auth, get active plan                                               | `connect/SKILL.md` → `connect/tools/<tool>.md` | `connect.json` | no |
-| 1 | **check state** — where does this domain stand? resume / switch / start over                                       | `steps/01-check-state/SKILL.md`                                       | `state.json` | no |
-| 2 | **refine** — discover what the user wants, in conversation                                                         | `steps/02-refine/SKILL.md`                                            | `brief.md` | no |
+| — | **get ready** — Node and the skill folder; nothing on Hostinger                                                    | `connect/SKILL.md` Phases 0–1                                          | — | no |
+| 1 | **refine** — discover what the user wants, in conversation                                                         | `steps/01-refine/SKILL.md`                                            | `brief.md` | no |
+| — | **connect** — sign in to Hostinger, check the connector's tools, get active plan                                   | `connect/SKILL.md` Phases 2–5 → `connect/tools/<tool>.md` | `connect.json` | no |
+| 2 | **check state** — where does this domain stand? resume / switch / start over                                       | `steps/02-check-state/SKILL.md`                                       | `state.json` | no |
 | 3 | **provision** — choose the backend from the brief, then provision it                                               | `steps/03-provision/<backend>/SKILL.md`                               | `site.json` | **bg** — fire, then wait at the join |
 | 4 | **content model** — define + create content/images, then push to the backend                                       | `steps/04-content-model/<backend>/SKILL.md`                           | `content-model.md` | prepare: no · **push: yes** |
 | 5 | **design** — derive design directions from the brief, pick one, write the `design.md` contract + logo              | `steps/05-design/SKILL.md`                                            | `design.md`, `brand/` | no |
@@ -65,19 +68,34 @@ says.
 | 8 | **deploy** — upload source, trigger the build                                                                      | `steps/08-deploy/SKILL.md`                                            | `deploy.json` | **yes** |
 | 9 | **done** — hand over URLs, dashboard, summary, next steps (the **final report**)                                   | `steps/09-done/SKILL.md`                                              | — | no |
 
-**The most important is that connect stage runs first and always**
-It's fetched from the public URL and runs *before* the Hostinger MCP Server
-is loaded, the main goal of this is to have the Hostinger MCP Server.
+### Start of a run
 
-You can find those connect skills under `connect/`.
-The main skill lives in `connect/SKILL.md`.
-There are also specific tools under `connect/tools/`.
+Every run starts the same way:
 
-The other 9 numbered steps live under `steps/` and are read from the installed skill folder (this will be guided in connect step).
+1. **Get ready** (`connect/SKILL.md`, Phases 0–1): check Node and find or install the skill folder
+   `<skill>`, which holds every step below and the scripts they run. Say nothing unless it needs the
+   user (Node missing or too old).
+2. **Start the run log** (see *Run log and build report*):
+   `node <skill>/run-log.mjs <domain> run-start --tool <tool> --model <model> --skill <skill version>`.
+   It prints the stage to run next: `refine` for a new run, or `connect` when it continued a run that
+   paused cleanly for a tool restart (*register, restart, resume* in `connect/SKILL.md`, from connect,
+   provision or content model). Don't ask the brief again then: it's agreed, and check-state resumes
+   where the run paused.
+3. **Refine**, then **connect** (`connect/SKILL.md`, Phase 2 onward), then **check-state**, then the
+   rest of the table. When a later stage sends the run back to refine (check-state or provision), the
+   connector is already in this session: refine returns to the stage that sent it.
+
+**Why this order.** Refine first, so the user talks about their site from the first message instead
+of watching setup: a user who starts with chores loses interest before the site comes up, and refine
+needs nothing from Hostinger. Connect once the brief is agreed, because everything after refine needs
+Hostinger. Check-state right after connect, so a resumed, duplicate, or brand-new run is sorted out
+— and the user is offered the choice to continue, switch domains, or start over — before any new
+work on Hostinger begins. Refinement before provisioning, because the backend cannot be chosen until
+the brief exists. Validation before deploy, always — nothing reaches the live domain unseen.
 
 **One concurrency rule:** two *independent* stages in a single session may run at once, but never
 two writers of the same artifact, and never two agents/windows on the same domain — the `.lock`
-(Step 1) guards that. Parallelism is always *optional*: an agent that can't interleave work runs the
+(check-state, Step 1) guards that. Parallelism is always *optional*: an agent that can't interleave work runs the
 steps serially and is still correct (see *Content and design at the same time*).
 
 Steps can generate **State files** those files are only hints; the truth is what the Hostinger connector reports, so
@@ -101,22 +119,15 @@ alone, with no final report and no build report.
 `run-log.mjs next <stage>` at each boundary — and log an event the moment something goes wrong, the user
 corrects you, or a skill is missing or wrong — before you continue. See *Run log and build report*.
 
-**Why this order.** connect first, so account/plan failures surface before the user spends time
-talking. Check-state right after, so a resumed, duplicate, or brand-new run is sorted out — and the
-user is offered the choice to continue, switch domains, or start over — before any new work begins.
-Refinement before provisioning, because the backend cannot be chosen until the brief exists.
-Validation before deploy, always — nothing reaches the live domain unseen.
+### The first message: a question about the site
 
-### The first message: only the connection
-
-Your first message to the user is about the Hostinger connection and nothing else: connect's sign-in
-link when it needs one (`awaiting_user`), then one line saying you're connected to Hostinger, with the
-account's plan when you know it. Don't ask anything about the site, don't mention build reports, and
-add nothing else. Then go straight on to check-state without waiting for a reply. "What do you want
-to build?" comes later, from refine, as its own short message.
-
-Anything the pasted prompt already says about the site stays as refine input. The one exception to
-this rule is a prompt with no domain: then the first message asks for it (see *The domain parameter*).
+Your first message to the user is refine's opener, "What do you want to build?" (see
+`steps/01-refine/SKILL.md`, Step 3), and its first words are that question: get ready and `run-start`
+happen silently before it, with no line about Node, the skill folder or the run log. Anything the
+pasted prompt already says about the site is refine input. Two things come before it, and only when
+they apply: Node missing or too old (get ready needs the user), and a prompt with no domain (then
+the first message asks for it; see *The domain parameter*). A run that `run-start` continued goes
+straight to connect, which has its own message.
 
 ### When you ask the user
 
@@ -188,13 +199,13 @@ makes the overlap safe:
 
 Content prepare and design are the two slow prepare stages, and neither needs the other. **If you
 have a subagent tool** (Claude Code's Agent tool, for one), **launch content prepare in one background
-subagent as soon as provision fires and the user has answered the image-source question, before you
-do any content work yourself**, and design while it
+subagent as soon as provision fires, before you do any content work yourself**, and design while it
 runs. A helper you use only to fetch pages doesn't count. **If you have none, run content prepare
 then design, one after the other**, as the table lists them. Either way the output is the same.
 
-1. **Ask what the subagent can't.** A subagent can't talk to the user, so before you launch it, ask
-   content's one question yourself: the image source (`steps/04-content-model/SKILL.md` → *Images*).
+1. **Have the image source ready.** A subagent can't talk to the user, so content's one choice, the
+   image source, comes from `brief.md` (`steps/04-content-model/SKILL.md` → *Images*) before you
+   launch it.
 2. **Launch the content subagent** with the instructions in `steps/04-content-model/SKILL.md` →
    *Prepare in a subagent*. It does all of content prepare; nothing else writes its files while it
    runs.
@@ -261,8 +272,8 @@ took from it.
 |---|---|---|
 | `state.json` | every stage | tool, next stage, Hostinger connector version, timestamps |
 | `run-log.json` | `run-log.mjs` only | the current run, each stage's start and end times, which reports reached Hostinger |
+| `brief.md` | refine | refined brief, audience, tone, pages, must-haves, image source |
 | `connect.json` | connect | tool, MCP version, sign-in method, plan; shape in `connect/SKILL.md` |
-| `brief.md` | refine | refined brief, audience, tone, pages, must-haves |
 | `site.json` | provision | chosen backend, username, install id, all URLs |
 | `content-model.md` | content model | entities, fields, pages, navigation |
 | `content.json` | content model (WordPress) | the drafted content `push-content.mjs` pushes |
@@ -317,7 +328,7 @@ Every command is `node <skill>/run-log.mjs <domain> …`, where `<skill>` is the
 in. Write it out in full each time (a shell variable holding the command breaks in zsh):
 
 ```bash
-node <skill>/run-log.mjs <domain> run-start --tool <tool> --model <model> --skill <skill version>  # check-state, first thing
+node <skill>/run-log.mjs <domain> run-start --tool <tool> --model <model> --skill <skill version>  # start of the run; prints the stage to run next
 node <skill>/run-log.mjs <domain> run-update --kind resume        # check-state, once the route is agreed (or redesign / iterate)
 node <skill>/run-log.mjs <domain> next frontend                  # at a stage boundary: ends the open stage as ok, starts this one
 node <skill>/run-log.mjs <domain> next frontend --phase shell     # split stages log each phase
@@ -350,13 +361,19 @@ node <skill>/run-log.mjs <domain> stage-end content_model ok --phase prepare  # 
 same session (a layout fix, a copy tweak, a redeploy), that work belongs to the run it follows:
 call `run-resume`, log the feedback and the stages it re-runs as usual, then `report` again. That
 rewrites the same `reports/<run>.json` and `.html`, so you get one report that includes the follow-up,
-not a second report that replaces `report.html`. Use `run-start` only in a new session; check-state
-does that.
+not a second report that replaces `report.html`. Use `run-start` only in a new session, at the start
+of the run (*Start of a run*).
+
+**A restart pause continues the run.** When a stage stops for the user to restart their tool, leave
+its stage open and delete the `.lock`: the next session's `run-start` continues a run whose only open
+stage is `connect`, `provision` or `content_model` and whose `.lock` is gone, instead of closing it as
+`abandoned`, and opens connect. A `.lock` left behind means a crash or another window, not a pause.
 
 `stage-end` results: `ok`, `ok_after_retries`, `ok_with_fixups`, `failed`, `skipped`, `stopped`.
-Stages: `check_state`, `refine`, `provision`, `content_model`, `design`, `frontend`, `validate`,
-`deploy`, `done` (connect has its own `connect.json`). Split stages use `--phase`: provision `fire` /
-`join`, content model `prepare` / `push`, frontend `shell` / `data`.
+Stages, in run order: `refine`, `connect`, `check_state`, `provision`, `content_model`, `design`,
+`frontend`, `validate`, `deploy`, `done`. Get ready runs before the log starts and isn't logged.
+Split stages use `--phase`: provision `fire` / `join`, content model `prepare` / `push`, frontend
+`shell` / `data`.
 
 **Forgot a `stage-start`?** Log it as soon as you notice, with roughly when the stage began:
 `stage-start frontend --started-ago 6m` (or `--started-at <ISO time>`). The same flags work on a

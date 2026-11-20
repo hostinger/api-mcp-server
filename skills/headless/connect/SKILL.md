@@ -1,11 +1,20 @@
 ---
 name: hostinger-headless-connect
-description: "Connect step for the Hostinger Headless flow — verify Node, run the bootstrap (reach the Hostinger MCP server + OAuth sign-in), then route to the matching coding-tool skill under tools/ so MCP tools and skills are available before the build steps run. Triggers: connect to Hostinger, set up the Hostinger connector, start a headless build."
+description: "Connect step for the Hostinger Headless flow, in two parts: get ready (verify Node, find or install the skill folder) before refine, then, once the brief is agreed, run the bootstrap (reach the Hostinger MCP server + OAuth sign-in) and route to the matching coding-tool skill under tools/ so the MCP tools are available before check-state. Triggers: connect to Hostinger, set up the Hostinger connector, start a headless build."
 ---
 
 # Hostinger Headless Skill — connect
 
-You are a coding agent, and this is a skill for you to execute. Follow the phases below in order.
+You are a coding agent, and this is a skill for you to execute. Follow the phases below in order,
+in two parts with refine in between:
+
+- **Get ready** (Phases 0–1) runs first in every run, before any message to the user, and touches
+  nothing on Hostinger: Node and the skill folder.
+- **Connect** (Phases 2–5) runs once `brief.md` is written: the Hostinger sign-in, the connector's
+  tools and `connect.json`, then check-state.
+
+The user talks about their site before any setup they'd have to watch (see *Start of a run* in
+`<skill>/SKILL.md`).
 
 This skill goal is to help you to connect to Hostinger via MCP. That can be done via Hostinger Connector or adding the MCP via MCP Server.
 
@@ -28,9 +37,7 @@ If that errors (Node not installed) or prints a version below 20, install or upg
 - Linux: `nvm install 22 && nvm use 22` (or your distro's Node 20+ package)
 - Windows: `winget install OpenJS.NodeJS.LTS` (or download from nodejs.org)
 
-## Phase 1 — Get the skill folder, then run its bootstrap (deterministic)
-
-### Find or install the skill folder
+## Phase 1 — Find or install the skill folder
 
 The bootstrap script and every step after connect ship in the `headless/` skill folder. Use the copy
 you already have; never fetch single files from GitHub.
@@ -70,9 +77,19 @@ The printed path is `<skill>`. Every later command uses it in full, wherever the
 directory is. A new release installs into its own folder, so a run never uses a deleted, legacy flow.
 
 Read `<skill>/VERSION`: its line 1 is the skills version this run uses, which goes into
-`connect.json` (Phase 3).
+`connect.json` (Phase 4).
 
-### Run the bootstrap
+That's get ready. Go back to *Start of a run* in `<skill>/SKILL.md`: refine runs next, and connect
+picks up at Phase 2 once `brief.md` is written.
+
+## Phase 2 — Sign in: run the bootstrap (deterministic)
+
+Start connect's stage in the run log: `node <skill>/run-log.mjs <domain> next connect` (it ends
+refine's, and does nothing when `run-start` continued a run already in connect).
+
+Phases 2–4 run without status lines. The user sees only the sign-in link when this phase needs one,
+a failure's `detail` if one stops connect, and then Phase 5's one connected line (or, instead, the
+restart request).
 
 Run the bundled script. It verifies the MCP server and handles sign-in, emitting one JSON event per line on stdout. Run it as a background/streaming process. Show the user only the sign-in URL (`awaiting_user`) or a
 failure's `detail`, and handle the other events silently (table below).
@@ -89,11 +106,11 @@ The script emits one JSON object per line:
 
 | Event | What to do                                                                                                                                                                                                                           |
 | --- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `launcher` (`command`, `args`) | How to start the MCP server: use these for every registration (Phase 2). |
+| `launcher` (`command`, `args`) | How to start the MCP server: use these for every registration (Phase 3). |
 | `mcp_ok` | MCP server reachable — continue.                                                                                                                                                                                                     |
 | `logged_in` | Already authenticated (env token or a previous sign-in) — continue.                                                                                                                                                                  |
 | `awaiting_user` (`verificationUri`) | A browser window should have opened on the user's machine. Show the URL in plain prose and wait for the user to finish signing in. The OAuth callback lands on a localhost port, so the sign-in must be completed on this same machine. |
-| `success` | Bootstrap done — continue to Phase 2. |
+| `success` | Bootstrap done — continue to Phase 3. |
 | `launcher_failed` / `mcp_unreachable` / `login_failed` (with `detail`) | Stop and show the user the `detail`. Do not improvise a parallel setup by hand. |
 
 If the environment has a `HOSTINGER_API_TOKEN` set (for example CI), the bootstrap reports `logged_in` immediately — no browser needed.
@@ -114,7 +131,7 @@ cd "$HOME" && node "$HOME/.hostinger/mcp/launch.mjs" --logout
 
 Credentials live in `~/.config/hostinger-mcp/credentials.json` (macOS/Linux) or `%APPDATA%\hostinger-mcp\credentials.json` (Windows) and are shared by every Hostinger MCP binary. OAuth works only when the tool runs the server over its default local (stdio) transport, which is what every registration below uses; `--http` needs `HOSTINGER_API_TOKEN`.
 
-## Phase 2 - Route to the specific tool instructions
+## Phase 3 - Route to the specific tool instructions
 
 **Use the Hostinger connector only through your tool's native MCP tools** (`mcp__hostinger__*`,
 `mcp__hostinger-*__*`, or however your tool names them). Never spawn the MCP server yourself and
@@ -129,7 +146,7 @@ one group says nothing about the other:
 | Group | Operations | Comes from | Needed by |
 |---|---|---|---|
 | **Hosting** | `hosting_*` (websites, deploy, build report), `wordpress_*` | `hostinger` (`<command> <launcher>`), or the scoped servers such as `hostinger-hosting` + `hostinger-wordpress` | every build |
-| **Ecommerce** | `ecommerce_*` (stores, products, shipping, payments) | **only** `hostinger-ecommerce` (`<command> <launcher> hostinger-ecommerce-mcp`), or the Ecommerce MCP in the Hostinger Connector. Neither `hostinger` nor the scoped hosting servers include it | Ecommerce backends (chosen later, in refine) |
+| **Ecommerce** | `ecommerce_*` (stores, products, shipping, payments) | **only** `hostinger-ecommerce` (`<command> <launcher> hostinger-ecommerce-mcp`), or the Ecommerce MCP in the Hostinger Connector. Neither `hostinger` nor the scoped hosting servers include it | Ecommerce backends (`brief.md` → **Suggested backend**) |
 
 Check each group on its own, right here at connect, before anything else:
 
@@ -137,11 +154,12 @@ Check each group on its own, right here at connect, before anything else:
 - **Ecommerce:** a tool from the `hostinger-ecommerce` server is in the session (Claude Code:
   `mcp__hostinger-ecommerce__*`), and its search finds `ecommerce_stores_list` (e.g. search "list stores").
 
-Only when **both** pass are the Hostinger tools "in this session". If either is missing, the tools
-are **not** in this session: follow *register, restart, resume* below for the missing server(s) now,
-even though other Hostinger tools respond. Don't wait for refine to choose a backend: the restart
-costs the least before the user has been asked anything, and finding the gap at provision forces a
-second restart in the middle of the build.
+Only when **both** pass are the Hostinger tools "in this session". If either is missing, register the
+missing server(s) now (*register, restart, resume* below), even though other Hostinger tools respond.
+Whether you then pause for a restart depends on what this build needs: the hosting group always, the
+ecommerce group only when `brief.md`'s **Suggested backend** includes Ecommerce. A missing ecommerce
+group on any other backend is registered for later sessions, and the run carries on without a
+restart. A gap found at provision would force a restart in the middle of the build.
 
 ### When the Hostinger tools aren't in this session: register, restart, resume
 
@@ -152,17 +170,20 @@ until the tool restarts. When either tool group above is missing:
    (`<command> <launcher>`) if the hosting group is missing, and `hostinger-ecommerce`
    (`<command> <launcher> hostinger-ecommerce-mcp`) if the ecommerce group is missing.
    Skip a server that is already registered under its name. When neither group is there, register
-   both: the backend isn't chosen until refine, and one restart then covers every backend.
-2. **Write `connect.json`** (Phase 3) before you stop. The skill folder from Phase 1 stays in place,
-   so the next run starts from it.
-3. **Send the first message and end your turn.** It follows *The first message* in
-   `<skill>/SKILL.md`: the sign-in link if one was needed, then one line saying Hostinger is set up
-   and asking the user to restart the tool (the route says how) and paste the same prompt again so the
-   build continues from there. This is a pause, not a run ending: no final report and no build report.
-4. **On the next run** the tools are loaded, so connect skips registration and check-state resumes the
-   domain's workspace.
+   both, whatever the brief's backend: one restart then covers every backend.
+2. **Write `connect.json`** (Phase 4) before you stop. The skill folder from Phase 1 and `brief.md`
+   stay in place, so the next run starts from them.
+3. **Pause and end your turn.** Send one line saying Hostinger is set up and the plan is saved,
+   asking the user to restart the tool (the route says how) and paste the same prompt again so the
+   build continues from there. Leave the current stage open in the run log (connect's, or provision's
+   or content model's when they pause here), and delete `~/.hostinger/<domain>/.lock`: this session
+   ends here. This is a pause, not a run ending: no final report and no build report.
+4. **On the next run** `run-start` continues this run at connect (*Start of a run* in
+   `<skill>/SKILL.md`), so the brief isn't asked again. Connect finds the tools loaded, skips
+   registration, and the run goes on to check-state, which resumes where the run paused.
 
-If a tool loads new servers without a restart (VS Code), use them right away and skip steps 3–4.
+If a tool loads new servers without a restart (VS Code), use them right away and skip steps 3–4. Skip
+them too when the only missing group is one this build doesn't need (above).
 
 **Every registration and every command that starts the MCP server goes through the launcher**
 (`~/.hostinger/mcp/launch.sh` and `launch.mjs`, which the bootstrap writes): never `npx` directly, with or without
@@ -199,13 +220,15 @@ remove it and register it again through the launcher, then follow *register, res
 If the user's tool isn't listed yet, connect it the generic way: register both Hostinger MCP servers
 in that tool's MCP config (command `<command>`, args `<launcher>` as above), then follow *register, restart, resume*.
 
+Once your tool's route has both groups in the session, come back here for Phase 4.
+
 ### The skills come from Phase 1 only
 
 The tool routes don't download the skills: Phase 1 already found or installed `<skill>`. The bundle
 ships a `<skill>/VERSION` stamp (`version=<semver>` on line 1, then `commit` and `built`); carry the
-version into `connect.json` (Phase 3) so the build report records which skills ran.
+version into `connect.json` (Phase 4) so the build report records which skills ran.
 
-## Phase 3 - Write `connect.json`
+## Phase 4 - Write `connect.json`
 
 Once the tool is connected, write `~/.hostinger/<domain>/connect.json` (create the folder if it is
 missing) in exactly this shape:
@@ -215,8 +238,8 @@ missing) in exactly this shape:
   "order_id": null, "plan": null, "connected_at": "2026-10-28T10:46:12Z" }
 ```
 
-- `tool`: the `<tool>` from the Phase 2 route (`claude-code`, `codex`, `cursor`, `vscode`,
-  `antigravity`, `devin`, or a short lowercase name for an unlisted tool), the same value later
+- `tool`: the `<tool>` from the Phase 3 route (`claude-code`, `codex`, `cursor`, `vscode`,
+  `antigravity`, `devin`, or a short lowercase name for an unlisted tool), the same value
   passed to `run-start --tool`.
 - `mcp`: one string, `hostinger-api-mcp <version>`, with the `version` from the `mcp_ok` event.
   Never an object.
@@ -228,11 +251,13 @@ missing) in exactly this shape:
 
 Extra keys are allowed, but keep these seven as above: the build report reads `tool`, `mcp` and `skills`.
 
-## Phase 4 - Continue to Headless Hosting steps
+## Phase 5 - Continue to check-state
 
-Once everything is verified and you have the Hostinger MCP Server and the skills, tell the user in
-one line that you're connected to Hostinger, as *The first message* in `<skill>/SKILL.md` describes.
-Then go back to `<skill>/SKILL.md` and continue with check-state without waiting for a reply.
+Once everything is verified and you have the Hostinger MCP Server, tell the user in one line that
+you're connected to Hostinger, with the account's plan when you know it. That line is connect's whole
+message, after the sign-in link when Phase 2 needed one: don't mention build reports, and don't
+repeat the plan. Then go back to `<skill>/SKILL.md` and continue with check-state without waiting for
+a reply. Refine already ran, so don't start the flow over.
 
 
 ## Reference Sources

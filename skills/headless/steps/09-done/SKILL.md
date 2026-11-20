@@ -24,15 +24,15 @@ Write it in this order:
    root returns 403 until the frontend is deployed").
 
 2. **Steps completed.** This table is required on every run, including early stops: never replace
-   it with prose. Give one row per stage that ran, using the stage numbers and names from the
-   orchestrator's flow table. Leave out stages that didn't run and name them in the outcome
+   it with prose. Give one row per stage that ran, in the order it ran, using the stage numbers
+   and names from the orchestrator's flow table. Leave out stages that didn't run and name them in the outcome
    paragraph instead. A finished WordPress blog build looks like this:
 
    | Stage | Result |
    |---|---|
+   | 1 refine | Personal travel blog about coastal towns in the UK; backend: WordPress; images: Hostinger AI. |
    | connect | Hostinger connector reached over MCP (`@hostinger/mcp` 1.9.2); signed in through the browser login. |
-   | 1 check state | New build for `harbourlight.blog`; no earlier workspace. |
-   | 2 refine | Personal travel blog about coastal towns in the UK; backend: WordPress. |
+   | 2 check state | New build for `harbourlight.blog`; no earlier workspace. |
    | 3 provision | Business plan, order 41875230; setup took 6 min; domain, SSL and WordPress checks passed. |
    | 4 content model | 5 pages, 8 posts, 6 categories, 1 menu, 14 images (Hostinger AI), SEO titles on every page; counts re-read from the REST API. |
    | 5 design | "Salt & Ink" direction: serif headings, sea-blue accents; `design.md` and logo icon written. |

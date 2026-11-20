@@ -60,7 +60,8 @@ OAuth can run:
 ```
 
 Cursor loads MCP servers only when the editor starts, so after Step 2 write `connect.json` and follow
-*register, restart, resume* in `connect/SKILL.md`: ask the user to fully quit and reopen Cursor
+*register, restart, resume* in `connect/SKILL.md`, which says when a restart is needed. When it is,
+ask the user to fully quit and reopen Cursor
 (and, if Cursor asks, enable the two Hostinger servers under Settings → MCP), then paste the same
 prompt. Never spawn the server yourself or write a JSON-RPC client to reach it: every connector call
 must be a native MCP tool call.
@@ -102,7 +103,5 @@ cd "$HOME" && node "$HOME/.hostinger/mcp/launch.mjs" --logout
 
 ## Step 3 — Hand off
 
-The skills are already in place: Phase 1 of `connect/SKILL.md` found the installed `<skill>`
-folder or installed it from the `@hostinger/mcp` release. Don't download them again here. Read the
-`<skill>/VERSION` stamp (record it in `connect.json`), open `<skill>/SKILL.md` and follow its
-steps. That skill owns the rest of the run.
+The skills are already in place: Phase 1 of `connect/SKILL.md` found `<skill>` and its
+`<skill>/VERSION` stamp. Go back to `connect/SKILL.md`, Phase 4.

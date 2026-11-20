@@ -27,7 +27,7 @@ Provision a **Hostinger Ecommerce** backend for `<domain>` and prove it is ready
 > (Or enable the **Ecommerce** MCP in the Hostinger Connector.) A newly added MCP server only loads
 > after a restart, so pause the run with *register, restart, resume* from `connect/SKILL.md`: save
 > state, ask the user to restart the tool and paste the same prompt, and end your turn. Check-state then
-> resumes at provision. Never spawn the server yourself or write a JSON-RPC client to reach it.
+> resumes at the stage that paused. Never spawn the server yourself or write a JSON-RPC client to reach it.
 >
 > Verify the tools work in-session with a search — e.g. "list stores" →
 > `ecommerce_stores_list` — before proceeding.
