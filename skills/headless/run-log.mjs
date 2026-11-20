@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Hostinger Headless run log: records a build as it happens and writes reports/<run>.json + .html.
 //
-//   node run-log.mjs <domain> run-start [--kind build|resume|redesign|iterate] [--tool <tool>] [--model <model>] [--skill <version>]
+//   node run-log.mjs <domain> run-start [--kind build|resume|redesign|iterate] [--tool <tool>] [--model <model>] [--skill <version>] [--take-over]
 //   node run-log.mjs <domain> run-update [--kind …] [--model …] [--skill …]
 //   node run-log.mjs <domain> run-resume [--reason "<text>"]
 //   node run-log.mjs <domain> stage-start <stage> [--phase <phase>] [--started-ago 6m | --started-at <ISO time>]
@@ -9,14 +9,16 @@
 //   node run-log.mjs <domain> next <stage> [--phase <phase>]
 //   node run-log.mjs <domain> stage-fix <stage> [--phase <phase>] (--started-ago 6m | --started-at <ISO time>)
 //   node run-log.mjs <domain> event <issue|feedback|skill_gap|good> '<json>'
+//   node run-log.mjs <domain> pause
 //   node run-log.mjs <domain> report [--outcome live|stopped|failed|abandoned] [--tokens '<json>']
 //   node run-log.mjs <domain> unsent
 //   node run-log.mjs <domain> report-sent [<run>]
 //   node run-log.mjs <domain> report-rejected [<run>]
 
-import { appendFileSync, copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { appendFileSync, copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { homedir, hostname } from 'node:os';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const STAGES = ['refine', 'connect', 'check_state', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy', 'done'];
@@ -88,7 +90,152 @@ function workspace(domain, { create = false } = {}) {
     logPath: join(dir, 'run-log.json'),
     eventsPath: join(dir, 'events.jsonl'),
     reportsDir: join(dir, 'reports'),
+    lockPath: join(dir, '.lock'),
   };
+}
+
+// One session at a time builds a domain, and .lock names it. The holder is the agent process (Claude
+// Code, Codex, claude -p): each command runs in a short-lived shell under it, so the nearest ancestor
+// that isn't a shell or a wrapper lives as long as the session and no longer.
+// Linux ps cuts a name to 15 characters, so each wrapper also matches its cut form.
+const WRAPPERS = new Set(['sh', 'bash', 'zsh', 'dash', 'fish', 'pwsh', 'powershell', 'cmd', 'sandbox-exec', 'bwrap', 'codex-linux-sandbox', 'env', 'timeout', 'caffeinate']
+  .flatMap((name) => [name, name.slice(0, 15)]));
+// A lock whose holder can't be checked (another host, no process list, the old timestamp-only lock)
+// counts as live while it was refreshed this recently.
+const LOCK_FRESH_MS = 30 * 60 * 1000;
+
+const processName = (name) => basename(name.replace(/\\/g, '/')).replace(/^-/, '').replace(/\.exe$/i, '').toLowerCase();
+
+// pid -> { ppid, started, name }; null when the process list can't be read. The start time tells a
+// reused PID from the process that held the lock.
+function processTable() {
+  const windows = process.platform === 'win32';
+  const r = windows
+    ? spawnSync('powershell', ['-NoProfile', '-NonInteractive', '-Command',
+      'Get-CimInstance Win32_Process | ForEach-Object { "$($_.ProcessId)`t$($_.ParentProcessId)`t$(if ($_.CreationDate) { $_.CreationDate.ToUniversalTime().ToString(\'o\') })`t$($_.Name)" }'], { encoding: 'utf8' })
+    : spawnSync('ps', ['-A', '-o', 'pid=,ppid=,lstart=,comm='], { encoding: 'utf8', env: { ...process.env, LC_ALL: 'C', TZ: 'UTC' } });
+  if (r.status !== 0 || !r.stdout) return null;
+  const table = new Map();
+  for (const line of r.stdout.split(/\r?\n/)) {
+    const m = windows ? line.match(/^(\d+)\t(\d+)\t([^\t]*)\t(.*)$/) : line.trim().match(/^(\d+)\s+(\d+)\s+(\w+\s+\w+\s+\d+\s+[\d:]+\s+\d+)\s+(.*)$/);
+    if (m) table.set(Number(m[1]), { ppid: Number(m[2]), started: m[3].replace(/\s+/g, ' ') || null, name: m[4] });
+  }
+  return table.size ? table : null;
+}
+
+function currentHolder(table) {
+  let pid = process.ppid;
+  while (table?.has(pid) && WRAPPERS.has(processName(table.get(pid).name))) pid = table.get(pid).ppid;
+  const proc = table?.get(pid);
+  return { host: hostname(), pid, started: proc?.started ?? null, process: proc ? processName(proc.name) : null };
+}
+
+// The old timestamp-only lock, or one another session is still writing, has no holder: only a time.
+function readLock(ws) {
+  let text;
+  let mtime;
+  try {
+    text = readFileSync(ws.lockPath, 'utf8');
+    mtime = statSync(ws.lockPath).mtimeMs;
+  } catch {
+    return null;
+  }
+  try {
+    const lock = JSON.parse(text);
+    if (lock && typeof lock === 'object' && Number.isInteger(lock.pid)) return lock;
+  } catch {}
+  const stamped = Date.parse(text.trim());
+  const refreshed = new Date(Number.isNaN(stamped) ? mtime : stamped).toISOString();
+  return { host: null, pid: null, started: null, process: null, tool: null, acquired_at: refreshed, refreshed_at: refreshed };
+}
+
+const byRecency = (lock) => (Date.now() - Date.parse(lock.refreshed_at) < LOCK_FRESH_MS ? 'live' : 'dead');
+
+// own, live or dead; unverified when there is no process list (a sandbox that blocks ps), where the
+// holder found is the command's own shell and this session can't be told from another on this host.
+function lockStatus(lock, me, table) {
+  if (lock.host !== me.host) return byRecency(lock);
+  if (!table) return 'unverified';
+  if (lock.pid === me.pid && lock.started === me.started) return 'own';
+  if (lock.started) return table.get(lock.pid)?.started === lock.started ? 'live' : 'dead';
+  return byRecency(lock);
+}
+
+// Replacing the lock goes through a rename, so a reader never sees half of it.
+function writeLock(ws, lock) {
+  const tmp = `${ws.lockPath}.${process.pid}.tmp`;
+  writeJson(tmp, lock);
+  renameSync(tmp, ws.lockPath);
+}
+
+// Of two sessions creating a missing lock at once, exactly one succeeds.
+function createLock(ws, lock) {
+  try {
+    writeFileSync(ws.lockPath, `${JSON.stringify(lock, null, 2)}\n`, { flag: 'wx' });
+    return true;
+  } catch (error) {
+    if (error.code === 'EEXIST') return false;
+    throw error;
+  }
+}
+
+// Reads the run log without migrating it: a refused session writes nothing.
+function holderStage(ws) {
+  try {
+    const log = readJson(ws.logPath, {});
+    const open = openStages(log, log.run?.id).at(-1);
+    return { tool: log.run?.tool ?? null, stage: open ? stageLabel(open) : null };
+  } catch {
+    return { tool: null, stage: null };
+  }
+}
+
+function refuse(ws, lock, { offerTakeOver }) {
+  const { tool, stage } = holderStage(ws);
+  const who = [
+    lock.tool ?? tool ?? lock.process,
+    lock.pid === null ? null : lock.host === hostname() ? `pid ${lock.pid}` : `on ${lock.host}`,
+    `since ${lock.acquired_at}`,
+    stage && `in ${stage}`,
+  ].filter(Boolean).join(', ');
+  const takeOver = offerTakeOver ? '. Only if the user says to take over, run run-start --take-over: the other session stops at its next step' : '';
+  fail(`another session (${who}) is building ${ws.domain}; stop and tell the user${takeOver}`);
+}
+
+// Checks the lock before a command writes anything: another live session's lock refuses it, and this
+// session's own lock is refreshed. `take` also takes a missing lock or one whose holder is gone.
+// `start` (run-start) does too, offers a takeover when refused, and with `takeOver` takes a live lock.
+// wasFree: no lock existed.
+function claimLock(ws, { take = false, start = false, takeOver = false, tool = null }) {
+  const table = processTable();
+  const me = currentHolder(table);
+  const record = () => ({ ...me, tool, acquired_at: now(), refreshed_at: now() });
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const lock = readLock(ws);
+    if (!lock) {
+      if (!take) return { lock: null, wasFree: true };
+      const fresh = record();
+      if (createLock(ws, fresh)) return { lock: fresh, wasFree: true };
+      continue;
+    }
+    // An unverified lock: run-start judges it by recency, and a later command trusts that run-start
+    // settled it rather than refuse its own session.
+    const verdict = lockStatus(lock, me, table);
+    const status = verdict === 'unverified' ? (start ? byRecency(lock) : 'own') : verdict;
+    if (status === 'own') {
+      const refreshed = { ...lock, tool: tool ?? lock.tool, refreshed_at: now() };
+      writeLock(ws, refreshed);
+      return { lock: refreshed, wasFree: false };
+    }
+    if (status === 'live' && !takeOver) refuse(ws, lock, { offerTakeOver: start });
+    if (!take) return { lock: null, wasFree: false };
+    // Two sessions taking over the same dead lock at once both rename theirs in; the one that lost
+    // is refused at its next command.
+    const taken = record();
+    writeLock(ws, taken);
+    return { lock: taken, wasFree: false };
+  }
+  fail(`${ws.lockPath} keeps appearing and disappearing; another session is starting on ${ws.domain}. Stop and tell the user`);
 }
 
 // state.json belongs to the agent, which may rewrite it whole or leave it half-written, so the run
@@ -119,6 +266,14 @@ function migrate(ws) {
   writeJson(ws.statePath, state);
 }
 
+const openStages = (log, runId) => (log.history ?? []).filter((h) => h.run === runId && !h.ended_at);
+const stageLabel = (h) => `${h.stage}${h.phase ? `/${h.phase}` : ''}`;
+// A run pauses for a tool restart with exactly one stage open, one that can stop for a restart.
+function pausableStage(log) {
+  const open = openStages(log, log.run?.id);
+  return open.length === 1 && RESTART_STAGES.includes(open[0].stage) ? open[0] : null;
+}
+
 function currentRun(log) {
   if (!log.run?.id) fail('no run started; call run-start first (the start of every run does this)');
   return log.run;
@@ -141,23 +296,21 @@ function readConnect(ws) {
   return { tool: typeof connect.tool === 'string' ? connect.tool : null, mcp: version, skills: typeof connect.skills === 'string' ? connect.skills : null };
 }
 
-function runStart(ws, flags) {
+function runStart(ws, flags, lockWasFree) {
   const log = loadLog(ws);
   // A run left open in a restart stage goes on in the new session, at connect, instead of being
   // abandoned. The paused stage ends at its last logged activity, so the restart wait isn't counted.
-  // A clean pause deletes .lock, so one still there means a crash or another window: not a pause.
+  // A run paused by older skill text has no paused_at; it deleted .lock instead.
   const history = (log.history ?? []).filter((h) => h.run === log.run?.id);
-  const open = history.filter((h) => !h.ended_at);
-  const pausedCleanly = !existsSync(join(ws.dir, '.lock'));
-  if (log.run?.id && !log.run.reported_at && pausedCleanly && open.length === 1 && RESTART_STAGES.includes(open[0].stage)) {
-    const [paused] = open;
+  const paused = pausableStage(log);
+  if (log.run?.id && !log.run.reported_at && paused && (log.run.paused_at || lockWasFree)) {
+    delete log.run.paused_at;
     for (const key of ['model', 'skill']) if (typeof flags[key] === 'string') log.run[key] = flags[key];
     const events = readEvents(ws).filter((e) => e.run === log.run.id);
     Object.assign(paused, { ended_at: lastActivity(log.run, history, events), result: 'ok', note: paused.note ? `${paused.note}; ${PAUSE_NOTE}` : PAUSE_NOTE });
     log.history.push({ run: log.run.id, stage: 'connect', phase: null, started_at: now(), ended_at: null, result: null, note: 'continued after a tool restart' });
     saveLog(ws, log);
-    const where = `${paused.stage}${paused.phase ? `/${paused.phase}` : ''}`;
-    console.log(`run ${log.run.id} continued after a tool restart in ${where}; next: connect`);
+    console.log(`run ${log.run.id} continued after a tool restart in ${stageLabel(paused)}; next: connect`);
     return;
   }
   // A previous run that never reached its report (closed window, crash) is closed out first, so
@@ -220,6 +373,18 @@ function runResume(ws, flags) {
   delete run.reported_at;
   saveLog(ws, log);
   console.log(`run ${run.id} resumed (follow-up ${run.follow_ups.length})`);
+}
+
+// A tool-restart pause leaves its stage open, and the dispatch releases the lock, so the next
+// session's run-start continues the run at connect instead of closing it as abandoned.
+function pause(ws) {
+  const log = loadLog(ws);
+  const run = currentRun(log);
+  const paused = pausableStage(log);
+  if (!paused) fail(`a restart pause needs exactly one open stage, one of ${RESTART_STAGES.join(', ')}; open now: ${openStages(log, run.id).map(stageLabel).join(', ') || 'none'}`);
+  run.paused_at = now();
+  saveLog(ws, log);
+  console.log(`run ${run.id} paused in ${stageLabel(paused)}; the next session's run-start continues it at connect`);
 }
 
 function stageStart(ws, [stage], flags) {
@@ -688,60 +853,55 @@ document.querySelectorAll('.bar').forEach((el) => {
 `;
 }
 
+function report(ws, flags) {
+  let tokens;
+  if (typeof flags.tokens === 'string') {
+    try {
+      tokens = JSON.parse(flags.tokens);
+    } catch {
+      fail('--tokens must be JSON, e.g. \'{"input":0,"output":0,"source":"…"}\'');
+    }
+    // null and {} can't be sent; treat them as not reported.
+    if (tokens === null || (typeof tokens === 'object' && !Array.isArray(tokens) && !Object.keys(tokens).length)) tokens = undefined;
+    else validate(tokens, { ...reportSchema()?.properties?.tokens, type: 'object' }, '--tokens');
+  }
+  console.log(`report written: ${buildReport(ws, { outcome: flags.outcome, tokens })}`);
+  const { id, file } = reportFile(ws);
+  console.log(`send it: pass ${file} unchanged to hosting_headless_submit-build-report, then run report-sent ${id} (or report-rejected ${id} on a 422)`);
+}
+
+// What each command does with the domain's lock: check it (refuse if another live session holds it,
+// refresh it if this one does), take it, start (take it, or take it over when asked), release it
+// after the command, or leave it alone.
+const COMMANDS = {
+  'run-start': { lock: 'start', run: (ws, rest, flags, claim) => runStart(ws, flags, claim.wasFree) },
+  'run-update': { lock: 'check', run: (ws, rest, flags) => runUpdate(ws, flags) },
+  'run-resume': { lock: 'take', run: (ws, rest, flags) => runResume(ws, flags) },
+  'stage-start': { lock: 'check', run: stageStart },
+  'stage-end': { lock: 'check', run: stageEnd },
+  next: { lock: 'check', run: next },
+  'stage-fix': { lock: 'check', run: stageFix },
+  event: { lock: 'check', run: (ws, rest) => event(ws, rest) },
+  pause: { lock: 'release', run: (ws) => pause(ws) },
+  report: { lock: 'release', run: (ws, rest, flags) => report(ws, flags) },
+  unsent: { lock: 'none', run: (ws) => unsent(ws) },
+  'report-sent': { lock: 'check', run: (ws, rest) => reportSent(ws, rest) },
+  'report-rejected': { lock: 'check', run: (ws, rest) => reportRejected(ws, rest) },
+};
+
 const { positional, flags } = parseArgs(process.argv.slice(2));
 const [domain, command, ...rest] = positional;
-const ws = workspace(domain, { create: command === 'run-start' });
-switch (command) {
-  case 'run-start':
-    runStart(ws, flags);
-    break;
-  case 'run-update':
-    runUpdate(ws, flags);
-    break;
-  case 'run-resume':
-    runResume(ws, flags);
-    break;
-  case 'stage-start':
-    stageStart(ws, rest, flags);
-    break;
-  case 'stage-end':
-    stageEnd(ws, rest, flags);
-    break;
-  case 'next':
-    next(ws, rest, flags);
-    break;
-  case 'stage-fix':
-    stageFix(ws, rest, flags);
-    break;
-  case 'event':
-    event(ws, rest);
-    break;
-  case 'report': {
-    let tokens;
-    if (typeof flags.tokens === 'string') {
-      try {
-        tokens = JSON.parse(flags.tokens);
-      } catch {
-        fail('--tokens must be JSON, e.g. \'{"input":0,"output":0,"source":"…"}\'');
-      }
-      // null and {} can't be sent; treat them as not reported.
-      if (tokens === null || (typeof tokens === 'object' && !Array.isArray(tokens) && !Object.keys(tokens).length)) tokens = undefined;
-      else validate(tokens, { ...reportSchema()?.properties?.tokens, type: 'object' }, '--tokens');
-    }
-    console.log(`report written: ${buildReport(ws, { outcome: flags.outcome, tokens })}`);
-    const { id, file } = reportFile(ws);
-    console.log(`send it: pass ${file} unchanged to hosting_headless_submit-build-report, then run report-sent ${id} (or report-rejected ${id} on a 422)`);
-    break;
-  }
-  case 'unsent':
-    unsent(ws);
-    break;
-  case 'report-sent':
-    reportSent(ws, rest);
-    break;
-  case 'report-rejected':
-    reportRejected(ws, rest);
-    break;
-  default:
-    fail('command must be run-start, run-update, run-resume, stage-start, stage-end, next, stage-fix, event, report, unsent, report-sent or report-rejected');
-}
+const spec = COMMANDS[command];
+const names = Object.keys(COMMANDS);
+if (!spec) fail(`command must be ${names.slice(0, -1).join(', ')} or ${names.at(-1)}`);
+const ws = workspace(domain, { create: spec.lock === 'start' });
+const start = spec.lock === 'start';
+const claim = spec.lock === 'none' ? null : claimLock(ws, {
+  take: start || spec.lock === 'take',
+  start,
+  takeOver: start && flags['take-over'] === true,
+  tool: start && typeof flags.tool === 'string' ? flags.tool : null,
+});
+spec.run(ws, rest, flags, claim);
+// A command that fails exits before this, so a refused pause or report keeps the lock.
+if (spec.lock === 'release' && claim.lock) rmSync(ws.lockPath, { force: true });

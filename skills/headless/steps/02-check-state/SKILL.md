@@ -39,7 +39,8 @@ try each. Don't ask first and say nothing about it to the user. Don't let a fail
 
 ## Step 1 — Is a build actively running right now? (check this before anything else)
 
-Keep two things separate, and **never guess from a timestamp.**
+Another session building this domain was already ruled out: `run-start` holds the domain's lock for
+this session. What's left is the platform, and **never guess from a timestamp.**
 
 - **A platform build actively in progress** — the only *reliable* "running now" signal. Check
   `hosting_websites_list-setups { "domain": "<domain>" }` and exact-match the domain row:
@@ -54,16 +55,6 @@ Keep two things separate, and **never guess from a timestamp.**
 
   This check **is** the source of truth for `provision.status`: a stored `in_progress`/`completed` in
   `state.json` is only a hint until this reconciles it.
-
-- **A `.lock`** — `~/.hostinger/<domain>/.lock`. It only tells you *a previous run
-  touched this domain*. **Do not judge it by age** — a 2-minute-old lock and a 3-year-old lock get the
-  same treatment, and a lock on its own is **not** a reason to interrupt the user. Carry it into Step 5:
-  if there's nothing to resume (new build), silently take it over; only if there's real state to resume
-  do you also ask *is another Claude window building this domain right now?* (yes → stop; no → take
-  over).
-
-Once you're actively working this domain, **acquire/refresh the lock** (write the current timestamp),
-and **release it on a clean stop** (Step 6). The lock marks an active session, nothing more.
 
 ---
 
@@ -144,20 +135,19 @@ artifacts** (`site.json`, `design.md`, `content-model.md`, `src/`, …).
 ## Step 5 — Guide the user
 
 The question to ask depends on whether there is actually **something to resume** — i.e. **build
-artifacts** beyond a brief only, or a **live site** for this domain. A stray `.lock`, connect's files or a brief only are *not*
+artifacts** beyond a brief only, or a **live site** for this domain. Connect's files or a brief only are *not*
 something to resume.
 
 - **A run paused in provision or content model for a tool restart** (`run-start` printed "continued
   after a tool restart in <stage>/<phase>") → resume at that stage and phase without asking: the user only
-  restarted their tool (`run-start` continues a run only when the pause deleted its `.lock`, so Step 1
-  finds none). What Steps 1–3 found still corrects the stage. A run paused in connect has nothing to resume yet: the cases below apply.
+  restarted their tool (`run-start` continues a run only after a clean `pause`). What Steps 1–3
+  found still corrects the stage. A run paused in connect has nothing to resume yet: the cases below apply.
 - **New build** (brief only, and either the domain is free **or** it holds only an empty headless
   shell or a PocketBase site from onboarding) → just proceed to provision. **Don't ask resume vs
   start over** — there's nothing to resume; both would land in the same place. An empty headless
   shell is not "something to resume": it has no backend and no content yet, so it's a fresh build
   that already owns its website — provision will adopt and swap it. Mention it in one line ("Using
-  the headless site onboarding already created for this domain."). If a leftover `.lock` is lying
-  around, silently take it over and continue (optionally mention it in one line).
+  the headless site onboarding already created for this domain.").
 - **The brief named another backend than the site fixes** (Step 3) → send the run back to refine
   with that backend fixed (`next refine`; refine Step 1, *A fixed backend*). Refine re-confirms the
   plan with the user in one message and writes the brief, then the run returns here and lands in
@@ -169,8 +159,7 @@ something to resume.
   installed** — WordPress at `/cms`, a store, a PocketBase backend with build artifacts, or a deployed app) → tell the user plainly what's there
   and **ask them to choose**, regardless of how old it is (don't guess from timestamps):
 
-- **Resume** — pick up at the computed stage. (If a `.lock` is present in this case, also confirm no
-  other window is actively building this domain right now.)
+- **Resume** — pick up at the computed stage.
 - **Start over / redo a step** — only safe **before anything is provisioned**. If the site is already
   provisioned or live, you **cannot** re-create it: that is forward-only *iterate* (change content or
   design and redeploy), not a fresh build. Never re-provision or overwrite a live site; if the user
@@ -191,12 +180,6 @@ Write `~/.hostinger/<domain>/state.json` with the agreed next `stage` and a fres
 route isn't a new build, record it with `run-log.mjs <domain> run-update --kind resume` (or
 `redesign` / `iterate`) and end the stage with the route as its note, in one shell command:
 `… run-update --kind resume && … stage-end check_state ok --note "<the route>"`.
-Then:
-
-- **Handing straight to the next stage in this same session?** Keep the `.lock` (you are still
-  actively running) and continue.
-- **Stopping and returning control to the user?** (e.g. the next stage isn't built yet; waiting for
-  an answer is not a stop.) **Delete the `.lock`** — the session is no longer active, and a leftover lock just
-  forces an unnecessary "is another window running?" question on the next run. Always release the lock
-  on a clean stop; it exists only to mark an actively-running session. A stop is still the end of a
-  run: give the final report and save the build report (`09-done`).
+Then hand straight to the next stage. If the run stops here instead (waiting for an answer is not a
+stop), that is still the end of a run: give the final report and save the build report (`09-done`),
+whose `report` releases the domain.

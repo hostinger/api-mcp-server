@@ -81,6 +81,16 @@ Every run starts the same way:
    paused cleanly for a tool restart (*register, restart, resume* in `connect/SKILL.md`, from connect,
    provision or content model). Don't ask the brief again then: it's agreed, and check-state resumes
    where the run paused.
+
+   `run-start` also takes the domain's lock, so only one session builds a domain at a time. A
+   session that crashed or was closed doesn't block it. If `run-start` fails with "another session
+   (…) is building <domain>":
+   1. Stop: no refine, no files, and no final report, since this session started no run.
+   2. Tell the user plainly which tool is building this domain, since when and in which stage (the
+      message names all three), and that if they tell you to take over, you will, and the other
+      session stops at its next step.
+   3. Only if the user says so, run `run-start` again with `--take-over` and the same flags. With no
+      one to ask (`claude -p` or another unattended run), just stop and say why.
 3. **Refine**, then **connect** (`connect/SKILL.md`, Phase 2 onward), then **check-state**, then the
    rest of the table. When a later stage sends the run back to refine (check-state or provision), the
    connector is already in this session: refine returns to the stage that sent it.
@@ -94,8 +104,8 @@ work on Hostinger begins. Refinement before provisioning, because the backend ca
 the brief exists. Validation before deploy, always — nothing reaches the live domain unseen.
 
 **One concurrency rule:** two *independent* stages in a single session may run at once, but never
-two writers of the same artifact, and never two agents/windows on the same domain — the `.lock`
-(check-state, Step 1) guards that. Parallelism is always *optional*: an agent that can't interleave work runs the
+two writers of the same artifact, and never two agents/windows on the same domain — `run-start`'s
+lock guards that (*Start of a run*). Parallelism is always *optional*: an agent that can't interleave work runs the
 steps serially and is still correct (see *Content and design at the same time*).
 
 Steps can generate **State files** those files are only hints; the truth is what the Hostinger connector reports, so
@@ -329,12 +339,14 @@ in. Write it out in full each time (a shell variable holding the command breaks 
 
 ```bash
 node <skill>/run-log.mjs <domain> run-start --tool <tool> --model <model> --skill <skill version>  # start of the run; prints the stage to run next
+node <skill>/run-log.mjs <domain> run-start --take-over --tool <tool> --model <model> --skill <skill version>  # only after the user says to take over (Start of a run)
 node <skill>/run-log.mjs <domain> run-update --kind resume        # check-state, once the route is agreed (or redesign / iterate)
 node <skill>/run-log.mjs <domain> next frontend                  # at a stage boundary: ends the open stage as ok, starts this one
 node <skill>/run-log.mjs <domain> next frontend --phase shell     # split stages log each phase
 node <skill>/run-log.mjs <domain> stage-end frontend ok_after_retries --note "second framework tried"   # any other result, or a note
 node <skill>/run-log.mjs <domain> stage-start frontend            # start without ending anything
 node <skill>/run-log.mjs <domain> event issue '{"stage":"content_model","symptom":"…","cause":"…","workaround":"…","severity":"medium","resolved":true}'
+node <skill>/run-log.mjs <domain> pause                           # stopping for a tool restart (below)
 node <skill>/run-log.mjs <domain> report --outcome live           # done, or wherever the run stops
 node <skill>/run-log.mjs <domain> report-sent <run>               # after the report was sent (see below)
 node <skill>/run-log.mjs <domain> report-rejected <run>           # the send returned 422
@@ -364,10 +376,15 @@ rewrites the same `reports/<run>.json` and `.html`, so you get one report that i
 not a second report that replaces `report.html`. Use `run-start` only in a new session, at the start
 of the run (*Start of a run*).
 
+**The run log owns the domain's lock.** Never create or delete `~/.hostinger/<domain>/.lock`
+yourself. When a command after `run-start` fails with "another session … is building <domain>; stop
+and tell the user", the user moved the build to another session: stop at once, write nothing more,
+and tell them so.
+
 **A restart pause continues the run.** When a stage stops for the user to restart their tool, leave
-its stage open and delete the `.lock`: the next session's `run-start` continues a run whose only open
-stage is `connect`, `provision` or `content_model` and whose `.lock` is gone, instead of closing it as
-`abandoned`, and opens connect. A `.lock` left behind means a crash or another window, not a pause.
+its stage open and run `pause`: the next session's `run-start` continues a run whose only open stage
+is `connect`, `provision` or `content_model` and that paused, instead of closing it as `abandoned`,
+and opens connect. A run whose session crashed or was taken over is closed as `abandoned`.
 
 `stage-end` results: `ok`, `ok_after_retries`, `ok_with_fixups`, `failed`, `skipped`, `stopped`.
 Stages, in run order: `refine`, `connect`, `check_state`, `provision`, `content_model`, `design`,

@@ -176,8 +176,9 @@ until the tool restarts. When either tool group above is missing:
 3. **Pause and end your turn.** Send one line saying Hostinger is set up and the plan is saved,
    asking the user to restart the tool (the route says how) and paste the same prompt again so the
    build continues from there. Leave the current stage open in the run log (connect's, or provision's
-   or content model's when they pause here), and delete `~/.hostinger/<domain>/.lock`: this session
-   ends here. This is a pause, not a run ending: no final report and no build report.
+   or content model's when they pause here), and run
+   `node <skill>/run-log.mjs <domain> pause`, which releases the domain for the next session: this
+   session ends here. This is a pause, not a run ending: no final report and no build report.
 4. **On the next run** `run-start` continues this run at connect (*Start of a run* in
    `<skill>/SKILL.md`), so the brief isn't asked again. Connect finds the tools loaded, skips
    registration, and the run goes on to check-state, which resumes where the run paused.
