@@ -9812,29 +9812,6 @@ Use this endpoint to create automation scripts for VPS setup tasks.
   };
 
   /**
-   * Deprecated: use `POST /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.
-
-Attach existing public keys from your account to a specified virtual machine.
-
-Multiple keys can be attached to a single virtual machine.
-
-Use this endpoint to enable SSH key authentication for VPS instances.
-   */
-  "vps_public-keys_attach": {
-    params: {
-      /**
-       * Virtual Machine ID
-       */
-      virtualMachineId: number;
-      /**
-       * Public Key IDs to attach
-       */
-      ids: array;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
    * Deprecated: account-level public keys have no direct replacement. Root SSH keys are now managed per
 virtual machine via `DELETE /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys`.
 
@@ -10012,27 +9989,6 @@ each action, such as the action name, timestamp, and status.
 Use this endpoint to view VPS operation history and troubleshoot issues.
    */
   "vps_actions_list": {
-    params: {
-      /**
-       * Virtual Machine ID
-       */
-      virtualMachineId: number;
-      /**
-       * Page number
-       */
-      page?: number;
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
-   * Deprecated: use `GET /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.
-
-Retrieve public keys attached to a specified virtual machine.
-
-Use this endpoint to view SSH keys configured for specific VPS instances.
-   */
-  "vps_virtual-machines_attached-public-keys": {
     params: {
       /**
        * Virtual Machine ID

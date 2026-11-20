@@ -17416,48 +17416,6 @@ const tools: OpenApiTool[] = [
     ]
   },
   {
-    "name": "vps_public-keys_attach",
-    "title": "Attach public key",
-    "annotations": {
-      "title": "Attach public key",
-      "readOnlyHint": false,
-      "destructiveHint": false
-    },
-    "description": "Deprecated: use `POST /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.\n\nAttach existing public keys from your account to a specified virtual machine.\n\nMultiple keys can be attached to a single virtual machine.\n\nUse this endpoint to enable SSH key authentication for VPS instances.",
-    "method": "POST",
-    "path": "/api/vps/v1/public-keys/attach/{virtualMachineId}",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "virtualMachineId": {
-          "type": "integer",
-          "description": "Virtual Machine ID"
-        },
-        "ids": {
-          "type": "array",
-          "description": "Public Key IDs to attach",
-          "items": {
-            "type": "integer",
-            "description": "ids parameter"
-          }
-        }
-      },
-      "required": [
-        "virtualMachineId",
-        "ids"
-      ]
-    },
-    "security": [
-      {
-        "apiToken": []
-      }
-    ],
-    "group": "vps",
-    "bodyParameters": [
-      "ids"
-    ]
-  },
-  {
     "name": "vps_public-keys_delete",
     "title": "Delete public key",
     "annotations": {
@@ -17769,40 +17727,6 @@ const tools: OpenApiTool[] = [
     "description": "Retrieve actions performed on a specified virtual machine.\n\nActions are operations or events that have been executed on the virtual\nmachine, such as starting, stopping, or modifying the machine. This endpoint\nallows you to view the history of these actions, providing details about\neach action, such as the action name, timestamp, and status.\n\nUse this endpoint to view VPS operation history and troubleshoot issues.",
     "method": "GET",
     "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/actions",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "virtualMachineId": {
-          "type": "integer",
-          "description": "Virtual Machine ID"
-        },
-        "page": {
-          "type": "integer",
-          "description": "Page number"
-        }
-      },
-      "required": [
-        "virtualMachineId"
-      ]
-    },
-    "security": [
-      {
-        "apiToken": []
-      }
-    ],
-    "group": "vps"
-  },
-  {
-    "name": "vps_virtual-machines_attached-public-keys",
-    "title": "Get attached public keys",
-    "annotations": {
-      "title": "Get attached public keys",
-      "readOnlyHint": true,
-      "destructiveHint": false
-    },
-    "description": "Deprecated: use `GET /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.\n\nRetrieve public keys attached to a specified virtual machine.\n\nUse this endpoint to view SSH keys configured for specific VPS instances.",
-    "method": "GET",
-    "path": "/api/vps/v1/virtual-machines/{virtualMachineId}/public-keys",
     "inputSchema": {
       "type": "object",
       "properties": {

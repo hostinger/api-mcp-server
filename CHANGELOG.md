@@ -4,6 +4,19 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.14.2 — 2026-11-20
+
+### Operations
+
+- Removed `vps_public-keys_attach`
+- Removed `vps_virtual-machines_attached-public-keys`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v4.14.1 — 2026-11-20
 
 ### Operations

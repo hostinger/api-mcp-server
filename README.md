@@ -78,7 +78,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (425 total)
+- `hostinger-api-mcp` — unified server over every operation (423 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
@@ -90,7 +90,7 @@ This package installs the following MCP server commands:
 - `hostinger-hosting-mcp` — 59 operations for hosting
 - `hostinger-mail-mcp` — 39 operations for mail
 - `hostinger-reach-mcp` — 73 operations for reach
-- `hostinger-vps-mcp` — 68 operations for vps
+- `hostinger-vps-mcp` — 66 operations for vps
 - `hostinger-wordpress-mcp` — 41 operations for wordpress
 
 Every binary exposes the same three tools; a scoped binary only searches and executes its own group's operations. `hostinger-api-mcp` remains the backwards-compatible default.
@@ -4444,19 +4444,6 @@ Use this endpoint to create automation scripts for VPS setup tasks.
 - **Method**: `POST`
 - **Path**: `/api/vps/v1/post-install-scripts`
 
-#### vps_public-keys_attach
-
-Deprecated: use `POST /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.
-
-Attach existing public keys from your account to a specified virtual machine.
-
-Multiple keys can be attached to a single virtual machine.
-
-Use this endpoint to enable SSH key authentication for VPS instances.
-
-- **Method**: `POST`
-- **Path**: `/api/vps/v1/public-keys/attach/{virtualMachineId}`
-
 #### vps_public-keys_delete
 
 Deprecated: account-level public keys have no direct replacement. Root SSH keys are now managed per
@@ -4570,17 +4557,6 @@ Use this endpoint to view VPS operation history and troubleshoot issues.
 
 - **Method**: `GET`
 - **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/actions`
-
-#### vps_virtual-machines_attached-public-keys
-
-Deprecated: use `GET /api/vps/v1/virtual-machines/{virtualMachineId}/ssh-keys` instead.
-
-Retrieve public keys attached to a specified virtual machine.
-
-Use this endpoint to view SSH keys configured for specific VPS instances.
-
-- **Method**: `GET`
-- **Path**: `/api/vps/v1/virtual-machines/{virtualMachineId}/public-keys`
 
 #### vps_backups_list
 
