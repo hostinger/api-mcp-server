@@ -1634,5 +1634,106 @@ export default [
       "inventory_quantity",
       "manage_inventory"
     ]
+  },
+  {
+    "name": "ecommerce_webhooks_get",
+    "title": "Get an ecommerce webhook",
+    "annotations": {
+      "title": "Get an ecommerce webhook",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Get a subscription owned by your store, without signing secrets.",
+    "method": "GET",
+    "path": "/api/ecommerce/v1/stores/{store_id}/webhooks/{endpoint_id}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "store_id": {
+          "type": "string",
+          "description": "ID of the store owned by your account."
+        },
+        "endpoint_id": {
+          "type": "string",
+          "description": "Webhook endpoint ID belonging to this store."
+        }
+      },
+      "required": [
+        "store_id",
+        "endpoint_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
+  },
+  {
+    "name": "ecommerce_webhooks_delete",
+    "title": "Delete an ecommerce webhook",
+    "annotations": {
+      "title": "Delete an ecommerce webhook",
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true
+    },
+    "description": "Delete a subscription owned by your store, retaining delivery audit records.",
+    "method": "DELETE",
+    "path": "/api/ecommerce/v1/stores/{store_id}/webhooks/{endpoint_id}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "store_id": {
+          "type": "string",
+          "description": "ID of the store owned by your account."
+        },
+        "endpoint_id": {
+          "type": "string",
+          "description": "Webhook endpoint ID belonging to this store."
+        }
+      },
+      "required": [
+        "store_id",
+        "endpoint_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
+  },
+  {
+    "name": "ecommerce_webhooks_list",
+    "title": "List ecommerce webhooks",
+    "annotations": {
+      "title": "List ecommerce webhooks",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "List your store's subscriptions for external automation systems, without signing secrets.",
+    "method": "GET",
+    "path": "/api/ecommerce/v1/stores/{store_id}/webhooks",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "store_id": {
+          "type": "string",
+          "description": "ID of the store owned by your account."
+        }
+      },
+      "required": [
+        "store_id"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "ecommerce"
   }
 ];

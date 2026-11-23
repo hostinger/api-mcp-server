@@ -78,13 +78,13 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (423 total)
+- `hostinger-api-mcp` — unified server over every operation (426 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
 - `hostinger-dns-mcp` — 10 operations for dns
 - `hostinger-domains-mcp` — 43 operations for domains
-- `hostinger-ecommerce-mcp` — 30 operations for ecommerce
+- `hostinger-ecommerce-mcp` — 33 operations for ecommerce
 - `hostinger-gpu-mcp` — 13 operations for gpu
 - `hostinger-horizons-mcp` — 7 operations for horizons
 - `hostinger-hosting-mcp` — 59 operations for hosting
@@ -1846,6 +1846,27 @@ store currency. Returns the created variant.
 
 - **Method**: `POST`
 - **Path**: `/api/ecommerce/v1/stores/{store_id}/products/{product_id}/variants`
+
+#### ecommerce_webhooks_get
+
+Get a subscription owned by your store, without signing secrets.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/webhooks/{endpoint_id}`
+
+#### ecommerce_webhooks_delete
+
+Delete a subscription owned by your store, retaining delivery audit records.
+
+- **Method**: `DELETE`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/webhooks/{endpoint_id}`
+
+#### ecommerce_webhooks_list
+
+List your store's subscriptions for external automation systems, without signing secrets.
+
+- **Method**: `GET`
+- **Path**: `/api/ecommerce/v1/stores/{store_id}/webhooks`
 
 ### `hostinger-gpu-mcp`
 

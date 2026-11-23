@@ -3412,6 +3412,53 @@ store currency. Returns the created variant.
   };
 
   /**
+   * Get a subscription owned by your store, without signing secrets.
+   */
+  "ecommerce_webhooks_get": {
+    params: {
+      /**
+       * ID of the store owned by your account.
+       */
+      store_id: string;
+      /**
+       * Webhook endpoint ID belonging to this store.
+       */
+      endpoint_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * Delete a subscription owned by your store, retaining delivery audit records.
+   */
+  "ecommerce_webhooks_delete": {
+    params: {
+      /**
+       * ID of the store owned by your account.
+       */
+      store_id: string;
+      /**
+       * Webhook endpoint ID belonging to this store.
+       */
+      endpoint_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
+   * List your store's subscriptions for external automation systems, without signing secrets.
+   */
+  "ecommerce_webhooks_list": {
+    params: {
+      /**
+       * ID of the store owned by your account.
+       */
+      store_id: string;
+    };
+    response: any; // Response structure will depend on the API
+  };
+
+  /**
    * Retrieve detailed information about a specified GPU instance, including its SSH keys.
 
 Use this endpoint to follow the instance `status` after creating or deleting it.

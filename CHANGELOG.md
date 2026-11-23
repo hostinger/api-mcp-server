@@ -4,6 +4,22 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.15.1 — 2026-11-23
+
+### Operations
+
+- Added `ecommerce_webhooks_get` — Get an ecommerce webhook
+- Added `ecommerce_webhooks_delete` — Delete an ecommerce webhook
+- Added `ecommerce_webhooks_list` — List ecommerce webhooks
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`
+- Bundled agent skills: `skills/headless/VERSION`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v4.15.0 — 2026-11-20
 
 ### Also in this release
