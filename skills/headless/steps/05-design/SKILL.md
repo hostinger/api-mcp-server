@@ -79,16 +79,51 @@ Before inventing anything, gather what already constrains the design:
 | Images already sourced | `content-model.md` → the image lines under *Articles*, or the `image` URLs in `content.json` on WordPress (skip until content prepare has finished) | Glance at a few at small size; keep accents from clashing with their dominant colours |
 | Current design (redesign only) | existing `design.md` | What to keep, what to move away from |
 
-**Reference sites.** Open each one in a real browser if you have one. Static fetches are often
-blocked or rate-limited; without a browser, fetch the HTML and its linked CSS instead. If neither
-works, say so in one line and continue from the brief alone. Pull **cues**:
+**Reference sites.** With a browser tool and a subagent tool, don't open them yourself:
+screenshots and page dumps would stay in your context for the rest of the build. Launch **one**
+subagent for all the reference URLs with the prompt below, in the foreground (not in the
+background), and take the cues from its answer before Step 3. Pick one that can use the browser and
+run shell commands (Claude Code: `general-purpose`), not a helper that only fetches pages. Without
+a browser tool or without a subagent tool, follow the same prompt yourself: a fetch of the HTML and
+CSS is small, and a subagent would only add its launch and its answer. A site that couldn't be opened gets one line to
+the user; continue from the brief alone for it.
 
-- **Fonts:** the computed `font-family` of `h1`/`h2` and of body `p`.
-- **Colours:** background colours weighted by painted area (element width × height), the top 5–8.
+Send the prompt as it is. Fill `<domain>` and the tone line, write the `<url> — …` line once per
+reference site, and leave the answer format's `<…>` placeholders for the reader:
+
+```text
+You are the reference-site reader of a Hostinger headless build for <domain>. Look at the sites
+below and report the cues its design can borrow. Read only: save nothing, write no files, and send
+back no screenshots, file paths or page text.
+
+Sites, each with what the brief says to take from it (or "nothing said"):
+<url> — <brief.md → Design direction, for this site>
+Tone of the brief: <brief.md → Tone, in one line>
+
+Use a browser tool if you have one; don't install or start a browser yourself. Without one, or
+when it can't open a site, fetch the HTML and its linked CSS with curl. When curl is refused too
+(403, 429), list the site under "Couldn't open". From each site take:
+- Fonts: the computed font-family of h1/h2 and of body p.
+- Colours: background colours weighted by painted area (element width × height), the top 5-8.
   Skip transparent and semi-transparent backgrounds and overlays (cookie banners, modals, chat
   widgets). Text colours come from headings, paragraphs and links.
-- **Feel:** look at the first screen and one further down (screenshots shown to you, not saved in
-  the workspace) and note what creates the feel: type weight, colour blocking, shapes, density.
+- Feel: look at the first screen and one further down, and note what creates the feel: type
+  weight, colour blocking, shapes, density.
+With curl, take the font-family set on body and h1/h2 in the CSS, and the background colours set on
+body, header, hero and footer, instead of computed values and painted area.
+
+Answer in exactly this format and nothing else: one block per site you opened, then one
+"Couldn't open" line per site you couldn't (leave the line out when you opened them all).
+
+## <url>
+- Fonts: headings <family>; body <family>
+- Colours: <hex> <where it's painted>, ... (largest area first)
+- Feel: <two or three lines>
+- Borrow: <what the brief asks for from this site, then other cues that fit the tone>
+- Avoid: <what clashes with the brief>
+
+Couldn't open: <url> (<why>)
+```
 
 **Borrow cues, never assets** (the owner's own site under `keep-look.md` is the exception).
 Don't use its logo, copy, images or exact layout. **The brief wins** over the live site when they

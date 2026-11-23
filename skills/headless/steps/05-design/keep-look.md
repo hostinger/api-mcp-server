@@ -3,10 +3,10 @@
 Read from [`SKILL.md`](SKILL.md) Step 1 when the brief says to keep the current look. Step numbers
 below are that file's; 5.x are its Step 5 checks.
 
-1. **Read the look from what the brief points at.** A live site: use Step 2's reference-site method
-   (computed fonts, colours by painted area, the feel), but this site is the owner's own, so take its
-   logo file as it is (the header `<img>` or inline `<svg>`, plus its favicon if it has one) and save
-   it unchanged in `brand/`. Screenshots or a brand guide: read the colours and lettering from them;
+1. **Read the look from what the brief points at.** A live site: open it yourself, not in a
+   subagent, and take the fonts, colours and feel as Step 2's reference-site prompt says. This site
+   is the owner's own, so also take its logo file as it is (the header `<img>` or inline `<svg>`,
+   plus its favicon if it has one) and save it unchanged in `brand/`. Screenshots or a brand guide: read the colours and lettering from them;
    a logo seen only in a screenshot counts as no logo file, so list "logo file needed" under gaps in
    the final report. The app in this folder (the path under `brief.md` → **Existing project**):
    read its source; no build or browser needed.

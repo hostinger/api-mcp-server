@@ -220,7 +220,8 @@ then design, one after the other**, as the table lists them. Either way the outp
    *Prepare in a subagent*. It does all of content prepare; nothing else writes its files while it
    runs.
 3. **Do design yourself, meanwhile** (`steps/05-design/SKILL.md`): its one question to the user stays
-   with you.
+   with you. With a browser, its reference-site reader (Step 2) is a short read-only subagent that
+   design launches and waits for, not a second split.
 4. **Wait for the subagent before the frontend step**, which reads `content-model.md`. When it
    reports, end its stage in the run log, check the files it names exist and note its gaps for the
    final report. Set `state.json` → `stage` to `frontend` only once both the subagent has reported and
