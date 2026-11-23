@@ -92,11 +92,12 @@ fixtures, placeholder copy or `.htaccess` in the output).
 
 ## 5 — Preview & approval (optional — only when a person is signing off)
 
-When someone wants to see it first: start the local preview (Astro: `npm run preview`; Next.js:
-`npx next start`), show the user a couple of key routes at desktop and phone width (capture phone width
+When someone wants to see it first: start the local preview with `local-server.mjs`, as *Local
+servers* in the top-level `SKILL.md` shows, and give the user the `url` it prints. It stays up while you
+wait for their answer; the run's report stops it. Show the user a couple of key routes at desktop and phone width (capture phone width
 as in frontend's *Visual check*; frontend already caught the layout bugs, so this is for the user, not a
-re-review) and navigation, and present it for **explicit approval**. If preview tooling is unavailable,
-give the user the command and URL. On an autonomous or temp-domain run, skip this — deploy will verify the live result anyway.
+re-review) and navigation, and present it for **explicit approval**. If the preview won't start,
+give the user the command to run it themselves. On an autonomous or temp-domain run, skip this — deploy will verify the live result anyway.
 
 Then (after approval, or immediately if 4–5 were skipped): `state.json` → `stage: "deploy"`, fresh
 `updated_at`; leave `provision` unchanged.

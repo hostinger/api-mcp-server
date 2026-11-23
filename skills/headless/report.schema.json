@@ -138,6 +138,22 @@
         "properties": { "stage": { "type": "string" }, "phase": { "type": ["string", "null"] }, "problem": { "type": "string" } }
       }
     },
+    "servers": {
+      "description": "Local dev and preview servers this run started through local-server.mjs, and what stopping them at the end of the run found.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["port", "command", "status"],
+        "properties": {
+          "pid": { "type": "integer" },
+          "port": { "type": "integer" },
+          "command": { "type": "string" },
+          "started_at": { "type": "string" },
+          "stopped_at": { "type": ["string", "null"] },
+          "status": { "type": "string", "enum": ["stopped", "already_gone", "not_verified", "still_running"] }
+        }
+      }
+    },
     "previous_runs": {
       "type": "array",
       "items": {

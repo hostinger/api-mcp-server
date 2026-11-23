@@ -11,3 +11,8 @@ the user's direction (vibe-code with them). Your job is to connect it to the liv
 `wp/v2` reads, the WooCommerce/Ecommerce Store API, env/keys) and make it deployable (set
 `engines.node` to `22`, remove any `.htaccess`), then hand off to deploy. This generalises the Webapp
 "existing app" case in `SKILL.md` to WordPress and Ecommerce too.
+
+Run their dev or preview server only through `local-server.mjs` (top-level `SKILL.md`, *Local
+servers*), from their project folder, so the run stops it when it ends: put `{port}` where their script
+takes a port (`node <skill>/local-server.mjs start <domain> -- npm run dev -- --port {port}`), or leave it
+out when the framework reads `PORT`. Never stop or reuse a server the user already had running.

@@ -15,18 +15,18 @@
 //   node run-log.mjs <domain> report-sent [<run>]
 //   node run-log.mjs <domain> report-rejected [<run>]
 
-import { spawnSync } from 'node:child_process';
-import { appendFileSync, copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs';
-import { homedir, hostname } from 'node:os';
-import { basename, delimiter, dirname, isAbsolute, join } from 'node:path';
+import { appendFileSync, copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { hostname } from 'node:os';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { processName, processTable } from './processes.mjs';
+import { describeServer, isDown, serversSince, stopServers } from './servers.mjs';
+import { now, workspaceDir, writeJsonAtomic } from './workspace.mjs';
 
 const STAGES = ['refine', 'connect', 'check_state', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy', 'done'];
 // Stages that stop for the user to restart their tool, so it loads a newly registered Hostinger MCP server.
 const RESTART_STAGES = ['connect', 'provision', 'content_model'];
 const PAUSE_NOTE = 'paused for a tool restart';
-// A domain names a folder under ~/.hostinger, so "../x" or "a/b" must never reach the file system.
-const HOSTNAME = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i;
 const RESULTS = ['ok', 'ok_after_retries', 'ok_with_fixups', 'failed', 'skipped', 'stopped'];
 const OUTCOMES = ['live', 'stopped', 'failed', 'abandoned'];
 const EVENT_FIELDS = {
@@ -38,7 +38,6 @@ const EVENT_FIELDS = {
 const EVENT_LISTS = { issue: 'issues', feedback: 'user_feedback', skill_gap: 'skill_gaps', good: 'what_went_well' };
 
 const here = dirname(fileURLToPath(import.meta.url));
-const now = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
 // A start logged late is kept but marked estimated, so the report can tell measured times from remembered ones.
 function lateStart(flags, run) {
   let at = null;
@@ -79,10 +78,12 @@ const writeJson = (file, value) => writeFileSync(file, `${JSON.stringify(value, 
 // run-start is a run's first command, before anything else has written to the workspace.
 function workspace(domain, { create = false } = {}) {
   if (!domain || domain.startsWith('-')) fail('first argument must be the domain');
-  if (!HOSTNAME.test(domain)) fail(`"${domain}" is not a domain (use its ASCII form, e.g. xn--caf-dma.com)`);
-  const dir = join(homedir(), '.hostinger', domain);
-  if (create) mkdirSync(dir, { recursive: true });
-  else if (!existsSync(dir)) fail(`no workspace at ${dir}; run-start creates it`);
+  let dir;
+  try {
+    dir = workspaceDir(domain, { create });
+  } catch (error) {
+    fail(error.message);
+  }
   return {
     dir,
     domain,
@@ -103,38 +104,6 @@ const WRAPPERS = new Set(['sh', 'bash', 'zsh', 'dash', 'fish', 'pwsh', 'powershe
 // A lock whose holder can't be checked (another host, no process list, the old timestamp-only lock)
 // counts as live while it was refreshed this recently.
 const LOCK_FRESH_MS = 30 * 60 * 1000;
-
-const processName = (name) => basename(name.replace(/\\/g, '/')).replace(/^-/, '').replace(/\.exe$/i, '').toLowerCase();
-
-// This script runs in the user's project, maybe a cloned repository. Windows looks a bare program name
-// up in the working directory before PATH, as does a relative PATH entry elsewhere, so the process list
-// is read from home with only absolute, non-node_modules PATH entries (as connect/launch.mjs runs npx),
-// and Windows PowerShell is named by its full path.
-const helperEnv = { ...process.env, LC_ALL: 'C', TZ: 'UTC' };
-for (const key of Object.keys(helperEnv).filter((k) => k.toUpperCase() === 'PATH')) {
-  helperEnv[key] = helperEnv[key].split(delimiter)
-    .filter((p) => isAbsolute(p) && !p.split(/[\\/]/).includes('node_modules'))
-    .join(delimiter);
-}
-const systemRoot = isAbsolute(process.env.SystemRoot ?? '') ? process.env.SystemRoot : 'C:\\Windows';
-const POWERSHELL = join(systemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
-
-// pid -> { ppid, started, name }; null when the process list can't be read. The start time tells a
-// reused PID from the process that held the lock.
-function processTable() {
-  const windows = process.platform === 'win32';
-  const r = windows
-    ? spawnSync(POWERSHELL, ['-NoProfile', '-NonInteractive', '-Command',
-      'Get-CimInstance Win32_Process | ForEach-Object { "$($_.ProcessId)`t$($_.ParentProcessId)`t$(if ($_.CreationDate) { $_.CreationDate.ToUniversalTime().ToString(\'o\') })`t$($_.Name)" }'], { encoding: 'utf8', cwd: homedir(), env: helperEnv })
-    : spawnSync('ps', ['-A', '-o', 'pid=,ppid=,lstart=,comm='], { encoding: 'utf8', cwd: homedir(), env: helperEnv });
-  if (r.status !== 0 || !r.stdout) return null;
-  const table = new Map();
-  for (const line of r.stdout.split(/\r?\n/)) {
-    const m = windows ? line.match(/^(\d+)\t(\d+)\t([^\t]*)\t(.*)$/) : line.trim().match(/^(\d+)\s+(\d+)\s+(\w+\s+\w+\s+\d+\s+[\d:]+\s+\d+)\s+(.*)$/);
-    if (m) table.set(Number(m[1]), { ppid: Number(m[2]), started: m[3].replace(/\s+/g, ' ') || null, name: m[4] });
-  }
-  return table.size ? table : null;
-}
 
 function currentHolder(table) {
   let pid = process.ppid;
@@ -174,12 +143,6 @@ function lockStatus(lock, me, table) {
   return byRecency(lock);
 }
 
-// Replacing the lock goes through a rename, so a reader never sees half of it.
-function writeLock(ws, lock) {
-  const tmp = `${ws.lockPath}.${process.pid}.tmp`;
-  writeJson(tmp, lock);
-  renameSync(tmp, ws.lockPath);
-}
 
 // Of two sessions creating a missing lock at once, exactly one succeeds.
 function createLock(ws, lock) {
@@ -237,7 +200,7 @@ function claimLock(ws, { take = false, start = false, takeOver = false, tool = n
     const status = verdict === 'unverified' ? (start ? byRecency(lock) : 'own') : verdict;
     if (status === 'own') {
       const refreshed = { ...lock, tool: tool ?? lock.tool, refreshed_at: now() };
-      writeLock(ws, refreshed);
+      writeJsonAtomic(ws.lockPath, refreshed);
       return { lock: refreshed, wasFree: false };
     }
     if (status === 'live' && !takeOver) refuse(ws, lock, { offerTakeOver: start });
@@ -245,7 +208,7 @@ function claimLock(ws, { take = false, start = false, takeOver = false, tool = n
     // Two sessions taking over the same dead lock at once both rename theirs in; the one that lost
     // is refused at its next command.
     const taken = record();
-    writeLock(ws, taken);
+    writeJsonAtomic(ws.lockPath, taken);
     return { lock: taken, wasFree: false };
   }
   fail(`${ws.lockPath} keeps appearing and disappearing; another session is starting on ${ws.domain}. Stop and tell the user`);
@@ -309,7 +272,11 @@ function readConnect(ws) {
   return { tool: typeof connect.tool === 'string' ? connect.tool : null, mcp: version, skills: typeof connect.skills === 'string' ? connect.skills : null };
 }
 
-function runStart(ws, flags, lockWasFree) {
+// This session holds the domain now, so a server still recorded in the workspace was left by a session
+// that is gone; stopping it first also gets it into the report of the run that started it.
+async function runStart(ws, flags, lockWasFree) {
+  const leftovers = await stopServers(ws.dir);
+  if (leftovers.length) console.log(`local servers left by an earlier session: ${leftovers.map(describeServer).join('; ')}`);
   const log = loadLog(ws);
   // A run left open in a restart stage goes on in the new session, at connect, instead of being
   // abandoned. The paused stage ends at its last logged activity, so the restart wait isn't counted.
@@ -542,6 +509,7 @@ function buildReport(ws, { outcome, tokens } = {}) {
   const gaps = [...loggingGaps(stages, run, resolvedOutcome), ...dropped];
   const strip = ({ ts, run: _run, type: _type, ...rest }) => ({ ...rest, logged_at: ts });
   const liveStage = stages.find((s) => s.stage === 'deploy' && s.result?.startsWith('ok'));
+  const servers = serversSince(ws.dir, run.started_at);
   if (!OUTCOMES.includes(resolvedOutcome)) fail(`unknown outcome "${resolvedOutcome}"; one of ${OUTCOMES.join(', ')}`);
 
   const previous = existsSync(ws.reportsDir)
@@ -588,6 +556,7 @@ function buildReport(ws, { outcome, tokens } = {}) {
     skill_gaps: events.filter((e) => e.type === 'skill_gap').map(strip),
     what_went_well: events.filter((e) => e.type === 'good').map(strip),
     logging_gaps: gaps,
+    servers,
     previous_runs: previous,
   };
 
@@ -601,6 +570,7 @@ function buildReport(ws, { outcome, tokens } = {}) {
   fresh.run.reported_at = now();
   saveLog(ws, fresh);
   for (const g of gaps) console.log(`warning: ${g.stage}${g.phase ? `/${g.phase}` : ''}: ${g.problem}`);
+  for (const s of servers.filter((s) => !isDown(s))) console.log(`server not stopped: ${describeServer(s)}`);
   return join(ws.dir, 'report.html');
 }
 
@@ -846,6 +816,7 @@ details summary { cursor:pointer; color:var(--text-secondary); margin-top:16px; 
 <div class="legend"><span><span class="swatch sw-solid"></span>Finished</span><span><span class="swatch sw-hatch"></span>Failed, stopped or not finished</span><span><span class="swatch sw-est"></span>Start estimated</span><span>Stages can overlap: prep work runs while provisioning settles.</span></div>
 <details><summary>Show as table</summary><div class="table-wrap"><table><thead><tr><th>Stage</th><th>Start</th><th>End</th><th class="num">Minutes</th><th>Result</th><th>Note</th></tr></thead><tbody>${stageRows}</tbody></table></div></details></section>
 ${r.logging_gaps.length ? `<section><h2>Logging gaps (${r.logging_gaps.length})</h2><p class="muted">Where the run log is missing or unsure, so times here are less reliable.</p><ul>${r.logging_gaps.map((g) => `<li><strong>${esc(label(g.stage))}${g.phase ? ` · ${esc(g.phase)}` : ''}</strong> — ${esc(g.problem)}</li>`).join('')}</ul></section>` : ''}
+${r.servers.length ? `<section><h2>Local servers (${r.servers.length})</h2><p class="muted">Dev and preview servers this run started, and what stopping them when it ended found.</p><div class="table-wrap"><table><thead><tr><th class="num">Port</th><th class="num">PID</th><th>Command</th><th>Started</th><th>Stopped</th><th>Status</th></tr></thead><tbody>${r.servers.map((s) => `<tr><td class="num">${s.port}</td><td class="num">${s.pid}</td><td><code>${esc(s.command)}</code></td><td>${time(s.started_at)}</td><td>${time(s.stopped_at)}</td><td>${esc(label(s.status))}</td></tr>`).join('')}</tbody></table></div></section>` : ''}
 <section><h2>Issues (${r.issues.length})</h2>${r.issues.length ? `<div class="table-wrap"><table><thead><tr><th>Severity</th><th>Stage</th><th>Symptom</th><th>Cause</th><th>Workaround</th><th>Status</th></tr></thead><tbody>${issues}</tbody></table></div>` : '<p class="muted">No issues logged.</p>'}</section>
 <div class="cols"><section><h2>User feedback</h2>${list(r.user_feedback, (f) => `<li><span class="chip">${esc(label(f.category))}</span> <span class="muted">${esc(label(f.stage))}</span> — “${esc(f.paraphrase)}”</li>`, 'No feedback logged.')}</section>
 <section><h2>Skill gaps</h2>${list(r.skill_gaps, (g) => `<li><code>${esc(g.skill)}</code> — ${esc(g.gap)}</li>`, 'No skill gaps logged.')}</section></div>
@@ -866,7 +837,8 @@ document.querySelectorAll('.bar').forEach((el) => {
 `;
 }
 
-function report(ws, flags) {
+// The run ends here, finished or stopped early, so its local servers stop before the report records them.
+async function report(ws, flags) {
   let tokens;
   if (typeof flags.tokens === 'string') {
     try {
@@ -878,6 +850,7 @@ function report(ws, flags) {
     if (tokens === null || (typeof tokens === 'object' && !Array.isArray(tokens) && !Object.keys(tokens).length)) tokens = undefined;
     else validate(tokens, { ...reportSchema()?.properties?.tokens, type: 'object' }, '--tokens');
   }
+  await stopServers(ws.dir);
   console.log(`report written: ${buildReport(ws, { outcome: flags.outcome, tokens })}`);
   const { id, file } = reportFile(ws);
   console.log(`send it: pass ${file} unchanged to hosting_headless_submit-build-report, then run report-sent ${id} (or report-rejected ${id} on a 422)`);
@@ -915,6 +888,6 @@ const claim = spec.lock === 'none' ? null : claimLock(ws, {
   takeOver: start && flags['take-over'] === true,
   tool: start && typeof flags.tool === 'string' ? flags.tool : null,
 });
-spec.run(ws, rest, flags, claim);
+await spec.run(ws, rest, flags, claim);
 // A command that fails exits before this, so a refused pause or report keeps the lock.
 if (spec.lock === 'release' && claim.lock) rmSync(ws.lockPath, { force: true });

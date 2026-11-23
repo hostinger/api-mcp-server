@@ -148,7 +148,9 @@ built. Update `state.json` (`stage: "validate"`).
 Validate (Step 7) owns the clean rebuild + user preview; deploy (Step 8) ships it with the `app_type`
 and output directory that match the chosen framework + rendering.
 
-**Visual check.** With the site running locally against the live backend, look at the home page and one
+**Visual check.** After `npm run build`, start the site locally against the live backend with
+`local-server.mjs`, as *Local servers* in the top-level `SKILL.md` shows, and open the `url` it prints.
+After a fix, rebuild and start it again. Look at the home page and one
 page of each template (e.g. a post, a product, the contact page) at desktop and phone width. Take all the
 screenshots first, then open them all in one turn where your tool can open several images at once, since
 each separate look costs a model turn. Don't tile several pages onto one image or take one tall

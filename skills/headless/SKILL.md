@@ -256,6 +256,28 @@ exits 0 with `ok: true` and what it waited for; 1 with `ok: false` when the job 
 the local Hostinger MCP, with `fallback` naming the connector operation to poll yourself, every ~15 s.
 Never write your own `sleep` loops.
 
+### Local servers: `local-server.mjs`
+
+Start every local dev or preview server (frontend's visual check, validate's sign-off preview) through
+`local-server.mjs` (next to this file), never with `&`, `nohup` or your tool's background mode. Run it
+from the project folder; `{port}` in the command becomes the port it picked:
+
+```bash
+cd ~/.hostinger/<domain>/src && node <skill>/local-server.mjs start <domain> -- npx next start -p {port}                    # Next.js, after npm run build
+cd ~/.hostinger/<domain>/src && node <skill>/local-server.mjs start <domain> -- npx astro preview --port {port} --ignore-lock  # Astro, after npm run build
+cd ~/.hostinger/<domain>/src && node <skill>/local-server.mjs start <domain> -- npx next dev -p {port}                      # a dev server starts the same way
+```
+
+`start` stops the server this domain already runs, so after a rebuild just run it again. It picks a
+free port, so builds running side by side never collide, and waits until the port answers. It prints
+one JSON line and exits 0 with `ok: true` and the `url` to open; 1 with `ok: false`, `error` and
+`log_tail` when the server exited or didn't answer within `--timeout` (90s by default; keep it under
+your tool's command limit); 2 when it couldn't run.
+
+`run-log.mjs report` stops the run's servers when it ends, and `run-start` stops any that an earlier,
+ended session left. Neither touches a server `local-server.mjs` didn't start, such as the user's own
+`next dev`.
+
 ---
 
 ## State and artifacts
@@ -292,6 +314,7 @@ took from it.
 | `design.md` (+ `brand/` logo files) | design | chosen design direction: tokens, type, logo, components, per-page composition, accessibility |
 | `src/` | frontend | the website source implementing `design.md`; framework choice is recorded in `state.json → frontend` |
 | `deploy.json` | deploy | build id, deployed at, live URLs |
+| `servers.json` (+ `servers/<port>.log`) | `local-server.mjs` only | each local dev or preview server a run started: pid, port, command, start time, and whether it was stopped |
 | `events.jsonl` | every stage, via `run-log.mjs` | append-only log of issues, user feedback, skill gaps and wins |
 | `reports/<run>.json` + `.html`, `report.html` | done (or any early stop), via `run-log.mjs` | the build report for each run; `report.html` is the latest |
 

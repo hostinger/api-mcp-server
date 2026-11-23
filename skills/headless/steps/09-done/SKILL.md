@@ -207,6 +207,9 @@ the flow." On a 422 say it's saved locally only; on any other failure say it'll 
   a stage that was never logged. Fix what you can: `stage-end` an open stage, or correct a start with
   `stage-fix <stage> --started-ago <time>`, then run `report` again. What you can't fix stays in the report's
   *Logging gaps* section.
+- `report` also stops the local servers this run started. Each `server not stopped:` line it prints
+  names one it couldn't confirm stopped: tell the user in one line its port and pid, so they can stop
+  it.
 - In the final report's *Where state lives*, add the path to `report.html` so the user can open it.
 
 Do this on every run, including the early stops: those reports are the most useful ones.
