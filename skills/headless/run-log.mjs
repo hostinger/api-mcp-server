@@ -18,7 +18,7 @@
 import { spawnSync } from 'node:child_process';
 import { appendFileSync, copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { homedir, hostname } from 'node:os';
-import { basename, dirname, join } from 'node:path';
+import { basename, delimiter, dirname, isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const STAGES = ['refine', 'connect', 'check_state', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy', 'done'];
@@ -106,14 +106,27 @@ const LOCK_FRESH_MS = 30 * 60 * 1000;
 
 const processName = (name) => basename(name.replace(/\\/g, '/')).replace(/^-/, '').replace(/\.exe$/i, '').toLowerCase();
 
+// This script runs in the user's project, maybe a cloned repository. Windows looks a bare program name
+// up in the working directory before PATH, as does a relative PATH entry elsewhere, so the process list
+// is read from home with only absolute, non-node_modules PATH entries (as connect/launch.mjs runs npx),
+// and Windows PowerShell is named by its full path.
+const helperEnv = { ...process.env, LC_ALL: 'C', TZ: 'UTC' };
+for (const key of Object.keys(helperEnv).filter((k) => k.toUpperCase() === 'PATH')) {
+  helperEnv[key] = helperEnv[key].split(delimiter)
+    .filter((p) => isAbsolute(p) && !p.split(/[\\/]/).includes('node_modules'))
+    .join(delimiter);
+}
+const systemRoot = isAbsolute(process.env.SystemRoot ?? '') ? process.env.SystemRoot : 'C:\\Windows';
+const POWERSHELL = join(systemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
+
 // pid -> { ppid, started, name }; null when the process list can't be read. The start time tells a
 // reused PID from the process that held the lock.
 function processTable() {
   const windows = process.platform === 'win32';
   const r = windows
-    ? spawnSync('powershell', ['-NoProfile', '-NonInteractive', '-Command',
-      'Get-CimInstance Win32_Process | ForEach-Object { "$($_.ProcessId)`t$($_.ParentProcessId)`t$(if ($_.CreationDate) { $_.CreationDate.ToUniversalTime().ToString(\'o\') })`t$($_.Name)" }'], { encoding: 'utf8' })
-    : spawnSync('ps', ['-A', '-o', 'pid=,ppid=,lstart=,comm='], { encoding: 'utf8', env: { ...process.env, LC_ALL: 'C', TZ: 'UTC' } });
+    ? spawnSync(POWERSHELL, ['-NoProfile', '-NonInteractive', '-Command',
+      'Get-CimInstance Win32_Process | ForEach-Object { "$($_.ProcessId)`t$($_.ParentProcessId)`t$(if ($_.CreationDate) { $_.CreationDate.ToUniversalTime().ToString(\'o\') })`t$($_.Name)" }'], { encoding: 'utf8', cwd: homedir(), env: helperEnv })
+    : spawnSync('ps', ['-A', '-o', 'pid=,ppid=,lstart=,comm='], { encoding: 'utf8', cwd: homedir(), env: helperEnv });
   if (r.status !== 0 || !r.stdout) return null;
   const table = new Map();
   for (const line of r.stdout.split(/\r?\n/)) {

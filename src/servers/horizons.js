@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/horizons.js';
 
-startServer({ name: 'hostinger-horizons-mcp', version: '4.15.1', tools });
+startServer({ name: 'hostinger-horizons-mcp', version: '4.15.2', tools });

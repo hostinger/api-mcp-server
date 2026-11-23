@@ -39,14 +39,14 @@ emit('launcher', isWin
   ? { command: process.execPath, args: [LAUNCHER] }
   : { command: '/bin/sh', args: [LAUNCHER.replace(/\.mjs$/, '.sh')] });
 
-function capture(cmd, args) {
-  const r = spawnSync(cmd, args, { encoding: 'utf8', cwd: os.homedir() });
+function capture(args) {
+  const r = spawnSync(MCP[0], [...MCP.slice(1), ...args], { encoding: 'utf8', cwd: os.homedir() });
   return { status: r.status ?? 1, out: `${r.stdout || ''}${r.stderr || ''}`, error: r.error };
 }
 
 // ── 1. MCP server reachable ──────────────────────────────────────────────────
 function checkMcp() {
-  const r = capture(MCP[0], [...MCP.slice(1), '--version']);
+  const r = capture(['--version']);
   if (r.status !== 0) fail('mcp_unreachable', { detail: r.out.trim().slice(0, 400) });
   // npx interleaves "npm notice …" lines, so pick the first semver-looking token.
   const version = (r.out.match(/\d+\.\d+\.\d+[^\s]*/) || [])[0] || r.out.trim().split('\n').pop();
