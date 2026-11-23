@@ -18511,6 +18511,14 @@ export default [
         "post_install_script_id": {
           "type": "integer",
           "description": "Post-install script to execute after virtual machine was recreated"
+        },
+        "ssh_keys": {
+          "type": "array",
+          "description": "SSH public keys to add to the recreated virtual machine",
+          "items": {
+            "type": "string",
+            "description": "ssh_keys parameter"
+          }
         }
       },
       "required": [
@@ -18528,7 +18536,8 @@ export default [
       "template_id",
       "password",
       "panel_password",
-      "post_install_script_id"
+      "post_install_script_id",
+      "ssh_keys"
     ]
   },
   {
@@ -18656,7 +18665,7 @@ export default [
         },
         "public_key": {
           "type": "object",
-          "description": "Use SSH key",
+          "description": "Use SSH key. Deprecated: use ssh_keys instead",
           "properties": {
             "name": {
               "type": "string",
@@ -18666,6 +18675,14 @@ export default [
               "type": "string",
               "description": "Contents of the SSH key"
             }
+          }
+        },
+        "ssh_keys": {
+          "type": "array",
+          "description": "SSH public keys to add to the virtual machine",
+          "items": {
+            "type": "string",
+            "description": "ssh_keys parameter"
           }
         }
       },
@@ -18691,7 +18708,8 @@ export default [
       "enable_backups",
       "ns1",
       "ns2",
-      "public_key"
+      "public_key",
+      "ssh_keys"
     ]
   },
   {

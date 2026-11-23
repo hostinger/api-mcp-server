@@ -2104,6 +2104,14 @@ const tools: OpenApiTool[] = [
         "post_install_script_id": {
           "type": "integer",
           "description": "Post-install script to execute after virtual machine was recreated"
+        },
+        "ssh_keys": {
+          "type": "array",
+          "description": "SSH public keys to add to the recreated virtual machine",
+          "items": {
+            "type": "string",
+            "description": "ssh_keys parameter"
+          }
         }
       },
       "required": [
@@ -2121,7 +2129,8 @@ const tools: OpenApiTool[] = [
       "template_id",
       "password",
       "panel_password",
-      "post_install_script_id"
+      "post_install_script_id",
+      "ssh_keys"
     ]
   },
   {
@@ -2249,7 +2258,7 @@ const tools: OpenApiTool[] = [
         },
         "public_key": {
           "type": "object",
-          "description": "Use SSH key",
+          "description": "Use SSH key. Deprecated: use ssh_keys instead",
           "properties": {
             "name": {
               "type": "string",
@@ -2259,6 +2268,14 @@ const tools: OpenApiTool[] = [
               "type": "string",
               "description": "Contents of the SSH key"
             }
+          }
+        },
+        "ssh_keys": {
+          "type": "array",
+          "description": "SSH public keys to add to the virtual machine",
+          "items": {
+            "type": "string",
+            "description": "ssh_keys parameter"
           }
         }
       },
@@ -2284,7 +2301,8 @@ const tools: OpenApiTool[] = [
       "enable_backups",
       "ns1",
       "ns2",
-      "public_key"
+      "public_key",
+      "ssh_keys"
     ]
   },
   {

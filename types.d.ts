@@ -10506,6 +10506,10 @@ Password will not be shown in the response.
        * Post-install script to execute after virtual machine was recreated
        */
       post_install_script_id?: number;
+      /**
+       * SSH public keys to add to the recreated virtual machine
+       */
+      ssh_keys?: array;
     };
     response: any; // Response structure will depend on the API
   };
@@ -10603,9 +10607,13 @@ Known compromised passwords are rejected.
        */
       ns2?: string;
       /**
-       * Use SSH key
+       * Use SSH key. Deprecated: use ssh_keys instead
        */
       public_key?: object;
+      /**
+       * SSH public keys to add to the virtual machine
+       */
+      ssh_keys?: array;
     };
     response: any; // Response structure will depend on the API
   };

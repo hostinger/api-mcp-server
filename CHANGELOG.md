@@ -4,6 +4,18 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.20.0 — 2026-11-23
+
+### Operations
+
+- Changed the input schema and bodyParameters of `vps_virtual-machines_recreate`
+- Changed the input schema and bodyParameters of `vps_virtual-machines_setup`
+
+### Also in this release
+
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v4.19.0 — 2026-11-23
 
 ### Also in this release
