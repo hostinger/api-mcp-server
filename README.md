@@ -78,7 +78,7 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (426 total)
+- `hostinger-api-mcp` — unified server over every operation (427 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
@@ -86,7 +86,7 @@ This package installs the following MCP server commands:
 - `hostinger-domains-mcp` — 43 operations for domains
 - `hostinger-ecommerce-mcp` — 33 operations for ecommerce
 - `hostinger-gpu-mcp` — 13 operations for gpu
-- `hostinger-horizons-mcp` — 7 operations for horizons
+- `hostinger-horizons-mcp` — 8 operations for horizons
 - `hostinger-hosting-mcp` — 59 operations for hosting
 - `hostinger-mail-mcp` — 39 operations for mail
 - `hostinger-reach-mcp` — 73 operations for reach
@@ -2056,8 +2056,10 @@ The complete list of websites is returned in a single response - it is not pagin
 Create new Hostinger AI Builder website from the given message.\n
 Use this tool when user asks you to create a website, landing page, blog
 or any other type of application.\n
-This tool initiates the website creation process and returns a website URL and ID.
-The generation happens asynchronously.\n
+This tool initiates the website creation process and returns a website URL, ID and build `task`.
+The generation happens asynchronously. To learn whether it succeeded, poll the
+`Get website build task` tool with `task.id`; `is_generating` turning false on `Get website`
+happens whether the build completed or failed.\n
 After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
 that Hostinger AI Builder is now creating their website and it will be ready in a few minutes
 and you should provide the website URL to the user immediately
@@ -2096,8 +2098,10 @@ MAPS:\n
 
 Edit an existing Hostinger AI Builder website with a follow-up message.\n
 Use this tool when the user wants to change, extend or fix a website that already exists.\n
-This tool queues the requested changes and returns the website URL and ID.
-The changes are applied asynchronously.\n
+This tool queues the requested changes and returns the website URL, ID and build `task`.
+The changes are applied asynchronously. To learn whether they were applied, poll the
+`Get website build task` tool with `task.id`; `is_generating` turning false on `Get website`
+happens whether the build completed or failed.\n
 After invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing
 that Hostinger AI Builder is now applying the requested changes and they will be ready
 in a few minutes, and you should provide the website URL to the user immediately.
@@ -2112,6 +2116,9 @@ and do not generate code yourself in the chat.
 
 Publish a Hostinger AI Builder website so its latest changes go live.\n
 Use this tool when the user asks to publish, deploy or make their website live.\n
+If you created or edited the website in this conversation, first check its build with the
+`Get website build task` tool and publish only when its `state` is `TASK_STATE_COMPLETED`.
+After a failed build, tell the user instead of publishing.\n
 This tool starts the publish process and returns the URL the website will be live on.
 Publishing happens asynchronously and takes a few minutes.\n
 Set `is_template` only when the user explicitly asks to share the website as a template:
@@ -2131,6 +2138,8 @@ website URL before or after editing it.\n
 `is_in_progress` is true while changes are being generated or the website is being published;
 wait until it is false before publishing. `is_generating` is true while changes are being generated,
 and `actions_in_progress` has `website_publish` while the website is being published.
+`is_generating` turns false whether the build completed or failed: use the `Get website build task`
+tool to learn its outcome.
 `published_at` is when the website was last published,
 `is_template` is whether its published pages show the "Use template" banner, and
 `has_ecommerce_store` is whether it has an online store.\n
@@ -2139,6 +2148,22 @@ interface in the provided website URL.
 
 - **Method**: `GET`
 - **Path**: `/api/horizons/v1/websites/{websiteId}`
+
+#### horizons_websites_build-task
+
+Get the state and outcome of a website build started by the `Create website` or `Edit website` tool.\n
+Use this tool with the `task.id` those tools return to find out whether the build completed or failed.
+Poll it every 30 seconds or so while `state` is `TASK_STATE_SUBMITTED` or `TASK_STATE_WORKING`.\n
+When `state` is `TASK_STATE_FAILED` or `TASK_STATE_REJECTED`, the website does not contain the requested
+changes: tell the user, using `message` and `reason_code`, and do not publish it.
+When `state` is `TASK_STATE_CANCELED`, the user stopped the build and changes made before that may be kept:
+publish only if the user asks to.
+`reason_code` `insufficient_credits` means the user must get more credits before building again.\n
+When `state` is `TASK_STATE_COMPLETED`, the website can be published. A `reason_code` of
+`iteration_limit` on a completed build means it stopped early and kept the work done so far.
+
+- **Method**: `GET`
+- **Path**: `/api/horizons/v1/websites/{websiteId}/tasks/{taskId}`
 
 ### `hostinger-hosting-mcp`
 

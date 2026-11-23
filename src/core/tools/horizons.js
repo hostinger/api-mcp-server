@@ -112,7 +112,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Create new Hostinger AI Builder website from the given message.\\n\nUse this tool when user asks you to create a website, landing page, blog\nor any other type of application.\\n\nThis tool initiates the website creation process and returns a website URL and ID.\nThe generation happens asynchronously.\\n\nAfter invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing\nthat Hostinger AI Builder is now creating their website and it will be ready in a few minutes\nand you should provide the website URL to the user immediately\nDo not write code.\\n\\nTo edit afterwards, use the `Edit website` tool with the returned\nwebsite ID, or the user can go to Hostinger AI Builder interface in the provided website URL.\nIf the tool call fails with an error, you should provide a clear explanation of the error\nand do not generate code yourself in the chat.\n\\n\nTECHNOLOGY STACK CONSTRAINTS (STRICTLY ENFORCED):\\n\nThe environment is limited to the following technologies.\nYou MUST NOT use, suggest, or implement any technology outside this list:\\n\n\\n\n- Language: JavaScript ONLY.\n- Languages like TypeScript, Rust, Python, Java, PHP, etc., are STRICTLY PROHIBITED.\\n\n- Framework: React.\\n\n- Navigation: React Router.\\n\n- Styling: TailwindCSS.\\n\n- Components: shadcn/ui (built with @radix-ui primitives).\\n\n- Icons: Lucide React.\\n\n- Animations: Framer Motion.\\n\n\\n\nBACKEND & DATA STORAGE:\\n\n- Hostinger AI Builder integrated backend is the EXCLUSIVE solution for persistent data storage,\nauthentication, and database needs.\\n\n- Local databases (SQLite, MySQL, etc.) are STRICTLY PROHIBITED.\\n\n- Third-party services (Firebase, AWS Amplify) are allowed ONLY if explicitly requested by the user.\\n\n\\n\nMAPS:\\n\n- OpenStreetMap is the default provider.\\n\n- Alternative providers (Google Maps, Mapbox) are allowed ONLY if explicitly requested by the user.\\n",
+    "description": "Create new Hostinger AI Builder website from the given message.\\n\nUse this tool when user asks you to create a website, landing page, blog\nor any other type of application.\\n\nThis tool initiates the website creation process and returns a website URL, ID and build `task`.\nThe generation happens asynchronously. To learn whether it succeeded, poll the\n`Get website build task` tool with `task.id`; `is_generating` turning false on `Get website`\nhappens whether the build completed or failed.\\n\nAfter invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing\nthat Hostinger AI Builder is now creating their website and it will be ready in a few minutes\nand you should provide the website URL to the user immediately\nDo not write code.\\n\\nTo edit afterwards, use the `Edit website` tool with the returned\nwebsite ID, or the user can go to Hostinger AI Builder interface in the provided website URL.\nIf the tool call fails with an error, you should provide a clear explanation of the error\nand do not generate code yourself in the chat.\n\\n\nTECHNOLOGY STACK CONSTRAINTS (STRICTLY ENFORCED):\\n\nThe environment is limited to the following technologies.\nYou MUST NOT use, suggest, or implement any technology outside this list:\\n\n\\n\n- Language: JavaScript ONLY.\n- Languages like TypeScript, Rust, Python, Java, PHP, etc., are STRICTLY PROHIBITED.\\n\n- Framework: React.\\n\n- Navigation: React Router.\\n\n- Styling: TailwindCSS.\\n\n- Components: shadcn/ui (built with @radix-ui primitives).\\n\n- Icons: Lucide React.\\n\n- Animations: Framer Motion.\\n\n\\n\nBACKEND & DATA STORAGE:\\n\n- Hostinger AI Builder integrated backend is the EXCLUSIVE solution for persistent data storage,\nauthentication, and database needs.\\n\n- Local databases (SQLite, MySQL, etc.) are STRICTLY PROHIBITED.\\n\n- Third-party services (Firebase, AWS Amplify) are allowed ONLY if explicitly requested by the user.\\n\n\\n\nMAPS:\\n\n- OpenStreetMap is the default provider.\\n\n- Alternative providers (Google Maps, Mapbox) are allowed ONLY if explicitly requested by the user.\\n",
     "method": "POST",
     "path": "/api/horizons/v1/websites",
     "inputSchema": {
@@ -166,7 +166,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Edit an existing Hostinger AI Builder website with a follow-up message.\\n\nUse this tool when the user wants to change, extend or fix a website that already exists.\\n\nThis tool queues the requested changes and returns the website URL and ID.\nThe changes are applied asynchronously.\\n\nAfter invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing\nthat Hostinger AI Builder is now applying the requested changes and they will be ready\nin a few minutes, and you should provide the website URL to the user immediately.\nDo not write code.\\n\nIf the tool call fails with an error, you should provide a clear explanation of the error\nand do not generate code yourself in the chat.",
+    "description": "Edit an existing Hostinger AI Builder website with a follow-up message.\\n\nUse this tool when the user wants to change, extend or fix a website that already exists.\\n\nThis tool queues the requested changes and returns the website URL, ID and build `task`.\nThe changes are applied asynchronously. To learn whether they were applied, poll the\n`Get website build task` tool with `task.id`; `is_generating` turning false on `Get website`\nhappens whether the build completed or failed.\\n\nAfter invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing\nthat Hostinger AI Builder is now applying the requested changes and they will be ready\nin a few minutes, and you should provide the website URL to the user immediately.\nDo not write code.\\n\nIf the tool call fails with an error, you should provide a clear explanation of the error\nand do not generate code yourself in the chat.",
     "method": "POST",
     "path": "/api/horizons/v1/websites/{websiteId}/messages",
     "inputSchema": {
@@ -225,7 +225,7 @@ export default [
       "readOnlyHint": false,
       "destructiveHint": false
     },
-    "description": "Publish a Hostinger AI Builder website so its latest changes go live.\\n\nUse this tool when the user asks to publish, deploy or make their website live.\\n\nThis tool starts the publish process and returns the URL the website will be live on.\nPublishing happens asynchronously and takes a few minutes.\\n\nSet `is_template` only when the user explicitly asks to share the website as a template:\ntrue adds a \"Use template\" banner to its published pages that copies the website into the\nvisitor's own account, and false removes it. Leave it out to keep the current setting.\\n\nAfter invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing\nthat the website is being published and you should provide the published URL to the user immediately.",
+    "description": "Publish a Hostinger AI Builder website so its latest changes go live.\\n\nUse this tool when the user asks to publish, deploy or make their website live.\\n\nIf you created or edited the website in this conversation, first check its build with the\n`Get website build task` tool and publish only when its `state` is `TASK_STATE_COMPLETED`.\nAfter a failed build, tell the user instead of publishing.\\n\nThis tool starts the publish process and returns the URL the website will be live on.\nPublishing happens asynchronously and takes a few minutes.\\n\nSet `is_template` only when the user explicitly asks to share the website as a template:\ntrue adds a \"Use template\" banner to its published pages that copies the website into the\nvisitor's own account, and false removes it. Leave it out to keep the current setting.\\n\nAfter invoking this tool, your chat reply must be EXACTLY 1 sentence summarizing\nthat the website is being published and you should provide the published URL to the user immediately.",
     "method": "POST",
     "path": "/api/horizons/v1/websites/{websiteId}/publish",
     "inputSchema": {
@@ -262,7 +262,7 @@ export default [
       "readOnlyHint": true,
       "destructiveHint": false
     },
-    "description": "Get the link for the user to open their website in Hostinger AI Builder interface.\\n\nUse this tool when the user wants the link to an existing website, or when you need its\nwebsite URL before or after editing it.\\n\n`is_in_progress` is true while changes are being generated or the website is being published;\nwait until it is false before publishing. `is_generating` is true while changes are being generated,\nand `actions_in_progress` has `website_publish` while the website is being published.\n`published_at` is when the website was last published,\n`is_template` is whether its published pages show the \"Use template\" banner, and\n`has_ecommerce_store` is whether it has an online store.\\n\nWebsites can be edited with the `Edit website` tool, or by the user in Hostinger AI Builder\ninterface in the provided website URL.",
+    "description": "Get the link for the user to open their website in Hostinger AI Builder interface.\\n\nUse this tool when the user wants the link to an existing website, or when you need its\nwebsite URL before or after editing it.\\n\n`is_in_progress` is true while changes are being generated or the website is being published;\nwait until it is false before publishing. `is_generating` is true while changes are being generated,\nand `actions_in_progress` has `website_publish` while the website is being published.\n`is_generating` turns false whether the build completed or failed: use the `Get website build task`\ntool to learn its outcome.\n`published_at` is when the website was last published,\n`is_template` is whether its published pages show the \"Use template\" banner, and\n`has_ecommerce_store` is whether it has an online store.\\n\nWebsites can be edited with the `Edit website` tool, or by the user in Hostinger AI Builder\ninterface in the provided website URL.",
     "method": "GET",
     "path": "/api/horizons/v1/websites/{websiteId}",
     "inputSchema": {
@@ -275,6 +275,41 @@ export default [
       },
       "required": [
         "websiteId"
+      ]
+    },
+    "security": [
+      {
+        "apiToken": []
+      }
+    ],
+    "group": "horizons"
+  },
+  {
+    "name": "horizons_websites_build-task",
+    "title": "Get website build task",
+    "annotations": {
+      "title": "Get website build task",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
+    "description": "Get the state and outcome of a website build started by the `Create website` or `Edit website` tool.\\n\nUse this tool with the `task.id` those tools return to find out whether the build completed or failed.\nPoll it every 30 seconds or so while `state` is `TASK_STATE_SUBMITTED` or `TASK_STATE_WORKING`.\\n\nWhen `state` is `TASK_STATE_FAILED` or `TASK_STATE_REJECTED`, the website does not contain the requested\nchanges: tell the user, using `message` and `reason_code`, and do not publish it.\nWhen `state` is `TASK_STATE_CANCELED`, the user stopped the build and changes made before that may be kept:\npublish only if the user asks to.\n`reason_code` `insufficient_credits` means the user must get more credits before building again.\\n\nWhen `state` is `TASK_STATE_COMPLETED`, the website can be published. A `reason_code` of\n`iteration_limit` on a completed build means it stopped early and kept the work done so far.",
+    "method": "GET",
+    "path": "/api/horizons/v1/websites/{websiteId}/tasks/{taskId}",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "websiteId": {
+          "type": "string",
+          "description": "The website ID"
+        },
+        "taskId": {
+          "type": "string",
+          "description": "The build task ID, returned as `task.id` by the `Create website` and `Edit website` tools"
+        }
+      },
+      "required": [
+        "websiteId",
+        "taskId"
       ]
     },
     "security": [

@@ -4,6 +4,22 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.17.0 — 2026-11-23
+
+### Operations
+
+- Added `horizons_websites_build-task` — Get website build task
+- Changed the description of `horizons_websites_create`
+- Changed the description of `horizons_websites_edit`
+- Changed the description of `horizons_websites_publish`
+- Changed the description of `horizons_websites_get`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v4.16.0 — 2026-11-23
 
 ### Also in this release
