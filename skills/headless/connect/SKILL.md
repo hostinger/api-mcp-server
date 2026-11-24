@@ -23,16 +23,16 @@ Your goal is to route those tools to their specific skill inside the tools folde
 
 ## Phase 0 — Node (the single one prerequisite)
 
-The Hostinger MCP server requires Node ≥ 20. Check it:
+The Hostinger MCP server requires Node ≥ 24. Check it:
 
 ```bash
 node -v
 ```
 
-If that errors (Node not installed) or prints a version below 20, install or upgrade Node and re-check — do not try to work around it:
+If that errors (Node not installed) or prints a version below 24, install or upgrade Node and re-check — do not try to work around it:
 
-- macOS: `brew install node` (or `nvm install 22 && nvm use 22`)
-- Linux: `nvm install 22 && nvm use 22` (or your distro's Node 20+ package)
+- macOS: `brew install node` (or `nvm install 24 && nvm use 24`)
+- Linux: `nvm install 24 && nvm use 24` (or your distro's Node 24+ package)
 - Windows: `winget install OpenJS.NodeJS.LTS` (or download from nodejs.org)
 
 ## Phase 1 — Find or install the skill folder
@@ -135,25 +135,33 @@ the user can follow and approve, not a script.
 
 ### Check both tool groups, not just "some Hostinger tools"
 
-The build needs **two** groups of connector operations, and they come from different servers. Having
-one group says nothing about the other:
+The build needs **two** groups of connector operations. Not every Hostinger server carries both, so
+having one group says nothing about the other:
 
 | Group | Operations | Comes from | Needed by |
 |---|---|---|---|
 | **Hosting** | `hosting_*` (websites, deploy, build report), `wordpress_*` | `hostinger` (`<command> <launcher>`), or the scoped servers such as `hostinger-hosting` + `hostinger-wordpress` | every build |
-| **Ecommerce** | `ecommerce_*` (stores, products, shipping, payments) | **only** `hostinger-ecommerce` (`<command> <launcher> hostinger-ecommerce-mcp`), or the Ecommerce MCP in the Hostinger Connector. Neither `hostinger` nor the scoped hosting servers include it | Ecommerce backends (`brief.md` → **Suggested backend**) |
+| **Ecommerce** | `ecommerce_*` (stores, products, shipping, payments) | `hostinger` (`<command> <launcher>`, every operation), the hosted server `mcp.hostinger.com` (through its `search`/`execute`), or `hostinger-ecommerce` (`<command> <launcher> hostinger-ecommerce-mcp`) / the Ecommerce MCP in the Hostinger Connector. The scoped servers (`hostinger-hosting`, `hostinger-wordpress`, `hostinger-domains`, …) don't include it | Ecommerce backends (`brief.md` → **Suggested backend**) |
 
-Check each group on its own, right here at connect, before anything else:
+Check each group on its own with a real probe, right here at connect, before anything else. Any
+connected Hostinger server counts:
 
 - **Hosting:** a Hostinger search tool finds `hosting_websites_list` (e.g. search "list websites").
-- **Ecommerce:** a tool from the `hostinger-ecommerce` server is in the session (Claude Code:
-  `mcp__hostinger-ecommerce__*`), and its search finds `ecommerce_stores_list` (e.g. search "list stores").
+- **Ecommerce:** a Hostinger search tool finds `ecommerce_stores_list` (search "list stores"), or
+  running `ecommerce_stores_list` returns the account's stores (an empty list passes too). It passes
+  whichever server answered: `hostinger`, `mcp.hostinger.com` or `hostinger-ecommerce`. Never decide
+  from tool or server names (such as `mcp__hostinger-ecommerce__*`): the unified server carries the
+  ecommerce operations under its own name, and a session full of scoped `mcp__hostinger-*__*` tools
+  can still be missing them.
 
 Only when **both** pass are the Hostinger tools "in this session". If either is missing, register the
-missing server(s) now (*register, restart, resume* below), even though other Hostinger tools respond.
+missing server now (*register, restart, resume* below), even though other Hostinger tools respond:
+`hostinger` when the hosting group is missing, since it carries both groups. When hosting passes but
+ecommerce doesn't, the session runs only scoped servers: register `hostinger-ecommerce` as the
+fallback.
 Pause for a restart when the hosting group is missing, or when the ecommerce group is missing and a
 `brief.md` already in the workspace (a continued or resumed build) names an Ecommerce backend.
-Otherwise register the missing ecommerce group and carry on without a restart: a new run has no
+Otherwise register the `hostinger-ecommerce` fallback and carry on without a restart: a new run has no
 brief yet, and `steps/03-provision/ecommerce/SKILL.md` pauses for it if refine picks Ecommerce.
 
 ### When the Hostinger tools aren't in this session: register, restart, resume
@@ -161,11 +169,12 @@ brief yet, and `steps/03-provision/ecommerce/SKILL.md` pauses for it if refine p
 Most coding tools load MCP servers only when they start, so a server registered mid-run isn't usable
 until the tool restarts. When either tool group above is missing:
 
-1. **Register the missing servers** in the tool's MCP config, as the tool route below shows: `hostinger`
-   (`<command> <launcher>`) if the hosting group is missing, and `hostinger-ecommerce`
-   (`<command> <launcher> hostinger-ecommerce-mcp`) if the ecommerce group is missing.
-   Skip a server that is already registered under its name. When neither group is there, register
-   both: one restart then covers every backend.
+1. **Register the missing server** in the tool's MCP config, as the tool route below shows: `hostinger`
+   (`<command> <launcher>`) if the hosting group is missing. It carries the ecommerce group too, so
+   one server and one restart cover every backend. Only when hosting passes and ecommerce doesn't
+   (scoped servers only), register the fallback `hostinger-ecommerce`
+   (`<command> <launcher> hostinger-ecommerce-mcp`) instead. Skip a server that is already
+   registered under its name.
 2. **Write `connect.json`** (Phase 4) before you stop. The skill folder from Phase 1 and the
    workspace stay in place, so the next run starts from them.
 3. **Pause and end your turn.** Send one line (at connect, after the sign-in link when one was
@@ -213,7 +222,7 @@ remove it and register it again through the launcher, then follow *register, res
 | Antigravity | `connect/tools/antigravity.md`  |
 | Devin       | `connect/tools/devin.md`        |
 
-If the user's tool isn't listed yet, connect it the generic way: register both Hostinger MCP servers
+If the user's tool isn't listed yet, connect it the generic way: register the `hostinger` MCP server
 in that tool's MCP config (command `<command>`, args `<launcher>` as above), then follow *register, restart, resume*.
 
 Once your tool's route has both groups in the session, come back here for Phase 4.

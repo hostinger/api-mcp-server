@@ -10,14 +10,16 @@ description: "Specific VS Code Hostinger MCP Server connection instructions for 
 
 ## Step 1 — Make the MCP tools available
 
-The later stages drive the Hostinger connector through VS Code's native MCP tools. Check **both** tool groups (hosting and ecommerce), as *Check both tool groups* in `connect/SKILL.md`
-says: other Hostinger tools responding doesn't mean the `hostinger-ecommerce` ones are there. Both
-respond and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on.
+The later stages drive the Hostinger connector through VS Code's native MCP tools. Check **both** tool groups (hosting and ecommerce) with a real search, as *Check both tool groups* in `connect/SKILL.md`
+says: "list websites" finds `hosting_websites_list` and "list stores" finds `ecommerce_stores_list`,
+on any connected Hostinger server. The unified `hostinger` server and `mcp.hostinger.com` carry both;
+the scoped servers (`hostinger-hosting`, `hostinger-wordpress`, …) carry no ecommerce. Both pass and
+the registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on.
 
-If either is missing, register the missing server(s) for VS Code; skip one already registered. The bootstrap already signed you in, so they reuse
-the cached sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are
-no tokens to handle. Add them to `.vscode/mcp.json` (workspace) or your user `settings.json` under
-`mcp`:
+If the hosting group is missing, register `hostinger` for VS Code, which carries both groups; skip it
+if it's already registered. The bootstrap already signed you in, so it reuses the cached sign-in
+(`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are no tokens to
+handle. Add it to `.vscode/mcp.json` (workspace) or your user `settings.json` under `mcp`:
 
 ```json
 // .vscode/mcp.json
@@ -27,20 +29,21 @@ no tokens to handle. Add them to `.vscode/mcp.json` (workspace) or your user `se
       "type": "stdio",
       "command": "<command>",
       "args": ["<launcher>"]
-    },
-    "hostinger-ecommerce": {
-      "type": "stdio",
-      "command": "<command>",
-      "args": ["<launcher>", "hostinger-ecommerce-mcp"]
     }
   }
 }
 ```
 
-Or add them in two commands:
+Or add it in one command:
 
 ```bash
 code --add-mcp '{"name":"hostinger","command":"<command>","args":["<launcher>"]}'
+```
+
+Only when hosting passes and ecommerce doesn't (scoped servers only), add the ecommerce fallback
+instead, as a `hostinger-ecommerce` entry with `"args": ["<launcher>", "hostinger-ecommerce-mcp"]` or:
+
+```bash
 code --add-mcp '{"name":"hostinger-ecommerce","command":"<command>","args":["<launcher>","hostinger-ecommerce-mcp"]}'
 ```
 

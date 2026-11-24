@@ -1,19 +1,20 @@
 ---
 name: headless-step-content-model-ecommerce
-description: "Push phase of Step 4 for a Hostinger Ecommerce backend: create the catalog through the hostinger-ecommerce MCP — products (physical/digital) priced in minor units, product images from URLs, optional variants — on the store from site.json. Verified against the public Storefront V2 API. Idempotent, instance-gated."
+description: "Push phase of Step 4 for a Hostinger Ecommerce backend: create the catalog through the ecommerce_* operations of a connected Hostinger MCP server — products (physical/digital) priced in minor units, product images from URLs, optional variants — on the store from site.json. Verified against the public Storefront V2 API. Idempotent, instance-gated."
 ---
 
 # headless-step-content-model-ecommerce
 
 **Push phase — needs the store.** Run after provision created the store + custom sales channel (ids in
-`site.json → ecommerce`). All writes go through the **`hostinger-ecommerce`** MCP (`ecommerce_*`,
-OAuth). Prices are **integers in minor units** (cents) and live on **variants**.
+`site.json → ecommerce`). All writes go through the **`ecommerce_*`** operations (OAuth) of whichever
+connected Hostinger server has them: `hostinger`, `mcp.hostinger.com` or `hostinger-ecommerce`. Prices are **integers in minor units** (cents) and live on **variants**.
 
 **In:** `content-model.md` (prepared catalog), `site.json` (`ecommerce.store_id`). **Out:** products +
 images created in the store; ids recorded back into `content-model.md`.
 
-> If the `hostinger-ecommerce` MCP tools aren't available, follow the prerequisite in
-> `../../03-provision/ecommerce/SKILL.md`: register the server, then pause with *register, restart,
+> If search "list stores" doesn't find `ecommerce_stores_list` on any connected Hostinger server,
+> follow the prerequisite in `../../03-provision/ecommerce/SKILL.md`: register the
+> `hostinger-ecommerce` fallback if it isn't registered, then pause with *register, restart,
 > resume* from `connect/SKILL.md`. Never drive the server yourself over stdio.
 
 ## Step 1 — Create products (idempotent)

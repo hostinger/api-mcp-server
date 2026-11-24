@@ -12,21 +12,29 @@ description: "Specific Claude Code Hostinger MCP Server connection instructions 
 ## Step 1 — Make the MCP tools available
 
 Stages 2–10 drive the Hostinger connector through Claude Code's native MCP tools. Check **both** tool
-groups as *Check both tool groups* in `connect/SKILL.md` says:
+groups with a real search, as *Check both tool groups* in `connect/SKILL.md` says. Any connected
+Hostinger server counts (`mcp__hostinger__*`, the hosted `mcp.hostinger.com`, `mcp__hostinger-ecommerce__*`):
 
-- **Hosting:** `mcp__hostinger__*`, or the scoped `mcp__hostinger-hosting__*`.
-- **Ecommerce:** `mcp__hostinger-ecommerce__*`. The scoped servers (`hostinger-hosting`,
-  `hostinger-wordpress`, `hostinger-domains`, …) never include it, so a session full of
-  `mcp__hostinger-*__*` tools can still be missing it.
+- **Hosting:** search "list websites" finds `hosting_websites_list`.
+- **Ecommerce:** search "list stores" finds `ecommerce_stores_list` (or running it returns the
+  stores). The unified `hostinger` server and `mcp.hostinger.com` include it; the scoped servers
+  (`hostinger-hosting`, `hostinger-wordpress`, `hostinger-domains`, …) don't, so a session full of
+  `mcp__hostinger-*__*` tools can still be missing it. Don't judge by tool-name prefixes.
 
-Both present and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on. Either missing → register the missing server(s) at user scope
-now (`claude mcp list` shows what's already registered; skip those). The bootstrap already signed you
-in, so they reuse the cached sign-in (`~/.config/hostinger-mcp/credentials.json`, or
-`HOSTINGER_API_TOKEN`) and there are no tokens to handle:
+Both pass and the registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on. Otherwise register at user scope now (`claude mcp list`
+shows what's already registered; skip those). The bootstrap already signed you in, so it reuses the
+cached sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are no
+tokens to handle:
 
 ```bash
-claude mcp add hostinger --scope user -- "<command>" "<launcher>"                                     # hosting group missing
-claude mcp add hostinger-ecommerce --scope user -- "<command>" "<launcher>" hostinger-ecommerce-mcp  # ecommerce group missing
+claude mcp add hostinger --scope user -- "<command>" "<launcher>"   # hosting group missing; carries ecommerce too
+```
+
+Only when hosting passes and ecommerce doesn't (scoped servers only), register the ecommerce fallback
+instead:
+
+```bash
+claude mcp add hostinger-ecommerce --scope user -- "<command>" "<launcher>" hostinger-ecommerce-mcp
 ```
 
 Claude Code loads MCP servers only at startup, so follow *register, restart, resume* in

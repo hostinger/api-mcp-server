@@ -1,6 +1,6 @@
 ---
 name: headless-step-provision-ecommerce
-description: "Provision a Hostinger Ecommerce backend for the Hostinger Headless flow: ensure the hostinger-ecommerce MCP is connected, create the headless website (frontend host) and a Hostinger Ecommerce STORE with a custom (headless) sales channel, set shipping + payment, and record it all in site.json."
+description: "Provision a Hostinger Ecommerce backend for the Hostinger Headless flow: ensure the ecommerce_* operations are reachable from a connected Hostinger MCP server, create the headless website (frontend host) and a Hostinger Ecommerce STORE with a custom (headless) sales channel, set shipping + payment, and record it all in site.json."
 ---
 
 # headless-step-provision-ecommerce
@@ -15,13 +15,16 @@ Provision a **Hostinger Ecommerce** backend for `<domain>` and prove it is ready
 
 **Out:** `site.json` (store id, custom sales channel id, URLs).
 
-> ## ⚠️ Prerequisite: the `hostinger-ecommerce` MCP server must be connected
-> Store management is **not** in the `hosting`/`wordpress` MCP groups — it's the separate
-> **`hostinger-ecommerce`** group (`ecommerce_*` ops, OAuth-backed, no API token needed). Connect
-> registers it when it's missing, but runs before refine, so on a new run it doesn't restart for it:
-> here the server is often registered but its tools aren't loaded yet. If the ecommerce search finds
-> nothing, check the registration as connect Phase 3 does and register it only if it isn't there. The
-> command for each tool is in its `connect/tools/<tool>.md`; for Claude Code:
+> ## ⚠️ Prerequisite: the `ecommerce_*` operations must be reachable
+> Store management is the **ecommerce** group (`ecommerce_*` ops, OAuth-backed, no API token needed).
+> The unified `hostinger` server and the hosted `mcp.hostinger.com` include it, as does
+> `hostinger-ecommerce`; the scoped servers (`hostinger-hosting`, `hostinger-wordpress`, …) don't.
+> Probe it on any connected Hostinger server: search "list stores" must find `ecommerce_stores_list`.
+> If it does, there is nothing to register. If it finds nothing, the session runs only scoped
+> servers: connect registers the `hostinger-ecommerce` fallback then, but runs before refine, so on a
+> new run it doesn't restart for it, and here the server is often registered but its tools aren't
+> loaded yet. Check the registration as connect Phase 3 does and register it only if it isn't there.
+> The command for each tool is in its `connect/tools/<tool>.md`; for Claude Code:
 > ```bash
 > claude mcp add hostinger-ecommerce --scope user -- "<command>" "<launcher>" hostinger-ecommerce-mcp
 > ```
@@ -35,8 +38,8 @@ Provision a **Hostinger Ecommerce** backend for `<domain>` and prove it is ready
 > `ecommerce_stores_list` — before proceeding.
 > The authoritative, always-current build guide is `ecommerce_miscellaneous_custom-storefront-setup-instructions` — read it once per build.
 
-All website-lifecycle calls go through the `hosting` connector (`execute`); all store calls through the
-`hostinger-ecommerce` MCP.
+All website-lifecycle calls go through the `hosting` connector (`execute`); all store calls through
+whichever connected Hostinger server answered the ecommerce probe.
 
 ## Step 1 — The headless website (frontend host)
 

@@ -11,7 +11,7 @@ description: "Specific Cursor Hostinger MCP Server connection instructions for t
 
 ## Step 1 — Install / reach Hostinger MCP
 
-**Prerequisite:** Node.js 20 or newer on `PATH` (`node -v`). The published package engines require `>=20`; use Node 24 if you follow the package README.
+**Prerequisite:** Node.js 24 or newer on `PATH` (`node -v`), as the package README requires (`nvm install 24 && nvm use 24`).
 
 The Hostinger MCP is the npm package `@hostinger/mcp`. You do **not** need a global install — Cursor (and this session) run it through the launcher (`~/.hostinger/mcp/`, written by the connect bootstrap), which starts the latest release with `npx` from your home folder. Never run `npx` for it directly: from the project, npx would run the project's own `node`. `<command>` and `<launcher>` below come from the bootstrap's `launcher` event (see `connect/SKILL.md`). Prefer the unified binary `hostinger-api-mcp` (every operation). Scoped binaries such as `hostinger-hosting-mcp` are optional.
 
@@ -34,15 +34,17 @@ hostinger-api-mcp --version
 
 ### Register the servers in Cursor
 
-Check **both** tool groups, as *Check both tool groups* in `connect/SKILL.md` says: hosting
-(`mcp__hostinger__*` or `mcp__hostinger-hosting__*`) **and** ecommerce (`mcp__hostinger-ecommerce__*`).
-The scoped `mcp__hostinger-*__*` servers never include ecommerce, so they alone don't count. Both
-present and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → skip registration: go to Step 2 only if you still need sign-in, otherwise go to Step 3.
+Check **both** tool groups with a real search, as *Check both tool groups* in `connect/SKILL.md` says:
+hosting ("list websites" finds `hosting_websites_list`) **and** ecommerce ("list stores" finds
+`ecommerce_stores_list`), on any connected Hostinger server. The unified `hostinger` server and
+`mcp.hostinger.com` carry both; the scoped `mcp__hostinger-*__*` servers never include ecommerce, so
+they alone don't count. Don't judge by tool-name prefixes. Both pass and the registrations run the
+launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → skip registration: go to Step 2 only if you still need sign-in, otherwise go to Step 3.
 
-If either is missing, register the missing server(s) in `~/.cursor/mcp.json` (global, so every project and every
-later run has them). Merge them into any existing `mcpServers` rather than replacing the file.
-**Do not** put `HOSTINGER_API_TOKEN` in this file when you want OAuth: leave the token unset so
-OAuth can run:
+If the hosting group is missing, register `hostinger` (it carries both groups) in `~/.cursor/mcp.json`
+(global, so every project and every later run has it). Merge it into any existing `mcpServers`
+rather than replacing the file. **Do not** put `HOSTINGER_API_TOKEN` in this file when you want
+OAuth: leave the token unset so OAuth can run:
 
 ```json
 {
@@ -50,7 +52,17 @@ OAuth can run:
     "hostinger": {
       "command": "<command>",
       "args": ["<launcher>"]
-    },
+    }
+  }
+}
+```
+
+Only when hosting passes and ecommerce doesn't (scoped servers only), add the ecommerce fallback
+instead:
+
+```json
+{
+  "mcpServers": {
     "hostinger-ecommerce": {
       "command": "<command>",
       "args": ["<launcher>", "hostinger-ecommerce-mcp"]
@@ -62,7 +74,7 @@ OAuth can run:
 Cursor loads MCP servers only when the editor starts, so after Step 2 write `connect.json` and follow
 *register, restart, resume* in `connect/SKILL.md`, which says when a restart is needed. When it is,
 ask the user to fully quit and reopen Cursor
-(and, if Cursor asks, enable the two Hostinger servers under Settings → MCP), then paste the same
+(and, if Cursor asks, enable the new Hostinger server under Settings → MCP), then paste the same
 prompt. Never spawn the server yourself or write a JSON-RPC client to reach it: every connector call
 must be a native MCP tool call.
 

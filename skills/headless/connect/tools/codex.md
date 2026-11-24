@@ -10,26 +10,36 @@ description: "Specific Codex Hostinger MCP Server connection instructions for th
 
 ## Step 1 — Make the MCP tools available
 
-The later stages drive the Hostinger connector through Codex's native MCP tools. Check **both** tool groups (hosting and ecommerce), as *Check both tool groups* in `connect/SKILL.md`
-says: other Hostinger tools responding doesn't mean the `hostinger-ecommerce` ones are there. Both
-respond and both registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on.
+The later stages drive the Hostinger connector through Codex's native MCP tools. Check **both** tool groups (hosting and ecommerce) with a real search, as *Check both tool groups* in `connect/SKILL.md`
+says: "list websites" finds `hosting_websites_list` and "list stores" finds `ecommerce_stores_list`,
+on any connected Hostinger server. The unified `hostinger` server and `mcp.hostinger.com` carry both;
+the scoped servers (`hostinger-hosting`, `hostinger-wordpress`, …) carry no ecommerce. Both pass and
+the registrations run the launcher (*An existing Hostinger registration* in `connect/SKILL.md`) → use them and move on.
 
-If either is missing, register the missing server(s); skip one already registered. The bootstrap already signed you in, so they reuse the cached
-sign-in (`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are no tokens
-to handle:
+If the hosting group is missing, register `hostinger`, which carries both groups; skip it if it's
+already registered. The bootstrap already signed you in, so it reuses the cached sign-in
+(`~/.config/hostinger-mcp/credentials.json`, or `HOSTINGER_API_TOKEN`) and there are no tokens to handle:
 
 ```bash
 codex mcp add hostinger -- "<command>" "<launcher>"
-codex mcp add hostinger-ecommerce -- "<command>" "<launcher>" hostinger-ecommerce-mcp
 ```
 
-or add them to `~/.codex/config.toml`:
+or add it to `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.hostinger]
 command = "<command>"
 args = ["<launcher>"]
+```
 
+Only when hosting passes and ecommerce doesn't (scoped servers only), register the ecommerce fallback
+instead:
+
+```bash
+codex mcp add hostinger-ecommerce -- "<command>" "<launcher>" hostinger-ecommerce-mcp
+```
+
+```toml
 [mcp_servers.hostinger-ecommerce]
 command = "<command>"
 args = ["<launcher>", "hostinger-ecommerce-mcp"]
