@@ -62,7 +62,7 @@
             "type": "object",
             "required": ["stage", "started_at", "ended_at", "result"],
             "properties": {
-              "stage": { "type": "string", "enum": ["refine", "connect", "check_state", "provision", "content_model", "design", "frontend", "validate", "deploy", "done"] },
+              "stage": { "type": "string", "enum": ["connect", "check_state", "refine", "provision", "content_model", "design", "frontend", "validate", "deploy", "done"] },
               "phase": { "type": ["string", "null"] },
               "started_at": { "type": "string" },
               "ended_at": { "type": ["string", "null"] },

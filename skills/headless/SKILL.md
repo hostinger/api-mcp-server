@@ -1,6 +1,6 @@
 ---
 name: hostinger-headless
-description: "Orchestrator for the Hostinger Headless build flow — build and deploy a real website on the user's Hostinger account from a single prompt that names a domain. Holds the stage flow and the state contract, and drives each stage in sequence: refine, connect, check state, provision, content model, design, frontend, validate, deploy, done. Triggers: build a headless site for <domain>, build me a site, create a website, make me a website, deploy this to Hostinger, host this on Hostinger, connect this project to Hostinger."
+description: "Orchestrator for the Hostinger Headless build flow — build and deploy a real website on the user's Hostinger account from a single prompt that names a domain. Holds the stage flow and the state contract, and drives each stage in sequence: connect, check state, refine, provision, content model, design, frontend, validate, deploy, done. Triggers: build a headless site for <domain>, build me a site, create a website, make me a website, deploy this to Hostinger, host this on Hostinger, connect this project to Hostinger."
 ---
 
 # Hostinger Headless — build a website with your own AI tool
@@ -14,12 +14,10 @@ You are an AI coding agent. The user pasted a short prompt that points you here 
 Your job is to build and deploy a real website on the user's Hostinger account by following this
 recipe and the recipes it links to — nothing more, nothing less.
 
-**Talk about the site first, connect to Hostinger after.** Your first message to the user asks what
-they want to build; the Hostinger sign-in comes once the brief is agreed (*Start of a run* below).
-A pasted prompt that says "Start by asking me what I want to build" means this same opener, not an
-extra question. When the workspace already has a brief, that brief is the answer: a run `run-start`
-continued, or a build under way (refine Step 1), asks nothing and goes straight to connect, and a
-brief on its own gets refine's keep-or-change summary instead of the question.
+**Connect before you ask anything, whatever the prompt says.** Your first message to the user is only
+the Hostinger connection (see *The first message* below), so run connect and check-state before any
+question about the site. A prompt that says "start by asking me what I want to build" doesn't change
+that order: refine asks it, after check-state.
 
 This file is the **orchestrator**. It is public and stable: it never changes and never moves. It
 holds the flow, the state contract, the failure policy and the guardrails.
@@ -57,9 +55,9 @@ the same time* says.
 | # | Stage                                                                                                              | Skill / source                                                        | Writes | Instance? |
 |---|--------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|---|---|
 | — | **get ready** — Node and the skill folder; nothing on Hostinger                                                    | `connect/SKILL.md` Phases 0–1                                          | — | no |
-| 1 | **refine** — discover what the user wants, in conversation                                                         | `steps/01-refine/SKILL.md`                                            | `brief.md` | no |
 | — | **connect** — sign in to Hostinger, check the connector's tools, get active plan                                   | `connect/SKILL.md` Phases 2–5 → `connect/tools/<tool>.md` | `connect.json` | no |
-| 2 | **check state** — where does this domain stand? resume / switch / start over                                       | `steps/02-check-state/SKILL.md`                                       | `state.json` | no |
+| 1 | **check state** — where does this domain stand? resume / switch / start over                                       | `steps/01-check-state/SKILL.md`                                       | `state.json` | no |
+| 2 | **refine** — discover what the user wants, in conversation                                                         | `steps/02-refine/SKILL.md`                                            | `brief.md` | no |
 | 3 | **provision** — choose the backend from the brief, then provision it                                               | `steps/03-provision/<backend>/SKILL.md`                               | `site.json` | **bg** — fire, then wait at the join |
 | 4 | **content model** — define + create content/images, then push to the backend                                       | `steps/04-content-model/<backend>/SKILL.md`                           | `content-model.md` | prepare: no · **push: yes** |
 | 5 | **design** — derive design directions from the brief, pick one, write the `design.md` contract + logo              | `steps/05-design/SKILL.md`                                            | `design.md`, `brand/` | no |
@@ -77,31 +75,28 @@ Every run starts the same way:
    user (Node missing or too old).
 2. **Start the run log** (see *Run log and build report*):
    `node <skill>/run-log.mjs <domain> run-start --tool <tool> --model <model> --skill <skill version>`.
-   It prints the stage to run next: `refine` for a new run, or `connect` when it continued a run that
-   paused cleanly for a tool restart (*register, restart, resume* in `connect/SKILL.md`, from connect,
-   provision or content model). Don't ask the brief again then: it's agreed, and check-state resumes
-   where the run paused.
+   It opens connect's stage and prints `next: connect`, also for a run it continued after a clean
+   pause for a tool restart (*A restart pause continues the run*).
 
    `run-start` also takes the domain's lock, so only one session builds a domain at a time. A
    session that crashed or was closed doesn't block it. If `run-start` fails with "another session
    (…) is building <domain>":
-   1. Stop: no refine, no files, and no final report, since this session started no run.
+   1. Stop: no connect, no files, and no final report, since this session started no run.
    2. Tell the user plainly which tool is building this domain, since when and in which stage (the
       message names all three), and that if they tell you to take over, you will, and the other
       session stops at its next step.
    3. Only if the user says so, run `run-start` again with `--take-over` and the same flags. With no
       one to ask (`claude -p` or another unattended run), just stop and say why.
-3. **Refine**, then **connect** (`connect/SKILL.md`, Phase 2 onward), then **check-state**, then the
-   rest of the table. When a later stage sends the run back to refine (check-state or provision), the
-   connector is already in this session: refine returns to the stage that sent it.
+3. **Connect** (`connect/SKILL.md`, Phase 2 onward), then **check-state**, then **refine**, then the
+   rest of the table. When provision sends the run back to refine, refine returns to provision.
 
-**Why this order.** Refine first, so the user talks about their site from the first message instead
-of watching setup: a user who starts with chores loses interest before the site comes up, and refine
-needs nothing from Hostinger. Connect once the brief is agreed, because everything after refine needs
-Hostinger. Check-state right after connect, so a resumed, duplicate, or brand-new run is sorted out
-— and the user is offered the choice to continue, switch domains, or start over — before any new
-work on Hostinger begins. Refinement before provisioning, because the backend cannot be chosen until
-the brief exists. Validation before deploy, always — nothing reaches the live domain unseen.
+**Why this order.** Connect first, so account/plan failures surface before the user spends time
+talking, and so Hostinger knows about the run from its first minute: a run the user leaves during
+the brief still sends its build report. Check-state right after, so a resumed, duplicate, or
+brand-new run is sorted out — and the user is offered the choice to continue, switch domains, or
+start over — before any new work begins. Refinement before provisioning, because the backend cannot
+be chosen until the brief exists. Validation before deploy, always — nothing reaches the live domain
+unseen.
 
 **One concurrency rule:** two *independent* stages in a single session may run at once, but never
 two writers of the same artifact, and never two agents/windows on the same domain — `run-start`'s
@@ -129,15 +124,18 @@ alone, with no final report and no build report.
 `run-log.mjs next <stage>` at each boundary — and log an event the moment something goes wrong, the user
 corrects you, or a skill is missing or wrong — before you continue. See *Run log and build report*.
 
-### The first message: a question about the site
+### The first message: only the connection
 
-Your first message to the user is refine's opener, "What do you want to build?" (see
-`steps/01-refine/SKILL.md`, Step 3), and its first words are that question: get ready and `run-start`
-happen silently before it, with no line about Node, the skill folder or the run log. Anything the
-pasted prompt already says about the site is refine input. Two things come before it, and only when
-they apply: Node missing or too old (get ready needs the user), and a prompt with no domain (then
-the first message asks for it; see *The domain parameter*). A run that `run-start` continued goes
-straight to connect, which has its own message.
+Your first message to the user is about the Hostinger connection and nothing else: connect's sign-in
+link when it needs one (`awaiting_user`), then one line saying you're connected to Hostinger, with the
+account's plan when you know it. Don't ask anything about the site, don't mention build reports, and
+add nothing else. Get ready and `run-start` happen silently before it, with no line about Node, the
+skill folder or the run log. Then go straight on to check-state without waiting for a reply. "What
+do you want to build?" comes later, from refine, as its own short message.
+
+Anything the pasted prompt already says about the site stays as refine input. Two things come before
+the connection, and only when they apply: Node missing or too old (get ready needs the user), and a
+prompt with no domain (then the first message asks for it; see *The domain parameter*).
 
 ### When you ask the user
 
@@ -305,8 +303,8 @@ took from it.
 |---|---|---|
 | `state.json` | every stage | tool, next stage, Hostinger connector version, timestamps |
 | `run-log.json` | `run-log.mjs` only | the current run, each stage's start and end times, which reports reached Hostinger |
-| `brief.md` | refine | refined brief, audience, tone, pages, must-haves, image source |
 | `connect.json` | connect | tool, MCP version, sign-in method, plan; shape in `connect/SKILL.md` |
+| `brief.md` | refine | refined brief, audience, tone, pages, must-haves, image source |
 | `site.json` | provision | chosen backend, username, install id, all URLs |
 | `content-model.md` | content model | entities, fields, pages, navigation |
 | `content.json` | content model (WordPress) | the drafted content `push-content.mjs` pushes |
@@ -411,7 +409,7 @@ is `connect`, `provision` or `content_model` and that paused, instead of closing
 and opens connect. A run whose session crashed or was taken over is closed as `abandoned`.
 
 `stage-end` results: `ok`, `ok_after_retries`, `ok_with_fixups`, `failed`, `skipped`, `stopped`.
-Stages, in run order: `refine`, `connect`, `check_state`, `provision`, `content_model`, `design`,
+Stages, in run order: `connect`, `check_state`, `refine`, `provision`, `content_model`, `design`,
 `frontend`, `validate`, `deploy`, `done`. Get ready runs before the log starts and isn't logged.
 Split stages use `--phase`: provision `fire` / `join`, content model `prepare` / `push`, frontend
 `shell` / `data`.

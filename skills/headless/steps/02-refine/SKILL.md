@@ -1,6 +1,6 @@
 ---
 name: headless-step-refine
-description: "Step 1 (refine) of the Hostinger Headless flow, the first stage the user talks to, run before the Hostinger connection. Turns the user's seed — often just a domain — into a brief through conversation: asks what they want to build (purpose, audience, tone, pages, products, must-haves; images, local files, links all welcome), then *infers* the backend that fits (WordPress, Ecommerce, WordPress + Ecommerce, WordPress + WooCommerce for a one-site content+store, or PocketBase for a custom app/SPA or any site whose visitors create its data: accounts, bookings, comments, votes, order requests) — it never asks the user to pick a backend or a technology; it asks for the site name (suggesting a few when the user has none), the user confirms the plan (and the image source) in plain language, and only after their yes it writes brief.md. Hostinger Ecommerce stays the default for selling; WooCommerce is chosen only when the user explicitly asks for it or wants content and a store on one WordPress site."
+description: "Step 2 (refine) of the Hostinger Headless flow. Turns the user's seed — often just a domain — into a brief through conversation: asks what they want to build (purpose, audience, tone, pages, products, must-haves; images, local files, links all welcome), then *infers* the backend that fits (WordPress, Ecommerce, WordPress + Ecommerce, WordPress + WooCommerce for a one-site content+store, or PocketBase for a custom app/SPA or any site whose visitors create its data: accounts, bookings, comments, votes, order requests) — it never asks the user to pick a backend or a technology; it asks for the site name (suggesting a few when the user has none), the user confirms the plan (and the image source) in plain language, and only after their yes it writes brief.md. Hostinger Ecommerce stays the default for selling; WooCommerce is chosen only when the user explicitly asks for it or wants content and a store on one WordPress site."
 ---
 
 # headless-step-refine
@@ -28,45 +28,31 @@ question tool is not the user passing on a question; see *When you ask the user*
 **In:** the domain (the workspace directory name), plus anything the user already shared.
 **Out:** `~/.hostinger/<domain>/brief.md`.
 
-Nothing in this step touches Hostinger. It runs before the connection (*Start of a run* in the
-top-level `SKILL.md`), so it reads only the local workspace and the user; check-state checks the plan
-against Hostinger afterwards and sends the run back here when the site fixes the backend. Refine is
-the only writer of `brief.md`. It only asks, decides and writes.
+Nothing in this step touches Hostinger. Refine is the only writer of `brief.md`. It only asks,
+decides and writes.
 
 ---
 
 ## Step 1 — Read the workspace, then the resume check
 
-Read everything already in `~/.hostinger/<domain>/` (`state.json`, any notes, images or files the
-user dropped there) — it all counts as input.
+Read everything already in `~/.hostinger/<domain>/` (`state.json`, `connect.json`, any notes, images
+or files the user dropped there) — it all counts as input.
 
-If `brief.md` already exists for this domain, **don't overwrite it**:
+If `brief.md` already exists for this domain, **don't overwrite it**. Show the user a three-line
+summary (what the site is, its pages, the suggested backend) and ask: *keep it, or change something?*
+Keep → go to Step 6, unless the brief has no **Site name** or **Images** section: then ask what's
+missing first (Round 1 question 4, or the Step 5 images line) and add it. Change → edit only what
+they asked for, then re-confirm (Step 5). A skipped tool result is not Keep; see *When you ask the
+user* in the top-level `SKILL.md`.
 
-- **Later build artifacts exist too** (`site.json`, `design.md`, `content-model.md`, `src/`): the
-  build is under way, and check-state offers to resume it once you're connected. Ask nothing here,
-  even when the pasted prompt says to start by asking what to build:
-  `node <skill>/run-log.mjs <domain> stage-end refine skipped --note "build under way"`, and go on.
-- **Only the brief:** show the user a three-line summary (what the site is, its pages, the suggested
-  backend) and ask: *keep it, or change something?* Keep → go to Step 6, unless the brief has no
-  **Site name** or **Images** section: then ask what's missing first (Round 1 question 4, or the
-  Step 5 images line) and add it. Change → edit only what they asked for, then re-confirm (Step 5).
-  A skipped tool result is not Keep; see *When you ask the user* in the top-level `SKILL.md`.
-
-**A fixed backend.** On the first pass the backend is yours to pick from the conversation: what
-onboarding set up on Hostinger isn't visible before the connection. It is **fixed** — never change
-the Suggested backend — in two cases:
-
-- **The site is already provisioned** (`site.json` exists). Explain that switching backends means a
-  new domain.
-- **Check-state sent you back because the site fixes it** (an onboarding PocketBase site, or a live
-  site with a real backend). Re-decide
-  what follows from that backend (Step 4's rendering, the Step 5 images line), then go to Step 5: its
-  message opens by saying the site already runs on that backend and what changes for the user. When
-  the plan needs what that backend can't do (checkout, a CMS the owner writes in), say so in the same
-  message and offer to build on another domain instead.
-
-A `brief.md` whose Suggested backend is **Webapp** is from an older flow: re-decide it in Step 4 (it
-becomes **PocketBase**, or the user is pointed at the `deploy-to-hosting` skill).
+If the site is already provisioned (`site.json` exists), the backend is **fixed** — never change the
+Suggested backend on a provisioned site. Explain that switching backends means a new domain. The same
+holds when check-state found an onboarding site of setup type `headless_pocketbase`: onboarding has
+already chosen PocketBase, so the backend is **PocketBase**, and when check-state found a live site
+with a real backend (WordPress at `/cms`, a store, a PocketBase backend): keep that backend. Refine
+still finds out what to build, but never picks another backend for that domain. A `brief.md` whose Suggested backend is **Webapp** is
+from an older flow: re-decide it in Step 4 (it becomes **PocketBase**, or the user is pointed at the
+`deploy-to-hosting` skill).
 
 ## Step 2 — Gather what you already have
 
@@ -96,8 +82,7 @@ If Step 2 already answers the Round 1 questions, skip the Round 1–3 questions 
 open with one line and **wait for the user's answer**: *"Tell me what you want to build — a
 sentence is enough. Links, screenshots or files help too. Skip anything you don't want to answer."*
 
-The opener is the run's first message (see *The first message* in the top-level `SKILL.md`), sent
-before any Hostinger setup. Of the rounds it asks Round 1 only (plus the
+The opener is its own message, sent after check-state. Of the rounds it asks Round 1 only (plus the
 Build mode and Existing project confirms above, when they apply). Never fold Round 2 or 3 into it
 (audience, pages, look, content or logo), not even as a numbered list under the opening question.
 
@@ -305,9 +290,7 @@ and note it in the brief.
 Write `brief.md` from the template below. Fill every section from the conversation, defaulting what
 the user skipped and tagging it `(assumed)`; leave out **Products** when nothing is sold and
 **Existing project** unless Step 2 found a project in the folder. Use the user's own words where you
-can. Then set `state.json` → `stage` to the stage *Start of a run* in the top-level `SKILL.md` names
-after refine (`connect` on the first pass, else the stage that sent the run back here), with a fresh
-`updated_at`, and go on to it.
+can. Then set `state.json` → `stage` to `provision`, with a fresh `updated_at`.
 
 The **Suggested backend** section is the contract with `03-provision/SKILL.md`, which routes on it.
 Its first line must be exactly one of `**WordPress**`, `**Ecommerce**`, `**WordPress + Ecommerce**`,

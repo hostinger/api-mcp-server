@@ -23,7 +23,7 @@ import { processName, processTable } from './processes.mjs';
 import { describeServer, isDown, serversSince, stopServers } from './servers.mjs';
 import { now, workspaceDir, writeJsonAtomic } from './workspace.mjs';
 
-const STAGES = ['refine', 'connect', 'check_state', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy', 'done'];
+const STAGES = ['connect', 'check_state', 'refine', 'provision', 'content_model', 'design', 'frontend', 'validate', 'deploy', 'done'];
 // Stages that stop for the user to restart their tool, so it loads a newly registered Hostinger MCP server.
 const RESTART_STAGES = ['connect', 'provision', 'content_model'];
 const PAUSE_NOTE = 'paused for a tool restart';
@@ -322,9 +322,9 @@ async function runStart(ws, flags, lockWasFree) {
     skill: flags.skill ?? previous.skill ?? null,
   };
   fresh.history ??= [];
-  fresh.history.push({ run: id, stage: 'refine', phase: null, started_at: startedAt, ended_at: null, result: null, note: null });
+  fresh.history.push({ run: id, stage: 'connect', phase: null, started_at: startedAt, ended_at: null, result: null, note: null });
   saveLog(ws, fresh);
-  console.log(`run ${fresh.run.id} started; next: refine`);
+  console.log(`run ${fresh.run.id} started; next: connect`);
 }
 
 function runUpdate(ws, flags) {

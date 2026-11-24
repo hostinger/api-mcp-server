@@ -18,16 +18,18 @@ Provision a **Hostinger Ecommerce** backend for `<domain>` and prove it is ready
 > ## ⚠️ Prerequisite: the `hostinger-ecommerce` MCP server must be connected
 > Store management is **not** in the `hosting`/`wordpress` MCP groups — it's the separate
 > **`hostinger-ecommerce`** group (`ecommerce_*` ops, OAuth-backed, no API token needed). Connect
-> registers it alongside `hostinger`, so its tools are normally already in the session. If they
-> aren't (for example, a tool connected before connect registered both servers), register it now. The
+> registers it when it's missing, but runs before refine, so on a new run it doesn't restart for it:
+> here the server is often registered but its tools aren't loaded yet. If the ecommerce search finds
+> nothing, check the registration as connect Phase 3 does and register it only if it isn't there. The
 > command for each tool is in its `connect/tools/<tool>.md`; for Claude Code:
 > ```bash
 > claude mcp add hostinger-ecommerce --scope user -- "<command>" "<launcher>" hostinger-ecommerce-mcp
 > ```
-> (Or enable the **Ecommerce** MCP in the Hostinger Connector.) A newly added MCP server only loads
-> after a restart, so pause the run with *register, restart, resume* from `connect/SKILL.md`: save
-> state, ask the user to restart the tool and paste the same prompt, and end your turn. Check-state then
-> resumes at the stage that paused. Never spawn the server yourself or write a JSON-RPC client to reach it.
+> (Or enable the **Ecommerce** MCP in the Hostinger Connector.) Either way, already registered or just
+> added, its tools only load after a restart, so pause the run with *register, restart, resume* from
+> `connect/SKILL.md`: save state, ask the user to restart the tool and paste the same prompt, and end
+> your turn. Check-state then resumes at the stage that paused. Never spawn the server yourself or
+> write a JSON-RPC client to reach it.
 >
 > Verify the tools work in-session with a search — e.g. "list stores" →
 > `ecommerce_stores_list` — before proceeding.

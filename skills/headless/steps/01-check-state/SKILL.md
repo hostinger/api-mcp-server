@@ -1,16 +1,15 @@
 ---
 name: headless-step-check-state
-description: "Build step of the Hostinger Headless flow, run right after connect, once refine has agreed the brief. Works out where a given domain's build stands — is a run already in progress, does the site already exist, how far did it get — by reconciling the global workspace state under ~/.hostinger/<domain>/ with what the Hostinger connector reports, then guides the user to continue, switch or buy a domain, or start over. Owns all resume/position logic for the flow."
+description: "First build step of the Hostinger Headless flow, run right after connect. Works out where a given domain's build stands — is a run already in progress, does the site already exist, how far did it get — by reconciling the global workspace state under ~/.hostinger/<domain>/ with what the Hostinger connector reports, then guides the user to continue, switch or buy a domain, or start over. Owns all resume/position logic for the flow."
 ---
 
 # headless-step-check-state
 
-A build step of the Hostinger Headless flow (orchestrated by `hostinger.com/headless/skill.md`), run
-right after connect. Refine has already agreed the brief (`brief.md`) from the local workspace alone,
-and connect has connected the Hostinger connector and confirmed the account can build. Your job here
-is to **figure out where this domain stands and agree the route with the user** before any new work
-on Hostinger begins, including what refine couldn't see without Hostinger (Step 3). This step owns
-all resume/position logic — no other stage second-guesses it.
+The first build step of the Hostinger Headless flow (orchestrated by `hostinger.com/headless/skill.md`),
+run right after connect. Connect has already connected the Hostinger connector and confirmed the
+account can build. Your job here is to
+**figure out where this domain stands and agree the route with the user** before any new work begins.
+This step owns all resume/position logic — no other stage second-guesses it.
 
 Nothing in this step creates, provisions, deploys, or deletes anything. It reads and guides. Its
 only writes to Hostinger are unsent build reports (Step 0) and the tool-connected event (Step 3).
@@ -22,7 +21,7 @@ Everything for this domain lives in its global workspace `~/.hostinger/<domain>/
 
 ## Step 0 — Log the stage, send unsent reports
 
-The run log started before refine (*Start of a run* in the top-level `SKILL.md`). Before anything
+The run log started before connect (*Start of a run* in the top-level `SKILL.md`). Before anything
 else, end connect's stage, start this one and list the reports still to send:
 
 ```bash
@@ -60,9 +59,9 @@ this session. What's left is the platform, and **never guess from a timestamp.**
 
 ## Step 2 — Read the workspace directory
 
-Open `~/.hostinger/<domain>/` by its exact path, not by listing `~/.hostinger/`. Refine has always
-written to it by now: read `state.json` (its `stage`) and whatever artifacts exist (`brief.md`,
-`site.json`, …). Treat these as a hint, not the truth.
+Open `~/.hostinger/<domain>/` by its exact path, not by listing `~/.hostinger/` (`run-start` created
+it): read `state.json` (its `stage`) and whatever artifacts exist (`brief.md`, `site.json`, …).
+Treat these as a hint, not the truth.
 
 ---
 
@@ -93,18 +92,14 @@ Query the Hostinger connector — the local files are never trusted on their own
   ownership: "all" }` returns **no** `/cms` row, `hosting_pocketbase_backend { username, domain }`
   returns 404 or `state: "missing"` (the same test provision uses), and there is no `site.json`
   recording a backend. It is a **new build** that
-  happens to already own its website, not a finished or resumable one. Route it to **provision**,
-  which adopts the shell and swaps it to the brief's backend (provision's subfolder repeats this check
-  before swapping). Never create a second site, and never skip provision for it.
-  `headless_pocketbase` is **not** an empty shell: onboarding chose PocketBase, so the backend is
-  fixed as **PocketBase** and provision creates the backend if it isn't there yet
+  happens to already own its website, not a finished or resumable one. Route it to **refine** (choose
+  the backend), then **provision** adopts the shell and swaps it to that backend (provision's subfolder
+  repeats this check before swapping). Never create a second site, and never skip provision for it.
+  `headless_pocketbase` is **not** an empty shell: onboarding chose PocketBase, so refine keeps the
+  backend fixed as **PocketBase** and provision creates the backend if it isn't there yet
   (`hosting_pocketbase_backend` → 404 or state `missing` means not yet). After 24 h the setup row is
-  gone and the public API can't tell such a site with no backend from an empty shell; the brief's
-  backend then stands, as for any empty shell.
-- **Does the brief fit what's there?** Refine ran before the connection, so it chose the backend
-  from the conversation alone. When the site already fixes the backend (an onboarding PocketBase
-  site, or a site with a real backend) and `brief.md`'s **Suggested backend** names another, the site
-  wins: Step 5 sends the run back to refine.
+  gone and the public API can't tell such a site with no backend from an empty shell; refine then
+  decides the backend as for any empty shell.
 - **A `site.json → backend: "webapp"`** is from an older flow that built a plain Node.js host, which
   this version no longer does. Tell the user in one line and point them at the `deploy-to-hosting`
   skill for that app; don't resume it as a headless build.
@@ -116,16 +111,15 @@ corrected.
 
 ## Step 4 — Determine the position
 
-Refine has always run before this step, and agreed or kept the brief with the user. **"Brief only"
-here means that brief and nothing built after it:** `brief.md`, `connect.json`, and **no other build
-artifacts** (`site.json`, `design.md`, `content-model.md`, `src/`, …).
+**"Local state: none" here means no build artifacts yet** (`brief.md`, `site.json`, `design.md`,
+`content-model.md`, `src/`, …). `connect.json`, the run log and `state.json` don't count.
 
 | Local state | Reality (domain) | Position |
 |---|---|---|
-| brief only | free | **new build** — go on to provision |
-| brief only | empty headless shell (onboarding) | **new build on an existing shell** — go on to provision, which adopts the shell and swaps it to the brief's backend. Never create a second site, never skip provision |
-| brief only | onboarding PocketBase site (setup `type` `headless_pocketbase`) | **new build on an existing PocketBase site** — the backend is PocketBase (back to refine first when the brief named another, Step 5); go on to provision, which creates the backend if it isn't there yet. Not something to resume, even when the backend already exists: nothing has been built on it |
-| brief only | site exists with a real backend | **adopt / resume** — a live site built elsewhere; never create a second site. Offer resume or iterate, with the brief as what the user asked for |
+| none (connect only) | free | **new build** — start from refine |
+| none (connect only) | empty headless shell (onboarding) | **new build on an existing shell** — start from refine; provision adopts the shell and swaps it to the chosen backend. Never create a second site, never skip provision |
+| none (connect only) | onboarding PocketBase site (setup `type` `headless_pocketbase`) | **new build on an existing PocketBase site** — start from refine with the backend fixed as PocketBase; provision creates the backend if it isn't there yet. Not something to resume, even when the backend already exists: nothing has been built on it |
+| none (connect only) | site exists with a real backend | **adopt / resume** — never create a second site; route to the first unfinished stage |
 | build artifacts present, incomplete | matches | **resume** at `state.json`'s `stage` |
 | build artifacts present | disagrees | **reality wins** — recompute the stage from what actually exists |
 | build artifacts present, all done | live site exists | **finished** — this is now an *iterate* request, not a build |
@@ -135,26 +129,19 @@ artifacts** (`site.json`, `design.md`, `content-model.md`, `src/`, …).
 ## Step 5 — Guide the user
 
 The question to ask depends on whether there is actually **something to resume** — i.e. **build
-artifacts** beyond a brief only, or a **live site** for this domain. Connect's files or a brief only are *not*
-something to resume.
+artifacts** (`brief.md`, `site.json`, …) or a **live site** for this domain. Connect's files are
+*not* something to resume.
 
 - **A run paused in provision or content model for a tool restart** (`run-start` printed "continued
   after a tool restart in <stage>/<phase>") → resume at that stage and phase without asking: the user only
   restarted their tool (`run-start` continues a run only after a clean `pause`). What Steps 1–3
   found still corrects the stage. A run paused in connect has nothing to resume yet: the cases below apply.
-- **New build** (brief only, and either the domain is free **or** it holds only an empty headless
-  shell or a PocketBase site from onboarding) → just proceed to provision. **Don't ask resume vs
-  start over** — there's nothing to resume; both would land in the same place. An empty headless
+- **New build** (no build artifacts and either the domain is free **or** it holds only an empty
+  headless shell or a PocketBase site from onboarding) → just proceed to refine. **Don't ask resume
+  vs start over** — there's nothing to resume; both would land in the same place. An empty headless
   shell is not "something to resume": it has no backend and no content yet, so it's a fresh build
   that already owns its website — provision will adopt and swap it. Mention it in one line ("Using
   the headless site onboarding already created for this domain.").
-- **The brief named another backend than the site fixes** (Step 3) → send the run back to refine
-  with that backend fixed (`next refine`; refine Step 1, *A fixed backend*). Refine re-confirms the
-  plan with the user in one message and writes the brief, then the run returns here and lands in
-  one of the other cases.
-- **A live site with a real backend, and a brief only** (built from another machine, so there was no
-  workspace) → say what's live and offer **resume** or **iterate**, as below. Treat the brief as what
-  the user is asking for.
 - **Something to resume** (build artifacts exist, or a site exists for the domain **with a real backend
   installed** — WordPress at `/cms`, a store, a PocketBase backend with build artifacts, or a deployed app) → tell the user plainly what's there
   and **ask them to choose**, regardless of how old it is (don't guess from timestamps):

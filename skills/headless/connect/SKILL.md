@@ -1,20 +1,18 @@
 ---
 name: hostinger-headless-connect
-description: "Connect step for the Hostinger Headless flow, in two parts: get ready (verify Node, find or install the skill folder) before refine, then, once the brief is agreed, run the bootstrap (reach the Hostinger MCP server + OAuth sign-in) and route to the matching coding-tool skill under tools/ so the MCP tools are available before check-state. Triggers: connect to Hostinger, set up the Hostinger connector, start a headless build."
+description: "Connect step for the Hostinger Headless flow, first in every run and before any question about the site: verify Node, find or install the skill folder, run the bootstrap (reach the Hostinger MCP server + OAuth sign-in), then route to the matching coding-tool skill under tools/ so the MCP tools are available before check-state. Triggers: connect to Hostinger, set up the Hostinger connector, start a headless build."
 ---
 
 # Hostinger Headless Skill — connect
 
-You are a coding agent, and this is a skill for you to execute. Follow the phases below in order,
-in two parts with refine in between:
+You are a coding agent, and this is a skill for you to execute. Follow the phases below in order.
+This skill runs first in every run, before any question about the site, in two parts with
+`run-start` in between (see *Start of a run* in `<skill>/SKILL.md`):
 
-- **Get ready** (Phases 0–1) runs first in every run, before any message to the user, and touches
-  nothing on Hostinger: Node and the skill folder.
-- **Connect** (Phases 2–5) runs once `brief.md` is written: the Hostinger sign-in, the connector's
-  tools and `connect.json`, then check-state.
-
-The user talks about their site before any setup they'd have to watch (see *Start of a run* in
-`<skill>/SKILL.md`).
+- **Get ready** (Phases 0–1), before any message to the user, touches nothing on Hostinger: Node and
+  the skill folder.
+- **Connect** (Phases 2–5): the Hostinger sign-in, the connector's tools and `connect.json`, then
+  check-state.
 
 This skill goal is to help you to connect to Hostinger via MCP. That can be done via Hostinger Connector or adding the MCP via MCP Server.
 
@@ -79,13 +77,10 @@ directory is. A new release installs into its own folder, so a run never uses a 
 Read `<skill>/VERSION`: its line 1 is the skills version this run uses, which goes into
 `connect.json` (Phase 4).
 
-That's get ready. Go back to *Start of a run* in `<skill>/SKILL.md`: refine runs next, and connect
-picks up at Phase 2 once `brief.md` is written.
+That's get ready. Go back to *Start of a run* in `<skill>/SKILL.md` for `run-start`, which opens
+connect's stage in the run log, then pick up at Phase 2.
 
 ## Phase 2 — Sign in: run the bootstrap (deterministic)
-
-Start connect's stage in the run log: `node <skill>/run-log.mjs <domain> next connect` (it ends
-refine's, and does nothing when `run-start` continued a run already in connect).
 
 Phases 2–4 run without status lines. The user sees only the sign-in link when this phase needs one,
 a failure's `detail` if one stops connect, and then Phase 5's one connected line (or, instead, the
@@ -156,10 +151,10 @@ Check each group on its own, right here at connect, before anything else:
 
 Only when **both** pass are the Hostinger tools "in this session". If either is missing, register the
 missing server(s) now (*register, restart, resume* below), even though other Hostinger tools respond.
-Whether you then pause for a restart depends on what this build needs: the hosting group always, the
-ecommerce group only when `brief.md`'s **Suggested backend** includes Ecommerce. A missing ecommerce
-group on any other backend is registered for later sessions, and the run carries on without a
-restart. A gap found at provision would force a restart in the middle of the build.
+Pause for a restart when the hosting group is missing, or when the ecommerce group is missing and a
+`brief.md` already in the workspace (a continued or resumed build) names an Ecommerce backend.
+Otherwise register the missing ecommerce group and carry on without a restart: a new run has no
+brief yet, and `steps/03-provision/ecommerce/SKILL.md` pauses for it if refine picks Ecommerce.
 
 ### When the Hostinger tools aren't in this session: register, restart, resume
 
@@ -170,18 +165,18 @@ until the tool restarts. When either tool group above is missing:
    (`<command> <launcher>`) if the hosting group is missing, and `hostinger-ecommerce`
    (`<command> <launcher> hostinger-ecommerce-mcp`) if the ecommerce group is missing.
    Skip a server that is already registered under its name. When neither group is there, register
-   both, whatever the brief's backend: one restart then covers every backend.
-2. **Write `connect.json`** (Phase 4) before you stop. The skill folder from Phase 1 and `brief.md`
-   stay in place, so the next run starts from them.
-3. **Pause and end your turn.** Send one line saying Hostinger is set up and the plan is saved,
-   asking the user to restart the tool (the route says how) and paste the same prompt again so the
-   build continues from there. Leave the current stage open in the run log (connect's, or provision's
-   or content model's when they pause here), and run
+   both: one restart then covers every backend.
+2. **Write `connect.json`** (Phase 4) before you stop. The skill folder from Phase 1 and the
+   workspace stay in place, so the next run starts from them.
+3. **Pause and end your turn.** Send one line (at connect, after the sign-in link when one was
+   needed) saying Hostinger is set up and asking the user to restart the tool (the route says how)
+   and paste the same prompt again so the build continues from there. Leave the current stage open
+   in the run log (connect's, or provision's or content model's when they pause here), and run
    `node <skill>/run-log.mjs <domain> pause`, which releases the domain for the next session: this
    session ends here. This is a pause, not a run ending: no final report and no build report.
 4. **On the next run** `run-start` continues this run at connect (*Start of a run* in
-   `<skill>/SKILL.md`), so the brief isn't asked again. Connect finds the tools loaded, skips
-   registration, and the run goes on to check-state, which resumes where the run paused.
+   `<skill>/SKILL.md`). Connect finds the tools loaded, skips registration, and the run goes on to
+   check-state, which resumes where the run paused, so a brief already agreed isn't asked again.
 
 If a tool loads new servers without a restart (VS Code), use them right away and skip steps 3–4. Skip
 them too when the only missing group is one this build doesn't need (above).
@@ -255,10 +250,8 @@ Extra keys are allowed, but keep these seven as above: the build report reads `t
 ## Phase 5 - Continue to check-state
 
 Once everything is verified and you have the Hostinger MCP Server, tell the user in one line that
-you're connected to Hostinger, with the account's plan when you know it. That line is connect's whole
-message, after the sign-in link when Phase 2 needed one: don't mention build reports, and don't
-repeat the plan. Then go back to `<skill>/SKILL.md` and continue with check-state without waiting for
-a reply. Refine already ran, so don't start the flow over.
+you're connected to Hostinger, as *The first message* in `<skill>/SKILL.md` describes. Then go back
+to `<skill>/SKILL.md` and continue with check-state without waiting for a reply.
 
 
 ## Reference Sources
