@@ -370,29 +370,6 @@ const tools: OpenApiTool[] = [
     "group": "gpu"
   },
   {
-    "name": "gpu_catalog_pool-groups",
-    "title": "Get pool groups",
-    "annotations": {
-      "title": "Get pool groups",
-      "readOnlyHint": true,
-      "destructiveHint": false
-    },
-    "description": "Retrieve GPU pool groups, ordered by name.\n\nEach group bundles the pools of one GPU model and lists its currently available pools,\nwhether any of them is available and the lowest hourly price, in credits, among its instance types.\nThe price is returned even when the group is out of stock.\n\nUse this endpoint to show which GPU models can be ordered and from what price.",
-    "method": "GET",
-    "path": "/api/gpu/v1/pools/groups",
-    "inputSchema": {
-      "type": "object",
-      "properties": {},
-      "required": []
-    },
-    "security": [
-      {
-        "apiToken": []
-      }
-    ],
-    "group": "gpu"
-  },
-  {
     "name": "gpu_catalog_pool-instance-types",
     "title": "Get pool instance types",
     "annotations": {

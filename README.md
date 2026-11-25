@@ -78,14 +78,14 @@ pnpm update -g @hostinger/mcp
 
 This package installs the following MCP server commands:
 
-- `hostinger-api-mcp` — unified server over every operation (427 total)
+- `hostinger-api-mcp` — unified server over every operation (426 total)
 - `hostinger-agency-hosting-mcp` — 43 operations for agency-hosting
 - `hostinger-agent-readiness-mcp` — 4 operations for agent-readiness
 - `hostinger-billing-mcp` — 10 operations for billing
 - `hostinger-dns-mcp` — 10 operations for dns
 - `hostinger-domains-mcp` — 43 operations for domains
 - `hostinger-ecommerce-mcp` — 33 operations for ecommerce
-- `hostinger-gpu-mcp` — 13 operations for gpu
+- `hostinger-gpu-mcp` — 12 operations for gpu
 - `hostinger-horizons-mcp` — 8 operations for horizons
 - `hostinger-hosting-mcp` — 59 operations for hosting
 - `hostinger-mail-mcp` — 39 operations for mail
@@ -1971,19 +1971,6 @@ Use this endpoint to monitor GPU instance load.
 
 - **Method**: `GET`
 - **Path**: `/api/gpu/v1/instances/{instanceId}/metrics`
-
-#### gpu_catalog_pool-groups
-
-Retrieve GPU pool groups, ordered by name.
-
-Each group bundles the pools of one GPU model and lists its currently available pools,
-whether any of them is available and the lowest hourly price, in credits, among its instance types.
-The price is returned even when the group is out of stock.
-
-Use this endpoint to show which GPU models can be ordered and from what price.
-
-- **Method**: `GET`
-- **Path**: `/api/gpu/v1/pools/groups`
 
 #### gpu_catalog_pool-instance-types
 

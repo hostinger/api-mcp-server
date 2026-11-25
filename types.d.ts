@@ -3631,22 +3631,6 @@ Use this endpoint to monitor GPU instance load.
   };
 
   /**
-   * Retrieve GPU pool groups, ordered by name.
-
-Each group bundles the pools of one GPU model and lists its currently available pools,
-whether any of them is available and the lowest hourly price, in credits, among its instance types.
-The price is returned even when the group is out of stock.
-
-Use this endpoint to show which GPU models can be ordered and from what price.
-   */
-  "gpu_catalog_pool-groups": {
-    params: {
-
-    };
-    response: any; // Response structure will depend on the API
-  };
-
-  /**
    * Retrieve the instance types offered by a specified GPU pool, ordered by CPU core count.
 
 Each instance type describes its CPU, memory and storage, and its hourly price.
