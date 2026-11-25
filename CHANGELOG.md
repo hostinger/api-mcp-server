@@ -4,6 +4,17 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.23.1 — 2026-11-25
+
+### Operations
+
+- Changed the input schema of `dns_propagation_check-record`
+
+### Also in this release
+
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Build and packaging: `types.d.ts`
+
 ## v4.23.0 — 2026-11-25
 
 ### Also in this release
