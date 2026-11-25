@@ -4,6 +4,14 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v4.23.0 — 2026-11-25
+
+### Also in this release
+
+- Dependencies: `package-lock.json`
+- Bundled agent skills: `skills/headless/VERSION`, `skills/make-website-agent-ready/SKILL.md`, `skills/make-website-agent-ready/references/checks.md`
+- Other files: `src/core/skills.js`, `src/core/skills.ts`
+
 ## v4.22.1 — 2026-11-25
 
 ### Operations
