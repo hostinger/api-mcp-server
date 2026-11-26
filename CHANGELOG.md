@@ -4,6 +4,27 @@ Generated at release time from the diff between the previous and current
 build. Tool changes are listed individually; everything else is summarised
 by area.
 
+## v5.0.0 — 2026-11-26
+
+### Operations
+
+- Removed `horizons_websites_clone`
+- Removed `horizons_websites_list`
+- Removed `horizons_websites_create`
+- Removed `horizons_websites_edit`
+- Removed `horizons_websites_publish`
+- Removed `horizons_websites_get`
+- Removed `horizons_websites_build-task`
+
+### Also in this release
+
+- Documentation: `README.md`
+- Dependencies: `package-lock.json`, `package.json`
+- Bundled agent skills: `skills/headless/VERSION`
+- Request handling and authentication: `src/core/runtime.js`, `src/core/runtime.ts`
+- Server entry points: `src/servers/horizons.js`, `src/servers/horizons.ts`
+- Build and packaging: `types.d.ts`
+
 ## v4.23.1 — 2026-11-25
 
 ### Operations
