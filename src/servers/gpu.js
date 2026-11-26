@@ -3,4 +3,4 @@
 import { startServer } from '../core/runtime.js';
 import tools from '../core/tools/gpu.js';
 
-startServer({ name: 'hostinger-gpu-mcp', version: '5.0.2', tools });
+startServer({ name: 'hostinger-gpu-mcp', version: '6.0.0', tools });
