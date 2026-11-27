@@ -194,11 +194,18 @@ const restApi = site.urls?.rest_api ?? `https://${domain}/cms/wp-json/wp/v2`;
 const storeApi = site.urls?.store_api ?? `https://${domain}/cms/wp-json/wc/store/v1`;
 const store = content.store;
 
+// jwt-token has returned the site's mcp_url as http://, and the https redirect turns the POST into a GET (405).
+function overHttps(url) {
+  const u = new URL(url);
+  if (u.protocol === 'http:' && u.hostname === domain) u.protocol = 'https:';
+  return u.href;
+}
+
 localMcp = connect('headless-push-content');
 const mint = async () => {
   const { data, error } = await localMcp.execute('wordpress_installations_jwt-token', { username, software });
   if (error || !data?.token) throw new Error(`couldn't mint the installation token: ${error ?? 'no token in the reply'}`);
-  return { token: data.token, url: data.mcp_url ?? site.urls?.wp_mcp };
+  return { token: data.token, url: overHttps(data.mcp_url ?? site.urls?.wp_mcp) };
 };
 const wp = await openSite(mint).catch((e) => finish(2, { ok: false, error: `couldn't open the site's WP MCP: ${e.message}`, fallback: FALLBACK }));
 

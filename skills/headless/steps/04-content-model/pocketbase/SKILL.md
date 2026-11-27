@@ -70,8 +70,9 @@ Only once `provision.status == "completed"`.
 node <here>/scripts/pb-apply-schema.mjs ~/.hostinger/<domain>/pocketbase/schema.json ~/.hostinger/<domain>/.pocketbase/credentials.json
 ```
 
-Fix every reported problem and run it again until it prints `DONE`. It is idempotent: it never
-deletes fields or data, adds `created` and `updated` timestamps, inserts `seed` records into empty
+Fix every reported problem and run it again until it prints `DONE`; when it still fails after two real
+fixes, stop as *Stop a fix loop after two fixes* in the top-level `SKILL.md` says. It is idempotent: it
+never deletes fields or data, adds `created` and `updated` timestamps, inserts `seed` records into empty
 collections and merges `rateLimits`. Re-run it after every schema change; a schema change needs no
 redeploy.
 

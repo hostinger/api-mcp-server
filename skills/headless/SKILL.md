@@ -255,6 +255,53 @@ exits 0 with `ok: true` and what it waited for; 1 with `ok: false` when the job 
 the local Hostinger MCP, with `fallback` naming the connector operation to poll yourself, every ~15 s.
 Never write your own `sleep` loops.
 
+### Known Hostinger quirks
+
+Hostinger behaviors the steps meet and expect. When one shows up, do what its row says, once; the
+steps name the quirk and point here. A quirk's retry is not a fix (*Stop a fix loop after two fixes*).
+
+| Quirk | Symptom | What to do |
+|---|---|---|
+| Install list lags | `wordpress_installations_list` returns `[]` for a few seconds after the setup is `completed` | Retry it briefly before failing |
+| Install URL says http | The WordPress install record's `url` starts with `http://` | Use `https://<domain>/cms` URLs anyway |
+| `jwt-token` 500 that succeeded | `wordpress_installations_jwt-token` returns HTTP 500 | Call it once more before failing |
+| `mcp_url` says http | The `jwt-token` reply's `mcp_url` starts with `http://`, and the WP MCP's `initialize` answers 405 (the https redirect turns the POST into a GET) | `push-content.mjs` switches it to `https://` itself; by hand, use the `https://` URL |
+| Plugin install 500 that succeeded | `wordpress_plugins_install` returns HTTP 500 | Go straight to the poll; never send a second install blindly |
+| Root 403 before the first deploy | `GET https://<domain>/` returns 403 or the Hostinger default page until the frontend is deployed | Expected, not a failure |
+| PocketBase `failed` | `hosting_pocketbase_backend` says `state: failed` | Hostinger retries it on its own after `retry_after_seconds`: wait that long and read again. The data is intact; never delete the backend |
+| PocketBase 503 after idle | The first request after about 5 idle minutes returns 503 | A wake-up: send it again |
+| Ecommerce 402 on payment | `ecommerce_payments_enable-manual-method` returns HTTP 402 (a free account), and checkout later fails with `400 payment_provider_not_configured` | A normal outcome: record `payment_enabled: false`, tell the user in one line that checkout needs a paid Ecommerce plan, and carry on. Never retry |
+| SSL pending | `wait.mjs` returns `ok: true` with `https_pending: true`: a new domain's certificate is still installing, for up to about an hour | The deploy worked: check over `http://`, tell the user HTTPS follows on its own, and don't wait for it |
+| Root 403 after a completed build | The build is `completed` but the root serves 403 (`wait.mjs` says `build settings missing`, or times out on the root) | The deploy call went without its build settings: pass them (`steps/08-deploy/SKILL.md`) and redeploy. This one is a real fix |
+| SSR app hangs | The build is `completed` but an SSR root never answers (`wait.mjs build` `timed_out` on the root) | `hosting_nodejs_restart-application { username, domain }`, no rebuild |
+| Stale root after deploy | The root still serves the previous build right after a `completed` one | Check again after about 30 s |
+
+### Stop a fix loop after two fixes
+
+Three checks can keep failing while you fix and retry: the Hostinger deploy build (`wait.mjs build`
+says `failed`), deploy verification (`steps/08-deploy/SKILL.md` Step 5), and the content push. When the
+same check fails again after **two real fixes**, stop: no third fix, no further redeploy or push. The
+first attempt isn't a fix, so you stop at its third failure: the first attempt, then one after each fix.
+
+A real fix is a change to the source, config or deploy call aimed at that failure. The retry or
+workaround of a *Known Hostinger quirks* row doesn't count, and neither does running `wait.mjs` again
+after `timed_out`. The local `npm run build` while you write the frontend isn't one of these checks.
+
+When you stop:
+
+1. End the stage `failed` and log one unresolved `issue` naming both fixes, in one command (add
+   `--phase push` on the `stage-end` for the content push):
+   ```bash
+   node <skill>/run-log.mjs <domain> stage-end <stage> failed --note "<check>: stopped after 2 fixes" && node <skill>/run-log.mjs <domain> event issue '{"stage":"<stage>","symptom":"<what failed>","workaround":"fix 1: <…>; fix 2: <…>","severity":"high","resolved":false}'
+   ```
+2. Tell the user through the done step's final report, not a summary of your own: read
+   `steps/09-done/SKILL.md` now and write the final report it describes (`--outcome failed`). Its
+   outcome paragraph names the check that stopped, its *Steps completed* table ends at that stage, and
+   the failure with the two fixes you tried is one item of its *Gaps / follow-ups* list: `report
+   --outcome failed` prints that item, so copy it as written. Don't ask
+   whether to keep trying. If the user asks to, that continues the run as a follow-up (*Follow-ups
+   continue the run*).
+
 ### Local servers: `local-server.mjs`
 
 Start every local dev or preview server (frontend's visual check, validate's sign-off preview) through

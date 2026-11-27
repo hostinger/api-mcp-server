@@ -89,15 +89,10 @@ A store needs ≥1 shipping zone and ≥1 payment method to check out.
 - **Shipping:** `ecommerce_shipping_set-store { store_id, price }` (minor units; 0 = free).
 - **Payment:** `ecommerce_payments_enable-manual-method { store_id, title }`.
 
-> **Known gate — free accounts have no payment method, and therefore no checkout.** On a **free
-> account** (and any account/store without a paid Hostinger Ecommerce plan), `enable-manual-method`
-> returns **HTTP 402**, and checkout later fails with `400 payment_provider_not_configured`. This is
-> **expected, not an error** — payment, and therefore checkout, is simply unavailable on the plan. The
-> catalog and the storefront still work fully. **Never block, stop, loop or retry the build on this:**
-> - Record `payment_enabled: false` in `site.json` (set `shipping_enabled` as usual).
-> - Tell the user in one line that checkout needs a paid Ecommerce plan, and carry straight on.
-> - Treat the 402 as a normal outcome — don't surface it as a failure or re-attempt the call.
-> - Never ask the user for payment credentials.
+> **Free accounts have no payment method, and therefore no checkout.** On a free account (or any store
+> without a paid Hostinger Ecommerce plan), `enable-manual-method` returns HTTP 402: the *Ecommerce 402
+> on payment* quirk under *Known Hostinger quirks* in the top-level `SKILL.md` says what to do. Set
+> `shipping_enabled` as usual, and never ask the user for payment credentials.
 >
 > Every downstream stage reads `site.json → ecommerce.payment_enabled` and, when it is `false`, skips
 > all checkout wiring and verification (see content-model Step 5, frontend, deploy). A store with

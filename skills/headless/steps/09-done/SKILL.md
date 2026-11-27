@@ -112,7 +112,10 @@ Write it in this order:
    resumed run will start from, and the build report `~/.hostinger/<domain>/report.html`.
 
 6. **Gaps / follow-ups** (only if any) — a short numbered list of anything skipped, approximated or
-   left for the user (e.g. no images generated, default WordPress content left in place).
+   left for the user (e.g. no images generated, default WordPress content left in place), and any check
+   stopped after two fixes: what failed and the two fixes tried. On a failed run, run the *Build report*
+   command before writing this report: `report --outcome failed` prints one item per stage, with every
+   fix its unresolved issues name. Copy those items into this list as written.
 
 Never include passwords, JWTs or other secrets in the report. For wp-admin access, give the URL and
 offer a one-click login link (`wordpress_login_create-links`), not credentials.
@@ -182,7 +185,7 @@ open "$URL"        # macOS
 
 ## Build report
 
-Right after the final report, save the build report for this run. It turns the run log (stage times
+Right after the final report (before it, on a failed run), save the build report for this run. It turns the run log (stage times
 from `run-log.json`, events from `events.jsonl`) into `reports/<run>.json` and `.html`, and copies the
 HTML to `report.html` in the workspace:
 

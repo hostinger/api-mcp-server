@@ -119,13 +119,11 @@ it runs at the join.
    - Any other message → stop and show it to the user. Never retry a 422 blindly.
 4. **Wait for it.** `state` may be `null` right after creation; that's normal.
    `cd "$HOME" && node <skill>/wait.mjs pocketbase <domain>` returns once `https://<domain>/api/health`
-   answers 200 (over `http://` with `https_pending: true` while a new domain's certificate is still
-   installing — fine, go on). If it times out, re-read `hosting_pocketbase_backend`: `failed` means
-   the last start didn't succeed and Hostinger retries it on its own after `retry_after_seconds`
-   (the data is intact — wait that long and read again, never delete the backend); `unregistered`
-   means it's broken → stop and show the user; `missing` means its files are gone → point 2 creates
-   a new, empty one. The backend sleeps after about 5 idle minutes, so one 503 on a first request is
-   a wake-up.
+   answers 200 (over `http://` with `https_pending: true`: the *SSL pending* quirk, so go on). If it
+   times out, re-read `hosting_pocketbase_backend`: `failed` is the *PocketBase `failed`* quirk;
+   `unregistered` means it's broken → stop and show the user; `missing` means its files are gone →
+   point 2 creates a new, empty one. A 503 on a first request is the *PocketBase 503 after idle*
+   quirk. The quirks are under *Known Hostinger quirks* in the top-level `SKILL.md`.
 
 PocketBase owns `/api` and `/_` on this domain; the app's own server routes use another prefix (e.g.
 `/server`). The owner sets outgoing mail (SMTP), backups and social sign-in in the dashboard: they
@@ -142,9 +140,9 @@ it in this flow.
 | PocketBase answers | `GET https://<domain>/api/health` and `GET https://<domain>/_/` | 200 and 200 |
 | Credentials saved | `~/.hostinger/<domain>/.pocketbase/credentials.json` | present, mode `600`, `domain` matches |
 
-`GET https://<domain>/` returns the Hostinger default page (or 403) until the frontend is deployed —
-expected, not a failure. There is **no `/cms`** on this domain; the app itself serves every route but
-`/api` and `/_` once it is deployed (Step 8).
+`GET https://<domain>/` serving the default page or 403 is the *root 403 before the first deploy*
+quirk (*Known Hostinger quirks* in the top-level `SKILL.md`). There is **no `/cms`** on this domain;
+the app itself serves every route but `/api` and `/_` once it is deployed (Step 8).
 
 If a check fails: retry once after ~30 s; if it still fails, stop and point the user at hPanel.
 

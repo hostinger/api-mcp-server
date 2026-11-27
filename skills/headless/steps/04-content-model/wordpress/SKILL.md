@@ -96,7 +96,8 @@ stderr; stdout is one JSON line with `counts`, `verify` and `ids`.
 | `1` with `failed` | Those items failed; the rest is in | Fix the cause the `error` names and re-run. If the same item fails twice, create just that item with [`by-hand.md`](by-hand.md) |
 | `2` | It couldn't reach the site (sign-in, the site's MCP, a missing ability); `error` says why | Push with [`by-hand.md`](by-hand.md) |
 
-A run cut short (a tool timeout, a kill) is safe to repeat: just run it again.
+A run cut short (a tool timeout, a kill) is safe to repeat: just run it again. A push that still fails
+after two real fixes stops as *Stop a fix loop after two fixes* in the top-level `SKILL.md` says.
 
 ## Step 3 — Hand off
 

@@ -164,21 +164,20 @@ cd "$HOME" && node <skill>/wait.mjs build <domain> <buildUuid>
 ```
 
 It waits for `hosting_get-deployment` to report the build `completed`, then up to 5 minutes for
-`https://<domain>/` (or `http://` while the certificate is pending) to serve 200. What its result means here:
+`https://<domain>/` (or `http://` while the certificate is pending) to serve 200. What its result means
+here (the quirks named are under *Known Hostinger quirks* in the top-level `SKILL.md`):
 
 - `ok: true`: the build is done and the root serves 200. Go on to Step 5.
-- `ok: true` with `https_pending: true`: the build is done and `http://<domain>/` serves 200, but the
-  new domain's SSL certificate is still installing (this can take the better part of an hour). The
-  deploy worked: tell the user HTTPS will follow on its own, run Step 5 over `http://`, and don't
-  wait for the certificate.
+- `ok: true` with `https_pending: true`: the *SSL pending* quirk. Run Step 5 over `http://`.
 - `ok: false` with `build.state: failed`: read `log_tail` (the end of the build log) and `analysis`, fix
   locally, re-archive and redeploy (pass `fromLine` to `hosting_get-deployment` to read only new log
-  output).
-- `ok: false` with `build settings missing`: the settings didn't take (the root would 403 for good). Fix
-  the deploy call and redeploy.
-- `ok: false` with `timed_out`: `last_status` says whether the build was still running or the root
-  wasn't serving 200 yet (see Step 5's note on a 403). For an SSR app that built but hangs,
-  `hosting_nodejs_restart-application { username, domain }` recovers the server without a rebuild.
+  output). After two fixes that don't take, stop as *Stop a fix loop after two fixes* in the
+  top-level `SKILL.md` says.
+- `ok: false` with `build settings missing`: the *root 403 after a completed build* quirk.
+- `ok: false` with `timed_out`: `last_status` says whether the build was still running (run the same
+  command again) or the root wasn't serving 200 yet. A root that 403s or serves the previous build is
+  the *root 403 after a completed build* or *stale root after deploy* quirk; an SSR root that never
+  answers is the *SSR app hangs* quirk.
 
 ## Step 5 — Verify the live site (all must pass)
 
@@ -215,9 +214,10 @@ It waits for `hosting_get-deployment` to report the build `completed`, then up t
 >   redeploy without the file.
 
 The root check is already done when `wait.mjs build` returned `ok: true`; check the rest in one shell
-command (`curl` each URL). A `completed` build whose root 403s almost always means the build settings
-weren't passed to `hosting_deploy` (null settings) — pass them and redeploy. Caching can briefly serve a
-stale root; re-check after ~30 s.
+command (`curl` each URL). A root that 403s or serves the previous build is the *root 403 after a
+completed build* or *stale root after deploy* quirk (*Known Hostinger quirks* in the top-level
+`SKILL.md`). A check that still fails after two real fixes stops the deploy as *Stop a fix loop after
+two fixes* in the top-level `SKILL.md` says.
 
 ## Step 6 — Record `deploy.json`
 

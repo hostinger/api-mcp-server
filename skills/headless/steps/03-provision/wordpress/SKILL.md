@@ -102,12 +102,10 @@ install WordPress straight into its `/cms` directory. This is the onboarding han
 
 Notes:
 
-- `wordpress_installations_list` can lag a few seconds behind `completed` and return `[]` — retry
-  briefly before failing. Its `domain` filter is a substring match, so exact-match the row.
-- The install record's `url` may say `http://`; always use `https://` URLs.
-- `GET https://<domain>/` returns 403 until the frontend is deployed — expected, not a failure.
-- A `jwt-token` HTTP 500 can still have succeeded (a known quirk of the `hostinger-wordpress` MCP):
-  call it again before failing.
+- `wordpress_installations_list`'s `domain` filter is a substring match, so exact-match the row.
+- Four quirks can show up here: *Install list lags*, *Install URL says http*, *Root 403 before the
+  first deploy* and *`jwt-token` 500 that succeeded*. Each has its one action under *Known Hostinger
+  quirks* in the top-level `SKILL.md`.
 - **Never print, log or store the JWT.** It is minted on demand (24 h lifetime) by whichever stage
   needs the per-site WP MCP; only `mcp_url` is recorded.
 
@@ -131,8 +129,8 @@ which plugins you're installing; drop `wordpress-seo` if they say they don't wan
 
 1. **Install all of them in one call** (management MCP, async):
    `wordpress_plugins_install { username, software: <install_id>, plugins: [<every slug from the table>] }`.
-   An HTTP 500 doesn't mean it failed (a known quirk of the `hostinger-wordpress` MCP): go straight to
-   the poll, and never send a second install blindly.
+   An HTTP 500 is the *plugin install 500 that succeeded* quirk (*Known Hostinger quirks* in the
+   top-level `SKILL.md`).
 2. **Poll** `wordpress_plugins_list-installed { username, software }` until every slug shows `active`
    (install and activate usually complete together). Activate a slug that is installed but inactive with
    `wordpress_plugins_activate { username, software, plugin: "<slug>" }`.

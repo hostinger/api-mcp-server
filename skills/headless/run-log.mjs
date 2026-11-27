@@ -507,6 +507,9 @@ function buildReport(ws, { outcome, tokens } = {}) {
   const endedAt = stillOpen ? now() : lastActivity(run, history, events);
   const stages = history.map((h) => ({ ...h, minutes: minutesBetween(h.started_at, h.ended_at ?? endedAt) }));
   const gaps = [...loggingGaps(stages, run, resolvedOutcome), ...dropped];
+  if (resolvedOutcome === 'failed' && !events.some((e) => e.type === 'issue' && !e.resolved)) {
+    gaps.push({ stage: stoppedAt(stages, state.stage) ?? 'done', phase: null, problem: 'the run failed but no unresolved issue says what failed; log one with `event issue` ("resolved":false), then run report again' });
+  }
   const strip = ({ ts, run: _run, type: _type, ...rest }) => ({ ...rest, logged_at: ts });
   const liveStage = stages.find((s) => s.stage === 'deploy' && s.result?.startsWith('ok'));
   const servers = serversSince(ws.dir, run.started_at);
@@ -854,6 +857,46 @@ async function report(ws, flags) {
   console.log(`report written: ${buildReport(ws, { outcome: flags.outcome, tokens })}`);
   const { id, file } = reportFile(ws);
   console.log(`send it: pass ${file} unchanged to hosting_headless_submit-build-report, then run report-sent ${id} (or report-rejected ${id} on a 422)`);
+  const written = readJson(file, {});
+  if (written.info?.outcome === 'failed') for (const line of gapsToCopy(written.issues)) console.log(line);
+}
+
+// Agents left to remember the done step's format write their own sections instead, so a failed run
+// prints its required Gaps / follow-ups items as text to copy. Agents log an issue per attempt, so
+// it's one item per stage: the stage's latest symptom, and every distinct fix its issues name.
+function gapsToCopy(issues) {
+  const byStage = new Map();
+  for (const i of issues.filter((i) => !i.resolved)) byStage.set(i.stage, [...(byStage.get(i.stage) ?? []), i]);
+  if (!byStage.size) return [];
+  return [
+    'Copy into your final report, as written, as items of its *Gaps / follow-ups* list:',
+    ...[...byStage].map(([stage, open], n) => {
+      const tried = distinctFixes(open);
+      return `${n + 1}. ${label(stage)}: ${forReport(open.at(-1).symptom)}.${tried.length ? ` Tried: ${tried.join('; ')}.` : ''} Still failing.`;
+    }),
+  ];
+}
+
+// An issue's workaround often lists several fixes ("fix 1: …; fix 2: …", as the stop rule logs them),
+// and the stop's issue repeats fixes logged earlier in other words, so split on ';' and keep each fix
+// once, by its number when it has one, in the order and wording first logged.
+function distinctFixes(issues) {
+  const fixes = issues.flatMap((i) => String(i.workaround ?? '').split(';')).map((f) => forReport(f)).filter(Boolean);
+  const seen = new Map();
+  for (const f of fixes) {
+    const number = f.match(/^fix\s*(\d+)\b/i)?.[1];
+    const key = number ? `fix ${number}` : f.toLowerCase().replace(/\s+/g, ' ');
+    if (!seen.has(key)) seen.set(key, f);
+  }
+  return [...seen.values()];
+}
+
+// Short, and with anything shaped like a credential masked: the final report never shows secrets.
+const SECRET = /\beyJ[\w-]+\.[\w-]+\.[\w-]+|\b(Bearer|Basic)\s+\S+|\b(password|passwd|token|secret|api[_-]?key|authorization)(["']?\s*[:=]\s*["']?)[^\s"',;]+/gi;
+function forReport(text, max = 240) {
+  const masked = String(text).trim().replace(SECRET, (m, scheme, key, sep) => (scheme ? `${scheme} [redacted]` : key ? `${key}${sep}[redacted]` : '[redacted]'));
+  const clipped = masked.length > max ? `${masked.slice(0, max - 1)}…` : masked;
+  return clipped.trim().replace(/[.\s]+$/, '');
 }
 
 // What each command does with the domain's lock: check it (refuse if another live session holds it,
