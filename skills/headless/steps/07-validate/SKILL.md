@@ -63,13 +63,14 @@ ships `package-lock.json` and the server installs from it, so the fix lands in t
 3. **Safe fixes.** `npm audit fix`, then rebuild clean: delete the build output (`.next` for Next.js,
    `.output` for Nuxt, `build` for SvelteKit, `dist` for Astro and Vite/React/Vue; for any
    other framework, the folder `npm run build` writes), run `npm run build`, and run the project's `check` or
-   `check:dist` script if it has one. Passes → copy the pair to the backup again. Fails → restore the
+   `check:dist` script if it has one. Passes → note whether `package-lock.json` differs from the
+   backup (`cmp -s`), then copy the pair to the backup again. Fails → restore the
    backup and `npm ci`. Never run `npm audit fix --force`: it takes breaking major upgrades across the
    whole tree. Low and moderate advisories this can't fix stay.
 4. **High and critical.** If `npm audit --audit-level=high` still fails, run `npm audit --json`. For
    each entry under `vulnerabilities` whose `severity` is `high` or `critical` and whose `fixAvailable`
    is an object, run `npm install <fixAvailable.name>@<fixAvailable.version>`. Rebuild clean as in
-   item 3. Fails → restore the backup, `npm ci`, and treat those advisories as leftovers.
+   item 3, noting as there whether `package-lock.json` changed. Fails → restore the backup, `npm ci`, and treat those advisories as leftovers.
    `fixAvailable: false` means no dependency upgrade fixes it.
 
 **Leftovers.** A high or critical advisory that no upgrade fixes, or whose upgrade breaks the build,
@@ -80,6 +81,13 @@ doesn't block the deploy: deploy the last working pair, log one event for all of
 ```bash
 node <skill>/run-log.mjs <domain> event issue '{"stage":"validate","symptom":"npm audit: <n> high/critical advisories left","cause":"<package>@<version> <advisory ID>: no fix through an upgrade | upgrade breaks the build; …","severity":"high","resolved":false}'
 ```
+
+**Re-check after the rebuild.** When item 3 or 4 changed `package-lock.json` and kept it, the site now
+runs a new build, so before going on, check it again if you have a subagent tool: start the server
+with `local-server.mjs` and run frontend's *Visual check* through the subagent
+([`../06-frontend/SKILL.md`](../06-frontend/SKILL.md)), in the next round: the check message over the
+same routes, then fixes and at most two re-checks, logged as there with
+`--stage validate`. Without a subagent tool, go on.
 
 ## 4 — Clean rebuild against the live API (optional — skip unless signing off)
 
@@ -94,9 +102,11 @@ fixtures, placeholder copy or `.htaccess` in the output).
 
 When someone wants to see it first: start the local preview with `local-server.mjs`, as *Local
 servers* in the top-level `SKILL.md` shows, and give the user the `url` it prints. It stays up while you
-wait for their answer; the run's report stops it. Show the user a couple of key routes at desktop and phone width (capture phone width
-as in frontend's *Visual check*; frontend already caught the layout bugs, so this is for the user, not a
-re-review) and navigation, and present it for **explicit approval**. If the preview won't start,
+wait for their answer; the run's report stops it. Show the user a couple of key routes at desktop and phone width
+and navigation, and present it for **explicit approval**. When a subagent ran the visual check, show
+the newest `<route>-<width>.png` of those routes from `checks/` (the highest round that has it, sections
+too if the user wants the full page) by path, without opening them yourself; take no new ones. After a self-check, capture phone width as in frontend's *Self-check*
+(frontend already caught the layout bugs, so this is for the user, not a re-review). If the preview won't start,
 give the user the command to run it themselves. On an autonomous or temp-domain run, skip this — deploy will verify the live result anyway.
 
 Then (after approval, or immediately if 4–5 were skipped): `state.json` → `stage: "deploy"`, fresh

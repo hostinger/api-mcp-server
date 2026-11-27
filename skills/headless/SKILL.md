@@ -50,7 +50,8 @@ Hostinger connector's OAuth token. **This recipe is not a security boundary.**
 Work through the stages in the order the table lists them, each reading its recipe and writing its
 artifact into the site workspace `~/.hostinger/<domain>/`. The one exception to the order is content
 prepare (step 4) and design (step 5): with a subagent tool, run them at the same time, as *Content and design at
-the same time* says.
+the same time* says, and frontend's visual check (step 6) goes to a fresh subagent, which screenshots
+the site and reports what to fix (`steps/06-frontend/SKILL.md` → *Visual check*).
 
 | # | Stage                                                                                                              | Skill / source                                                        | Writes | Instance? |
 |---|--------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|---|---|
@@ -359,6 +360,7 @@ took from it.
 | `.pocketbase/credentials.json` | provision (PocketBase) | the backend's superuser email and one-time password; mode `600`, never deployed, never printed |
 | `design.md` (+ `brand/` logo files) | design | chosen design direction: tokens, type, logo, components, per-page composition, accessibility |
 | `src/` | frontend | the website source implementing `design.md`; framework choice is recorded in `state.json → frontend` |
+| `checks/<round>/` | the visual check subagents, frontend's and validate's | the screenshots of each check round, named `<route>-<width>.png` (`home` for `/`, else the path without its leading `/` and with each other `/` as `-`), with `-2`, `-3` … for each further viewport-height section, the subagent's `answer.txt`, which `check-findings.mjs` turns into `issue` events, and any helper scripts the checker wrote |
 | `deploy.json` | deploy | build id, deployed at, live URLs |
 | `servers.json` (+ `servers/<port>.log`) | `local-server.mjs` only | each local dev or preview server a run started: pid, port, command, start time, and whether it was stopped |
 | `events.jsonl` | every stage, via `run-log.mjs` | append-only log of issues, user feedback, skill gaps and wins |

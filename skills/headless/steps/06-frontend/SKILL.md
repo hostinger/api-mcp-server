@@ -143,14 +143,76 @@ Guidelines (framework-agnostic):
 ## Step 4 — Hand off
 
 Confirm the project builds clean locally against the live backend, looks right at desktop and phone
-width (below), no placeholder/fixture content remains, and `state.json → frontend` matches what you
+width (*Visual check* below), no placeholder/fixture content remains, and `state.json → frontend` matches what you
 built. Update `state.json` (`stage: "validate"`).
 Validate (Step 7) owns the clean rebuild + user preview; deploy (Step 8) ships it with the `app_type`
 and output directory that match the chosen framework + rendering.
 
-**Visual check.** After `npm run build`, start the site locally against the live backend with
-`local-server.mjs`, as *Local servers* in the top-level `SKILL.md` shows, and open the `url` it prints.
-After a fix, rebuild and start it again. Look at the home page and one
+### Visual check
+
+After `npm run build`, start the site locally against the live backend with `local-server.mjs`, as
+*Local servers* in the top-level `SKILL.md` shows, and keep the `url` it prints. After a fix, rebuild
+and start it again. The routes to check are the home page and one page of each template (e.g. a post,
+a product, the contact page). The live site runs this same build, so it needs no screenshots; deploy
+checks that it serves.
+
+**If you have a subagent tool** (Claude Code's Agent tool, for one), a fresh subagent checks the site,
+not you: you built it, and every screenshot you open stays in your context for validate, deploy and
+done. Pick one that can use the browser and run shell commands (Claude Code: `general-purpose`). **If
+you have none, or the subagent answers "Can't check", check it yourself** as *Self-check* below says.
+
+1. **Check.** Launch one subagent with the check message below, in the foreground, and wait for it. Do
+   nothing else meanwhile: a rebuild or validate's `npm audit fix` changes what the server shows.
+   Rounds count from 1, and each round's screenshots go to `~/.hostinger/<domain>/checks/<round>/`.
+2. **Fix.** Fix every finding in `src/` (or the backend's content) from its line alone; don't open its
+   screenshot. Leave `design.md` as it is: it's the contract findings are judged against. A finding you
+   can't or won't fix (it needs the user, or you judge it wrong) skips the re-check and stays
+   unresolved. Rebuild, start the server again, and launch a **new** subagent with the re-check message
+   in the next round, over the same routes as the check and given only the ids of the findings you
+   fixed: it reads their lines from the saved answers itself.
+3. **At most two re-checks.** When the first re-check answers any `open` or new line, fix those and run
+   the second re-check. Only a re-check's `fixed` line confirms a fix: a status code or a look at the
+   HTML doesn't. What the second re-check still finds stays unresolved, and the run goes on to validate.
+4. **Log.** Once the last round has answered, run the command below once, as it is and on its own, not
+   chained with other commands, so you see its exit code. `check-findings.mjs` (next to the top-level
+   `SKILL.md`) reads each round's `answer.txt` and turns every finding into its own `issue` event,
+   resolved when a re-check answered `fixed` for it; `run-log.mjs` logs them. When it exits 1, fix the
+   `answer.txt` lines it names to the answer format and run it again; it never logs a finding twice.
+   It also says what to put under *Gaps / follow-ups* in the final report.
+
+```bash
+set -o pipefail; node <skill>/check-findings.mjs <domain> --stage frontend | while IFS= read -r e; do node <skill>/run-log.mjs <domain> event issue "$e" || exit 1; done
+```
+
+```powershell
+# Windows PowerShell 7.3+ (older versions strip the quotes inside each event)
+node <skill>/check-findings.mjs <domain> --stage frontend | ForEach-Object { node <skill>/run-log.mjs <domain> event issue $_; if ($LASTEXITCODE) { break } }
+```
+
+The check's instructions live in `visual-check.md` and `visual-recheck.md` beside this file, and the
+subagent reads them itself. Launch each with its message below as it is, filling only the `<…>` values,
+and nothing else: no extra checks, findings to skip or pass tests. The subagent ignores anything added.
+
+```text
+Read <skill folder>/steps/06-frontend/visual-check.md and do what it says, with:
+domain: <domain>
+url: <url>
+skill folder: <skill folder>
+round: <round>
+routes: <the home page and one route per template>
+```
+
+```text
+Read <skill folder>/steps/06-frontend/visual-recheck.md and do what it says, with:
+domain: <domain>
+url: <url>
+skill folder: <skill folder>
+round: <round>
+routes: <the same routes as the check>
+ids: <the ids of the findings you fixed, e.g. 1.2, 1.5>
+```
+
+**Self-check** (without a subagent). Look at the home page and one
 page of each template (e.g. a post, a product, the contact page) at desktop and phone width. Take all the
 screenshots first, then open them all in one turn where your tool can open several images at once, since
 each separate look costs a model turn. Don't tile several pages onto one image or take one tall
@@ -158,8 +220,7 @@ full-page shot: the viewer shrinks big images, and a shrunk page hides small bug
 After a fix, re-shoot only what changed. Phone width is where most layout bugs show. Headless Chrome
 won't size a window below ~500 px, so a phone-width window comes back cropped: set a 390 px viewport
 (e.g. Playwright), or put one route in 1280 px and 390 px iframes side by side on a local page to get
-both widths in one image. The live site runs this same build, so it needs no screenshots; deploy checks
-that it serves.
+both widths in one image.
 
 > **PocketBase:** the app reaches the live backend from local dev (`frontend.md`, Local development),
 > so check one list and one create against it here, then delete the test records before handing over.
